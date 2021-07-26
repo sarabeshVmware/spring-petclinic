@@ -2,15 +2,15 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tbs.vmware.com.1.2.0
+  name: tbs.tanzu.vmware.com.1.2.0
 spec:
-  refName: tbs.vmware.com
+  refName: tbs.tanzu.vmware.com
   version: 1.2.0
   releaseNotes: |
         Release 1.2.0 of the tbs app package
   valuesSchema:
     openAPIv3:
-      title: tbs.vmware.com values schema
+      title: tbs.tanzu.vmware.com values schema
       properties:
         docker_repository:
           type: string
@@ -23,7 +23,7 @@ spec:
           description: registry username
           default: 
           examples:
-          - kdhaduk@vmware.com
+          - kdhaduk@.vmware.com
         docker_password:
           type: string
           description: registry password

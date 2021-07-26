@@ -5,3 +5,4 @@ Trial Project for trying out the packaging for Tanzu Application Platform and Ta
 Add New Repo
 
 kbld -f ./packages --imgpkg-lock-output ./.imgpkg/images.yml
+imgpkg push <>

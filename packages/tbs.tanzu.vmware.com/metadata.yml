@@ -2,7 +2,7 @@ apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
   # This will be the name of our package
-  name: tbs.vmware.com
+  name: tbs.tanzu.vmware.com
 spec:
   displayName: "Tanzu Build Service"
   longDescription: "TBS consisting of all the manifests needed for installation"
