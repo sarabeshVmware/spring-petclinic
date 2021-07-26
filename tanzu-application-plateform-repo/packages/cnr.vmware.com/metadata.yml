@@ -1,0 +1,11 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  # This will be the name of our package
+  name: cnr.vmware.com
+spec:
+  displayName: "Cloud Native Runtime"
+  longDescription: "CNR consisting of all the manifests needed for installation"
+  shortDescription: "cloud native runtime"
+  categories:
+  - poc of packaging CNR

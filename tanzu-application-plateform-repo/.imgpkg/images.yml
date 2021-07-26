@@ -1,0 +1,10 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.0
+  image: registry.pivotal.io/build-service/bundle@sha256:8ab4c32699209412c3f58b4a910aaefc3ace3d1e99b5770dffa20bebda5184fa
+- annotations:
+    kbld.carvel.dev/id: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
+  image: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
+kind: ImagesLock

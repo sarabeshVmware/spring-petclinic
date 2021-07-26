@@ -1,0 +1,69 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cnr.vmware.com.1.0.0
+spec:
+  refName: cnr.vmware.com
+  version: 1.0.0
+  releaseNotes: |
+        Release 1.0.0 of the cnr app package
+  valuesSchema:
+    openAPIv3:
+      title: cnr.vmware.com values schema
+      properties:
+        server:
+          type: registry server
+          default: 
+          examples:
+          - registry.pivotal.io
+        username:
+          type: string
+          description: registry username
+          default: 
+          examples:
+          - kdhaduk@vmware.com
+        password:
+          type: string
+          description: registry password
+          default: 
+          examples:
+          - password
+        provider:
+          type: string
+          description: 
+          default: 
+          examples:
+          - local, tkgs
+        local_dns:
+          type: string
+          description: 
+          default: 
+          examples:
+          - dns
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
+          secretRef:
+            name: target-registry-secret
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/kbld.yaml
+          - config/serving
+          - config/net-contour
+          - config/eventing
+          - config/net-certmanager
+          - config/discovery
+          - config/aws-event-sources
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - '-'
+          - config/ytt/
+          - config/kapp.yaml
+      deploy:
+      - kapp: {}
