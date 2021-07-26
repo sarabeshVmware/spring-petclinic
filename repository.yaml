@@ -1,0 +1,10 @@
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageRepository
+metadata:
+  name: tanzu-advanced-packages
+spec:
+  fetch:
+    imgpkgBundle:
+      image: kdhadukacr.azurecr.io/tbs_cnr_adv_repo@sha256:7dec6ee2a9e14c022bc4fc40e308fa88a972a4e9c3dda8809796b1162f1c8fd1
+      secretRef:
+        name: target-registry-secret
