@@ -4,9 +4,7 @@ Carvel packages that are included in a TAP repo bundle.
 
 **Repository Layout**
 - **.imgpkg/**: images.yml contains package bundle references used by package CRs.
-
-- **packages**/: packages directory contains package metadata and package CRs for each package. 
-packages directory contains package metadata and package CRs.
+- **packages/**: packages directory contains package metadata and package CRs for each package. 
 
 **Dev workflow**
 1. Create a directory for your package.
@@ -16,6 +14,7 @@ packages directory contains package metadata and package CRs.
 3. Add Package CR into above created package directory with file name as <version>.yml.
    for ex. tbs.tanzu.vmware.com/1.2.0.yml
 
+**TAP Packaging**
 Generate TAP repo bundle
 kbld -f ./packages --imgpkg-lock-output ./.imgpkg/images.yml
 
