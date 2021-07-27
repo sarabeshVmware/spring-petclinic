@@ -15,6 +15,7 @@ Carvel packages that are included in a TAP repo bundle.
    for ex. tbs.tanzu.vmware.com/1.2.0.yml
 
 **TAP Packaging**
+
 Generate TAP repo bundle
 kbld -f ./packages --imgpkg-lock-output ./.imgpkg/images.yml
 
