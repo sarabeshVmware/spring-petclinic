@@ -1,0 +1,13 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: accelerator.tanzu.vmware.com
+spec:
+  displayName: "Application Accelerator for VMware Tanzu"
+  longDescription: "Application Accelerator is used to create new projects and configurations which follow enterprise standards."
+  shortDescription: "App for creating new projects or configurations"
+  categories:
+  - accelerator
+  - applications
+  - configuration
