@@ -2,8 +2,17 @@
 apiVersion: imgpkg.carvel.dev/v1alpha1
 images:
 - annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/app-accelerator/acc-install-bundle:0.1.0
+  image: registry.pivotal.io/app-accelerator/acc-install-bundle@sha256:db7818594cf2b453116cf0c17e2c158c0d77acb1d960897b435be77b9fb5c5c5
+- annotations:
     kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.0
   image: registry.pivotal.io/build-service/bundle@sha256:8ab4c32699209412c3f58b4a910aaefc3ace3d1e99b5770dffa20bebda5184fa
+- annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.1
+  image: registry.pivotal.io/build-service/bundle@sha256:3da44e9fb75b1813ec5898de86d52a6eec594ba64e171040af2088995913d8f8
+- annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.2
+  image: registry.pivotal.io/build-service/bundle@sha256:e03765dbce254a1266a8bba026a71ec908854681bd12bf69cd7d55d407bbca95
 - annotations:
     kbld.carvel.dev/id: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
   image: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
