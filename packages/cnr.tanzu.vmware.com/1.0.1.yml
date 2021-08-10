@@ -45,7 +45,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
+          image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
           secretRef:
             name: target-registry-secret
       template:
