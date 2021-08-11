@@ -1,0 +1,31 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: appliveview.tanzu.vmware.com.0.1.0
+spec:
+  refName: appliveview.tanzu.vmware.com
+  version: 0.1.0
+  releaseNotes: |
+        Release 0.1.0 of the App Live View package
+  valuesSchema:
+    openAPIv3:
+      title: appliveview.tanzu.vmware.com values schema
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
+          secretRef:
+            name: target-registry-secret
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
