@@ -2,15 +2,15 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: cnr.tanzu.vmware.com.1.0.1
+  name: cnrs.tanzu.vmware.com.1.0.1
 spec:
-  refName: cnr.tanzu.vmware.com
+  refName: cnrs.tanzu.vmware.com
   version: 1.0.1
   releaseNotes: |
         Release 1.0.1 of the cnr app package
   valuesSchema:
     openAPIv3:
-      title: cnr.tanzu.vmware.com values schema
+      title: cnrs.tanzu.vmware.com values schema
       properties:
         server:
           type: registry server
