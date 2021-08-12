@@ -23,7 +23,7 @@ spec:
           description: registry username
           default: 
           examples:
-          - kdhaduk@.vmware.com
+          - janedoe@pivotal.io
         docker_password:
           type: string
           description: registry password
@@ -35,7 +35,7 @@ spec:
           description: tanzunet registry username required for dependency updation feature
           default: 
           examples:
-          - kdhaduk@vmware.com
+          - janedoe@pivotal.io
         tanzunet_password:
           type: string
           description: tanzunet registry password required for dependency updation feature
