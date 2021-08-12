@@ -22,7 +22,7 @@ spec:
           description: registry username
           default: 
           examples:
-          - kdhaduk@vmware.com
+          - janedoe@pivotal.io
         password:
           type: string
           description: registry password
