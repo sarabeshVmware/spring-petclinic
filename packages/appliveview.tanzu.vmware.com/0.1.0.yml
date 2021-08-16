@@ -11,6 +11,23 @@ spec:
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
+      properties:
+        registry.server:
+          type: registry server
+          default: 
+          examples:
+          - registry.pivotal.io
+        registry.username:
+          type: string
+          description: registry username
+          default: 
+          examples:
+          - ksankaranara@vmware.com
+        registry.password:
+          type: string
+          description: registry password
+          default: 
+
   template:
     spec:
       fetch:
