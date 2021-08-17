@@ -14,16 +14,16 @@ spec:
       title: appliveview.tanzu.vmware.com values schema
       properties:
         registry:
-          description: 'Harbor Registry Details'
+          description: 'Image Registry Details'
           properties:
             server:
-              description: Harbor Registry URL
+              description: Image Registry URL
               type: string
             username:
-              description: Harbor Registry Username
+              description: Image Registry Username
               type: string
             password:
-              description: Harbor Registry Password
+              description: Image Registry Password
               type: string
           type: object  
   template:
