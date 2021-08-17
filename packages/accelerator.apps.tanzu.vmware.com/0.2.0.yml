@@ -1,0 +1,70 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: accelerator.apps.tanzu.vmware.com.0.2.0
+spec:
+  refName: accelerator.apps.tanzu.vmware.com
+  version: 0.2.0
+  releasedAt: null
+  releaseNotes: |
+        Beta release of the App Accelerator package
+  licenses: 
+  - "TBD"
+  valuesSchema:
+    openAPIv3:
+      title: accelerator.apps.tanzu.vmware.com values schema
+      properties:
+        registry:
+          hostname:
+            type: string
+            description: The hostname for the registry where the App-Accelerator images are located.
+            default: "registry.pivotal.io"
+          username:
+            type: string
+            description: The username to use for authenticating with the registry where the App-Accelerator images are located.
+            default: ""
+          password:
+            type: string
+            description: The password to use for authenticating with the registry where the App-Accelerator images are located.
+            default: ""
+        server:
+          service_type:
+            type: string
+            description: The service type for the acc-ui-server service.
+            default: LoadBalancer
+            examples:
+            - NodePort
+          watched_namespace:
+            type: string
+            description: The namespace that the server watches for accelerator resources.
+            default: default
+          engine_invocation_url:
+            type: string
+            description: The URL the server uses for invoking the accelerator engine.
+            default: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
+        engine:
+          service_type:
+            type: string
+            description: The service type for the Service of the engine.
+            default: ClusterIP
+            examples:
+            - NodePort
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0-dev
+          secretRef:
+            name: tap-registry
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
