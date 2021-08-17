@@ -8,33 +8,31 @@ spec:
   version: 0.1.0
   releaseNotes: |
         Release 0.1.0 of the App Live View package
+  releasedAt: 2021-09-01T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
       properties:
-        registry.server:
-          type: registry server
-          default: 
-          examples:
-          - registry.pivotal.io
-        registry.username:
-          type: string
-          description: registry username
-          default: 
-          examples:
-          - ksankaranara@vmware.com
-        registry.password:
-          type: string
-          description: registry password
-          default: 
-
+        registry:
+          description: 'Harbor Registry Details'
+          properties:
+            server:
+              description: Harbor Registry URL
+              type: string
+            username:
+              description: Harbor Registry Username
+              type: string
+            password:
+              description: Harbor Registry Password
+              type: string
+          type: object  
   template:
     spec:
       fetch:
       - imgpkgBundle:
           image: dev.registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
           secretRef:
-            name: target-registry-secret
+            name: tap-registry
       template:
       - ytt:
           paths:
