@@ -48,7 +48,7 @@ spec:
       - imgpkgBundle:
           image: registry.pivotal.io/build-service/bundle:1.2.0
           secretRef:
-            name: target-registry-secret
+            name: tap-registry
       template:
       - ytt:
           paths:
