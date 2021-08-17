@@ -39,7 +39,7 @@ spec:
       - ytt:
           paths:
           - "config"
-          - "values.yml"
+          - "values.yaml"
       - kbld:
           paths:
           - "-"
