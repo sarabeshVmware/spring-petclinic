@@ -30,7 +30,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
+          image: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
           secretRef:
             name: tap-registry
       template:
