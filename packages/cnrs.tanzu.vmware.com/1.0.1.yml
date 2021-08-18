@@ -10,7 +10,6 @@ spec:
   releaseNotes: |
         Release 1.0.1 of the Cloud Native Runtimes app package
   capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
-  licenses: 
   valuesSchema:
     openAPIv3:
       title: cnrs.tanzu.vmware.com values schema

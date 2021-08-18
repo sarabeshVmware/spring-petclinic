@@ -17,7 +17,7 @@ spec:
           description: docker repository
           default: 
           examples:
-          - registry.pivotal.io/adv_pkg_bundle
+          - registry.pivotal.io/tap_pkg_bundle
         docker_username:
           type: string
           description: registry username
