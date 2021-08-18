@@ -6,11 +6,10 @@ metadata:
 spec:
   refName: cnrs.tanzu.vmware.com
   version: 1.0.1
-  releasedAt: 2021-07-30
+  releasedAt: 2021-07-30T00:00:00Z
   releaseNotes: |
         Release 1.0.1 of the Cloud Native Runtimes app package
   capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
-  licenses: 
   valuesSchema:
     openAPIv3:
       title: cnrs.tanzu.vmware.com values schema
@@ -60,7 +59,7 @@ spec:
       - imgpkgBundle:
           image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
           secretRef:
-            name: target-registry-secret
+            name: tap-registry
       template:
       - kbld:
           paths:

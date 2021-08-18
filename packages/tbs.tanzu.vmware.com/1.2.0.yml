@@ -17,13 +17,13 @@ spec:
           description: docker repository
           default: 
           examples:
-          - registry.pivotal.io/adv_pkg_bundle
+          - registry.pivotal.io/tap_pkg_bundle
         docker_username:
           type: string
           description: registry username
           default: 
           examples:
-          - kdhaduk@.vmware.com
+          - janedoe@pivotal.io
         docker_password:
           type: string
           description: registry password
@@ -35,7 +35,7 @@ spec:
           description: tanzunet registry username required for dependency updation feature
           default: 
           examples:
-          - kdhaduk@vmware.com
+          - janedoe@pivotal.io
         tanzunet_password:
           type: string
           description: tanzunet registry password required for dependency updation feature
@@ -48,7 +48,7 @@ spec:
       - imgpkgBundle:
           image: registry.pivotal.io/build-service/bundle:1.2.0
           secretRef:
-            name: target-registry-secret
+            name: tap-registry
       template:
       - ytt:
           paths:
