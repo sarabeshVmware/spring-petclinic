@@ -2,18 +2,12 @@
 apiVersion: imgpkg.carvel.dev/v1alpha1
 images:
 - annotations:
-    kbld.carvel.dev/id: registry.pivotal.io/app-accelerator/acc-install-bundle:0.1.0
-  image: registry.pivotal.io/app-accelerator/acc-install-bundle@sha256:db7818594cf2b453116cf0c17e2c158c0d77acb1d960897b435be77b9fb5c5c5
+    kbld.carvel.dev/id: dev.registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0-dev
+  image: dev.registry.pivotal.io/app-accelerator/acc-install-bundle@sha256:00b45a328cb0f331ae646e5986f78628bf1b10b2ec2d1ad6ce2467664149310b
 - annotations:
-    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.0
-  image: registry.pivotal.io/build-service/bundle@sha256:8ab4c32699209412c3f58b4a910aaefc3ace3d1e99b5770dffa20bebda5184fa
+    kbld.carvel.dev/id: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
+  image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
 - annotations:
-    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.1
-  image: registry.pivotal.io/build-service/bundle@sha256:3da44e9fb75b1813ec5898de86d52a6eec594ba64e171040af2088995913d8f8
-- annotations:
-    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.2
-  image: registry.pivotal.io/build-service/bundle@sha256:e03765dbce254a1266a8bba026a71ec908854681bd12bf69cd7d55d407bbca95
-- annotations:
-    kbld.carvel.dev/id: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
-  image: us.gcr.io/daisy-284300/cloud-native-runtimes/staging@sha256:dcaae303e24aa9bb5422425fff73d877b15654240e93f24824987bfdafa446b0
+    kbld.carvel.dev/id: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
+  image: registry.pivotal.io/app-live-view/application-live-view-install-bundle@sha256:349210e9bef0ca8b1da90ad9151798966354c2e6018b56b7fd485cbd5a1c7f9b
 kind: ImagesLock
