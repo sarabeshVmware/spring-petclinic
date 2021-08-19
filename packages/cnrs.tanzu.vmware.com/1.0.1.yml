@@ -45,7 +45,7 @@ spec:
             domain:
               type: string
               description: domain name
-              example:
+              examples:
                 - "example.com"
         ingress:
           type: object
