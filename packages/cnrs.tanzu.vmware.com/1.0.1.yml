@@ -53,7 +53,7 @@ spec:
             reuse_crds:
               type: boolean
               description: set true to reuse existing Contour instance
-              default:
+              default: false
             external:
               type: object
               properties:
@@ -92,10 +92,73 @@ spec:
           - config/discovery
           - config/aws-event-sources
       - ytt:
+          inline:
+            paths:
+              patch1.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                #@ load("@ytt:data", "data")
+                #@ if data.values.ingress.internal.namespace:
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding","metadata":{"name":"contour-internal"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding"}),expects="2+"
+                ---
+                subjects:
+                  #@overlay/match by="namespace",expects=[0,1,2]
+                  #@overlay/remove
+                  - kind: ServiceAccount
+                    namespace: contour-internal
+
+                #@overlay/match by=overlay.subset({"metadata":{"namespace":"contour-internal"}}),expects="1+"
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"Namespace","metadata":{"name":"contour-internal"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRole","metadata":{"name":"contour-cnr"}}),expects=2
+                #@ if/end data.values.ingress.external.namespace:
+                #@overlay/remove
+                ---
+
+                #@ end
+              patch2.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                #@ load("@ytt:data", "data")
+                #@ if data.values.ingress.external.namespace:
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding","metadata":{"name":"contour-external"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding"}),expects="2+"
+                ---
+                subjects:
+                  #@overlay/match by="namespace",expects=[0,1,2]
+                  #@overlay/remove
+                  - kind: ServiceAccount
+                    namespace: contour-external
+
+                #@overlay/match by=overlay.subset({"metadata":{"namespace":"contour-external"}}),expects="1+"
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"Namespace","metadata":{"name":"contour-external"}})
+                #@overlay/remove
+                ---
+
+                #@ end
+
           ignoreUnknownComments: true
           paths:
           - '-'
           - config/ytt/
           - config/kapp.yaml
+          fileMarks:
+          - config/ytt/overlay-contour-internal.yaml:exclude=true
+          - config/ytt/overlay-contour-external.yaml:exclude=true
       deploy:
       - kapp: {}
