@@ -1,0 +1,101 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cnrs.tanzu.vmware.com.1.0.1
+spec:
+  refName: cnrs.tanzu.vmware.com
+  version: 1.0.1
+  releasedAt: 2021-07-30T15:18:46Z
+  releaseNotes: |
+        Release 1.0.1 of the Cloud Native Runtimes app package
+  capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
+  valuesSchema:
+    openAPIv3:
+      title: cnrs.tanzu.vmware.com values schema
+      properties:
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: registry server
+              examples:
+                - registry.pivotal.io
+            username:
+              type: string
+              description: registry username
+              examples:
+                - janedoe@pivotal.io
+            password:
+              type: string
+              description: registry password
+        provider:
+          type: string
+          description: Kubernetes cluster provider
+          examples:
+            - local, tkgs
+        local_dns:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: specify true if local DNS needs to be enabled
+              default: false
+            domain:
+              type: string
+              description: domain name
+              examples:
+                - "example.com"
+        ingress:
+          type: object
+          properties:
+            reuse_crds:
+              type: boolean
+              description: set true to reuse existing Contour instance
+              default:
+            external:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: external namespace
+            internal:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: internal namespace
+        pdb:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description:
+              default: true
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
+          secretRef:
+            name: tap-registry
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/kbld.yaml
+          - config/serving
+          - config/net-contour
+          - config/eventing
+          - config/net-certmanager
+          - config/discovery
+          - config/aws-event-sources
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - '-'
+          - config/ytt/
+          - config/kapp.yaml
+      deploy:
+      - kapp: {}
