@@ -6,7 +6,7 @@ metadata:
 spec:
   refName: cnrs.tanzu.vmware.com
   version: 1.0.1
-  releasedAt: 2021-07-30T00:00:00Z
+  releasedAt: 2021-07-30T15:18:46Z
   releaseNotes: |
         Release 1.0.1 of the Cloud Native Runtimes app package
   capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
@@ -14,45 +14,65 @@ spec:
     openAPIv3:
       title: cnrs.tanzu.vmware.com values schema
       properties:
-        registry.server:
-          type: registry server
-          default: 
-          examples:
-          - registry.pivotal.io
-        registry.username:
-          type: string
-          description: registry username
-          default: 
-          examples:
-          - janedoe@pivotal.io
-        registry.password:
-          type: string
-          description: registry password
-          default: 
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: registry server
+              examples:
+                - registry.pivotal.io
+            username:
+              type: string
+              description: registry username
+              examples:
+                - janedoe@pivotal.io
+            password:
+              type: string
+              description: registry password
         provider:
           type: string
           description: Kubernetes cluster provider
-          default: 
           examples:
-          - local, tkgs
+            - local, tkgs
         local_dns:
-          type: string
-          description: 
-          default: 
-          examples:
-          - dns
-        ingress.reuse_crds:
-          type: string
-          description: set true to reuse existing Contour instance
-          default: false
-        ingress.external.namespace:
-          type: string
-          description: external namespace
-          default: 
-        ingress.internal.namespace:
-          type: string
-          description: internal namespace
-          default: 
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: specify true if local DNS needs to be enabled
+              default: false
+            domain:
+              type: string
+              description: domain name
+              examples:
+                - "example.com"
+        ingress:
+          type: object
+          properties:
+            reuse_crds:
+              type: boolean
+              description: set true to reuse existing Contour instance
+              default:
+            external:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: external namespace
+            internal:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: internal namespace
+        pdb:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description:
+              default: true
   template:
     spec:
       fetch:
