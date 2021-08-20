@@ -158,7 +158,7 @@ spec:
           - config/ytt/
           - config/kapp.yaml
           fileMarks:
-          - config/ytt/overlay-contour-internal.yaml:exclude=true
-          - config/ytt/overlay-contour-external.yaml:exclude=true
+          - overlay-contour-internal.yaml:exclude=true
+          - overlay-contour-external.yaml:exclude=true
       deploy:
       - kapp: {}
