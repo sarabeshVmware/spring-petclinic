@@ -2,15 +2,16 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tbs.tanzu.vmware.com.1.2.1
+  name: buildservice.tanzu.vmware.com.1.2.0
 spec:
-  refName: tbs.tanzu.vmware.com
-  version: 1.2.1
-  releaseNotes: |
-        Release 1.2.1 of the tbs app package
+  refName: buildservice.tanzu.vmware.com
+  version: 1.2.0
+  releasedAt: "2021-06-11T00:00:00Z"
+  capacityRequirementsDescription: Cluster with nodes > 50GB ephemeral storage, Registry > 5GB available space
+  releaseNotes: "https://docs.pivotal.io/build-service/1-2/release-notes.html#1-2-0"
   valuesSchema:
     openAPIv3:
-      title: tbs.tanzu.vmware.com values schema
+      title: buildservice.tanzu.vmware.com values schema
       properties:
         docker_repository:
           type: string
@@ -32,13 +33,13 @@ spec:
           - password
         tanzunet_username:
           type: string
-          description: tanzunet registry username required for dependency updation feature
+          description: tanzunet registry username required for dependency updater feature
           default: 
           examples:
           - janedoe@pivotal.io
         tanzunet_password:
           type: string
-          description: tanzunet registry password required for dependency updation feature
+          description: tanzunet registry password required for dependency updater feature
           default: 
           examples:
           - password   
@@ -46,7 +47,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.pivotal.io/build-service/bundle:1.2.1
+          image: registry.pivotal.io/build-service/bundle:1.2.0
           secretRef:
             name: tap-registry
       template:
@@ -60,4 +61,3 @@ spec:
           - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
----
