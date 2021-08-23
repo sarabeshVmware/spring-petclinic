@@ -61,7 +61,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0-dev
+          image: registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0
           secretRef:
             name: tap-registry
       template:
