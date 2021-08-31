@@ -1,0 +1,327 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: accelerator.apps.tanzu.vmware.com
+spec:
+  displayName: "Application Accelerator for VMware Tanzu"
+  longDescription: "Application Accelerator is used to create new projects and configurations which follow enterprise standards."
+  shortDescription: "Used to create new projects and configurations."
+  providerName: "VMware"
+  maintainers:
+  - name: "Thomas Risberg"
+  supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: accelerator.apps.tanzu.vmware.com.0.2.0
+spec:
+  refName: accelerator.apps.tanzu.vmware.com
+  version: 0.2.0
+  releasedAt: 2021-09-01T00:00:00Z
+  releaseNotes: |
+        Beta release 0.2.0 of the Application Accelerator for VMware Tanzu package
+  valuesSchema:
+    openAPIv3:
+      title: accelerator.apps.tanzu.vmware.com values schema
+      properties:
+        registry:
+          description: 'Image Registry Configuration'
+          properties:
+            server:
+              type: string
+              description: The hostname for the registry where the App-Accelerator images are located.
+              default: "registry.pivotal.io"
+            username:
+              type: string
+              description: The username to use for authenticating with the registry where the App-Accelerator images are located.
+              default: ""
+            password:
+              type: string
+              description: The password to use for authenticating with the registry where the App-Accelerator images are located.
+              default: ""
+          type: object
+        server:
+          description: 'UI Server Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the acc-ui-server service.
+              default: LoadBalancer
+              examples:
+              - NodePort
+            watched_namespace:
+              type: string
+              description: The namespace that the server watches for accelerator resources.
+              default: default
+            engine_invocation_url:
+              type: string
+              description: The URL the server uses for invoking the accelerator engine.
+              default: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
+          type: object
+        engine:
+          description: 'Accelerator Engine Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the Service of the engine.
+              default: ClusterIP
+              examples:
+              - NodePort
+          type: object
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0
+          secretRef:
+            name: tap-registry
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: appliveview.tanzu.vmware.com
+spec:
+  maintainers:
+    - name : "Martin Lippert"
+  providerName: "VMware"
+  displayName: "Application Live View for VMware Tanzu"
+  longDescription: "Application Live View is a lightweight insights and troubleshooting tool that helps Application Developers and Application Operators to look inside of running applications"
+  shortDescription: "App for monitoring and troubleshooting running apps"
+  supportDescription: "https://tanzu.vmware.com/support"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: appliveview.tanzu.vmware.com.0.1.0
+spec:
+  refName: appliveview.tanzu.vmware.com
+  version: 0.1.0
+  releaseNotes: |
+        Release 0.1.0 of the App Live View package
+  releasedAt: 2021-09-01T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      title: appliveview.tanzu.vmware.com values schema
+      properties:
+        registry:
+          description: 'Image Registry Details'
+          properties:
+            server:
+              description: Image Registry URL
+              type: string
+            username:
+              description: Image Registry Username
+              type: string
+            password:
+              description: Image Registry Password
+              type: string
+          type: object  
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
+          secretRef:
+            name: tap-registry
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: cnrs.tanzu.vmware.com
+spec:
+  maintainers:
+    - name : "VMware"
+  displayName: "Cloud Native Runtimes"
+  longDescription: "Cloud Native Runtimes for Tanzu is a serverless application runtime for Kubernetes that is based on Knative and runs on a single Kubernetes cluster"
+  shortDescription: "Cloud Native Runtimes is a serverless runtime based on Knative"
+  providerName: "VMware"
+  supportDescription: "https://tanzu.vmware.com/support"
+
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cnrs.tanzu.vmware.com.1.0.1
+spec:
+  refName: cnrs.tanzu.vmware.com
+  version: 1.0.1
+  releasedAt: 2021-07-30T15:18:46Z
+  releaseNotes: |
+        Release 1.0.1 of the Cloud Native Runtimes app package
+  capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
+  valuesSchema:
+    openAPIv3:
+      title: cnrs.tanzu.vmware.com values schema
+      properties:
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: registry server
+              examples:
+                - registry.pivotal.io
+            username:
+              type: string
+              description: registry username
+              examples:
+                - janedoe@pivotal.io
+            password:
+              type: string
+              description: registry password
+        provider:
+          type: string
+          description: Kubernetes cluster provider
+          examples:
+            - local, tkgs
+        local_dns:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: specify true if local DNS needs to be enabled
+              default: false
+            domain:
+              type: string
+              description: domain name
+              examples:
+                - "example.com"
+        ingress:
+          type: object
+          properties:
+            reuse_crds:
+              type: boolean
+              description: set true to reuse existing Contour instance
+              default: false
+            external:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: external namespace
+            internal:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: internal namespace
+        pdb:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description:
+              default: true
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
+          secretRef:
+            name: tap-registry
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/kbld.yaml
+          - config/serving
+          - config/net-contour
+          - config/eventing
+          - config/net-certmanager
+          - config/discovery
+          - config/aws-event-sources
+      - ytt:
+          inline:
+            paths:
+              patch1.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                #@ load("@ytt:data", "data")
+                #@ if data.values.ingress.internal.namespace:
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding","metadata":{"name":"contour-internal"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding"}),expects="2+"
+                ---
+                subjects:
+                  #@overlay/match by="namespace",expects=[0,1,2]
+                  #@overlay/remove
+                  - kind: ServiceAccount
+                    namespace: contour-internal
+
+                #@overlay/match by=overlay.subset({"metadata":{"namespace":"contour-internal"}}),expects="1+"
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"Namespace","metadata":{"name":"contour-internal"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRole","metadata":{"name":"contour-cnr"}}),expects=2
+                #@ if/end data.values.ingress.external.namespace:
+                #@overlay/remove
+                ---
+
+                #@ end
+              patch2.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                #@ load("@ytt:data", "data")
+                #@ if data.values.ingress.external.namespace:
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding","metadata":{"name":"contour-external"}})
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"ClusterRoleBinding"}),expects="2+"
+                ---
+                subjects:
+                  #@overlay/match by="namespace",expects=[0,1,2]
+                  #@overlay/remove
+                  - kind: ServiceAccount
+                    namespace: contour-external
+
+                #@overlay/match by=overlay.subset({"metadata":{"namespace":"contour-external"}}),expects="1+"
+                #@overlay/remove
+                ---
+
+                #@overlay/match by=overlay.subset({"kind":"Namespace","metadata":{"name":"contour-external"}})
+                #@overlay/remove
+                ---
+
+                #@ end
+
+          ignoreUnknownComments: true
+          paths:
+          - '-'
+          - config/ytt/
+          - config/kapp.yaml
+          fileMarks:
+          - overlay-contour-internal.yaml:exclude=true
+          - overlay-contour-external.yaml:exclude=true
+      deploy:
+      - kapp: {}

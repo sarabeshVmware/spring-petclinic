@@ -1,0 +1,11 @@
+---
+packages:
+  - name: app-accelerator
+    versions:
+      - 0.2.0
+  - name: app-live-view
+    versions:
+      - 0.1.0
+  - name: cloud-native-runtimes
+    versions:
+      - 1.0.1

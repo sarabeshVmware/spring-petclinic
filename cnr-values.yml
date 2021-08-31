@@ -1,0 +1,5 @@
+---
+registry:
+  server: dev.registry.pivotal.io
+  username: $tanzunet_username
+  password: $tanzunet_password
