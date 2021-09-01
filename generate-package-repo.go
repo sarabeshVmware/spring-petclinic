@@ -32,13 +32,14 @@ type BundleRef struct {
 }
 
 func main() {
-	var OciRegistry = "projects.registry.vmware.com/tanzu_adv_eng"
+	var OciRegistry = "dev.registry.pivotal.io/tanzu-advanced-edition"
 	var PackagesDirectoryPath = filepath.Join("./", "packages")
 	var RepoDirectoryPath = filepath.Join("./", "repos")
 	var GeneratedRepoDirectoryPath = filepath.Join(RepoDirectoryPath, "generated")
 	var repository Repository
 
 	channel := os.Args[1]
+	// tag := os.Args[2]
 	channelDir := filepath.Join(GeneratedRepoDirectoryPath, channel)
 	imgpkgDir := filepath.Join(channelDir, ".imgpkg")
 	packagesDir := filepath.Join(channelDir, "packages")
@@ -83,6 +84,7 @@ func main() {
 
 	bundleLockFilename := "output.yaml"
 	registryPathAndTag := OciRegistry + "/" + channel + ":latest"
+	//registryPathAndTag := OciRegistry + "/" + channel + ":" + tag
 	execCommand("imgpkg", []string{"push", "--tty", "--bundle", registryPathAndTag, "--file", channelDir, "--lock-output", bundleLockFilename})
 
 	bundleLockYamlFile, err := ioutil.ReadFile(bundleLockFilename)
