@@ -95,7 +95,6 @@ func main() {
 	check(err)
 
 	fmt.Println("Package Repository pushed to", bundleLock.Bundle.Image)
-	fmt.Println("\nInstall with:\ntanzu package repository add repo-name --namespace default --url", bundleLock.Bundle.Image)
 	os.RemoveAll(bundleLockFilename)
 }
 
