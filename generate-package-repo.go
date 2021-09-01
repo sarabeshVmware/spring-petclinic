@@ -39,7 +39,7 @@ func main() {
 	var repository Repository
 
 	channel := os.Args[1]
-	// tag := os.Args[2]
+	tag := os.Args[2]
 	channelDir := filepath.Join(GeneratedRepoDirectoryPath, channel)
 	imgpkgDir := filepath.Join(channelDir, ".imgpkg")
 	packagesDir := filepath.Join(channelDir, "packages")
@@ -83,8 +83,8 @@ func main() {
 	execCommand("kbld", []string{"--file", packagesDir, "--imgpkg-lock-output", imagesLockFile})
 
 	bundleLockFilename := "output.yaml"
-	registryPathAndTag := OciRegistry + "/" + channel + ":latest"
-	//registryPathAndTag := OciRegistry + "/" + channel + ":" + tag
+	//registryPathAndTag := OciRegistry + "/" + channel + ":latest"
+	registryPathAndTag := OciRegistry + "/" + channel + ":" + tag
 	execCommand("imgpkg", []string{"push", "--tty", "--bundle", registryPathAndTag, "--file", channelDir, "--lock-output", bundleLockFilename})
 
 	bundleLockYamlFile, err := ioutil.ReadFile(bundleLockFilename)

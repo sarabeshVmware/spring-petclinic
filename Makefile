@@ -8,5 +8,5 @@ run: ## Run the generate-package-repository program for the specified channel
 ifeq ($(origin CHANNEL),undefined && $(origin TAG),undefined)
 	@echo "Error! CHANNEL or TAG env var not set"
 else
-	go run generate-package-repo.go $(CHANNEL)
+	go run generate-package-repo.go $(CHANNEL) $(TAG)
 endif
