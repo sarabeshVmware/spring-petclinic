@@ -11,8 +11,8 @@ images:
     kbld.carvel.dev/id: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
   image: registry.pivotal.io/app-live-view/application-live-view-install-bundle@sha256:349210e9bef0ca8b1da90ad9151798966354c2e6018b56b7fd485cbd5a1c7f9b
 - annotations:
-    kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.0
-  image: registry.pivotal.io/build-service/bundle@sha256:8ab4c32699209412c3f58b4a910aaefc3ace3d1e99b5770dffa20bebda5184fa
+    kbld.carvel.dev/id: registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0
+  image: registry.pivotal.io/app-accelerator/acc-install-bundle@sha256:0815d79aa70ca5c6fc00316f789378f39dc3dd0bfde9ebd0dbe5a5b7bece0040
 - annotations:
     kbld.carvel.dev/id: registry.pivotal.io/build-service/bundle:1.2.1
   image: registry.pivotal.io/build-service/bundle@sha256:3da44e9fb75b1813ec5898de86d52a6eec594ba64e171040af2088995913d8f8

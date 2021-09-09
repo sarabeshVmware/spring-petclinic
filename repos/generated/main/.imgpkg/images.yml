@@ -1,0 +1,13 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
+  image: projects.registry.vmware.com/tanzu_serverless/release@sha256:aff798e78aeeb9b5404c33ac1ddfcbe962271b496433e267d94378e2bf911366
+- annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/app-accelerator/acc-install-bundle:0.2.0
+  image: registry.pivotal.io/app-accelerator/acc-install-bundle@sha256:0815d79aa70ca5c6fc00316f789378f39dc3dd0bfde9ebd0dbe5a5b7bece0040
+- annotations:
+    kbld.carvel.dev/id: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.1.0
+  image: registry.pivotal.io/app-live-view/application-live-view-install-bundle@sha256:b13b9ba81bcc985d76607cfc04bcbb8829b4cc2820e64a99e0af840681da12aa
+kind: ImagesLock
