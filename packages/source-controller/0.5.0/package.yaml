@@ -1,0 +1,24 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.source.apps.tanzu.vmware.com.0.1.2
+spec:
+  refName: controller.source.apps.tanzu.vmware.com
+  version: 0.1.2
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.pivotal.io/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/source-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}

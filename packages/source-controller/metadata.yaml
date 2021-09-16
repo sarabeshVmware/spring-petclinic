@@ -1,0 +1,14 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: controller.source.apps.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Source Controller"
+  longDescription: "Tanzu Source Controller enables app devs to create/update workloads from local source code and/or pre-built image in a registry"
+  shortDescription: "Tanzu Source Controller enables workload create/update from local source code and/or pre-built image in a registry"
+  providerName: "VMware"
+  maintainers:
+  - name: "Scott Andrews"
+  - name: "Rashed Kamal"
+  supportDescription: "https://tanzu.vmware.com/support"

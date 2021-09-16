@@ -1,0 +1,14 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: service-bindings.labs.vmware.com
+spec:
+  displayName: "Service Bindings for Kubernetes"
+  longDescription: "Service Bindings for Kubernetes implements the Service Binding Specification."
+  shortDescription: "Service Bindings for Kubernetes implements the Service Binding Specification."
+  providerName: "VMware"
+  maintainers:
+  - name: "Scott Andrews"
+  - name: "Rashed Kamal"
+  supportDescription: "https://tanzu.vmware.com/support"

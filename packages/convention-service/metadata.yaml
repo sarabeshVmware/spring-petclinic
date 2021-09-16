@@ -11,4 +11,4 @@ spec:
   maintainers:
   - name: "Scott Andrews"
   - name: "Rashed Kamal"
-  supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
+  supportDescription: "https://tanzu.vmware.com/support"

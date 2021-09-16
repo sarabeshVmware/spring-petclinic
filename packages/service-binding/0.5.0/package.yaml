@@ -1,0 +1,24 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: service-bindings.labs.vmware.com.0.5.0
+spec:
+  refName: service-bindings.labs.vmware.com
+  version: 0.5.0
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.pivotal.io/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/service-bindings.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
