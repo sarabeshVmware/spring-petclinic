@@ -1,0 +1,26 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.conventions.apps.tanzu.vmware.com.0.4.2
+spec:
+  refName: controller.conventions.apps.tanzu.vmware.com
+  version: 0.4.2
+  releasedAt: 2021-09-16T00:00:00Z
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.pivotal.io/tanzu-source-controller/source-controller-bundle:v0.4.2
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/namespace.yaml
+          - config/convention-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}

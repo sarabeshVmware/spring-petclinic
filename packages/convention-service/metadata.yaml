@@ -1,0 +1,14 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: controller.conventions.apps.tanzu.vmware.com
+spec:
+  displayName: "Convention Service for VMware Tanzu"
+  longDescription: "Convention Service enables app operators to consistently apply desired runtime configurations to fleets of workloads as they are deployed to the Tanzu platform"
+  shortDescription: "Convention Service enables app operators to consistently apply desired runtime configurations to fleets of workloads."
+  providerName: "VMware"
+  maintainers:
+  - name: "Scott Andrews"
+  - name: "Rashed Kamal"
+  supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
