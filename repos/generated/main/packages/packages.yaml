@@ -19,7 +19,7 @@ metadata:
 spec:
   refName: accelerator.apps.tanzu.vmware.com
   version: 0.2.0
-  releasedAt: 2021-09-01T00:00:00Z
+  releasedAt: 2021-08-25T00:00:00Z
   releaseNotes: |
         Beta release 0.2.0 of the Application Accelerator for VMware Tanzu package
   valuesSchema:
