@@ -1,0 +1,32 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: scp-toolkit.tanzu.vmware.com.0.3.0
+  namespace: scp-toolkit
+spec:
+  refName: scp-toolkit.tanzu.vmware.com
+  releaseNotes: |
+    * Updated support for authentication to private registries to use new method introduced by kapp-controller v0.24.0 and secretgen-controller v0.5.0, see [Authenticating to Private Registries](https://carvel.dev/kapp-controller/docs/latest/private-registry-auth/).
+    * Increased the resource requirements and limits for Deployments, see [Resource Requirements](/reference/resource_requirements.md) for details.
+    * Fixed an issue that did not allow the kubectl-scp plugin to federate multiple APIs from the same group.
+    * Fixed replicated Secret not being cleaned up from workload clusters on deletion of original Secret.
+    * Fixed incorrect RoleBinding roleRef created by `SecretExport` in Resource Replication.
+    * Removed creation of redundant Role and RoleBinding resources by kubectl-scp plugin for Resource Replication.
+    * Switched controller base images to use [paketobuildpacks/run:tiny](https://github.com/paketo-buildpacks/stacks#tiny).
+    * Added support for [service-bindings v0.5.0](https://github.com/vmware-labs/service-bindings/releases/tag/v0.5.0) to kubectl-scp.
+  releasedAt: "2021-09-17T13:53:29Z"
+  template:
+    spec:
+      deploy:
+      - kapp: {}
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:afbe2a83df495a66b139feec5f9c8a99c267c2df3d009d68a14d4d0f2cb31e91
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - .
+  valuesSchema:
+    openAPIv3: null
+  version: 0.3.0
