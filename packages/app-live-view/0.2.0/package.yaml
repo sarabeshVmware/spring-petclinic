@@ -8,7 +8,7 @@ spec:
   version: 0.2.0
   releaseNotes: |
         Release 0.2.0 of the App Live View package
-  releasedAt: TBD
+  releasedAt: 2021-09-27T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
@@ -38,7 +38,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.2.0-SNAPSHOT
+          image: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.2.0
           secretRef:
             name: tap-registry
       template:
