@@ -6,6 +6,7 @@ metadata:
 spec:
   refName: controller.source.apps.tanzu.vmware.com
   version: 0.1.2
+  releasedAt: 2021-09-16T00:00:00Z
   template:
     spec:
       fetch:
