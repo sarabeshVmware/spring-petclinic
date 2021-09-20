@@ -1,0 +1,65 @@
+namespace: tap-install
+secrets:
+  - name: tap-registry
+    registry: registry.tanzu.vmware.com
+    username: # TANZUNET_USERNAME
+    password: # TANZUNET_PASSWORD
+package_repository:
+  name: tanzu-tap-repository
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages@sha256:89f3db2d85c6dfe0fb99d82d6f4cda023cdef3f54a53f4b487ed4d6b0a63a65a
+packages:
+  - name: accelerator.apps.tanzu.vmware.com
+    installed_name: accelerator-apps
+    version: 0.3.0
+  - name: api-portal.tanzu.vmware.com
+    installed_name: api-portal
+    version: 1.0.2
+  - name: appliveview.tanzu.vmware.com
+    installed_name: appliveview
+    version: 0.2.0
+  - name: buildservice.tanzu.vmware.com
+    installed_name: buildservice
+    version: 1.3.0-rc1
+  - name: cartographer.tanzu.vmware.com
+    installed_name: cartographer
+    version: 0.0.6
+  - name: cnrs.tanzu.vmware.com
+    installed_name: cnrs
+    version: 1.0.2
+  - name: controller.conventions.apps.tanzu.vmware.com
+    installed_name: controller-conventions
+    version: 0.4.2
+  - name: controller.source.apps.tanzu.vmware.com
+    installed_name: controller-source
+    version: 0.1.2
+  - name: default-supply-chain-testing.tanzu.vmware.com
+    installed_name: default-supply-chain-testing
+    version: 0.2.0
+    use_values_file: default-supply-chain-testing.yaml
+  - name: default-supply-chain.tanzu.vmware.com
+    installed_name: default-supply-chain
+    version: 0.2.0
+    use_values_file: default-supply-chain.yaml
+  - name: developer-conventions.tanzu.vmware.com
+    installed_name: developer-conventions
+    version: 0.2.0
+  - name: grype.scanning.apps.tanzu.vmware.com
+    installed_name:
+    version: 1.0.0-beta
+    use_values_file: grype-scanning-apps.yaml
+  - name: image-policy-webhook.signing.run.tanzu.vmware.com
+    installed_name: image-policy-webhook-signing-run
+    version: 1.0.0-beta.0
+  - name: scanning.apps.tanzu.vmware.com
+    installed_name:
+    version: 1.0.0-beta
+    use_values_file: scanning-apps.yaml
+  - name: scp-toolkit.tanzu.vmware.com
+    installed_name: scp-toolkit
+    version: 0.3.0
+  - name: scst-store.tanzu.vmware.com
+    installed_name: scst-store
+    version: 1.0.0-beta.0
+  - name: service-bindings.labs.vmware.com
+    installed_name: service-bindings-labs
+    version: 0.5.0
