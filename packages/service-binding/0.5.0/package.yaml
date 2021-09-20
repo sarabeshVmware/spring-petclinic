@@ -10,7 +10,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
+          image: registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
       template:
       - kbld:
           paths:
