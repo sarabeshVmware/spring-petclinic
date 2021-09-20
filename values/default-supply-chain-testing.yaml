@@ -1,0 +1,6 @@
+## default-supply-chain-testing.tanzu.vmware.com: Tanzu App Platform Default Supply Chain with Testing
+cluster_builder: "default"
+registry:
+  repository:
+  server: "index.docker.io"
+service_account: "default"

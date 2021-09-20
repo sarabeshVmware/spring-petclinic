@@ -1,0 +1,11 @@
+## default-supply-chain.tanzu.vmware.com: Tanzu App Platform Default Supply Chain
+registry:
+  repository: "tanzu_desktop"
+  server: "https://gcr.io"
+  username:
+  password:
+supplychain:
+  imagerepository:
+    secret:
+  podintent:
+    secret:
