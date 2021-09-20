@@ -10,7 +10,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+          image: registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
       template:
       - kbld:
           paths:
