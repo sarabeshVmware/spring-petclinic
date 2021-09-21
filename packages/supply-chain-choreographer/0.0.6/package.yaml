@@ -1,0 +1,32 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: supplychainchoreographer.tanzu.vmware.com.0.0.6
+spec:
+  refName: supplychainchoreographer.tanzu.vmware.com
+  version: 0.0.6
+  releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/0.0.6
+  releasedAt: "2021-09-20T19:57:21+00:00"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:e296a316385a57048cb189a3a710cecf128a62e77600a495f32d46309c6e8113
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          inline:
+            paths:
+              namespace.yaml: |-
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cartographer-system
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
