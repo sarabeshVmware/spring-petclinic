@@ -29,9 +29,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.2.0
-          secretRef:
-            name: reg-cred
+          image: registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle:0.2.0
       template:
       - ytt:
           paths:
@@ -43,13 +41,3 @@ spec:
           - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: reg-cred
-  annotations:
-    secretgen.carvel.dev/image-pull-secret: ""
-type: kubernetes.io/dockerconfigjson
-data:
-  .dockerconfigjson: e30K
