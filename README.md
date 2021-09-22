@@ -21,4 +21,4 @@ Generate TAP repo bundle and push to dev.registry.tanzu.vmware.com
 go run create-package-repo.go main <tag for tap repo>
 
 
-Note: While adding/modifying package CRs, If the product is released to User groups only in Tanzunet, Please add **VMware Internal Early Access group** to the product early group on TanzuNet so that TAP team can validate it.
+Note: While adding/modifying package CRs, If the product is released to User groups only in Tanzunet, Please add **DAP Internal Users** and **VMware Internal Early Access group** to the product early group on TanzuNet so that TAP team can validate it.
