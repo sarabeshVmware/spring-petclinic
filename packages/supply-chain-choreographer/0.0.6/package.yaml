@@ -5,8 +5,10 @@ metadata:
 spec:
   refName: supplychainchoreographer.tanzu.vmware.com
   version: 0.0.6
-  releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/0.0.6
-  releasedAt: "2021-09-20T19:57:21+00:00"
+  releaseNotes: |-
+    Initial Release of Supply Chain Choreographer - see
+    https://github.com/vmware-tanzu/cartographer/blob/main/site/content/docs/about.md
+  releasedAt: 2021-09-22T21:31:59Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -14,7 +16,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:e296a316385a57048cb189a3a710cecf128a62e77600a495f32d46309c6e8113
+          image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
       template:
       - ytt:
           ignoreUnknownComments: true
