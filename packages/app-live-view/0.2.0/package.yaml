@@ -16,15 +16,6 @@ spec:
         registry:
           description: 'Image Registry Details'
           properties:
-            server:
-              description: Image Registry URL
-              type: string
-            username:
-              description: Image Registry Username
-              type: string
-            password:
-              description: Image Registry Password
-              type: string
             connector_namespaces:
               description: The namespaces in which ALV monitors the user's apps
               type: array
@@ -40,7 +31,7 @@ spec:
       - imgpkgBundle:
           image: registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.2.0
           secretRef:
-            name: tap-registry
+            name: reg-cred
       template:
       - ytt:
           paths:
@@ -52,3 +43,13 @@ spec:
           - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: reg-cred
+  annotations:
+    secretgen.carvel.dev/image-pull-secret: ""
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: e30K
