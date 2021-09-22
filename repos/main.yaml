@@ -10,7 +10,6 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.0.1
-      - 1.0.2
   - name: convention-service
     versions:
       - 0.4.2
