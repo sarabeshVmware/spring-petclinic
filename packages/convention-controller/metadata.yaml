@@ -2,7 +2,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: convention-service.tanzu.vmware.com
+  name: controller.conventions.apps.tanzu.vmware.com
 spec:
   displayName: "Convention Service for VMware Tanzu"
   longDescription: "Convention Service enables app operators to consistently apply desired runtime configurations to fleets of workloads as they are deployed to the Tanzu platform"
