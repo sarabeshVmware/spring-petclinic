@@ -1,9 +1,9 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: supplychainchoreographer.tanzu.vmware.com.0.0.6
+  name: cartographer.tanzu.vmware.com.0.0.6
 spec:
-  refName: supplychainchoreographer.tanzu.vmware.com
+  refName: cartographer.tanzu.vmware.com
   version: 0.0.6
   releaseNotes: |-
     Initial Release of Supply Chain Choreographer - see
