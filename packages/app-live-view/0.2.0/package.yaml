@@ -13,18 +13,14 @@ spec:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
       properties:
-        registry:
-          description: 'Image Registry Details'
-          properties:
-            connector_namespaces:
-              description: The namespaces in which ALV monitors the user's apps
-              type: array
-              items:
-                type: string
-            server_namespace:
-              description: The namespace to which ALV server is deployed
-              type: string
-          type: object  
+        connector_namespaces:
+          description: The namespaces in which ALV monitors the user's apps
+          type: array
+          items:
+            type: string
+        server_namespace:
+          description: The namespace to which ALV server is deployed
+          type: string         
   template:
     spec:
       fetch:
