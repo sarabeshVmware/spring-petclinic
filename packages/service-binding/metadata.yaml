@@ -2,7 +2,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: service-bindings.labs.vmware.com
+  name: service-bindings.vmware.com
 spec:
   displayName: "Service Bindings for Kubernetes"
   longDescription: "Service Bindings for Kubernetes implements the Service Binding Specification."

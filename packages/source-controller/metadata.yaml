@@ -2,7 +2,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: controller.source.apps.tanzu.vmware.com
+  name: source-controller.tanzu.vmware.com
 spec:
   displayName: "Tanzu Source Controller"
   longDescription: "Tanzu Source Controller enables app devs to create/update workloads from local or remote source code repository."
