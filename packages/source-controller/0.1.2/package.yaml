@@ -2,9 +2,9 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: source-controller.tanzu.vmware.com.0.1.2
+  name: controller.source.apps.tanzu.vmware.com.0.1.2
 spec:
-  refName: source-controller.tanzu.vmware.com
+  refName: controller.source.apps.tanzu.vmware.com
   version: 0.1.2
   releasedAt: 2021-09-16T00:00:00Z
   template:
