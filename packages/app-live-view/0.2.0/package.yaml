@@ -8,39 +8,24 @@ spec:
   version: 0.2.0
   releaseNotes: |
         Release 0.2.0 of the App Live View package
-  releasedAt: TBD
+  releasedAt: 2021-09-27T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
       properties:
-        registry:
-          description: 'Image Registry Details'
-          properties:
-            server:
-              description: Image Registry URL
-              type: string
-            username:
-              description: Image Registry Username
-              type: string
-            password:
-              description: Image Registry Password
-              type: string
-            connector_namespaces:
-              description: The namespaces in which ALV monitors the user's apps
-              type: array
-              items:
-                type: string
-            server_namespace:
-              description: The namespace to which ALV server is deployed
-              type: string
-          type: object  
+        connector_namespaces:
+          description: The namespaces in which ALV monitors the user's apps
+          type: array
+          items:
+            type: string
+        server_namespace:
+          description: The namespace to which ALV server is deployed
+          type: string         
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/app-live-view/application-live-view-install-bundle:0.2.0-SNAPSHOT
-          secretRef:
-            name: tap-registry
+          image: registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle:0.2.0
       template:
       - ytt:
           paths:
