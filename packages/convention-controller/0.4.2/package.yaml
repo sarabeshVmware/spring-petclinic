@@ -7,6 +7,9 @@ spec:
   refName: controller.conventions.apps.tanzu.vmware.com
   version: 0.4.2
   releasedAt: 2021-09-16T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
   template:
     spec:
       fetch:

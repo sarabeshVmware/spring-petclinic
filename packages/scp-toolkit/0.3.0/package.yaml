@@ -15,7 +15,7 @@ spec:
     * Removed creation of redundant Role and RoleBinding resources by kubectl-scp plugin for Resource Replication.
     * Switched controller base images to use [paketobuildpacks/run:tiny](https://github.com/paketo-buildpacks/stacks#tiny).
     * Added support for [service-bindings v0.5.0](https://github.com/vmware-labs/service-bindings/releases/tag/v0.5.0) to kubectl-scp.
-  releasedAt: "2021-09-17T13:53:29Z"
+  releasedAt: 2021-09-17T13:53:29Z
   valuesSchema:
     openAPIv3:
       properties: {}
