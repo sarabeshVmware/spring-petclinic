@@ -13,8 +13,6 @@ spec:
       fetch:
       - imgpkgBundle:
           image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook/bundle:v1.0.0-beta.0
-          secretRef:
-            name: registry-credentials
       template:
       - ytt:
           paths:
