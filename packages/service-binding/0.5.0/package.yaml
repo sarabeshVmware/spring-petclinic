@@ -2,7 +2,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: service-bindings.labs.vmware.com.com.0.5.0
+  name: service-bindings.labs.vmware.com.0.5.0
 spec:
   refName: service-bindings.labs.vmware.com
   version: 0.5.0
