@@ -25,3 +25,17 @@ spec:
           - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      title: image-policy-webhook.signing.run.tanzu.vmware.com values schema
+      examples:
+      - warn_on_unmatched: true
+      properties:
+        warn_on_unmatched:
+          type: boolean
+          description: |
+            Feature flag for enabling admission of images that do not match any patterns in the image policy configuration.
+            Set to true to allow images that do not match any patterns into the cluster with a warning.
+          default: false
+          examples:
+          - true
