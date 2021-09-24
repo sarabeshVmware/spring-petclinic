@@ -12,7 +12,7 @@ packages:
   - name: scp-toolkit
     versions:
       - 0.3.0
-  - name: supply-chain-choreographer
+  - name: cartographer
     versions:
       - 0.0.6
   - name: app-live-view
