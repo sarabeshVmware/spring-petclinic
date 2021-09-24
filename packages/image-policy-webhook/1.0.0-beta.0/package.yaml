@@ -1,0 +1,27 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: image-policy-webhook.signing.run.tanzu.vmware.com.1.0.0-beta.0
+spec:
+  refName: image-policy-webhook.signing.run.tanzu.vmware.com
+  version: 1.0.0-beta.0
+  releaseNotes: |
+    Image Policy Webhook v1.0.0-beta.0
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook/bundle:v1.0.0-beta.0
+          secretRef:
+            name: registry-credentials
+      template:
+      - ytt:
+          paths:
+          - "config/"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
