@@ -12,7 +12,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook/bundle:v1.0.0-beta.0
+          image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
       template:
       - ytt:
           paths:
