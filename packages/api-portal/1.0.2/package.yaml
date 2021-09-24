@@ -5,7 +5,7 @@ metadata:
 spec:
   refName: api-portal.tanzu.vmware.com
   version: 1.0.2
-  releasedAt: "2021-09-23T00:00:00Z"
+  releasedAt: "2021-09-24T00:00:00Z"
   releaseNotes: |
     Initial release of the API portal package
   valuesSchema:
@@ -17,18 +17,6 @@ spec:
           type: object
           description: API portal server configurations
           properties:
-            deploymentName:
-              type: string
-              description: Deployment name
-              default: api-portal-server
-            imagePullPolicy:
-              type: string
-              description: Image Pull Policy
-              default: IfNotPresent
-            registryCredentialsSecret:
-              type: string
-              description: Name of image pull secret
-              default: api-portal-image-pull-secret
             replicaCount:
               type: integer
               description: Number of replicas
@@ -45,17 +33,6 @@ spec:
               type: string
               description: Timeout for remote OpenAPI retrieval (in seconds)
               default: "10"
-        serviceAccount:
-          type: object
-          description: Service Account configurations
-          properties:
-            create:
-              type: boolean
-              description: If the service account should be created
-              default: false
-            name:
-              type: string
-              description: Name of the service account
   licenses:
   - VMware Proprietary
   template:
