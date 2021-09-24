@@ -1,0 +1,106 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: scst-store.tanzu.vmware.com.1.0.0-beta.0
+spec:
+  refName: scst-store.tanzu.vmware.com
+  version: 1.0.0-beta.0
+  releaseNotes: |
+    Alpha release of the Metadata Store component package
+  valuesSchema:
+    openAPIv3:
+      title: metadata-store.tanzu.vmware.com values schema
+      examples:
+        - db_host: "metadata-store-db"
+          db_user: "metadata-store-user"
+          db_password: ""
+          db_name: "metadata-store"
+          db_port: "5432"
+          db_sslmode: "verify-full"
+          app_service_type: "NodePort"
+          api_port: 9443
+          api_host: "localhost"
+          auth_proxy_port: 8443
+          auth_proxy_host: "0.0.0.0"
+          use_cert_manager: "true"
+          storageClassName: "manual"
+      properties:
+        db_host:
+          type: string
+          description: "The database hostname"
+          default: "metadata-postgres"
+          examples:
+            - metadata-postgres
+            - some-dns-name.example.com
+            - 192.168.0.1
+        db_user:
+          type: string
+          description: "The database user to create and use for updating and querying. The metadata postgres section create this user. The metadata api server uses this username to connect to the database."
+          default: "metadata-store-user"
+        db_password:
+          type: string
+          description: "The database user password."
+          default: ""
+        db_name:
+          type: string
+          description: "The name of the database to use."
+          default: "metadata-store"
+        db_port:
+          type: string
+          description: "The database port to use. This is the port to use when connecting to the database pod."
+          default: "5432"
+        db_sslmode:
+          type: string
+          description: "Determines the security connection between API server and Postgres database. This can be set to 'verify-ca' or 'verify-full'"
+          default: "verify-full"
+          examples:
+            - "verify-ca"
+            - "verify-full"
+        app_service_type:
+          type: string
+          description: "The type of service to use for the metadata app service. This can be set to 'Nodeport' or 'LoadBalancer'."
+          default: "NodePort"
+          examples:
+            - "NodePort"
+            - "LoadBalancer"
+        api_port:
+          type: integer
+          description: "The internal port for the metadata app api endpoint. This will be used by the kube-rbac-proxy sidecar."
+          default: 9443
+        api_host:
+          type: string
+          description: "The internal hostname for the metadata api endpoint. This will be used by the kube-rbac-proxy sidecar."
+          default: "localhost"
+        auth_proxy_port:
+          type: integer
+          description: "The external port address of the of the kube-rbac-proxy sidecar"
+          default: 8443
+        auth_proxy_host:
+          type: string
+          description: "The binding ip address of the kube-rbac-proxy sidecar"
+          default: "0.0.0.0"
+        use_cert_manager:
+          type: string
+          description: "Cert manager is required to be installed to use this flag. When true, this creates certificates object to be signed by cert manager for the API server and Postgres database. If false, the certificate object have to be provided by the user."
+          default: "true"
+        storageClassName:
+          type: string
+          description: "The storage class name of the persistent volume used by Postgres database for storing data. The default value will use the default class name defined on the cluster."
+          default: "manual"
+  template:
+    spec:
+      fetch:
+        - imgpkgBundle:
+            image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.0
+      template:
+        - ytt:
+            ignoreUnknownComments: true
+            paths:
+              - "deployment/"
+        - kbld:
+            paths:
+              - "-"
+              - ".imgpkg/images.yml"
+      deploy:
+        - kapp: {}
