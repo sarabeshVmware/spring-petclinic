@@ -1,0 +1,69 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: accelerator.apps.tanzu.vmware.com.0.3.0
+spec:
+  refName: accelerator.apps.tanzu.vmware.com
+  version: 0.3.0
+  releasedAt: 2021-09-27T00:00:00Z
+  releaseNotes: |
+        Beta release 0.3.0 of the Application Accelerator for VMware Tanzu package
+  valuesSchema:
+    openAPIv3:
+      title: accelerator.apps.tanzu.vmware.com values schema
+      properties:
+        registry:
+          description: 'Image Registry Configuration'
+          properties:
+            secret_ref:
+              type: string
+              description: The secret used for accessing the registry where the App Accelerator images are located.
+              default: "reg-creds"
+          type: object
+        server:
+          description: 'UI Server Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the acc-ui-server service.
+              default: LoadBalancer
+              examples:
+              - NodePort
+            watched_namespace:
+              type: string
+              description: The namespace that the server watches for accelerator resources.
+              default: default
+            engine_invocation_url:
+              type: string
+              description: The URL the server uses for invoking the accelerator engine.
+              default: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
+          type: object
+        engine:
+          description: 'Accelerator Engine Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the Service of the engine.
+              default: ClusterIP
+              examples:
+              - NodePort
+          type: object
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.3.0
+          secretRef:
+            name: tap-registry
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
