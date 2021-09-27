@@ -11,11 +11,11 @@ spec:
   categories:
   - policy
   maintainers:
-  - "Adam Dawson"
-  - "Andrés Torres"
-  - "Denny Hoang"
-  - "Der Wei Chan"
-  - "Jackline Mutua"
-  - "Kavitha Krishnan"
-  - "Mauren Berti"
-  - "Robert Szumlakowski"
+  - name: "Adam Dawson"
+  - name: "Andrés Torres"
+  - name: "Denny Hoang"
+  - name: "Der Wei Chan"
+  - name: "Jackline Mutua"
+  - name: "Kavitha Krishnan"
+  - name: "Mauren Berti"
+  - name: "Robert Szumlakowski"
