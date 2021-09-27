@@ -13,14 +13,6 @@ spec:
     openAPIv3:
       title: accelerator.apps.tanzu.vmware.com values schema
       properties:
-        registry:
-          description: 'Image Registry Configuration'
-          properties:
-            secret_ref:
-              type: string
-              description: The secret used for accessing the registry where the App Accelerator images are located.
-              default: "reg-creds"
-          type: object
         server:
           description: 'UI Server Configuration'
           properties:
@@ -54,8 +46,6 @@ spec:
       fetch:
       - imgpkgBundle:
           image: registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.3.0
-          secretRef:
-            name: tap-registry
       template:
       - ytt:
           paths:
