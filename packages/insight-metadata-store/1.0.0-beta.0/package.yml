@@ -7,7 +7,7 @@ spec:
   refName: scst-store.tanzu.vmware.com
   version: 1.0.0-beta.0
   releaseNotes: |
-    Alpha release of the Metadata Store component package
+    Beta release of the Metadata Store component package
   valuesSchema:
     openAPIv3:
       title: metadata-store.tanzu.vmware.com values schema
@@ -92,7 +92,7 @@ spec:
     spec:
       fetch:
         - imgpkgBundle:
-            image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.0
+            image: registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.0
       template:
         - ytt:
             ignoreUnknownComments: true
