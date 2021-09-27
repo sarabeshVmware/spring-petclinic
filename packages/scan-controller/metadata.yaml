@@ -1,0 +1,19 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: scanning.apps.tanzu.vmware.com
+spec:
+  displayName: "Supply Chain Security Tools for VMware Tanzu - Scan"
+  shortDescription: "Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains."
+  longDescription: |-
+    Supply Chain Security Tools - Scan aims to help Tanzu customers build and
+    deploy secure, trusted software that complies with their corporate security
+    requirements. To that end, we provide scanning and gatekeeping capabilities
+    that Application and DevSecOps teams can easily incorporate earlier in their
+    path to production as it is a known industry best practice for reducing
+    security risk and ensuring more efficient remediation.
+  iconSVGBase64: ""
+  providerName: "VMware"
+  maintainers:
+  - name: "VMware Vulnerability Scanning Enablement"
+  supportDescription: "https://tanzu.vmware.com/support"
