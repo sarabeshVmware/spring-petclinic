@@ -1,0 +1,15 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: grype.scanning.apps.tanzu.vmware.com
+spec:
+  displayName: "Grype Scanner for Supply Chain Security Tools for VMware Tanzu - Scan"
+  shortDescription: "Default scan templates using Anchore Grype"
+  longDescription: |-
+    Default scan templates using Anchore Grype for Supply Chain Security Tools
+    for VMware Tanzu - Scan.
+  iconSVGBase64: ""
+  providerName: "VMware"
+  maintainers:
+  - name: "VMware Vulnerability Scanning Enablement"
+  supportDescription: "https://tanzu.vmware.com/support"
