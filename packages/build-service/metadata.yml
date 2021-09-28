@@ -9,8 +9,8 @@ spec:
   supportDescription: "https://tanzu.vmware.com/support"
   providerName: "VMware"
   maintainers:
-  - "Matt McNew"
-  - "Matt Gibson"
-  - "Tom Kennedy"
-  - "Kenneth DuMez"
-  - "Tyler Phelan"
+  - name: "Matt McNew"
+  - name: "Matt Gibson"
+  - name: "Tom Kennedy"
+  - name: "Kenneth DuMez"
+  - name: "Tyler Phelan"
