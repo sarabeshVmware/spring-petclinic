@@ -6,3 +6,12 @@ spec:
   displayName: Tanzu App Platform Develooper Conventions
   longDescription: Tanzu App Platform Developer Conventions
   shortDescription: Developer Conventions
+  providerName: VMware
+  maintainers:
+  - name: Lisa Burns
+  - name: Paul Warren
+  - name: Harsha Nandiwada
+  - name: Kiwi Bui
+  - name: Ming Xiao
+  - name: Anthony Pensiero
+  supportDescription: https://tanzu.vmware.com/support

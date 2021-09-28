@@ -5,6 +5,9 @@ metadata:
 spec:
   refName: developer-conventions.tanzu.vmware.com
   version: 0.2.0
+  valuesSchema:
+    openAPIv3:
+      properties: {}
   releaseNotes: |
     Developer Conventions contents package
   template:
