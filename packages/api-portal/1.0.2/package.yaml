@@ -1,0 +1,53 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: api-portal.tanzu.vmware.com.1.0.2
+spec:
+  refName: api-portal.tanzu.vmware.com
+  version: 1.0.2
+  releasedAt: "2021-09-27T00:00:00Z"
+  releaseNotes: |
+    Initial release of the API portal package
+  valuesSchema:
+    openAPIv3:
+      title: api-portal.tanzu.vmware.com values schema
+      examples: []
+      properties:
+        apiPortalServer:
+          type: object
+          description: API portal server configurations
+          properties:
+            replicaCount:
+              type: integer
+              description: Number of replicas
+              default: 1
+            sourceUrls:
+              type: string
+              description: OpenAPI urls to load
+              default: https://petstore.swagger.io/v2/swagger.json,https://petstore3.swagger.io/api/v3/openapi.json
+            sourceUrlsCacheTtlSec:
+              type: string
+              description: Time after which they will be refreshed (in seconds)
+              default: "300"
+            sourceUrlsTimeoutSec:
+              type: string
+              description: Timeout for remote OpenAPI retrieval (in seconds)
+              default: "10"
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.2
+      template:
+      - ytt:
+          paths:
+          - config/
+          - values.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
