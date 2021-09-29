@@ -1,0 +1,39 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: image-policy-webhook.signing.run.tanzu.vmware.com.1.0.0-beta.0
+spec:
+  refName: image-policy-webhook.signing.run.tanzu.vmware.com
+  version: 1.0.0-beta.0
+  releaseNotes: |
+    Image Policy Webhook v1.0.0-beta.0
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
+      template:
+      - ytt:
+          paths:
+          - "config/"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      title: image-policy-webhook.signing.run.tanzu.vmware.com values schema
+      examples:
+      - warn_on_unmatched: true
+      properties:
+        warn_on_unmatched:
+          type: boolean
+          description: |
+            Feature flag for enabling admission of images that do not match any patterns in the image policy configuration.
+            Set to true to allow images that do not match any patterns into the cluster with a warning.
+          default: false
+          examples:
+          - true
