@@ -1,0 +1,14 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: default-supply-chain-testing.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Default Supply Chain with Testing
+  shortDescription: Default Software Supply Chain with testing.
+  longDescription: |-
+    Tanzu App Platform Default Supply Chain with Testing powers workloads that
+    require running tests.
+  providerName: VMware
+  supportDescription: https://github.com/vmware-tanzu/cartographer
+  maintainers:
+  - name: VMware
