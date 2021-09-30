@@ -2,20 +2,32 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: grype.scanning.apps.tanzu.vmware.com.1.0.0-beta.0
+  name: scanning.apps.tanzu.vmware.com.1.0.0-beta
 spec:
-  refName: grype.scanning.apps.tanzu.vmware.com
-  version: 1.0.0-beta.0
+  refName: scanning.apps.tanzu.vmware.com
+  version: 1.0.0-beta
   releaseNotes: |
-    Initial beta release of the Supply Chain Security Tools - Scan package
+    Beta release of the Supply Chain Security Tools - Scan package
   valuesSchema:
     openAPIv3:
-      title: grype.scanning.apps.tanzu.vmware.com values schema
+      title: scanning.apps.tanzu.vmware.com values schema
       properties:
         namespace:
           type: string
-          description: Deployment namespace for the Scan Templates
-          default: default
+          description: Deployment namespace for the Scan Controller
+          default: scan-link-system
+        metadataStoreUrl:
+          type: string
+          description: Url of the Insight Metadata Store deployed in the cluster
+          default: https://metadata-store-app.metadata-store.svc.cluster.local:8443
+        metadataStoreCa:
+          type: string
+          description: CA Cert of the Insight Metadata Store deployed in the cluster
+          default: ""
+        metadataStoreTokenSecret:
+          type: string
+          description: Name of the Secret for the Insight Metadata Store Token deployed in the cluster
+          default: ""
         resources:
           type: object
           properties:
@@ -29,7 +41,15 @@ spec:
                   pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                   x-kubernetes-int-or-string: true
                   description: Limits describes the maximum amount of cpu resources allowed.
-                  default: 1000m
+                  default: 250m
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                  description: Limits describes the maximum amount of memory resources allowed.
+                  default: 256Mi
             requests:
               type: object
               properties:
@@ -40,7 +60,7 @@ spec:
                   pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                   x-kubernetes-int-or-string: true
                   description: Requests describes the minimum amount of cpu resources required.
-                  default: 250m
+                  default: 100m
                 memory:
                   anyOf:
                   - type: integer
@@ -53,7 +73,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.0
+          image: registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.1
       template:
       - ytt:
           paths:
