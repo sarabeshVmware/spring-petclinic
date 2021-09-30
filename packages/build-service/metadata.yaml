@@ -1,0 +1,16 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: buildservice.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Build Service"
+  longDescription: "Tanzu Build Service uses the open-source Cloud Native Buildpacks project to turn application source code into container images. Build Service executes reproducible builds that align with modern container standards, and additionally keeps images up-to-date. It does so by leveraging Kubernetes infrastructure with kpack, a Cloud Native Buildpacks Platform, to orchestrate the image lifecycle."
+  shortDescription: "Tanzu Build Service enables the building and automation of containerized software workflows securely and at scale."
+  supportDescription: "https://tanzu.vmware.com/support"
+  providerName: "VMware"
+  maintainers:
+  - name: "Matt McNew"
+  - name: "Matt Gibson"
+  - name: "Tom Kennedy"
+  - name: "Kenneth DuMez"
+  - name: "Tyler Phelan"
