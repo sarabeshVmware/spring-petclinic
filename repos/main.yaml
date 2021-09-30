@@ -12,7 +12,7 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-  - name: convention-service
+  - name: convention-controller
     versions:
       - 0.4.2
   - name: service-binding
