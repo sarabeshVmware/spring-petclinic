@@ -6,7 +6,7 @@ spec:
   categories:
   - services
   displayName: SCP Toolkit
-  longDescription: SCP Toolkit, featuring Service API Projection and Service Description.
+  longDescription: SCP Toolkit comprises Service Offering, Service API Projection and Service Resource Replication for VMware Tanzu
   maintainers:
   - name: The Services Control Plane team
   providerName: VMware
