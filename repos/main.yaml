@@ -3,6 +3,7 @@ packages:
   - name: app-accelerator
     versions:
       - 0.2.0
+      - 0.3.0
   - name: app-live-view
     versions:
       - 0.1.0
@@ -10,7 +11,8 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.0.1
-  - name: convention-service
+      - 1.0.2
+  - name: convention-controller
     versions:
       - 0.4.2
   - name: service-binding
@@ -25,6 +27,28 @@ packages:
   - name: cartographer
     versions:
       - 0.0.6
+  - name: scan-controller
+    versions:
+      - 1.0.0-beta.0
+  - name: grype-scanner
+    versions:
+      - 1.0.0-beta.0
+  - name: image-policy-webhook
+    versions:
+      - 1.0.0-beta.0
+  - name: default-supply-chain-testing
+    versions:
+      - 0.2.0
+  - name: developer-conventions
+    versions:
+      - 0.2.0 
+  - name: default-supply-chain
+    versions:
+      - 0.2.0 
+  - name: insight-metadata-store
+    versions:
+      - 1.0.0-beta.0
   - name: api-portal
     versions:
       - 1.0.2
+  
