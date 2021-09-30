@@ -40,6 +40,10 @@ func main() {
 
 	channel := os.Args[1]
 	tag := os.Args[2]
+	channelToPush := "tap-packages"
+	if len(os.Args) > 3 {
+		channelToPush = os.Args[3]
+	}
 	channelDir := filepath.Join(GeneratedRepoDirectoryPath, channel)
 	imgpkgDir := filepath.Join(channelDir, ".imgpkg")
 	packagesDir := filepath.Join(channelDir, "packages")
@@ -84,7 +88,7 @@ func main() {
 
 	bundleLockFilename := "output.yaml"
 	//registryPathAndTag := OciRegistry + "/" + channel + ":latest"
-	registryPathAndTag := OciRegistry + "/" + channel + ":" + tag
+	registryPathAndTag := OciRegistry + "/" + channelToPush + ":" + tag
 	execCommand("imgpkg", []string{"push", "--tty", "--bundle", registryPathAndTag, "--file", channelDir, "--lock-output", bundleLockFilename})
 
 	bundleLockYamlFile, err := ioutil.ReadFile(bundleLockFilename)
