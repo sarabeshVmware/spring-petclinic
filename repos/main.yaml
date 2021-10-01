@@ -29,10 +29,10 @@ packages:
       - 0.0.6
   - name: scan-controller
     versions:
-      - 1.0.0-beta.0
+      - 1.0.0-beta
   - name: grype-scanner
     versions:
-      - 1.0.0-beta.0
+      - 1.0.0-beta
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.0
