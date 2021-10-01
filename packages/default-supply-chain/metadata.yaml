@@ -1,0 +1,18 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: default-supply-chain.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Default Supply Chain
+  longDescription: Tanzu App Platform Default Supply Chain powering default workflows
+  shortDescription: Default Supply Chain
+  providerName: VMware
+  maintainers:
+  - name: Lisa Burns
+  - name: Paul Warren
+  - name: Harsha Nandiwada
+  - name: Kiwi Bui
+  - name: Ming Xiao
+  - name: Anthony Pensiero
+  supportDescription: https://tanzu.vmware.com/support
+

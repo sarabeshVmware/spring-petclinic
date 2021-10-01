@@ -1,0 +1,40 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: default-supply-chain.tanzu.vmware.com.0.2.0
+spec:
+  refName: default-supply-chain.tanzu.vmware.com
+  version: 0.2.0
+  releaseNotes: |
+    Default supply chain contents package
+  valuesSchema:
+    openAPIv3:
+      title: default-supply-chain.tanzu.vmware.com values schema
+      examples:
+      - registry:
+          server: https://youregistry.io
+          repository: sample-repo
+      properties:
+        registry.server:
+          type: string
+          description: registry hostname
+          default: https://yourregistry.io
+          examples:
+          - https://yourregistry.io
+        registry.repository:
+          type: string
+          description: Registry repository
+          default: sample-repo
+          examples:
+          - sample-repo
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain:0.2.0
+      template:
+      - ytt:
+          paths:
+          - config/
+      deploy:
+      - kapp: {}
