@@ -18,13 +18,13 @@ connector_namespaces: [default]
 server_namespace: app-live-view
 
 ## buildservice.tanzu.vmware.com: Tanzu Build Service
-# ca_cert_data:
-# kp_default_repository:
-# kp_default_repository_password:
-# kp_default_repository_username:
-# pull_from_tanzunet:
-# tanzunet_username:
-# tanzunet_password:
+ca_cert_data:
+kp_default_repository:
+kp_default_repository_password:
+kp_default_repository_username:
+pull_from_tanzunet:
+tanzunet_username:
+tanzunet_password:
 
 ## cartographer.tanzu.vmware.com: Cartographer
 
