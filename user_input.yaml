@@ -6,7 +6,7 @@ secrets:
     password: # TANZUNET_PASSWORD
 package_repository:
   name: tanzu-tap-repository
-  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages@sha256:89f3db2d85c6dfe0fb99d82d6f4cda023cdef3f54a53f4b487ed4d6b0a63a65a
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.2.0
 packages:
   ## INDEPENDENT PACKAGES:
   - name: accelerator.apps.tanzu.vmware.com
