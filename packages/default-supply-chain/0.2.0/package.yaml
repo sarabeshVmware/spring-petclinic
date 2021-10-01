@@ -12,47 +12,21 @@ spec:
       title: default-supply-chain.tanzu.vmware.com values schema
       examples:
       - registry:
-          server: https://gcr.io
-          repository: tanzu_desktop
-          username: user
-          password: password
+          server: https://youregistry.io
+          repository: sample-repo
       properties:
         registry.server:
           type: string
           description: registry hostname
-          default: https://gcr.io
+          default: https://yourregistry.io
           examples:
-          - https://gcr.io
+          - https://yourregistry.io
         registry.repository:
           type: string
           description: Registry repository
-          default: tanzu_desktop
+          default: sample-repo
           examples:
-          - tanzu_desktop
-        registry.username:
-          type: string
-          description: Registry username
-          default: ""
-          examples:
-          - stranger
-        registry.password:
-          type: string
-          description: Registry password
-          default: ""
-          examples:
-          - baddpass
-        supplychain.imagerepository.secret:
-          type: string
-          description: Image repository secret
-          default: ""
-          examples:
-          - reposecret
-        supplychain.podintent.secret:
-          type: string
-          description: Image repository secret
-          default: ""
-          examples:
-          - podintentsecret
+          - sample-repo
   template:
     spec:
       fetch:
