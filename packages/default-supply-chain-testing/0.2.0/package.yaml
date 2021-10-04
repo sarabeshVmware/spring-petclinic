@@ -5,7 +5,7 @@ metadata:
 spec:
   refName: default-supply-chain-testing.tanzu.vmware.com
   version: 0.2.0
-  releasedAt: "2021-09-29T17:25:46Z"
+  releasedAt: "2021-10-04T20:43:51Z"
   valuesSchema:
     openAPIv3:
       title: default-supply-chain-testing
@@ -38,7 +38,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:e48986820c22f55ea26ae099fae7fb78ab60ece96ebf4f90c13793b268f93b3d
+          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:bdb8404f0822efd09a4d3d60b0461793ff3d49031c045d9dfa51189436bd9127
       template:
       - ytt:
           ignoreUnknownComments: true
