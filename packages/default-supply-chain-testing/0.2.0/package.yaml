@@ -5,11 +5,17 @@ metadata:
 spec:
   refName: default-supply-chain-testing.tanzu.vmware.com
   version: 0.2.0
-  releasedAt: "2021-10-04T20:43:51Z"
+  releasedAt: "2021-10-05T14:19:01Z"
   valuesSchema:
     openAPIv3:
       title: default-supply-chain-testing
       properties:
+        templates_namespace:
+          type: string
+          description: Name of the namespace where shared templates are installed to. This variable should point to the namespace where this package is being installed into.
+          default: tap-install
+          examples:
+          - tap-install
         cluster_builder:
           type: string
           description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
@@ -31,14 +37,14 @@ spec:
           - gcr.io
         registry.repository:
           type: string
-          description: Name of the repository in the image registry server where the application images from the workloads should be pushed to.
+          description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
           examples:
           - web-team
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:bdb8404f0822efd09a4d3d60b0461793ff3d49031c045d9dfa51189436bd9127
+          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:9558ebbb8423ef3c2ce0600c82c496ece3efcf58fdfb911be304784e189bb479
       template:
       - ytt:
           ignoreUnknownComments: true
