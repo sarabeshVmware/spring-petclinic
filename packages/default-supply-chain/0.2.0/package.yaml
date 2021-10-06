@@ -31,7 +31,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain:0.2.0
+          image: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
       template:
       - ytt:
           paths:
