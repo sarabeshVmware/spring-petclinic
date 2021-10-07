@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -103,8 +104,10 @@ func main() {
 }
 
 func execCommand(command string, commandArgs []string) {
-	_, err := exec.Command(command, commandArgs...).CombinedOutput()
-	check(err)
+	output, err := exec.Command(command, commandArgs...).CombinedOutput()
+	if err != nil {
+		log.Fatal(string(output))
+	}
 }
 
 func copyYaml(packageFilepath string, outputFile *os.File) {
