@@ -104,6 +104,7 @@ func main() {
 }
 
 func execCommand(command string, commandArgs []string) {
+	fmt.Println("Executing command : ", command, commandArgs)
 	output, err := exec.Command(command, commandArgs...).CombinedOutput()
 	if err != nil {
 		log.Fatal(string(output))
