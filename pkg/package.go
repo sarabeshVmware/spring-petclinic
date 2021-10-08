@@ -19,7 +19,7 @@ type Package struct {
 	UseValuesFile string `yaml:"use_values_file"`
 }
 
-type packageInstalledOutput struct {
+type PackageInstalledOutput struct {
 	Name           string `json:"name"`
 	PackageName    string `json:"package-name"`
 	PackageVersion string `json:"package-version"`
@@ -31,13 +31,13 @@ func ListPackages(namespace string) {
 	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "available", "list", "-n", namespace}})
 }
 
-func ListInstalledPackages(namespace string) []packageInstalledOutput {
-	var pkgOutput []packageInstalledOutput
+func ListInstalledPackages(namespace string) []PackageInstalledOutput {
+	var packages []PackageInstalledOutput
 	log.Printf("Installed packages in namespace: %s", namespace)
-	temp, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "list", "-n", namespace, "-ojson"}})
-	err := json.Unmarshal(temp, &pkgOutput)
+	packagesList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "list", "-n", namespace, "-ojson"}})
+	err := json.Unmarshal(packagesList, &packages)
 	CheckError(err)
-	return pkgOutput
+	return packages
 }
 
 func ListValuesSchema(packages []Package, namespace string) {

@@ -40,12 +40,12 @@ func CreateImagepullSecrets(secrets []Secret, namespace string) {
 }
 
 func ListImagepullSecrets(namespace string) []SecretOutput {
-	var secretOutput []SecretOutput
+	var secrets []SecretOutput
 	log.Printf("Image Pull Secrets in namespace: %s", namespace)
-	temp, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "list", "-n", namespace, "-ojson"}})
-	err := json.Unmarshal(temp, &secretOutput)
+	secretsList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "list", "-n", namespace, "-ojson"}})
+	err := json.Unmarshal(secretsList, &secrets)
 	CheckError(err)
-	return secretOutput
+	return secrets
 }
 
 func DeleteImagepullSecrets(namespace string) {
