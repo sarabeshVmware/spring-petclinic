@@ -4,6 +4,7 @@
 package pkg
 
 import (
+	"encoding/json"
 	"log"
 	"time"
 
@@ -15,14 +16,31 @@ type PackageRepository struct {
 	Image string `yaml:"image"`
 }
 
+type packageRepoOutput struct {
+	Details    string `json:"details"`
+	Name       string `json:"name"`
+	Repository string `json:"repository"`
+	Status     string `json:"status"`
+}
+
 func AddPackageRepository(packageRepository PackageRepository, namespace string) {
 	log.Printf("Adding package repository CR: %s", packageRepository.Name)
 	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "add", packageRepository.Name, "--url", packageRepository.Image, "-n", namespace}})
 }
 
-func DeletePackageRepository(packageRepository PackageRepository, namespace string) {
-	log.Printf("Deleting package repository CR: %s", packageRepository.Name)
-	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", packageRepository.Name, "-n", namespace}})
+func ListPackageRepository(namespace string) []packageRepoOutput {
+	var addedPkgrs []packageRepoOutput
+	log.Printf("Retriving Package repository in namespace: %s", namespace)
+	temp, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "list", "-n", namespace, "-ojson"}})
+	err := json.Unmarshal(temp, &addedPkgrs)
+	CheckError(err)
+	return addedPkgrs
+}
+func DeletePackageRepository(namespace string) {
+	//log.Printf("Deleting package repository CR: %s", packageRepository.Name)
+	addedPkgr := ListPackageRepository(namespace)[0]
+	log.Printf("Deleting package repository: %s", addedPkgr.Name)
+	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", addedPkgr.Name, "-n", namespace}})
 }
 
 func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace string) {

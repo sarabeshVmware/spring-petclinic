@@ -3,13 +3,23 @@
 
 package pkg
 
-import "log"
+import (
+	"encoding/json"
+	"log"
+)
 
 type Secret struct {
 	Name     string `yaml:"name"`
 	Registry string `yaml:"registry"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
+}
+
+type SecretOutput struct {
+	Age      string `json:"age"`
+	Exported string `json:"exported"`
+	Name     string `json:"name"`
+	Registry string `json:"registry"`
 }
 
 func CreateDockerRegistrySecrets(secrets []Secret, namespace string) {
@@ -29,8 +39,18 @@ func CreateImagepullSecrets(secrets []Secret, namespace string) {
 	}
 }
 
-func DeleteImagepullSecrets(secrets []Secret, namespace string) {
-	for _, secret := range secrets {
+func ListImagepullSecrets(namespace string) []SecretOutput {
+	var secretOutput []SecretOutput
+	log.Printf("Image Pull Secrets in namespace: %s", namespace)
+	temp, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "list", "-n", namespace, "-ojson"}})
+	err := json.Unmarshal(temp, &secretOutput)
+	CheckError(err)
+	return secretOutput
+}
+
+func DeleteImagepullSecrets(namespace string) {
+	addedSecrets := ListImagepullSecrets(namespace)
+	for _, secret := range addedSecrets {
 		log.Printf("Deleting secret: %s", secret.Name)
 		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "delete", secret.Name, "-n", namespace, "-y"}})
 	}
