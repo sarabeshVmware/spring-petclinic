@@ -75,14 +75,6 @@ func ValidatePackage(packageInfo Package, namespace string) {
 	}
 }
 
-// func UninstallPackages(packages []Package, namespace string) {
-// 	for _, packageInfo := range packages {
-// 		log.Printf("Uninstalling package: %s", packageInfo.Name)
-// 		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "delete", packageInfo.InstalledName, "-n", namespace, "-y"}})
-// 	}
-
-// }
-
 func UninstallPackages(namespace string) {
 	installedpackages := ListInstalledPackages(namespace)
 	for _, each := range installedpackages {
