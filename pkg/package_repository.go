@@ -28,7 +28,7 @@ func AddPackageRepository(packageRepository PackageRepository, namespace string)
 	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "add", packageRepository.Name, "--url", packageRepository.Image, "-n", namespace}})
 }
 
-func ListPackageRepository(namespace string) []PackageRepoOutput {
+func ListPackageRepositories(namespace string) []PackageRepoOutput {
 	var addedPkgrs []PackageRepoOutput
 	log.Printf("Retriving Package repository in namespace: %s", namespace)
 	repoList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "list", "-n", namespace, "-ojson"}})
@@ -37,7 +37,7 @@ func ListPackageRepository(namespace string) []PackageRepoOutput {
 	return addedPkgrs
 }
 func DeletePackageRepository(namespace string) {
-	addedPkgr := ListPackageRepository(namespace)[0]
+	addedPkgr := ListPackageRepositories(namespace)[0]
 	log.Printf("Deleting package repository: %s", addedPkgr.Name)
 	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", addedPkgr.Name, "-n", namespace}})
 }
