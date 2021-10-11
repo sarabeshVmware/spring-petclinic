@@ -4,6 +4,7 @@
 package pkg
 
 import (
+	"encoding/json"
 	"log"
 	"path/filepath"
 	"time"
@@ -18,9 +19,25 @@ type Package struct {
 	UseValuesFile string `yaml:"use_values_file"`
 }
 
+type PackageInstalledOutput struct {
+	Name           string `json:"name"`
+	PackageName    string `json:"package-name"`
+	PackageVersion string `json:"package-version"`
+	Status         string `json:"status"`
+}
+
 func ListPackages(namespace string) {
 	log.Printf("Available packages in namespace: %s", namespace)
 	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "available", "list", "-n", namespace}})
+}
+
+func ListInstalledPackages(namespace string) []PackageInstalledOutput {
+	var packages []PackageInstalledOutput
+	log.Printf("Installed packages in namespace: %s", namespace)
+	packagesList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "list", "-n", namespace, "-ojson"}})
+	err := json.Unmarshal(packagesList, &packages)
+	CheckError(err)
+	return packages
 }
 
 func ListValuesSchema(packages []Package, namespace string) {
@@ -58,9 +75,11 @@ func ValidatePackage(packageInfo Package, namespace string) {
 	}
 }
 
-func UninstallPackages(packages []Package, namespace string) {
-	for _, packageInfo := range packages {
-		log.Printf("Uninstalling package: %s", packageInfo.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "delete", packageInfo.InstalledName, "-n", namespace, "-y"}})
+func UninstallPackages(namespace string) {
+	installedpackages := ListInstalledPackages(namespace)
+	for _, each := range installedpackages {
+		log.Printf("Uninstalling package: %s", each.Name)
+		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "delete", each.Name, "-n", namespace, "-y"}})
 	}
+
 }

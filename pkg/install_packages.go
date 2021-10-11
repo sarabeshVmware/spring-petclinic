@@ -27,11 +27,12 @@ func GetInput() Input {
 	return input
 }
 
-func Cleanup(input Input) {
+func Cleanup() {
+	input := GetInput()
 	log.Printf("Request: Cleanup")
-	UninstallPackages(input.Packages, input.Namespace)
-	DeletePackageRepository(input.PackageRepository, input.Namespace)
-	DeleteImagepullSecrets(input.Secrets, input.Namespace)
+	UninstallPackages(input.Namespace)
+	DeletePackageRepository(input.Namespace)
+	DeleteImagepullSecrets(input.Namespace)
 	DeleteNamespace(input.Namespace)
 }
 
@@ -41,7 +42,7 @@ func Install(preCleanup bool, postCleanup bool) {
 
 	log.Printf("Request: Cleanup pre-installation (%t)", preCleanup)
 	if preCleanup {
-		Cleanup(input)
+		Cleanup()
 	}
 
 	CreateNamespace(input.Namespace)
@@ -54,6 +55,6 @@ func Install(preCleanup bool, postCleanup bool) {
 
 	log.Printf("Request: Cleanup post-installation (%t)", postCleanup)
 	if postCleanup {
-		Cleanup(input)
+		Cleanup()
 	}
 }
