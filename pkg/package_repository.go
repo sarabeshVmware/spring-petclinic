@@ -37,9 +37,11 @@ func ListPackageRepositories(namespace string) []PackageRepoOutput {
 	return addedPkgrs
 }
 func DeletePackageRepository(namespace string) {
-	addedPkgr := ListPackageRepositories(namespace)[0]
-	log.Printf("Deleting package repository: %s", addedPkgr.Name)
-	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", addedPkgr.Name, "-n", namespace}})
+	addedPkgr := ListPackageRepositories(namespace)
+	if len(addedPkgr) != 0 {
+		log.Printf("Deleting package repository: %s", addedPkgr[0].Name)
+		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", addedPkgr[0].Name, "-n", namespace}})
+	}
 }
 
 func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace string) {
