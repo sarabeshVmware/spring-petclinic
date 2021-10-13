@@ -5,6 +5,7 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"time"
 
@@ -25,28 +26,29 @@ type PackageRepoOutput struct {
 
 func AddPackageRepository(packageRepository PackageRepository, namespace string) {
 	log.Printf("Adding package repository CR: %s", packageRepository.Name)
-	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "add", packageRepository.Name, "--url", packageRepository.Image, "-n", namespace}})
+	Run(fmt.Sprintf("tanzu package repository add %s --url %s -n %s", packageRepository.Name, packageRepository.Image, namespace))
 }
 
 func ListPackageRepositories(namespace string) []PackageRepoOutput {
 	var addedPkgrs []PackageRepoOutput
 	log.Printf("Retriving Package repository in namespace: %s", namespace)
-	repoList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "list", "-n", namespace, "-ojson"}})
+	repoList, _ := Run(fmt.Sprintf("tanzu package repository list -n %s -o json", namespace))
 	err := json.Unmarshal(repoList, &addedPkgrs)
 	CheckError(err)
 	return addedPkgrs
 }
+
 func DeletePackageRepository(namespace string) {
 	addedPkgr := ListPackageRepositories(namespace)
 	if len(addedPkgr) != 0 {
 		log.Printf("Deleting package repository: %s", addedPkgr[0].Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "delete", addedPkgr[0].Name, "-n", namespace}})
+		Run(fmt.Sprintf("tanzu package repository delete %s -n %s", addedPkgr[0].Name, namespace))
 	}
 }
 
 func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace string) {
 	log.Printf("Checking package repository status: %s", packageRepository.Name)
-	packageRepositoryStatus, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "repository", "get", packageRepository.Name, "-n", namespace, "-o", "json"}})
+	packageRepositoryStatus, _ := Run(fmt.Sprintf("tanzu package repository get %s -n %s -o json", packageRepository.Name, namespace))
 	jsonparser.ArrayEach(packageRepositoryStatus, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		repository, err := jsonparser.GetString(value, "repository")
 		CheckError(err)

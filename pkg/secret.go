@@ -5,6 +5,7 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 )
 
@@ -25,24 +26,23 @@ type SecretOutput struct {
 func CreateDockerRegistrySecrets(secrets []Secret, namespace string) {
 	for _, secret := range secrets {
 		log.Printf("Creating secret: %s", secret.Name)
-		RunCommand(Command{CommandName: "kubectl", Arguments: []string{"create", "secret", "docker-registry", secret.Name, "-n", namespace,
-			"--docker-server", secret.Registry, "--docker-username", secret.Username, "--docker-password", secret.Password}, DontLogCommand: true})
+		Run_DontLogCommand(fmt.Sprintf("kubectl create secret docker-registry %s --docker-server %s --docker-username %s --docker-password %s -n %s",
+			secret.Name, secret.Registry, secret.Username, secret.Password, namespace))
 	}
 }
 
 func CreateImagepullSecrets(secrets []Secret, namespace string) {
 	for _, secret := range secrets {
 		log.Printf("Creating secret: %s", secret.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "add", secret.Name,
-			"--registry", secret.Registry, "--username", secret.Username, "--password", secret.Password,
-			"--export-to-all-namespaces", "-n", namespace}, DontLogCommand: true})
+		Run_DontLogCommand(fmt.Sprintf("tanzu imagepullsecret add %s --registry %s --username %s --password %s --export-to-all-namespaces -n %s",
+			secret.Name, secret.Registry, secret.Username, secret.Password, namespace))
 	}
 }
 
 func ListImagepullSecrets(namespace string) []SecretOutput {
 	var secrets []SecretOutput
 	log.Printf("Image Pull Secrets in namespace: %s", namespace)
-	secretsList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "list", "-n", namespace, "-ojson"}})
+	secretsList, _ := Run(fmt.Sprintf("tanzu imagepullsecret list -n %s -o json", namespace))
 	err := json.Unmarshal(secretsList, &secrets)
 	CheckError(err)
 	return secrets
@@ -52,6 +52,6 @@ func DeleteImagepullSecrets(namespace string) {
 	addedSecrets := ListImagepullSecrets(namespace)
 	for _, secret := range addedSecrets {
 		log.Printf("Deleting secret: %s", secret.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"imagepullsecret", "delete", secret.Name, "-n", namespace, "-y"}})
+		Run(fmt.Sprintf("tanzu imagepullsecret delete %s -n %s -y", secret.Name, namespace))
 	}
 }

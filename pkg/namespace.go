@@ -3,11 +3,14 @@
 
 package pkg
 
-import "log"
+import (
+	"fmt"
+	"log"
+)
 
 func CheckIfNamespaceExists(namespace string) bool {
 	log.Printf("Checking if namespace exists: %s", namespace)
-	_, err := RunCommand(Command{CommandName: "kubectl", Arguments: []string{"get", "namespaces", namespace}, AllowError: true})
+	_, err := Run_AllowError(fmt.Sprintf("kubectl get namespaces %s", namespace))
 	if err != nil {
 		log.Printf("Namespace not found: %s", namespace)
 		return false
@@ -19,11 +22,11 @@ func CheckIfNamespaceExists(namespace string) bool {
 func DeleteNamespace(namespace string) {
 	if CheckIfNamespaceExists(namespace) {
 		log.Printf("Deleting namespace: %s", namespace)
-		RunCommand(Command{CommandName: "kubectl", Arguments: []string{"delete", "ns", namespace}})
+		Run(fmt.Sprintf("kubectl delete ns %s", namespace))
 	}
 }
 
 func CreateNamespace(namespace string) {
 	log.Printf("Creating namespace: %s", namespace)
-	RunCommand(Command{CommandName: "kubectl", Arguments: []string{"create", "ns", namespace}})
+	Run(fmt.Sprintf("kubectl create ns %s", namespace))
 }
