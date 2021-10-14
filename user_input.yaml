@@ -10,37 +10,37 @@ package_repository:
 packages:
   ## INDEPENDENT PACKAGES:
   - name: accelerator.apps.tanzu.vmware.com
-    installed_name: accelerator-apps
+    installed_name: app-accelerator
     version: 0.3.0
     use_values_file: app-accelerator.yaml
   - name: api-portal.tanzu.vmware.com
     installed_name: api-portal
     version: 1.0.2
   - name: cnrs.tanzu.vmware.com
-    installed_name: cnrs
+    installed_name: cloud-native-runtimes
     version: 1.0.2
     use_values_file: cloud-native-runtimes.yaml
   - name: controller.source.apps.tanzu.vmware.com
-    installed_name: controller-source
+    installed_name: source-controller
     version: 0.1.2
   - name: scp-toolkit.tanzu.vmware.com
     installed_name: scp-toolkit
     version: 0.3.0
   - name: service-bindings.labs.vmware.com
-    installed_name: service-bindings-labs
+    installed_name: service-bindings
     version: 0.5.0
   - name: buildservice.tanzu.vmware.com
-    installed_name: buildservice
+    installed_name: tanzu-build-service
     version: 1.3.0
     use_values_file: tanzu-build-service.yaml
 
   ## DEPENDENT PACKAGES:
-  ### appliveview requires controller-conventions; developer-conventions requires appliveview
+  ### app-live-view requires convention-controller; developer-conventions requires app-live-view
   - name: controller.conventions.apps.tanzu.vmware.com
-    installed_name: controller-conventions
+    installed_name: convention-controller
     version: 0.4.2
   - name: appliveview.tanzu.vmware.com
-    installed_name: appliveview
+    installed_name: app-live-view
     version: 0.2.0
     use_values_file: app-live-view.yaml
   - name: developer-conventions.tanzu.vmware.com
@@ -59,20 +59,20 @@ packages:
     installed_name: default-supply-chain
     version: 0.2.0
     use_values_file: default-supply-chain.yaml
-  ### grype-scanning-apps requires scanning-apps
+  ### grype-scanner requires scan-controller
   - name: scanning.apps.tanzu.vmware.com
-    installed_name: scanning-apps
+    installed_name: scan-controller
     version: 1.0.0-beta
     use_values_file: scst-scan-controller.yaml
   - name: grype.scanning.apps.tanzu.vmware.com
-    installed_name: grype-scanning-apps
+    installed_name: grype-scanner
     version: 1.0.0-beta
-  ### image-policy-webhook-signing-run requires scst-store
+  ### image-policy-webhook requires metadata-store
   - name: scst-store.tanzu.vmware.com
-    installed_name: scst-store
+    installed_name: metadata-store
     version: 1.0.0-beta.0
     use_values_file: scst-store.yaml
   - name: image-policy-webhook.signing.run.tanzu.vmware.com
-    installed_name: image-policy-webhook-signing-run
+    installed_name: image-policy-webhook
     version: 1.0.0-beta.0
     use_values_file: scst-sign.yaml
