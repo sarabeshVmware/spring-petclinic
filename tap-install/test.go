@@ -5,7 +5,7 @@ package main
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	"gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/pkg"
 )
 
 func main() {
