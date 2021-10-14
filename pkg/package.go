@@ -50,12 +50,13 @@ func ListValuesSchema(packages []Package, namespace string) {
 
 func InstallPackages(packages []Package, namespace string) {
 	for _, packageInfo := range packages {
-		valuesSchemaFile := filepath.Join(GetValuesDirectory(), "values.yaml")
-		if packageInfo.UseValuesFile != "" {
-			valuesSchemaFile = filepath.Join(GetValuesDirectory(), packageInfo.UseValuesFile)
-		}
 		log.Printf("Installing package: %s", packageInfo.Name)
-		Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s -f %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace, valuesSchemaFile))
+		if packageInfo.UseValuesFile != "" {
+			valuesSchemaFile := filepath.Join(GetValuesDirectory(), packageInfo.UseValuesFile)
+			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s -f %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace, valuesSchemaFile))
+		} else {
+			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace))
+		}
 		ValidatePackage(packageInfo, namespace)
 	}
 }

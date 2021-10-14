@@ -1,0 +1,3 @@
+# image-policy-webhook.signing.run.tanzu.vmware.com: Image Policy Webhook
+
+warn_on_unmatched: "true"
