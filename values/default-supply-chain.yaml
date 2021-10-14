@@ -1,4 +1,7 @@
-## default-supply-chain.tanzu.vmware.com: Tanzu App Platform Default Supply Chain
+# default-supply-chain.tanzu.vmware.com: Tanzu App Platform Default Supply Chain
+# default-supply-chain-testing.tanzu.vmware.com: Tanzu App Platform Default Supply Chain with Testing
+
 registry:
-  server: https://yourregistry.io
-  repository: sample-repo
+  repository: # REGISTRY-REPOSITORY
+  server: # REGISTRY-SERVER
+service_account: "default"

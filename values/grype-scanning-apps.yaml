@@ -1,8 +1,0 @@
-## grype.scanning.apps.tanzu.vmware.com: Grype Scanner for Supply Chain Security Tools for VMware Tanzu - Scan
-namespace: "default"
-resources:
-  limits:
-    cpu: "1000m"
-  requests:
-    cpu: "250m"
-    memory: "128Mi"

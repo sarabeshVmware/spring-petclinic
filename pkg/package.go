@@ -5,6 +5,7 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"path/filepath"
 	"time"
@@ -28,13 +29,13 @@ type PackageInstalledOutput struct {
 
 func ListPackages(namespace string) {
 	log.Printf("Available packages in namespace: %s", namespace)
-	RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "available", "list", "-n", namespace}})
+	Run(fmt.Sprintf("tanzu package available list -n %s", namespace))
 }
 
 func ListInstalledPackages(namespace string) []PackageInstalledOutput {
 	var packages []PackageInstalledOutput
 	log.Printf("Installed packages in namespace: %s", namespace)
-	packagesList, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "list", "-n", namespace, "-ojson"}})
+	packagesList, _ := Run(fmt.Sprintf("tanzu package installed list -n %s -o json", namespace))
 	err := json.Unmarshal(packagesList, &packages)
 	CheckError(err)
 	return packages
@@ -43,26 +44,26 @@ func ListInstalledPackages(namespace string) []PackageInstalledOutput {
 func ListValuesSchema(packages []Package, namespace string) {
 	for _, packageInfo := range packages {
 		log.Printf("Values schemas for package: %s", packageInfo.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "available", "get", packageInfo.Name + "/" + packageInfo.Version, "--values-schema", "-n", namespace}})
+		Run(fmt.Sprintf("tanzu package available get %s/%s --values-schema -n %s", packageInfo.Name, packageInfo.Version, namespace))
 	}
 }
 
 func InstallPackages(packages []Package, namespace string) {
 	for _, packageInfo := range packages {
-		valuesSchemaFile := filepath.Join(GetValuesDirectory(), "values.yaml")
-		if packageInfo.UseValuesFile != "" {
-			valuesSchemaFile = filepath.Join(GetValuesDirectory(), packageInfo.UseValuesFile)
-		}
 		log.Printf("Installing package: %s", packageInfo.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "install", packageInfo.InstalledName,
-			"-p", packageInfo.Name, "-v", packageInfo.Version, "-n", namespace, "-f", valuesSchemaFile}})
+		if packageInfo.UseValuesFile != "" {
+			valuesSchemaFile := filepath.Join(GetValuesDirectory(), packageInfo.UseValuesFile)
+			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s -f %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace, valuesSchemaFile))
+		} else {
+			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace))
+		}
 		ValidatePackage(packageInfo, namespace)
 	}
 }
 
 func ValidatePackage(packageInfo Package, namespace string) {
 	log.Printf("Validating package: %s", packageInfo.Name)
-	packageInstalled, _ := RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "get", packageInfo.InstalledName, "-n", namespace, "-o", "json"}})
+	packageInstalled, _ := Run(fmt.Sprintf("tanzu package installed get %s -n %s -o json", packageInfo.InstalledName, namespace))
 	status, err := jsonparser.GetString(packageInstalled, "[0]", "status")
 	CheckError(err)
 	if status == "Reconciling" {
@@ -79,7 +80,6 @@ func UninstallPackages(namespace string) {
 	installedpackages := ListInstalledPackages(namespace)
 	for _, each := range installedpackages {
 		log.Printf("Uninstalling package: %s", each.Name)
-		RunCommand(Command{CommandName: "tanzu", Arguments: []string{"package", "installed", "delete", each.Name, "-n", namespace, "-y"}})
+		Run(fmt.Sprintf("tanzu package installed delete %s -n %s -y", each.Name, namespace))
 	}
-
 }
