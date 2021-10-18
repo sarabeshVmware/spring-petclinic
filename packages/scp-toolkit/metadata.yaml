@@ -1,14 +1,19 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: scp-toolkit.tanzu.vmware.com
+  name: services-toolkit.tanzu.vmware.com
 spec:
   categories:
   - services
-  displayName: SCP Toolkit
-  longDescription: SCP Toolkit comprises Service Offering, Service API Projection and Service Resource Replication for VMware Tanzu
+  displayName: Services Toolkit
+  longDescription: |
+    The Services Toolkit comprises a number of Kubernetes native components which support the management, lifecycle, discoverability and connectivity of Service Resources (databases, message queues, DNS records, etc.) on Kubernetes. These components are:
+    * Service Offering
+    * Service API Projection
+    * Service Resource Replication
+    * Service Resource Claims
   maintainers:
   - name: The Services Control Plane team
   providerName: VMware
-  shortDescription: The SCP Toolkit
+  shortDescription: The Services Toolkit enables the management, lifecycle, discoverability and connectivity of Service Resources (databases, message queues, DNS records, etc.).
   supportDescription: https://tanzu.vmware.com/support
