@@ -1,10 +1,10 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: scp-toolkit.tanzu.vmware.com.0.4.0-rc.1
+  name: services-toolkit.tanzu.vmware.com.0.4.0-rc.1
   namespace: scp-toolkit
 spec:
-  refName: scp-toolkit.tanzu.vmware.com
+  refName: services-toolkit.tanzu.vmware.com
   version: 0.4.0-rc.1
   releaseNotes: https://docs.vmware.com/en/SCP-Toolkit/0.4/scp-toolkit-0-4/GUID-release_notes.html
   releasedAt: 2021-10-18T09:45:46Z
