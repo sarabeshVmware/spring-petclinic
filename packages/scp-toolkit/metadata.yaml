@@ -1,0 +1,14 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: scp-toolkit.tanzu.vmware.com
+spec:
+  categories:
+  - services
+  displayName: SCP Toolkit
+  longDescription: SCP Toolkit comprises Service Offering, Service API Projection and Service Resource Replication for VMware Tanzu
+  maintainers:
+  - name: The Services Control Plane team
+  providerName: VMware
+  shortDescription: The SCP Toolkit
+  supportDescription: https://tanzu.vmware.com/support
