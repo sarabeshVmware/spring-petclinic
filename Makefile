@@ -10,3 +10,17 @@ ifeq ($(origin CHANNEL),undefined && $(origin TAG),undefined)
 else
 	go run create-package-repo.go $(CHANNEL) $(TAG)
 endif
+
+validate-metadata-cr : ## Validate metadata.yml
+ifeq ($(origin METADATAFILE),undefined)
+	@echo "Error! METADATAFILE env var not set"
+else
+	go run scripts/metadata.go $(METADATAFILE)
+endif
+
+validate-package-cr : ## Validate package.yml
+ifeq ($(origin PACKAGEFILE),undefined)
+	@echo "Error! PACKAGEFILE env var not set"
+else
+	go run scripts/package.go $(PACKAGEFILE)
+endif
