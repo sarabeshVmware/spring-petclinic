@@ -1,7 +1,8 @@
 package main
 
 import (
-	"fmt"
+	
+	"log"
 	"os"
 
 	"github.com/go-playground/validator"
@@ -41,14 +42,15 @@ var validate *validator.Validate
 func main() {
 	fpath := os.Args[1]
 	pkgm := GetPackageMetadataFile(fpath)
+	log.Printf("Validating package metadata CR file: %s", fpath)
 	validate = validator.New()
 	err := validate.Struct(pkgm)
 	if err != nil {
 		validationErrors := err.(validator.ValidationErrors)
-		fmt.Println(validationErrors)
+		log.Println(validationErrors)
 		for _, err := range validationErrors {
-			fmt.Println("Field ", err.StructNamespace(), "is", err.Tag())
-			fmt.Println()
+			log.Println("Field ", err.StructNamespace(), "is", err.Tag())
+			log.Println()
 		}
 	}
 

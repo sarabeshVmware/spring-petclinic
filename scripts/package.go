@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"regexp"
 
@@ -58,26 +58,27 @@ var validate *validator.Validate
 func IsISO8601Date(fl validator.FieldLevel) bool {
 	ISO8601DateRegexString := "^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])(?:T|\\s)(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])?(Z)?$"
 	ISO8601DateRegex := regexp.MustCompile(ISO8601DateRegexString)
-
 	return ISO8601DateRegex.MatchString(fl.Field().String())
 }
 
 func main() {
 	fpath := os.Args[1]
 	packageFile := GetPackageFile(fpath)
+	log.Printf("Validating package CR file: %s", fpath)
 	validate = validator.New()
+	log.Printf("Registring custom validator for ISO8601 date validation")
 	validate.RegisterValidation("ISO8601date", IsISO8601Date)
 	err := validate.Struct(packageFile)
 	if err != nil {
 		validationErrors := err.(validator.ValidationErrors)
-		fmt.Println(validationErrors)
+		log.Println(validationErrors)
 		for _, err := range validationErrors {
 			if err.Tag() == "ISO8601date" {
-				fmt.Println("Please provide field ", err.StructNamespace(), "in format", err.Tag())
+				log.Println("Please provide field ", err.StructNamespace(), "in format", err.Tag())
 			} else {
-				fmt.Println("Field ", err.StructNamespace(), "is", err.Tag())
+				log.Println("Field ", err.StructNamespace(), "is", err.Tag())
 			}
-			fmt.Println()
+			log.Println()
 		}
 	}
 }
