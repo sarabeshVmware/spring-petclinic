@@ -21,13 +21,3 @@ func GetCurrentDir() string {
 	_, filename, _, _ := runtime.Caller(1)
 	return filepath.Dir(filename)
 }
-
-func GetProjectDirectory() string {
-	currentDir := GetCurrentDir()
-	return filepath.Dir(currentDir)
-}
-
-func GetValuesDirectory() string {
-	projectDir := GetProjectDirectory()
-	return filepath.Join(projectDir, "values")
-}
