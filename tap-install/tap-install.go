@@ -5,7 +5,8 @@ package main
 
 import (
 	"github.com/spf13/cobra"
-	"gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/pkg"
+	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	tapInstall "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/pkg"
 )
 
 func main() {
@@ -16,7 +17,7 @@ func main() {
 	rootCmd.AddCommand(installCommand())
 	rootCmd.AddCommand(cleanupCommand())
 	err := rootCmd.Execute()
-	pkg.CheckError(err)
+	tap.CheckError(err)
 }
 
 func installCommand() *cobra.Command {
@@ -26,7 +27,7 @@ func installCommand() *cobra.Command {
 		Use:   "install",
 		Short: "Install packages",
 		Run: func(cmd *cobra.Command, args []string) {
-			pkg.Install(preCleanup, postCleanup)
+			tapInstall.Install(preCleanup, postCleanup)
 		},
 	}
 	installCmd.Flags().BoolVar(&preCleanup, "pre-cleanup", false, "Cleanup namespace, secrets, repository and packages before installation.")
@@ -39,7 +40,7 @@ func cleanupCommand() *cobra.Command {
 		Use:   "clean",
 		Short: "Clean packages, secrets, package repositories etc..",
 		Run: func(cmd *cobra.Command, args []string) {
-			pkg.Cleanup()
+			tapInstall.Cleanup()
 		},
 	}
 	return cleanupCmd
