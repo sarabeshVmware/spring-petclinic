@@ -3,7 +3,7 @@ kind: PackageMetadata
 metadata:
   name: developer-conventions.tanzu.vmware.com
 spec:
-  displayName: Tanzu App Platform Develooper Conventions
+  displayName: Tanzu App Platform Developer Conventions
   longDescription: Tanzu App Platform Developer Conventions
   shortDescription: Developer Conventions
   providerName: VMware
