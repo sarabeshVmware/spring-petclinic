@@ -80,5 +80,7 @@ func main() {
 			}
 			log.Println()
 		}
+	} else {
+		log.Println("package CR file:", fpath ,"validated successfully")
 	}
 }

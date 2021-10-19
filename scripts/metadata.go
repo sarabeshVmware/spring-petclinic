@@ -52,6 +52,7 @@ func main() {
 			log.Println("Field ", err.StructNamespace(), "is", err.Tag())
 			log.Println()
 		}
-	}
+	}else{
+		log.Println("package metadata CR file:", fpath ,"validated successfully")}
 
 }
