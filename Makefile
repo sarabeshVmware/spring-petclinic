@@ -15,12 +15,12 @@ validate-metadata-cr : ## Validate metadata.yml
 ifeq ($(origin METADATAFILE),undefined)
 	@echo "Error! METADATAFILE env var not set"
 else
-	go run scripts/cmd/metadata/main.go $(METADATAFILE)
+	go run scripts/metadata.go $(METADATAFILE)
 endif
 
 validate-package-cr : ## Validate package.yml
 ifeq ($(origin PACKAGEFILE),undefined)
 	@echo "Error! PACKAGEFILE env var not set"
 else
-	go run scripts/cmd/package/main.go $(PACKAGEFILE)
+	go run scripts/package.go $(PACKAGEFILE)
 endif
