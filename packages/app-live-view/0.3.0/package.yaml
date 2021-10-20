@@ -2,12 +2,12 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: appliveview.tanzu.vmware.com.v0.3.0-build1
+  name: appliveview.tanzu.vmware.com.0.3.0-build1
 spec:
   refName: appliveview.tanzu.vmware.com
-  version: v0.3.0-build1
+  version: 0.3.0-build1
   releaseNotes: |
-        Release v0.3.0-build1 of the App Live View package
+        Release 0.3.0-build1 of the App Live View package
   releasedAt: 2021-10-19T00:00:00Z
   valuesSchema:
     openAPIv3:
@@ -15,14 +15,17 @@ spec:
       properties:
         connector_namespaces:
           description: The namespaces in which ALV monitors the user's apps
+          default: [default]
           type: array
           items:
             type: string
         server_namespace:
           description: The namespace to which ALV server is deployed
+          default: app-live-view
           type: string   
         service_type:
           description: The service type for the Application Live View server can be LoadBalancer, NodePort, or ClusterIP
+          default: LoadBalancer
           type: string       
   template:
     spec:
