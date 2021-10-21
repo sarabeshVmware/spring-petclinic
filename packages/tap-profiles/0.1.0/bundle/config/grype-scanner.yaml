@@ -1,0 +1,20 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+
+#! TODO depends on scanner that is disabled
+#! ---
+#! apiVersion: packaging.carvel.dev/v1alpha1
+#! kind: PackageInstall
+#! metadata:
+#!   name: grype-scanner
+#!   namespace: tap-install
+#! spec:
+#!   serviceAccountName: tap-install-sa
+#!   packageRef:
+#!     refName: grype.scanning.apps.tanzu.vmware.com
+#!     versionSelection:
+#!       constraints: 1.0.0-beta
+#!       prereleases: {}
+
+#@ end
