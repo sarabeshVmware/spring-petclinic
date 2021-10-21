@@ -1,0 +1,57 @@
+---
+packages:
+  - name: convention-controller
+    versions:
+      - 0.4.2
+  - name: service-binding
+    versions:
+      - 0.5.0
+  - name: source-controller
+    versions:
+      - 0.1.2
+# Changed name and version
+  - name: services-toolkit
+    versions:
+      - 0.4.0-rc.1
+  - name: cartographer
+    versions:
+      - 0.0.6
+# Changed version
+  - name: app-live-view
+    versions:
+      - 0.3.0
+  - name: scan-controller
+    versions:
+      - 1.0.0-beta
+  - name: grype-scanner
+    versions:
+      - 1.0.0-beta
+  - name: default-supply-chain-testing
+    versions:
+      - 0.2.0
+  - name: app-accelerator
+    versions:
+      - 0.3.0
+# Changed version
+  - name: developer-conventions
+    versions:
+      - 0.3.0 
+  - name: default-supply-chain
+    versions:
+      - 0.2.0 
+  - name: insight-metadata-store
+    versions:
+      - 1.0.0-beta.0
+  - name: image-policy-webhook
+    versions:
+      - 1.0.0-beta.0
+# Changed version
+  - name: api-portal
+    versions:
+      - 1.0.3
+  - name: cloud-native-runtimes
+    versions:
+      - 1.0.2
+  - name: build-service
+    versions:
+      - 1.3.0

@@ -8,7 +8,7 @@ spec:
   valuesSchema:
     openAPIv3:
       properties: {}
-  releasedAt: 2021-10-19T00:00+00:00
+  releasedAt: 2021-10-19T00:00:00Z
   releaseNotes: |
     Developer Conventions contents package
   template:
