@@ -24,7 +24,7 @@ Use "tap-tests [command] --help" for more information about a command.
 
 ## Installing packages
 ### User Input
-Configurable values such as credentials, repository image, etc. are provided via `tap-install/user_input.yaml`. The supported fields are:
+Configurable values such as credentials, repository image, etc. are provided via `tap-install/user-config.yaml`. The supported fields are:
 ```yaml
 namespace:
 secrets:
@@ -43,7 +43,7 @@ packages:
 ```
 ### Steps
 1. Currently, the script can add the package repository and installs packages in a configured environment. To set that up, refer: [Installing Tanzu Application Platform](https://docs-staging.vmware.com/en/VMware-Tanzu-Application-Platform/0.2/tap-0-2/GUID-install-intro.html)
-2. Populate `tap-install/user_input.yaml`. To use the default setup:
+2. Populate `tap-install/user-config.yaml`. To use the default setup:
     - Provide credentials:
       ```yaml
       secrets:
@@ -52,7 +52,7 @@ packages:
         username:
         password:
       ```
-    - Select the list of packages you want to install in `tap-install/user_input.yaml`. For example, for installing `cloud-native-runtimes` and `app-accelerator`, just keep:
+    - Select the list of packages you want to install in `tap-install/user-config.yaml`. For example, for installing `cloud-native-runtimes` and `app-accelerator`, just keep:
       ```yaml
       packages:
         - name: accelerator.apps.tanzu.vmware.com

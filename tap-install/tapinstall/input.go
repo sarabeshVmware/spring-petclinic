@@ -21,7 +21,7 @@ type Input struct {
 
 func GetInput() Input {
 	tapInstallDir := filepath.Dir(tap.GetCurrentDir())
-	inputBytes, err := os.ReadFile(filepath.Join(tapInstallDir, "user_input.yaml"))
+	inputBytes, err := os.ReadFile(filepath.Join(tapInstallDir, "user-config.yaml"))
 	tap.CheckError(err)
 	input := Input{}
 	err = yaml.Unmarshal(inputBytes, &input)
