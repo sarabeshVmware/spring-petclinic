@@ -59,14 +59,6 @@ packages:
     installed_name: default-supply-chain
     version: 0.2.0
     use_values_file: default-supply-chain.yaml
-  ### grype-scanner requires scan-controller
-  - name: scanning.apps.tanzu.vmware.com
-    installed_name: scan-controller
-    version: 1.0.0-beta
-    use_values_file: scst-scan-controller.yaml
-  - name: grype.scanning.apps.tanzu.vmware.com
-    installed_name: grype-scanner
-    version: 1.0.0-beta
   ### image-policy-webhook requires metadata-store
   - name: scst-store.tanzu.vmware.com
     installed_name: metadata-store
@@ -76,3 +68,11 @@ packages:
     installed_name: image-policy-webhook
     version: 1.0.0-beta.0
     use_values_file: scst-sign.yaml
+  ### scan-controller requires metadata-store; grype-scanner requires scan-controller
+  - name: scanning.apps.tanzu.vmware.com
+    installed_name: scan-controller
+    version: 1.0.0-beta
+    use_values_file: scst-scan-controller.yaml
+  - name: grype.scanning.apps.tanzu.vmware.com
+    installed_name: grype-scanner
+    version: 1.0.0-beta
