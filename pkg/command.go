@@ -39,3 +39,32 @@ func Run_DontLogCommand(command string) ([]byte, error) {
 func Run_DontLogCommand_AllowError(command string) ([]byte, error) {
 	return RunCommand(command, true, true)
 }
+
+func RunCommandWithBash(command string, allowError bool, dontLogCommand bool) ([]byte, error) {
+	cmd := exec.Command("bash", "-c", command)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if !dontLogCommand {
+		log.Printf("Command executed: %s", command)
+	}
+	log.Printf("Output: \n%s", string(stdoutStderr))
+	if !allowError {
+		CheckError(err)
+	}
+	return stdoutStderr, err
+}
+
+func RunWithBash(command string) ([]byte, error) {
+	return RunCommandWithBash(command, false, false)
+}
+
+func RunWithBash_AllowError(command string) ([]byte, error) {
+	return RunCommandWithBash(command, true, false)
+}
+
+func RunWithBash_DontLogCommand(command string) ([]byte, error) {
+	return RunCommandWithBash(command, false, true)
+}
+
+func RunWithBash_DontLogCommand_AllowError(command string) ([]byte, error) {
+	return RunCommandWithBash(command, true, true)
+}
