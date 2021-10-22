@@ -6,6 +6,7 @@ package pkg
 import (
 	"fmt"
 	"log"
+	"os"
 )
 
 func CreateClusterRoleBinding(name string, clusterRole string, serviceAccount string) {
@@ -23,6 +24,15 @@ func DeployApp(name string, files []string, namespace string) {
 }
 
 func ApplyConfiguration(file string) {
-	log.Printf("Applying configuration in file: %s", file)
-	Run(fmt.Sprintf("kubectl apply -f %s -o yaml", file))
+	configuration, err := os.ReadFile(file)
+	CheckError(err)
+	log.Printf("Applying configuration: \n%s", string(configuration))
+	Run(fmt.Sprintf("kubectl apply -f %s", file))
+}
+
+func ApplyConfigurationInNamespace(file string, namespace string) {
+	configuration, err := os.ReadFile(file)
+	CheckError(err)
+	log.Printf("Applying configuration in namespace %s: \n%s", namespace, string(configuration))
+	Run(fmt.Sprintf("kubectl apply -n %s -f %s", namespace, file))
 }
