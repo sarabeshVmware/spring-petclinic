@@ -4,7 +4,7 @@ Repo to maintain the test scripts for Tanzu Application Platform Packaging
 
 ## Installation Script CLI Usage
 ```
-➜ go run tap-install/tap-install.go -h               
+➜ go run tap-tests.go -h               
 TAP packaging tests CLI
 
 Usage:
@@ -63,16 +63,18 @@ packages:
           version: <version>
           use_values_file: cloud-native-runtimes.yaml
       ```
-3. Run: `go run tap-install/tap-install.go install [--pre-cleanup] [--post-cleanup]`
+3. Run: `go run tap-tests.go install [--pre-cleanup] [--post-cleanup]`
     ```
-    ➜ go run tap-install/tap-install.go install -h
+    ➜ go run tap-tests.go install -h
     Install packages
 
     Usage:
       tap-tests install [flags]
 
     Flags:
-      -h, --help           help for install
-          --post-cleanup   Cleanup namespace, secrets, repository and packages after installation.
-          --pre-cleanup    Cleanup namespace, secrets, repository and packages before installation.
+      -f, --config-file string   User configuration YAML file. (default "$PROJECT_DIR/tap-packaging-tests/tap-install/user-config.yaml")
+      -h, --help                 help for install
+          --post-cleanup         Cleanup namespace, secrets, repository and packages after installation.
+          --pre-cleanup          Cleanup namespace, secrets, repository and packages before installation.
+      -v, --values-dir string    Directory containing values schemas. (default "$PROJECT_DIR/tap-packaging-tests/tap-install/values")
     ```
