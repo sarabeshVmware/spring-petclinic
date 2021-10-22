@@ -82,6 +82,10 @@ func InstallPackages(packages []Package, namespace string, ValuesDirectory strin
 			log.Printf("Handling post-installation for cloud-native-runtimes:")
 			HandleCloudNativeRuntimesPostInstallation()
 		}
+		if packageInfo.Name == "image-policy-webhook.signing.run.tanzu.vmware.com" {
+			log.Printf("Handling post-installation for image-policy-webhook:")
+			HandleImagePolicyWebhookPostInstallation()
+		}
 	}
 }
 
@@ -214,4 +218,36 @@ func HandleCloudNativeRuntimesPostInstallation() {
 	log.Printf("Adding the secret to the service account:")
 	RunWithBash(`kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "pull-secret"}]}'`)
 	Run("kubectl describe serviceaccount default")
+}
+
+func HandleImagePolicyWebhookPostInstallation() {
+	tempFile, err := ioutil.TempFile("", "configuration*.yaml")
+	CheckError(err)
+	defer os.Remove(tempFile.Name())
+
+	configuration := `
+apiVersion: signing.run.tanzu.vmware.com/v1alpha1
+kind: ClusterImagePolicy
+metadata:
+ name: image-policy
+spec:
+ verification:
+   exclude:
+     resources:
+       namespaces:
+       - kube-system
+   keys:
+   - name: cosign-key
+     publicKey: |
+       -----BEGIN PUBLIC KEY-----
+       MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhyQCx0E9wQWSFI9ULGwy3BuRklnt
+       IqozONbbdbqz11hlRJy9c7SG+hdcFl9jE9uE/dwtuwU2MqU9T/cN0YkWww==
+       -----END PUBLIC KEY-----
+   images:
+   - namePattern: gcr.io/projectsigstore/cosign*
+     keys:
+     - name: cosign-key
+`
+	os.WriteFile(tempFile.Name(), []byte(configuration), 0666)
+	ApplyConfiguration(tempFile.Name())
 }
