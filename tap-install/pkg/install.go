@@ -25,6 +25,7 @@ func Install(preCleanup bool, postCleanup bool) {
 	tap.ListPackages(input.Namespace)
 	// tap.ListValuesSchema(input.Packages, input.Namespace)
 	tap.InstallPackages(input.Packages, input.Namespace, input.ValuesDirectory)
+	tap.SetupDeveloperNamespacePostInstallation(input.Namespace)
 
 	log.Printf("Request: Cleanup post-installation (%t)", postCleanup)
 	if postCleanup {
