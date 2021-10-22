@@ -6,11 +6,14 @@ package pkg
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"time"
 
 	"github.com/buger/jsonparser"
+	"gopkg.in/yaml.v3"
 )
 
 type Package struct {
@@ -51,12 +54,24 @@ func ListValuesSchema(packages []Package, namespace string) {
 func InstallPackages(packages []Package, namespace string, ValuesDirectory string) {
 	for _, packageInfo := range packages {
 		log.Printf("Installing package: %s", packageInfo.Name)
-		if packageInfo.UseValuesFile != "" {
-			valuesSchemaFile := filepath.Join(ValuesDirectory, packageInfo.UseValuesFile)
-			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s -f %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace, valuesSchemaFile))
-		} else {
-			Run(fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace))
+
+		// pre-requisites for packages:
+		if packageInfo.Name == "appliveview.tanzu.vmware.com" {
+			log.Printf("Handling pre-requisites for appliveview:")
+			HandleAppLiveViewPreRequisites(packageInfo, ValuesDirectory)
 		}
+		if packageInfo.Name == "scanning.apps.tanzu.vmware.com" {
+			log.Printf("Handling pre-requisites for scan-controller:")
+			HandleScanControllerPreRequisites(packageInfo, ValuesDirectory)
+		}
+
+		// install:
+		installCmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace)
+		if packageInfo.UseValuesFile != "" {
+			installCmd += fmt.Sprintf(" -f %s", filepath.Join(ValuesDirectory, packageInfo.UseValuesFile))
+		}
+		Run(installCmd)
+
 		ValidatePackage(packageInfo, namespace)
 	}
 }
@@ -82,4 +97,102 @@ func UninstallPackages(namespace string) {
 		log.Printf("Uninstalling package: %s", each.Name)
 		Run(fmt.Sprintf("tanzu package installed delete %s -n %s -y", each.Name, namespace))
 	}
+}
+
+func HandleAppLiveViewPreRequisites(packageInfo Package, ValuesDirectory string) {
+	valuesSchemaFile := filepath.Join(ValuesDirectory, packageInfo.UseValuesFile)
+	appliveviewSchemaBytes, err := os.ReadFile(valuesSchemaFile)
+	CheckError(err)
+	appliveviewSchema := struct {
+		ServerNamespace string `yaml:"server_namespace"`
+	}{}
+	err = yaml.Unmarshal([]byte(appliveviewSchemaBytes), &appliveviewSchema)
+	CheckError(err)
+	if appliveviewSchema.ServerNamespace != "" {
+		CreateNamespace(appliveviewSchema.ServerNamespace)
+	} else {
+		CreateNamespace("app-live-view")
+	}
+}
+
+func HandleScanControllerPreRequisites(packageInfo Package, ValuesDirectory string) {
+	tempFile, err := ioutil.TempFile("", "configuration*.yaml")
+	CheckError(err)
+	defer os.Remove(tempFile.Name())
+
+	configuration := `
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: metadata-store-read-write
+  namespace: metadata-store
+rules:
+- resources: ["all"]
+  verbs: ["get", "create", "update"]
+  apiGroups: [ "metadata-store/v1" ]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: metadata-store-read-write
+  namespace: metadata-store
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: metadata-store-read-write
+subjects:
+- kind: ServiceAccount
+  name: metadata-store-read-write-client
+  namespace: metadata-store
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: metadata-store-read-write-client
+  namespace: metadata-store
+automountServiceAccountToken: false
+`
+	os.WriteFile(tempFile.Name(), []byte(configuration), 0666)
+	ApplyConfiguration(tempFile.Name())
+
+	// update values schema
+	metadataStoreUrl, _ := RunWithBash(`kubectl -n metadata-store get service -o name | grep app | xargs kubectl -n metadata-store get -o jsonpath='{.spec.ports[].name}{"://"}{.metadata.name}{"."}{.metadata.namespace}{".svc.cluster.local:"}{.spec.ports[].port}'`)
+	metadataStoreCa, _ := RunWithBash(`kubectl get secret app-tls-cert -n metadata-store -o json | jq -r '.data."ca.crt"' | base64 -d`)
+	metadataStoreToken, _ := RunWithBash(`kubectl get secret $(kubectl get sa -n metadata-store metadata-store-read-write-client -o json | jq -r '.secrets[0].name') -n metadata-store -o json | jq -r '.data.token' | base64 -d`)
+	valuesSchemaFile := filepath.Join(ValuesDirectory, packageInfo.UseValuesFile)
+	scanControllerBytes, err := os.ReadFile(valuesSchemaFile)
+	CheckError(err)
+	scanControllerSchema := struct {
+		MetadataStoreUrl         string `yaml:"metadataStoreUrl"`
+		MetadataStoreCa          string `yaml:"metadataStoreCa"`
+		MetadataStoreTokenSecret string `yaml:"metadataStoreTokenSecret"`
+	}{}
+	err = yaml.Unmarshal([]byte(scanControllerBytes), &scanControllerSchema)
+	CheckError(err)
+	scanControllerSchema.MetadataStoreUrl = string(metadataStoreUrl)
+	scanControllerSchema.MetadataStoreCa = string(metadataStoreCa)
+	scanControllerBytes, err = yaml.Marshal(&scanControllerSchema)
+	CheckError(err)
+	err = os.WriteFile(valuesSchemaFile, scanControllerBytes, 0666)
+	CheckError(err)
+	log.Printf("Updated values schema for scan-controller: \n%s", string(scanControllerBytes))
+
+	CreateNamespace("scan-link-system")
+
+	configuration = fmt.Sprintf(`
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: %s
+  namespace: scan-link-system
+type: kubernetes.io/opaque
+stringData:
+  token: %s
+`, scanControllerSchema.MetadataStoreTokenSecret, metadataStoreToken)
+	os.WriteFile(tempFile.Name(), []byte(configuration), 0666)
+	ApplyConfiguration(tempFile.Name())
 }
