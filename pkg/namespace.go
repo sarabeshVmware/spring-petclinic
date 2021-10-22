@@ -27,6 +27,8 @@ func DeleteNamespace(namespace string) {
 }
 
 func CreateNamespace(namespace string) {
-	log.Printf("Creating namespace: %s", namespace)
-	Run(fmt.Sprintf("kubectl create ns %s", namespace))
+	if !CheckIfNamespaceExists(namespace) {
+		log.Printf("Creating namespace: %s", namespace)
+		Run(fmt.Sprintf("kubectl create ns %s", namespace))
+	}
 }
