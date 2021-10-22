@@ -1,0 +1,32 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.shared_tools]):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: api-portal
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: api-portal.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.0.2
+      prereleases: {}
+  values:
+  - secretRef:
+      name: api-portal-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: api-portal-values
+  namespace: tap-install
+stringData:
+  values.yml: #@ yaml.encode(data.values.api_portal)
+
+#@ end

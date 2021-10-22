@@ -1,0 +1,51 @@
+#@data/values-schema
+---
+#! enum: "full", "dev-light", "operator-light", "shared-tools"
+profile: full
+#! enum: "", "testing"
+supply_chain: ""
+
+rw_app_registry:
+  server_repo: ""
+  username: ""
+  password: ""
+
+install_cert_manager: true
+install_flux: true
+install_tekton: true
+
+#@schema/type any=True
+api_portal: {}
+
+#@schema/type any=True
+app_accelerator:
+  server:
+    service_type: "NodePort"
+    watched_namespace: "default"
+    engine_invocation_url: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
+  engine:
+    service_type: "ClusterIP"
+
+#@schema/type any=True
+app_live_view:
+  connector_namespaces: [default]
+  server_namespace: app-live-view
+
+#@schema/type any=True
+cnrs:
+  provider: local
+
+#@schema/type any=True
+default_supply_chain: {}
+
+#@schema/type any=True
+default_supply_chain_testing: {}
+
+#@schema/type any=True
+image_policy_webhook:
+  warn_on_unmatched: true
+
+#@schema/type any=True
+buildservice:
+  tanzunet_username: ""
+  tanzunet_password: ""
