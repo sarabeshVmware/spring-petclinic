@@ -5,7 +5,6 @@ package tapinstall
 
 import (
 	"os"
-	"path/filepath"
 
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 	"gopkg.in/yaml.v3"
@@ -19,13 +18,12 @@ type Input struct {
 	ValuesDirectory   string
 }
 
-func GetInput() Input {
-	tapInstallDir := filepath.Dir(tap.GetCurrentDir())
-	inputBytes, err := os.ReadFile(filepath.Join(tapInstallDir, "user-config.yaml"))
+func GetInput(configFile string, valuesDir string) Input {
+	inputBytes, err := os.ReadFile(configFile)
 	tap.CheckError(err)
 	input := Input{}
 	err = yaml.Unmarshal(inputBytes, &input)
 	tap.CheckError(err)
-	input.ValuesDirectory = filepath.Join(tapInstallDir, "values")
+	input.ValuesDirectory = valuesDir
 	return input
 }

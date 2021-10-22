@@ -9,8 +9,8 @@ import (
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 )
 
-func Cleanup() {
-	input := GetInput()
+func Cleanup(configFile string, valuesDir string) {
+	input := GetInput(configFile, valuesDir)
 	log.Printf("Request: Cleanup")
 	tap.UninstallPackages(input.Namespace)
 	tap.DeletePackageRepository(input.Namespace)
