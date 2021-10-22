@@ -70,9 +70,18 @@ func InstallPackages(packages []Package, namespace string, ValuesDirectory strin
 		if packageInfo.UseValuesFile != "" {
 			installCmd += fmt.Sprintf(" -f %s", filepath.Join(ValuesDirectory, packageInfo.UseValuesFile))
 		}
+		if packageInfo.Name == "cnrs.tanzu.vmware.com" || packageInfo.Name == "buildservice.tanzu.vmware.com" {
+			installCmd += " --poll-timeout 30m"
+		}
 		Run(installCmd)
 
 		ValidatePackage(packageInfo, namespace)
+
+		// handle post-installation:
+		if packageInfo.Name == "cnrs.tanzu.vmware.com" {
+			log.Printf("Handling post-installation for cloud-native-runtimes:")
+			HandleCloudNativeRuntimesPostInstallation()
+		}
 	}
 }
 
@@ -195,4 +204,14 @@ stringData:
 `, scanControllerSchema.MetadataStoreTokenSecret, metadataStoreToken)
 	os.WriteFile(tempFile.Name(), []byte(configuration), 0666)
 	ApplyConfiguration(tempFile.Name())
+}
+
+func HandleCloudNativeRuntimesPostInstallation() {
+	log.Printf("Creating an empty secret:")
+	Run_AllowError("kubectl create secret generic pull-secret --from-literal=.dockerconfigjson={} --type=kubernetes.io/dockerconfigjson")
+	log.Printf("Annotating the empty secret as a target of the secretgen controller:")
+	Run_AllowError(`kubectl annotate secret pull-secret secretgen.carvel.dev/image-pull-secret=""`)
+	log.Printf("Adding the secret to the service account:")
+	RunWithBash(`kubectl patch serviceaccount default -p '{"imagePullSecrets": [{"name": "pull-secret"}]}'`)
+	Run("kubectl describe serviceaccount default")
 }
