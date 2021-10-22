@@ -29,10 +29,6 @@ spec:
           $schema: https://backstage.io/schema/config-v1
           title: Application Configuration Schema
           type: object
-          required:
-          - app
-          - backend
-          - techdocs
           properties:
             app:
               type: object
