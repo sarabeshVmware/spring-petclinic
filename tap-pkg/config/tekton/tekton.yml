@@ -1,0 +1,7 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:library", "library")
+#@ load("@ytt:template", "template")
+#@ load("/_profiles.star", "profiles")
+
+#@ if/end profiles.is_any_enabled([profiles.full, profiles.operator_light]) and data.values.install_tekton:
+--- #@ template.replace(library.get("upstream").eval())

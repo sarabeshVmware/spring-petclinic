@@ -13,7 +13,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image:  dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-profiles:0.3.0
+          image:  dev.registry.tanzu.vmware.com/tanzu-application-platform/tap:0.3.0
       template:
       - ytt:
           paths:

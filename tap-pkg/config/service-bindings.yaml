@@ -1,0 +1,19 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light, profiles.operator_light]):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: service-bindings
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: service-bindings.labs.vmware.com
+    versionSelection:
+      constraints: 0.5.0
+      prereleases: {}
+
+#@ end
