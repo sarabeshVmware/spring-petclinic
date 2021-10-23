@@ -55,7 +55,7 @@ func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace
 		if repository == packageRepository.Image {
 			status, err := jsonparser.GetString(value, "status")
 			CheckError(err)
-			if status == "Reconciling" {
+			if status == "Reconciling" || status == "" {
 				time.Sleep(5 * time.Second)
 				CheckPackageRepositoryStatus(packageRepository, namespace)
 			} else if status == "Reconcile succeeded" {
