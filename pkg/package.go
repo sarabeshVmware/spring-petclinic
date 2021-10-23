@@ -94,7 +94,7 @@ func ValidatePackage(packageInfo Package, namespace string) {
 	packageInstalled, _ := Run(fmt.Sprintf("tanzu package installed get %s -n %s -o json", packageInfo.InstalledName, namespace))
 	status, err := jsonparser.GetString(packageInstalled, "[0]", "status")
 	CheckError(err)
-	if status == "Reconciling" {
+	if status == "Reconciling" || status == "" {
 		time.Sleep(5 * time.Second)
 		ValidatePackage(packageInfo, namespace)
 	} else if status == "Reconcile succeeded" {

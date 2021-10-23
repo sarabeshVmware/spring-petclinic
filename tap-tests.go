@@ -4,9 +4,11 @@
 package main
 
 import (
+	"path/filepath"
+
 	"github.com/spf13/cobra"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
-	tapInstall "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/pkg"
+	tapInstall "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/tapinstall"
 )
 
 func main() {
@@ -21,27 +23,32 @@ func main() {
 }
 
 func installCommand() *cobra.Command {
-	var preCleanup bool
-	var postCleanup bool
+	var preCleanup, postCleanup bool
+	var configFile, valuesDir string
 	installCmd := &cobra.Command{
 		Use:   "install",
 		Short: "Install packages",
 		Run: func(cmd *cobra.Command, args []string) {
-			tapInstall.Install(preCleanup, postCleanup)
+			tapInstall.Install(configFile, valuesDir, preCleanup, postCleanup)
 		},
 	}
 	installCmd.Flags().BoolVar(&preCleanup, "pre-cleanup", false, "Cleanup namespace, secrets, repository and packages before installation.")
 	installCmd.Flags().BoolVar(&postCleanup, "post-cleanup", false, "Cleanup namespace, secrets, repository and packages after installation.")
+	installCmd.Flags().StringVarP(&configFile, "config-file", "f", filepath.Join(tap.GetCurrentDir(), "tap-install", "user-config.yaml"), "User configuration YAML file.")
+	installCmd.Flags().StringVarP(&valuesDir, "values-dir", "v", filepath.Join(tap.GetCurrentDir(), "tap-install", "values"), "Directory containing values schemas.")
 	return installCmd
 }
 
 func cleanupCommand() *cobra.Command {
+	var configFile, valuesDir string
 	cleanupCmd := &cobra.Command{
 		Use:   "clean",
 		Short: "Clean packages, secrets, package repositories etc..",
 		Run: func(cmd *cobra.Command, args []string) {
-			tapInstall.Cleanup()
+			tapInstall.Cleanup(configFile, valuesDir)
 		},
 	}
+	cleanupCmd.Flags().StringVarP(&configFile, "config-file", "f", filepath.Join(tap.GetCurrentDir(), "tap-install", "user-config.yaml"), "User configuration YAML file.")
+	cleanupCmd.Flags().StringVarP(&valuesDir, "values-dir", "v", filepath.Join(tap.GetCurrentDir(), "tap-install", "values"), "Directory containing values schemas.")
 	return cleanupCmd
 }

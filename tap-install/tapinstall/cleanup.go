@@ -1,7 +1,7 @@
 // Copyright 2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package pkg
+package tapinstall
 
 import (
 	"log"
@@ -9,8 +9,8 @@ import (
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 )
 
-func Cleanup() {
-	input := GetInput()
+func Cleanup(configFile string, valuesDir string) {
+	input := GetInput(configFile, valuesDir)
 	log.Printf("Request: Cleanup")
 	tap.UninstallPackages(input.Namespace)
 	tap.DeletePackageRepository(input.Namespace)

@@ -1,7 +1,7 @@
 // Copyright 2021 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: Apache-2.0
 
-package pkg
+package tapinstall
 
 import (
 	"log"
@@ -9,13 +9,13 @@ import (
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 )
 
-func Install(preCleanup bool, postCleanup bool) {
+func Install(configFile string, valuesDir string, preCleanup bool, postCleanup bool) {
 	log.Printf("Request: Install packages")
-	input := GetInput()
+	input := GetInput(configFile, valuesDir)
 
 	log.Printf("Request: Cleanup pre-installation (%t)", preCleanup)
 	if preCleanup {
-		Cleanup()
+		Cleanup(configFile, valuesDir)
 	}
 
 	tap.CreateNamespace(input.Namespace)
@@ -29,6 +29,6 @@ func Install(preCleanup bool, postCleanup bool) {
 
 	log.Printf("Request: Cleanup post-installation (%t)", postCleanup)
 	if postCleanup {
-		Cleanup()
+		Cleanup(configFile, valuesDir)
 	}
 }
