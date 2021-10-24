@@ -10,7 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Input struct {
+type Config struct {
 	Namespace         string                `yaml:"namespace"`
 	Secrets           []tap.Secret          `yaml:"secrets"`
 	PackageRepository tap.PackageRepository `yaml:"package_repository"`
@@ -18,12 +18,12 @@ type Input struct {
 	ValuesDirectory   string
 }
 
-func GetInput(configFile string, valuesDir string) Input {
-	inputBytes, err := os.ReadFile(configFile)
+func GetConfig(configFile string, valuesDir string) Config {
+	configBytes, err := os.ReadFile(configFile)
 	tap.CheckError(err)
-	input := Input{}
-	err = yaml.Unmarshal(inputBytes, &input)
+	config := Config{}
+	err = yaml.Unmarshal(configBytes, &config)
 	tap.CheckError(err)
-	input.ValuesDirectory = valuesDir
-	return input
+	config.ValuesDirectory = valuesDir
+	return config
 }

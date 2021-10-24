@@ -10,10 +10,10 @@ import (
 )
 
 func Cleanup(configFile string, valuesDir string) {
-	input := GetInput(configFile, valuesDir)
+	config := GetConfig(configFile, valuesDir)
 	log.Printf("Request: Cleanup")
-	tap.UninstallPackages(input.Namespace)
-	tap.DeletePackageRepository(input.Namespace)
-	tap.DeleteImagepullSecrets(input.Namespace)
-	tap.DeleteNamespace(input.Namespace)
+	tap.UninstallPackages(config.Namespace)
+	tap.DeletePackageRepository(config.Namespace)
+	tap.DeleteImagepullSecrets(config.Namespace)
+	tap.DeleteNamespace(config.Namespace)
 }

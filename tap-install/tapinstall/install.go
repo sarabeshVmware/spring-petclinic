@@ -11,21 +11,21 @@ import (
 
 func Install(configFile string, valuesDir string, preCleanup bool, postCleanup bool) {
 	log.Printf("Request: Install packages")
-	input := GetInput(configFile, valuesDir)
+	config := GetConfig(configFile, valuesDir)
 
 	log.Printf("Request: Cleanup pre-installation (%t)", preCleanup)
 	if preCleanup {
 		Cleanup(configFile, valuesDir)
 	}
 
-	tap.CreateNamespace(input.Namespace)
-	tap.CreateImagepullSecrets(input.Secrets, input.Namespace)
-	tap.AddPackageRepository(input.PackageRepository, input.Namespace)
-	tap.CheckPackageRepositoryStatus(input.PackageRepository, input.Namespace)
-	tap.ListPackages(input.Namespace)
-	// tap.ListValuesSchema(input.Packages, input.Namespace)
-	tap.InstallPackages(input.Packages, input.Namespace, input.ValuesDirectory)
-	tap.SetupDeveloperNamespacePostInstallation(input.Namespace)
+	tap.CreateNamespace(config.Namespace)
+	tap.CreateImagepullSecrets(config.Secrets, config.Namespace)
+	tap.AddPackageRepository(config.PackageRepository, config.Namespace)
+	tap.CheckPackageRepositoryStatus(config.PackageRepository, config.Namespace)
+	tap.ListPackages(config.Namespace)
+	// tap.ListValuesSchema(config.Packages, config.Namespace)
+	tap.InstallPackages(config.Packages, config.Namespace, config.ValuesDirectory)
+	tap.SetupDeveloperNamespacePostInstallation(config.Namespace)
 
 	log.Printf("Request: Cleanup post-installation (%t)", postCleanup)
 	if postCleanup {
