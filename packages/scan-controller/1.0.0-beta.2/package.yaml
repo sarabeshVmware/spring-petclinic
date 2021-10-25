@@ -19,7 +19,7 @@ spec:
         metadataStoreUrl:
           type: string
           description: Url of the Insight Metadata Store deployed in the cluster
-          default: https://metadata-store-app.metadata-store.svc.cluster.local:8443
+          default: ""
         metadataStoreCaSecret:
           type: string
           description: Name of deployed Secret with key ca.crt holding the CA Cert of the Insight Metadata Store deployed in the cluster
