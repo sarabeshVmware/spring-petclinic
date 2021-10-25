@@ -1,0 +1,55 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.3
+  image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package@sha256:774e558a6005b8164ef92d959c2b7c9299de7b7793fd3f78288c02e2e558f76d
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle:0.3.0-build5
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:00fdfd100a4e331a1a513da2a1871dd73bf89c0c341d4e749152951c2ff504d7
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.1
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:69314f3fcfcf55d8614cf857e1622c627ec9128349f614c1d1394ef4566fd13f
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.4.0
+  image: registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:e3af6fbbbce1defd461e9d7e2800bca44ec98e5901c4cd1ea428cf9acc9c7616
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/build-service/bundle:1.3.0
+  image: registry.tanzu.vmware.com/build-service/bundle@sha256:0e64239d34119c1b8140d457a238050751360617d8e8b64703d8b7b4f944054a
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
+  image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
+  image: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.3.0-build.1
+  image: registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:402ffeebd5a4c3fdaf23fb4b7ec2ff4a9044a4e0be2a07eab80536309cbe568a
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:c0ece472adf0f93efbff9ef12b0b0bd8fb68a7205d4e963f5a31bc35e5ba819c
+  image: registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:c0ece472adf0f93efbff9ef12b0b0bd8fb68a7205d4e963f5a31bc35e5ba819c
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/serverless/1.0.2-build.81.tap.beta.2@sha256:d951d50b2212ad0923c63547008a73a95d3f8ed533335e7718fa4ebfbb829a20
+  image: registry.tanzu.vmware.com/serverless/1.0.2-build.81.tap.beta.2@sha256:d951d50b2212ad0923c63547008a73a95d3f8ed533335e7718fa4ebfbb829a20
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
+  image: registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
+  image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.1
+  image: registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates@sha256:542669ad7e0b064dadc97ad28a196e4ba076adfa6d2aa41e17eefd465483f557
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
+  image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:0c918d3a86e5f2a795ba16606c376acf17418fd26d7da6cb04ae3c2cb7ab31db
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.1
+  image: registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:f173696d119d0dc9adaa32c7c4e42b8444ee5f32ca845ccd83e0f0995d6f9a1a
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1
+  image: registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1
+- annotations:
+    kbld.carvel.dev/id: registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+  image: registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+kind: ImagesLock

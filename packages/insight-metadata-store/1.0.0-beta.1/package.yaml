@@ -139,7 +139,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.1
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle:v1.0.0-beta.1
       template:
       - ytt:
           ignoreUnknownComments: true
