@@ -8,6 +8,7 @@ spec:
   version: 1.0.0-beta.2
   releaseNotes: |
     Beta release of the Supply Chain Security Tools - Scan package
+  releasedAt: 2021-10-22T20:32:45Z
   valuesSchema:
     openAPIv3:
       title: grype.scanning.apps.tanzu.vmware.com values schema
