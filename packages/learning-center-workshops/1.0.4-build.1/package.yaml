@@ -13,7 +13,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: "registry.tanzu.vmware.com/learning-center/workshops-package:1.0.4-build.1"
+          image: "dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:47ea310326a24ba4f56e9205a8c0d7a08f35eb3e8cbaab001f96c4ce53f7ef0"
       template:
       - ytt:
           paths:
