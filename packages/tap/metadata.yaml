@@ -4,9 +4,9 @@ kind: PackageMetadata
 metadata:
   name: tap.tanzu.vmware.com
 spec:
-  displayName: "TAP package"
-  longDescription: ""
-  shortDescription: ""
+  displayName: "Tanzu Application Platform"
+  shortDescription: "Package to install a set of TAP components to get you started based on your use case."
+  longDescription: "Tanzu Application Platform package lets you install a setup of TAP components in one go. You can chose your use case by just selecting a profile."
   providerName: "VMware"
   maintainers:
   - name: "Dmitriy Kalinin"
