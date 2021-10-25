@@ -1,0 +1,194 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cnrs.tanzu.vmware.com.1.0.3
+spec:
+  refName: cnrs.tanzu.vmware.com
+  version: 1.0.3
+  releasedAt: 2021-10-20T00:00:00Z
+  releaseNotes: |
+    Release 1.0.3 of the Cloud Native Runtimes app package
+  capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
+  valuesSchema:
+    openAPIv3:
+      title: cnrs.tanzu.vmware.com values schema
+      properties:
+        provider:
+          type: string
+          description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on a local Kubernetes cluster provider."
+          examples:
+            - local
+        local_dns:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: "Optional: Only for when \"provider\" is set to \"local\" and running on Kind. Set to true to enable local DNS."
+              default: false
+            domain:
+              type: string
+              description: "Optional: Set a custom domain for the Knative services."
+              examples:
+                - "example.com"
+        ingress:
+          type: object
+          properties:
+            reuse_crds:
+              type: boolean
+              description: "Optional: Only valid if a Contour instance already present in the cluster. Set to \"true\" if you want CNR to re-use the cluster's existing Contour CRDs."
+              default: false
+            external:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+            internal:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+        pdb:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: "Optional: Set to true to enable Pod Disruption Budget. If provider local is set to \"local\", the PDB will be disabled automatically."
+              default: true
+  template:
+    spec:
+      fetch:
+        - imgpkgBundle:
+            image: registry.tanzu.vmware.com/serverless/1.0.3-build.112.tap.beta.3@sha256:8f4249416705dd7221073677210c251bf72ba7c1bbec788e77785443cd88c37b
+      template:
+        - kbld:
+            paths:
+              - .imgpkg/images.yml
+              - config/kbld.yaml
+              - config/serving
+              - config/net-contour
+              - config/eventing
+              - config/net-certmanager
+              - config/discovery
+              - config/aws-event-sources
+        - ytt:
+            inline:
+              paths:
+                secretgen.yaml: |
+                  #@ load("@ytt:overlay", "overlay")
+                  #@ load("values.star", "values")
+                  #@ namespaces = ["knative-serving", "knative-eventing", "vmware-sources", "knative-discovery", "knative-sources", "triggermesh"]
+                  #@ if not(values.ingress.external.namespace):
+                  #@ namespaces.append("contour-external")
+                  #@ end
+                  #@ if not(values.ingress.internal.namespace):
+                  #@ namespaces.append("contour-internal")
+                  #@ end
+                  #@ for ns in namespaces:
+                  ---
+                  apiVersion: v1
+                  kind: Secret
+                  metadata:
+                    name:  canonical-registry-secret
+                    namespace: #@ ns
+                    annotations:
+                        secretgen.carvel.dev/image-pull-secret: ""
+                  type: kubernetes.io/dockerconfigjson
+                  data:
+                    .dockerconfigjson: e30K
+                  #@ end
+                  ---
+
+                  #@ if not(values.ingress.external.namespace) or not(values.ingress.internal.namespace):
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"name":"contour"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Job","spec":{"template":{"metadata": {"labels": {"app": "contour-certgen"}}}}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"DaemonSet","metadata":{"name":"envoy"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+                  #@ end
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"knative-serving"}}),expects="4+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"knative-eventing"}}),expects="4+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"vmware-sources"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"knative-sources"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"knative-discovery"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+
+                  #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"triggermesh"}}),expects="1+"
+                  ---
+                  spec:
+                    template:
+                      spec:
+                        #@overlay/match missing_ok=True
+                        imagePullSecrets:
+                        - name: canonical-registry-secret
+            ignoreUnknownComments: true
+            paths:
+              - '-'
+              - config/ytt/
+              - config/kapp.yaml
+            fileMarks:
+              - registry-secret.yaml:exclude=true
+      deploy:
+        - kapp: {}

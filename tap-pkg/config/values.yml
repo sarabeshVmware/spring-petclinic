@@ -18,22 +18,16 @@ install_tekton: true
 api_portal: {}
 
 #@schema/type any=True
-app_accelerator:
-  server:
-    service_type: "NodePort"
-    watched_namespace: "default"
-    engine_invocation_url: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
-  engine:
-    service_type: "ClusterIP"
+app_accelerator: {}
 
 #@schema/type any=True
-app_live_view:
-  connector_namespaces: [default]
-  server_namespace: app-live-view
+app_live_view: {}
 
 #@schema/type any=True
-cnrs:
-  provider: local
+cartographer: {}
+
+#@schema/type any=True
+cnrs: {}
 
 #@schema/type any=True
 default_supply_chain: {}
