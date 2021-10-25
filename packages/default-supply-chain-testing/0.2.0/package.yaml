@@ -44,7 +44,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
+          image: dev.registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
       template:
       - ytt:
           ignoreUnknownComments: true

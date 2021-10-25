@@ -39,7 +39,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.3
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.3
       template:
       - ytt:
           paths:
