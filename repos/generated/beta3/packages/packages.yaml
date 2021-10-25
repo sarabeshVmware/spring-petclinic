@@ -2566,7 +2566,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
+          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
       template:
       - ytt:
           paths:

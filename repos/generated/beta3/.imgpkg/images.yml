@@ -50,9 +50,9 @@ images:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
   image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
 - annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
+  image: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:ee1d48f63f6cea7b3faf243eff911ae87627309d81eafdf746495e2c7dfef440
+- annotations:
     kbld.carvel.dev/id: registry.tanzu.vmware.com/build-service/bundle:1.3.0
   image: registry.tanzu.vmware.com/build-service/bundle@sha256:0e64239d34119c1b8140d457a238050751360617d8e8b64703d8b7b4f944054a
-- annotations:
-    kbld.carvel.dev/id: registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
-  image: registry.tanzu.vmware.com/tap-gui/bundle@sha256:ee1d48f63f6cea7b3faf243eff911ae87627309d81eafdf746495e2c7dfef440
 kind: ImagesLock
