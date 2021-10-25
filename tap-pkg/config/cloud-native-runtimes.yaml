@@ -15,7 +15,7 @@ spec:
   packageRef:
     refName: cnrs.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.2
+      constraints: 1.0.3
   values:
   - secretRef:
       name: cloud-native-runtimes-values

@@ -13,7 +13,7 @@ spec:
   packageRef:
     refName: scp-toolkit.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0
+      constraints: 0.4.0-rc.1
       prereleases: {}
 
 #@ end
