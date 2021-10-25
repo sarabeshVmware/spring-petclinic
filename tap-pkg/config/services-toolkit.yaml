@@ -6,14 +6,14 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: scp-toolkit
+  name: services-toolkit
   namespace: tap-install
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: scp-toolkit.tanzu.vmware.com
+    refName: services-toolkit.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0
+      constraints: 0.4.0-rc.1
       prereleases: {}
 
 #@ end

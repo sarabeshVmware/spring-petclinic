@@ -43,3 +43,6 @@ image_policy_webhook:
 buildservice:
   tanzunet_username: ""
   tanzunet_password: ""
+
+#@schema/type any=True
+tap_gui: {}
