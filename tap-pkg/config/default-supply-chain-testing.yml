@@ -19,7 +19,6 @@ spec:
     refName: default-supply-chain-testing.tanzu.vmware.com
     versionSelection:
       constraints: 0.2.0
-      prereleases: {}
   values:
   - secretRef:
       name: default-supply-chain-testing-values

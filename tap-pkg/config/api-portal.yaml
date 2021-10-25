@@ -15,8 +15,7 @@ spec:
   packageRef:
     refName: api-portal.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.2
-      prereleases: {}
+      constraints: 1.0.3
   values:
   - secretRef:
       name: api-portal-values
