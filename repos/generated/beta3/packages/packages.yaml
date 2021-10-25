@@ -28,7 +28,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1
+          image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1
       template:
       - kbld:
           paths:
@@ -71,7 +71,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
+          image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:50bad1c57ecf94a7e3cee025c4cf023cbbd846bd382456a8eeb4d6d4fc69e30f
       template:
       - kbld:
           paths:
@@ -113,7 +113,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
       template:
       - kbld:
           paths:
@@ -165,7 +165,7 @@ spec:
       - kapp: {}
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:c0ece472adf0f93efbff9ef12b0b0bd8fb68a7205d4e963f5a31bc35e5ba819c
+          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:c0ece472adf0f93efbff9ef12b0b0bd8fb68a7205d4e963f5a31bc35e5ba819c
       template:
       - ytt:
           paths:
@@ -210,7 +210,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
       template:
       - ytt:
           ignoreUnknownComments: true
@@ -379,7 +379,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.1
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.1
       template:
       - ytt:
           paths:
@@ -461,7 +461,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.1
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.1
       template:
       - ytt:
           paths:
@@ -534,7 +534,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
+          image: dev.registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
       template:
       - ytt:
           ignoreUnknownComments: true
@@ -617,7 +617,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.4.0
+          image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.4.0
       template:
       - ytt:
           paths:
@@ -665,7 +665,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.3.0-build.1
+          image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.3.0-build.1
       template:
       - ytt:
           paths:
@@ -729,7 +729,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
+          image: dev.registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
       template:
       - ytt:
           paths:
@@ -940,7 +940,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
       template:
       - ytt:
           paths:
@@ -1055,13 +1055,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: cnrs.tanzu.vmware.com.1.0.2
+  name: cnrs.tanzu.vmware.com.1.0.3
 spec:
   refName: cnrs.tanzu.vmware.com
-  version: 1.0.2
-  releasedAt: 2021-08-30T00:00:00Z
+  version: 1.0.3
+  releasedAt: 2021-10-20T00:00:00Z
   releaseNotes: |
-    Release 1.0.2 of the Cloud Native Runtimes app package
+    Release 1.0.3 of the Cloud Native Runtimes app package
   capacityRequirementsDescription: Cluster with one node Requires >6 CPUS, >6.0GB RAM, >30GB storage, cluster with multiple nodes Requires >2 CPUS, >4.0GB RAM, >20GB storage
   valuesSchema:
     openAPIv3:
@@ -1069,10 +1069,9 @@ spec:
       properties:
         provider:
           type: string
-          description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on TKGs or on a local Kubernetes cluster provider."
+          description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on a local Kubernetes cluster provider."
           examples:
             - local
-            - tkgs
         local_dns:
           type: object
           properties:
@@ -1115,7 +1114,7 @@ spec:
     spec:
       fetch:
         - imgpkgBundle:
-            image: registry.tanzu.vmware.com/serverless/1.0.2-build.81.tap.beta.2@sha256:d951d50b2212ad0923c63547008a73a95d3f8ed533335e7718fa4ebfbb829a20
+            image: dev.registry.tanzu.vmware.com/serverless/1.0.3-build.112.tap.beta.3@sha256:8f4249416705dd7221073677210c251bf72ba7c1bbec788e77785443cd88c37b
       template:
         - kbld:
             paths:
@@ -1315,6 +1314,1262 @@ spec:
       - ytt:
           paths:
           - values.yaml
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: tap-gui.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Application Platform GUI"
+  longDescription: "web app graphical user interface for Tanzu Application Platform"
+  shortDescription: "web app graphical user interface for Tanzu Application Platform"
+  providerName: "VMware"
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: "VMware"
+  iconSVGBase64: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBvbHlnb24gcG9pbnRzPSI3LjQyNCAwLjIyIDcuNDI0IDAuOTI1IDIuNjEgMy4yNDMgMi4wNTcgMi44MDMgNy40MjQgMC4yMiIgZmlsbD0iIzAwYzFkNSIvPjxwb2x5Z29uIHBvaW50cz0iMTMuNzgyIDIuODAzIDEzLjIzIDMuMjQzIDguNDE2IDAuOTI1IDguNDE2IDAuMjIgMTMuNzgyIDIuODAzIiBmaWxsPSIjMDBjMWQ1Ii8+PHBvbHlnb24gcG9pbnRzPSIxNS41MjIgOC40ODggMTQuODcgOC40ODggMTMuODUgNC4wMTggMTQuNDAxIDMuNTggMTUuNTIyIDguNDg4IiBmaWxsPSIjMWQ0MjhhIi8+PHBvbHlnb24gcG9pbnRzPSIxLjk5IDQuMDE4IDAuODAxIDkuMjI4IDAuMTEzIDkuMzg2IDEuNDM5IDMuNTggMS45OSA0LjAxOCIgZmlsbD0iIzFkNDI4YSIvPjxwb2x5Z29uIHBvaW50cz0iNC4zNTMgMTQuMzc0IDQuMDQ3IDE1LjAxIDAuMzM0IDEwLjM1NCAxLjAyMSAxMC4xOTYgNC4zNTMgMTQuMzc0IiBmaWxsPSIjNzhiZTIwIi8+PHBvbHlnb24gcG9pbnRzPSI1LjI0OCAxNC44MDYgNy45ODIgMTQuODA2IDcuOTgyIDE1LjQ0MSA0Ljk0MiAxNS40NDEgNS4yNDggMTQuODA2IiBmaWxsPSIjMDBjMWQ1Ii8+PHBhdGggZD0iTTExLjQ1NiwxMS42di0uMDY0bTEuMDA1LTEuMjIxSDEyLjQzTTEwLjksMTIuMjM2aDB2MFptLjU1OC0uNjM2di0uMDY0IiBmaWxsPSJub25lIi8+PHBvbHlnb24gcG9pbnRzPSIxMy42OTEgOC40ODggMTMuMDM5IDguNDg4IDEyLjMgNS4yNSAxMi4zIDUuMjUgMTIuMTc2IDQuNzA4IDExLjY4NCA0LjQ3MSA4LjQxNiAyLjg5NyA3LjkyIDIuNjU4IDcuNDI0IDIuODk3IDQuMTU2IDQuNDcxIDMuNjYzIDQuNzA4IDMuNTQgNS4yNSAyLjczNCA4Ljc4MiAyLjYxMiA5LjMxNCAyLjk1OSA5Ljc0OSA1LjIxNiAxMi41NzkgNS41NTggMTMuMDA3IDcuOTgyIDEzLjAwNyA3Ljk4MiAxMy42NDMgNS4yNTIgMTMuNjQzIDQuOTEgMTMuMjE1IDIuMjczIDkuOTA3IDEuOTI0IDkuNDcxIDIuMDQ2IDguOTQxIDIuOTg4IDQuODExIDMuMTEyIDQuMjY5IDMuNjA0IDQuMDMyIDcuNDI0IDIuMTkyIDcuOTIgMS45NTMgOC40MTYgMi4xOTIgMTIuMjM2IDQuMDMyIDEyLjcyOCA0LjI2OSAxMi44NTIgNC44MTEgMTMuNjkxIDguNDg4IiBmaWxsPSIjMDA5MWRhIi8+PHBhdGggZD0iTTE0LjEwNywxMi4wNjRoLS41NTZ2LS43M2gtMi4xdi43M0g5LjE3NFYxNS4wNWg0LjYxN3YuNzNoMi4xVjEzLjY4NWgtMi4xdi43M0g5LjgwOVYxMi43aDEuNjQ3di43M2gyLjF2LS42MTloLS4wMDVsLjAwNS0uMDA3di0uMWgyLjMzNlY5LjY3OUgxMS4yNjl2LS43M2gtMi4xdjIuMWgyLjF2LS43MjloMy45ODJ2MS43NDlIMTQuMTQybS0zLjUwOC0xLjY1NUg5LjgwOVY5LjU4NGguODI1Wm0zLjc5MiwzLjkxMWguODI1di44MjVoLS44MjVaTTEwLjksMTIuMjM2aDBsMCwwWm0yLjAxNi41NTloLS44MjVWMTEuOTdoLjgyNVoiIGZpbGw9IiMxZDQyOGEiLz48cG9seWdvbiBwb2ludHM9IjEwLjkgMTIuMjMzIDEwLjkgMTIuMjM2IDEwLjg5OCAxMi4yMzYgMTAuOSAxMi4yMzMiIGZpbGw9IiMxZDQyOGEiLz48cGF0aCBkPSJNMTMuNTQ2LDEyLjgxMWguMDA1VjEyLjhaIiBmaWxsPSIjMWQ0MjhhIi8+PC9zdmc+
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap-gui.tanzu.vmware.com.0.3.0-rc.1
+spec:
+  refName: tap-gui.tanzu.vmware.com
+  version: 0.3.0-rc.1
+  releasedAt: "2021-10-20T14:46:26Z"
+  releaseNotes: various improvements to Workload Visibility plugin
+  valuesSchema:
+    openAPIv3:
+      title: Tanzu Application Platform GUI Configuration Schema
+      description: |
+        This is the schema describing the structure of the Tanzu Application
+        Platform GUI config, including the structure of the Backstage
+        app-config.yml file.
+      properties:
+        namespace:
+          type: string
+          description: |
+            Namespace in which the Tanzu Application Platform GUI workloads will
+            be applied. This namespace will be created as part of the deploy.
+        service_type:
+          type: string
+          description: |
+            the type for the Kubernetes Service which exposes Backstage. Common
+            values are "ClusterIP", "NodePort" and "LoadBalancer".
+        app-config:
+          $schema: https://backstage.io/schema/config-v1
+          title: Application Configuration Schema
+          type: object
+          properties:
+            app:
+              type: object
+              description: Generic frontend configuration.
+              required:
+              - baseUrl
+              properties:
+                baseUrl:
+                  type: string
+                  visibility: frontend
+                  description: The public absolute root URL that the frontend.
+                title:
+                  type: string
+                  visibility: frontend
+                  description: The title of the app, as shown in the Backstage web interface.
+                googleAnalyticsTrackingId:
+                  type: string
+                  visibility: frontend
+                  description: Tracking ID for Google Analytics
+                  examples:
+                  - UA-000000-0
+                datadogRum:
+                  type: object
+                  description: Datadog RUM events configuration
+                  required:
+                  - clientToken
+                  - applicationId
+                  properties:
+                    env:
+                      type: string
+                      visibility: frontend
+                      description: Environment for Datadog RUM events
+                    clientToken:
+                      type: string
+                      visibility: frontend
+                      description: clientToken for Datadog RUM events
+                    applicationId:
+                      type: string
+                      visibility: frontend
+                      description: applicationId for Datadog RUM events
+                    site:
+                      type: string
+                      visibility: frontend
+                      description: site for Datadog RUM events
+                listen:
+                  type: object
+                  description: Listening configuration for local development
+                  properties:
+                    host:
+                      type: string
+                      visibility: frontend
+                      description: The host that the frontend should be bound to. Only used for local development.
+                    port:
+                      type: number
+                      visibility: frontend
+                      description: The port that the frontend should be bound to. Only used for local development.
+                support:
+                  description: Information about support of this Backstage instance and how to contact the integrator team.
+                  type: object
+                  required:
+                  - items
+                  - url
+                  properties:
+                    url:
+                      description: The primary support url.
+                      visibility: frontend
+                      type: string
+                    items:
+                      description: A list of categorized support item groupings.
+                      type: array
+                      items:
+                        type: object
+                        required:
+                        - links
+                        - title
+                        properties:
+                          title:
+                            description: The title of the support item grouping.
+                            visibility: frontend
+                            type: string
+                          icon:
+                            description: An optional icon for the support item grouping.
+                            visibility: frontend
+                            type: string
+                          links:
+                            description: A list of support links for the Backstage instance inside this grouping.
+                            type: array
+                            items:
+                              type: object
+                              required:
+                              - url
+                              properties:
+                                url:
+                                  visibility: frontend
+                                  type: string
+                                title:
+                                  visibility: frontend
+                                  type: string
+            auth:
+              type: object
+              description: Configuration that provides information on available configured authentication providers.
+              properties:
+                providers:
+                  type: object
+                  description: The available auth-provider options and attributes
+                  additionalProperties:
+                    type: object
+                    visibility: frontend
+                  properties:
+                    google:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    github:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    gitlab:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    saml:
+                      type: object
+                      required:
+                      - cert
+                      - entryPoint
+                      - issuer
+                      properties:
+                        entryPoint:
+                          type: string
+                        logoutUrl:
+                          type: string
+                        issuer:
+                          type: string
+                        cert:
+                          type: string
+                        privateKey:
+                          type: string
+                        authnContext:
+                          type: array
+                          items:
+                            type: string
+                        identifierFormat:
+                          type: string
+                        decryptionPvk:
+                          type: string
+                        signatureAlgorithm:
+                          enum:
+                          - sha256
+                          - sha512
+                          type: string
+                        digestAlgorithm:
+                          type: string
+                        acceptedClockSkewMs:
+                          type: number
+                    okta:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    oauth2:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        required:
+                        - authorizationUrl
+                        - clientId
+                        - clientSecret
+                        - tokenUrl
+                        properties:
+                          clientId:
+                            type: string
+                          clientSecret:
+                            type: string
+                          authorizationUrl:
+                            type: string
+                          tokenUrl:
+                            type: string
+                          scope:
+                            type: string
+                          disableRefresh:
+                            type: boolean
+                    oidc:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    auth0:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    microsoft:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    onelogin:
+                      type: object
+                      additionalProperties:
+                        type: object
+                        additionalProperties:
+                          type: string
+                    awsalb:
+                      type: object
+                      required:
+                      - region
+                      properties:
+                        issuer:
+                          type: string
+                        region:
+                          type: string
+                environment:
+                  description: |-
+                    The 'environment' attribute added as an optional parameter to have configurable environment value for `auth.providers`.
+                    default value: 'development'
+                    optional values: 'development' | 'production'
+                  visibility: frontend
+                  type: string
+                session:
+                  type: object
+                  properties:
+                    secret:
+                      description: The secret attribute of session object.
+                      visibility: secret
+                      type: string
+            backend:
+              description: Generic backend configuration.
+              type: object
+              required:
+              - baseUrl
+              - database
+              - listen
+              properties:
+                baseUrl:
+                  description: The public absolute root URL that the backend is reachable at, from the browser's perspective.
+                  visibility: frontend
+                  type: string
+                listen:
+                  description: Address that the backend should listen to.
+                  anyOf:
+                  - type: object
+                    properties:
+                      address:
+                        description: Address of the interface that the backend should bind to.
+                        type: string
+                      port:
+                        description: Port that the backend should listen to.
+                        type:
+                        - string
+                        - number
+                  - type: string
+                https:
+                  description: |-
+                    HTTPS configuration for the backend. If omitted the backend will serve HTTP.
+
+                    Setting this to `true` will cause self-signed certificates to be generated, which
+                    can be useful for local development or other non-production scenarios.
+                  anyOf:
+                  - type: object
+                    properties:
+                      certificate:
+                        description: Certificate configuration
+                        type: object
+                        required:
+                        - cert
+                        - key
+                        properties:
+                          cert:
+                            description: PEM encoded certificate. Use $file to load in a file
+                            type: string
+                          key:
+                            description: PEM encoded certificate key. Use $file to load in a file.
+                            visibility: secret
+                            type: string
+                  - enum:
+                    - true
+                    type: boolean
+                database:
+                  description: Database connection configuration, select base database type using the `client` field
+                  type: object
+                  required:
+                  - client
+                  - connection
+                  properties:
+                    client:
+                      description: Default database client to use
+                      enum:
+                      - pg
+                      - sqlite3
+                      type: string
+                    connection:
+                      description: Base database connection string or Knex object
+                      anyOf:
+                      - type: object
+                        properties: {}
+                        additionalProperties: true
+                      - type: string
+                    prefix:
+                      description: Database name prefix override
+                      type: string
+                    ensureExists:
+                      description: |-
+                        Whether to ensure the given database exists by creating it if it does not.
+                        Defaults to true if unspecified.
+                      type: boolean
+                    plugin:
+                      description: Plugin specific database configuration and client override
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          client:
+                            description: Database client override
+                            enum:
+                            - pg
+                            - sqlite3
+                            type: string
+                          connection:
+                            description: Database connection string or Knex object override
+                            anyOf:
+                            - type: object
+                              properties: {}
+                              additionalProperties: true
+                            - type: string
+                          ensureExists:
+                            description: |-
+                              Whether to ensure the given database exists by creating it if it does not.
+                              Defaults to base config if unspecified.
+                            type: boolean
+                cache:
+                  description: Cache connection configuration, select cache type using the `store` field
+                  anyOf:
+                  - type: object
+                    properties:
+                      store:
+                        type: string
+                        enum:
+                        - memory
+                    required:
+                    - store
+                  - type: object
+                    properties:
+                      store:
+                        type: string
+                        enum:
+                        - memcache
+                      connection:
+                        description: A memcache connection string in the form `user:pass@host:port`.
+                        type: string
+                    required:
+                    - connection
+                    - store
+                cors:
+                  type: object
+                  properties:
+                    origin:
+                      anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: string
+                    methods:
+                      anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: string
+                    allowedHeaders:
+                      anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: string
+                    exposedHeaders:
+                      anyOf:
+                      - type: array
+                        items:
+                          type: string
+                      - type: string
+                    credentials:
+                      type: boolean
+                    maxAge:
+                      type: number
+                    preflightContinue:
+                      type: boolean
+                    optionsSuccessStatus:
+                      type: number
+                reading:
+                  description: |-
+                    Configuration related to URL reading, used for example for reading catalog info
+                    files, scaffolder templates, and techdocs content.
+                  type: object
+                  properties:
+                    allow:
+                      description: |-
+                        A list of targets to allow outgoing requests to. Users will be able to make
+                        requests on behalf of the backend to the targets that are allowed by this list.
+                      type: array
+                      items:
+                        type: object
+                        required:
+                        - host
+                        properties:
+                          host:
+                            description: |-
+                              A host to allow outgoing requests to, being either a full host or
+                              a subdomain wildcard pattern with a leading `*`. For example `example.com`
+                              and `*.example.com` are valid values, `prod.*.example.com` is not.
+                              The host may also contain a port, for example `example.com:8080`.
+                            type: string
+                csp:
+                  description: |-
+                    Content Security Policy options.
+
+                    The keys are the plain policy ID, e.g. "upgrade-insecure-requests". The
+                    values are on the format that the helmet library expects them, as an
+                    array of strings. There is also the special value false, which means to
+                    remove the default value that Backstage puts in place for that policy.
+                  type: object
+                  additionalProperties:
+                    anyOf:
+                    - type: array
+                      items:
+                        type: string
+                    - enum:
+                      - false
+                      type: boolean
+            organization:
+              description: Configuration that provides information about the organization that the app is for.
+              type: object
+              properties:
+                name:
+                  description: The name of the organization that the app belongs to.
+                  visibility: frontend
+                  type: string
+            homepage:
+              type: object
+              properties:
+                clocks:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - label
+                    - timezone
+                    properties:
+                      label:
+                        visibility: frontend
+                        type: string
+                      timezone:
+                        visibility: frontend
+                        type: string
+            techdocs:
+              description: Configuration options for the techdocs plugin
+              type: object
+              required:
+              - builder
+              properties:
+                builder:
+                  description: Documentation building process depends on the builder attr
+                  visibility: frontend
+                  enum:
+                  - external
+                  - local
+                  type: string
+                legacyUseCaseSensitiveTripletPaths:
+                  description: Allows fallback to case-sensitive triplets in case of migration issues.
+                  visibility: frontend
+                  type: boolean
+                requestUrl:
+                  visibility: frontend
+                  type: string
+                generator:
+                  description: Techdocs generator information
+                  type: object
+                  required:
+                  - runIn
+                  properties:
+                    runIn:
+                      description: Where to run the techdocs (mkdocs) generator
+                      enum:
+                      - docker
+                      - local
+                      type: string
+                    dockerImage:
+                      description: Override the default techdocs docker image
+                      type: string
+                    pullImage:
+                      description: Pull the latest docker image
+                      type: boolean
+                generators:
+                  description: Techdocs generator information
+                  type: object
+                  required:
+                  - techdocs
+                  properties:
+                    techdocs:
+                      enum:
+                      - docker
+                      - local
+                      type: string
+                publisher:
+                  description: Techdocs publisher information
+                  anyOf:
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - local
+                    required:
+                    - type
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - awsS3
+                      awsS3:
+                        description: Required when 'type' is set to awsS3
+                        type: object
+                        required:
+                        - bucketName
+                        properties:
+                          credentials:
+                            description: |-
+                              (Optional) Credentials used to access a storage bucket.
+                              If not set, environment variables or aws config file will be used to authenticate.
+                            visibility: secret
+                            type: object
+                            required:
+                            - accessKeyId
+                            - secretAccessKey
+                            properties:
+                              accessKeyId:
+                                description: User access key id
+                                visibility: secret
+                                type: string
+                              secretAccessKey:
+                                description: User secret access key
+                                visibility: secret
+                                type: string
+                              roleArn:
+                                description: ARN of role to be assumed
+                                visibility: backend
+                                type: string
+                          bucketName:
+                            description: (Required) Cloud Storage Bucket Name
+                            visibility: backend
+                            type: string
+                          region:
+                            description: |-
+                              (Optional) AWS Region.
+                              If not set, AWS_REGION environment variable or aws config file will be used.
+                            visibility: secret
+                            type: string
+                          endpoint:
+                            description: |-
+                              (Optional) AWS Endpoint.
+                              The endpoint URI to send requests to. The default endpoint is built from the configured region.
+                            visibility: secret
+                            type: string
+                          s3ForcePathStyle:
+                            description: |-
+                              (Optional) Whether to use path style URLs when communicating with S3.
+                              Defaults to false.
+                              This allows providers like LocalStack, Minio and Wasabi (and possibly others) to be used to host tech docs.
+                            visibility: backend
+                            type: boolean
+                    required:
+                    - type
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - openStackSwift
+                      openStackSwift:
+                        description: Required when 'type' is set to openStackSwift
+                        type: object
+                        required:
+                        - authUrl
+                        - containerName
+                        - credentials
+                        - swiftUrl
+                        properties:
+                          credentials:
+                            description: (Required) Credentials used to access a storage bucket.
+                            visibility: secret
+                            type: object
+                            required:
+                            - id
+                            - secret
+                            properties:
+                              id:
+                                description: (Required) Application Credential ID
+                                visibility: secret
+                                type: string
+                              secret:
+                                description: (Required) Application Credential Secret
+                                visibility: secret
+                                type: string
+                          containerName:
+                            description: (Required) Cloud Storage Container Name
+                            visibility: backend
+                            type: string
+                          authUrl:
+                            description: (Required) Auth url sometimes OpenStack uses different port check your OpenStack apis.
+                            visibility: backend
+                            type: string
+                          swiftUrl:
+                            description: (Required) Swift URL
+                            visibility: backend
+                            type: string
+                    required:
+                    - type
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - azureBlobStorage
+                      azureBlobStorage:
+                        description: Required when 'type' is set to azureBlobStorage
+                        type: object
+                        required:
+                        - containerName
+                        - credentials
+                        properties:
+                          credentials:
+                            description: (Required) Credentials used to access a storage container.
+                            visibility: secret
+                            type: object
+                            required:
+                            - accountName
+                            properties:
+                              accountName:
+                                description: Account access name
+                                visibility: secret
+                                type: string
+                              accountKey:
+                                description: |-
+                                  (Optional) Account secret primary key
+                                  If not set, environment variables will be used to authenticate.
+                                visibility: secret
+                                type: string
+                          containerName:
+                            description: (Required) Cloud Storage Container Name
+                            visibility: backend
+                            type: string
+                    required:
+                    - type
+                  - type: object
+                    properties:
+                      type:
+                        type: string
+                        enum:
+                        - googleGcs
+                      googleGcs:
+                        description: Required when 'type' is set to googleGcs
+                        type: object
+                        required:
+                        - bucketName
+                        properties:
+                          bucketName:
+                            description: (Required) Cloud Storage Bucket Name
+                            visibility: backend
+                            type: string
+                          credentials:
+                            description: |-
+                              (Optional) API key used to write to a storage bucket.
+                              If not set, environment variables will be used to authenticate.
+                            visibility: secret
+                            type: string
+                    required:
+                    - type
+                storageUrl:
+                  type: string
+            catalog:
+              description: Configuration options for the catalog plugin.
+              type: object
+              properties:
+                rules:
+                  description: |-
+                    Rules to apply to all catalog entities, from any location.
+
+                    An undefined list of matchers means match all, an empty list of
+                    matchers means match none.
+
+                    This is commonly used to put in what amounts to a whitelist of kinds
+                    that regular users of Backstage are permitted to register locations
+                    for. This can be used to stop them from registering yaml files
+                    describing for example a Group entity called "admin" that they make
+                    themselves members of, or similar.
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - allow
+                    properties:
+                      allow:
+                        description: |-
+                          Allow entities of these particular kinds.
+
+                          E.g. ["Component", "API", "Template", "Location"]
+                        type: array
+                        items:
+                          type: string
+                readonly:
+                  description: |-
+                    Readonly defines whether the catalog allows writes after startup.
+
+                    Setting 'readonly=false' allows users to register their own components.
+                    This is the default value.
+
+                    Setting 'readonly=true' configures catalog to only allow reads. This can
+                    be used in combination with static locations to only serve operator
+                    provided locations. Effectively this removes the ability to register new
+                    components to a running backstage instance.
+                  type: boolean
+                locations:
+                  description: |-
+                    A set of static locations that the catalog shall always keep itself
+                    up-to-date with. This is commonly used for large, permanent integrations
+                    that are defined by the Backstage operators at an organization, rather
+                    than individual things that users register dynamically.
+
+                    These have (optional) rules of their own. These override what the global
+                    rules above specify. This way, you can prevent everybody from register
+                    e.g. User and Group entities, except for one or a few static locations
+                    that have those two kinds explicitly allowed.
+
+                    For example:
+
+                    ```yaml
+                    rules:
+                      - allow: [Component, API, Template, Location]
+                    locations:
+                      - type: url
+                        target: https://github.com/org/repo/blob/master/users.yaml
+                        rules:
+                          - allow: [User, Group]
+                      - type: url
+                        target: https://github.com/org/repo/blob/master/systems.yaml
+                        rules:
+                          - allow: [System]
+                    ```
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - target
+                    - type
+                    properties:
+                      type:
+                        description: The type of location, e.g. "url".
+                        type: string
+                      target:
+                        description: |-
+                          The target URL of the location, e.g.
+                          "https://github.com/org/repo/blob/master/users.yaml".
+                        type: string
+                      rules:
+                        description: |-
+                          Optional extra rules that apply to this particular location.
+
+                          These override the global rules above.
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - allow
+                          properties:
+                            allow:
+                              description: |-
+                                Allow entities of these particular kinds.
+
+                                E.g. ["Group", "User"]
+                              type: array
+                              items:
+                                type: string
+                processors:
+                  description: List of processor-specific options and attributes
+                  type: object
+                  properties:
+                    githubOrg:
+                      description: GithubOrgReaderProcessor configuration
+                      type: object
+                      required:
+                      - providers
+                      properties:
+                        providers:
+                          description: The configuration parameters for each single GitHub org provider.
+                          type: array
+                          items:
+                            type: object
+                            required:
+                            - target
+                            properties:
+                              target:
+                                description: |-
+                                  The prefix of the target that this matches on, e.g.
+                                  "https://github.com", with no trailing slash.
+                                type: string
+                              apiBaseUrl:
+                                description: |-
+                                  The base URL of the API of this provider, e.g.
+                                  "https://api.github.com", with no trailing slash.
+
+                                  May be omitted specifically for GitHub; then it will be deduced.
+                                type: string
+                              token:
+                                description: |-
+                                  The authorization token to use for requests to this provider.
+
+                                  If no token is specified, anonymous access is used.
+                                visibility: secret
+                                type: string
+                    githubMultiOrg:
+                      description: GithubMultiOrgReaderProcessor configuration
+                      type: object
+                      required:
+                      - orgs
+                      properties:
+                        orgs:
+                          description: The configuration parameters for each GitHub org to process.
+                          type: array
+                          items:
+                            type: object
+                            required:
+                            - name
+                            properties:
+                              name:
+                                description: The name of the GitHub org to process.
+                                type: string
+                              groupNamespace:
+                                description: |-
+                                  The namespace of the group created for this org.
+
+                                  Defaults to org name if omitted.
+                                type: string
+                              userNamespace:
+                                description: |-
+                                  The namespace of the users created from this org.
+
+                                  Defaults to empty string if omitted.
+                                type: string
+                    awsOrganization:
+                      description: AwsOrganizationCloudAccountProcessor configuration
+                      type: object
+                      required:
+                      - provider
+                      properties:
+                        provider:
+                          type: object
+                          properties:
+                            roleArn:
+                              description: The role to be assumed by this processor
+                              type: string
+            kubernetes:
+              type: object
+              required:
+              - clusterLocatorMethods
+              - serviceLocatorMethod
+              properties:
+                objectTypes:
+                  type: array
+                  items:
+                    enum:
+                    - configmaps
+                    - deployments
+                    - horizontalpodautoscalers
+                    - ingresses
+                    - pods
+                    - replicasets
+                    - services
+                    type: string
+                serviceLocatorMethod:
+                  type: object
+                  required:
+                  - type
+                  properties:
+                    type:
+                      type: string
+                      enum:
+                      - multiTenant
+                clusterLocatorMethods:
+                  type: array
+                  items:
+                    anyOf:
+                    - type: object
+                      properties:
+                        type:
+                          visibility: frontend
+                          type: string
+                          enum:
+                          - gke
+                        projectId:
+                          visibility: frontend
+                          type: string
+                        region:
+                          visibility: frontend
+                          type: string
+                        skipTLSVerify:
+                          visibility: frontend
+                          type: boolean
+                      required:
+                      - projectId
+                      - type
+                    - type: object
+                      properties:
+                        type:
+                          visibility: frontend
+                          type: string
+                          enum:
+                          - config
+                        clusters:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                            - authProvider
+                            - name
+                            - url
+                            properties:
+                              url:
+                                visibility: frontend
+                                type: string
+                              name:
+                                visibility: frontend
+                                type: string
+                              serviceAccountToken:
+                                visibility: secret
+                                type: string
+                              authProvider:
+                                visibility: frontend
+                                enum:
+                                - aws
+                                - google
+                                - serviceAccount
+                                type: string
+                              skipTLSVerify:
+                                visibility: frontend
+                                type: boolean
+                      required:
+                      - clusters
+                      - type
+                customResources:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - apiVersion
+                    - group
+                    - plural
+                    properties:
+                      group:
+                        type: string
+                      apiVersion:
+                        type: string
+                      plural:
+                        type: string
+            proxy:
+              description: |-
+                A list of forwarding-proxies. Each key is a route to match,
+                below the prefix that the proxy plugin is mounted on. It must
+                start with a '/'.
+              type: object
+              additionalProperties:
+                anyOf:
+                - type: object
+                  properties:
+                    target:
+                      description: Target of the proxy. Url string to be parsed with the url module.
+                      type: string
+                    headers:
+                      description: Object with extra headers to be added to target requests.
+                      type: object
+                      additionalProperties:
+                        type: string
+                    changeOrigin:
+                      description: 'Changes the origin of the host header to the target URL. Default: true.'
+                      type: boolean
+                    pathRewrite:
+                      description: |-
+                        Rewrite target's url path. Object-keys will be used as RegExp to match paths.
+                        If pathRewrite is not specified, it is set to a single rewrite that removes the entire prefix and route.
+                      type: object
+                      additionalProperties:
+                        type: string
+                    allowedMethods:
+                      description: 'Limit the forwarded HTTP methods, for example allowedMethods: [''GET''] to enforce read-only access.'
+                      type: array
+                      items:
+                        type: string
+                    allowedHeaders:
+                      description: |-
+                        Limit the forwarded HTTP methods. By default, only the headers that are considered safe for CORS
+                        and headers that are set by the proxy will be forwarded.
+                      type: array
+                      items:
+                        type: string
+                  required:
+                  - target
+                - type: string
+            integrations:
+              description: Configuration for integrations towards various external repository provider systems
+              type: object
+              properties:
+                azure:
+                  description: Integration configuration for Azure
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given Azure instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                bitbucket:
+                  description: Integration configuration for Bitbucket
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given Bitbucket instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      apiBaseUrl:
+                        description: The base url for the Bitbucket API, for example https://api.bitbucket.org/2.0
+                        visibility: frontend
+                        type: string
+                      username:
+                        description: The username to use for authenticated requests.
+                        visibility: secret
+                        type: string
+                      appPassword:
+                        description: Bitbucket app password used to authenticate requests.
+                        visibility: secret
+                        type: string
+                github:
+                  description: Integration configuration for GitHub
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given GitHub instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      apiBaseUrl:
+                        description: The base url for the GitHub API, for example https://api.github.com
+                        visibility: frontend
+                        type: string
+                      rawBaseUrl:
+                        description: The base url for GitHub raw resources, for example https://raw.githubusercontent.com
+                        visibility: frontend
+                        type: string
+                      apps:
+                        description: GitHub Apps configuration
+                        visibility: backend
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - appId
+                          - clientId
+                          - clientSecret
+                          - privateKey
+                          - webhookSecret
+                          properties:
+                            appId:
+                              description: The numeric GitHub App ID, string for environment variables
+                              type:
+                              - string
+                              - number
+                            privateKey:
+                              description: The private key to use for auth against the app
+                              visibility: secret
+                              type: string
+                            webhookSecret:
+                              description: The secret used for webhooks
+                              visibility: secret
+                              type: string
+                            clientId:
+                              description: The client ID to use
+                              type: string
+                            clientSecret:
+                              description: The client secret to use
+                              visibility: secret
+                              type: string
+                gitlab:
+                  description: Integration configuration for GitLab
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The host of the target that this matches on, e.g. "gitlab.com".
+                        visibility: frontend
+                        type: string
+                      apiBaseUrl:
+                        description: |-
+                          The base URL of the API of this provider, e.g.
+                          "https://gitlab.com/api/v4", with no trailing slash.
+
+                          May be omitted specifically for public GitLab; then it will be deduced.
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: |-
+                          The authorization token to use for requests to this provider.
+
+                          If no token is specified, anonymous access is used.
+                        visibility: secret
+                        type: string
+                      baseUrl:
+                        description: |-
+                          The baseUrl of this provider, e.g. "https://gitlab.com", which is
+                          passed into the GitLab client.
+
+                          If no baseUrl is provided, it will default to https://${host}.
+                        visibility: frontend
+                        type: string
+                googleGcs:
+                  description: Integration configuration for Google Cloud Storage
+                  type: object
+                  properties:
+                    clientEmail:
+                      description: Service account email used to authenticate requests.
+                      visibility: backend
+                      type: string
+                    privateKey:
+                      description: Service account private key used to authenticate requests.
+                      visibility: secret
+                      type: string
+                awsS3:
+                  description: Integration configuration for AWS S3 Service
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The host of the target that this matches on, e.g. "amazonaws.com".
+                        visibility: frontend
+                        type: string
+                      accessKeyId:
+                        description: Account access key used to authenticate requests.
+                        visibility: backend
+                        type: string
+                      secretAccessKey:
+                        description: Account secret key used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      roleArn:
+                        description: ARN of the role to be assumed
+                        visibility: backend
+                        type: string
+          description: This is the schema describing the structure of the app-config.yaml configuration file.
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
+      template:
+      - ytt:
+          paths:
           - config/
       - kbld:
           paths:
