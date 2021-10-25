@@ -7,6 +7,7 @@ spec:
   version: 1.0.0-beta.1
   releaseNotes: |
     Beta release of the Metadata Store component package
+  releasedAt: "2021-10-20T15:34:57Z"
   valuesSchema:
     openAPIv3:
       title: metadata-store.tanzu.vmware.com values schema
