@@ -19,7 +19,7 @@ packages:
 # Changed version
   - name: app-live-view
     versions:
-      - 0.3.0-build5
+      - 0.3.0
   - name: scan-controller
     versions:
       - 1.0.0-beta
