@@ -62,4 +62,3 @@ packages:
   
   ## TAP repo bundle version 0.3.0-build.2
   # Changed version: app-live-view, scan-controller, grype-scanner, build-service
-  # Newly added package: tap-gui
