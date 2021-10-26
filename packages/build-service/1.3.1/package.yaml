@@ -45,7 +45,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-        image: registry.tanzu.vmware.com/build-service/bundle@sha256:c1b63312ca2333298ede54f6121f17c53bb7d1b68256dbd6dccbc1ba88abded1
+          image: registry.tanzu.vmware.com/build-service/bundle@sha256:c1b63312ca2333298ede54f6121f17c53bb7d1b68256dbd6dccbc1ba88abded1
       template:
       - ytt:
           paths:
