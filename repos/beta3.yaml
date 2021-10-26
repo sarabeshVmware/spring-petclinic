@@ -54,6 +54,9 @@ packages:
   - name: tap-gui
     versions:
         - 0.3.0-rc.1
+  - name: tap
+    versions:
+        - 0.3.0-build.2
   
   
   ## TAP repo bundle version 0.3.0-build.1
@@ -62,3 +65,4 @@ packages:
   
   ## TAP repo bundle version 0.3.0-build.2
   # Changed version: app-live-view, scan-controller, grype-scanner, build-service
+  # Newly added package: tap
