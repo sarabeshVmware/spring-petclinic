@@ -1,0 +1,14 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: spring-boot-conventions.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Spring Boot Conventions Server"
+  longDescription: "The Spring Boot convention server ships by default with Tanzu Application Platform (TAP). This convention applies runtime best practice configurations to all Spring Boot apps deployed to the platform."
+  shortDescription: "Default Spring Boot convention server."
+  providerName: "VMware"
+  maintainers:
+  - name: "Scott Andrews"
+  - name: "Rashed Kamal"
+  supportDescription: "https://tanzu.vmware.com/support"
