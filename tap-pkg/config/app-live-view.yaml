@@ -29,11 +29,5 @@ metadata:
   namespace: tap-install
 stringData:
   values.yml: #@ yaml.encode(data.values.app_live_view)
-#! TODO why do we need this namespace?
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: app-live-view
 
 #@ end
