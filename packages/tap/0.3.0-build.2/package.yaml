@@ -1,12 +1,12 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.0.3.0-build.1
+  name: tap.tanzu.vmware.com.0.3.0-build.2
 spec:
   refName: tap.tanzu.vmware.com
-  version: 0.3.0-build.1
+  version: 0.3.0-build.2
   releaseNotes: |
-    Beta release 0.3.0-build.1 of Tanzu Application Platform.
+    Beta release 0.3.0-build.2 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
   releasedAt: "2021-10-19T00:00:00Z"
   template:
