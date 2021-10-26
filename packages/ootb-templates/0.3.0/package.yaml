@@ -1,0 +1,25 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-templates.tanzu.vmware.com.0.3.0-build.2
+spec:
+  refName: ootb-templates.tanzu.vmware.com
+  version: 0.3.0-build.2
+  releasedAt: "2021-10-26T17:50:47Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-templates
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:8240f58e25ee0d60734a684cc22c76aaf097675329ac3c18090fc8f3a5cdb303
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m

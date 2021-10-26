@@ -1,21 +1,15 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: default-supply-chain-testing.tanzu.vmware.com.0.2.0
+  name: ootb-supply-chain-testing.tanzu.vmware.com.0.3.0-build.2
 spec:
-  refName: default-supply-chain-testing.tanzu.vmware.com
-  version: 0.2.0
-  releasedAt: "2021-10-06T14:04:19Z"
+  refName: ootb-supply-chain-testing.tanzu.vmware.com
+  version: 0.3.0-build.2
+  releasedAt: "2021-10-26T17:53:17Z"
   valuesSchema:
     openAPIv3:
-      title: default-supply-chain-testing
+      title: ootb-supply-chain-testing
       properties:
-        templates_namespace:
-          type: string
-          description: Name of the namespace where shared templates are installed to. This variable should point to the namespace where this package is being installed into.
-          default: tap-install
-          examples:
-          - tap-install
         cluster_builder:
           type: string
           description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
@@ -44,7 +38,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
+          image: registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:2132e5ed028c433ba1f8c1b8f9c4520c209e583507fb335c3fa275f1037a4b5f
       template:
       - ytt:
           ignoreUnknownComments: true
