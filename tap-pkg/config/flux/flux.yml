@@ -4,7 +4,7 @@
 #@ load("@ytt:template", "template")
 #@ load("/_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light, profiles.operator_light]):
+#@ if data.values.install_flux and profiles.is_any_enabled([profiles.full, profiles.dev_light, profiles.operator_light]):
 
 ---
 apiVersion: v1
@@ -31,9 +31,31 @@ subjects:
 metadata:
   #@overlay/match missing_ok=True
   namespace: flux-system
+
+#@overlay/match by=overlay.subset({"kind": "Deployment"}),expects="1+"
+---
+spec:
+  template:
+    spec:
+      #@overlay/match missing_ok=True
+      imagePullSecrets:
+      #@overlay/append
+      - name: registry-creds
+
+#@overlay/append
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: registry-creds
+  namespace: flux-system
+  annotations:
+    secretgen.carvel.dev/image-pull-secret: ""
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: e30K
 #@ end
 
-#@ if/end data.values.install_flux:
 --- #@ template.replace(overlay.apply(library.get("upstream").eval(), flux_updates()))
 
 #@ end
