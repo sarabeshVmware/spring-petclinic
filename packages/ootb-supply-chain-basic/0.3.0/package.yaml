@@ -5,7 +5,7 @@ metadata:
 spec:
   refName: ootb-supply-chain-basic.tanzu.vmware.com
   version: 0.3.0-build.2
-  releasedAt: "2021-10-26T17:31:13Z"
+  releasedAt: "2021-10-27T16:00:20Z"
   valuesSchema:
     openAPIv3:
       title: ootb-supply-chain-basic
@@ -38,7 +38,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:d8f3ddd7475bb9ba7a550ee10ce8aba82ae3e1f15db178bc7c616967ed2e2f88
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:d8f3ddd7475bb9ba7a550ee10ce8aba82ae3e1f15db178bc7c616967ed2e2f88
       template:
       - ytt:
           ignoreUnknownComments: true

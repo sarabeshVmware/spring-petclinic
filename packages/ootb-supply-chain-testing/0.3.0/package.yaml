@@ -5,7 +5,7 @@ metadata:
 spec:
   refName: ootb-supply-chain-testing.tanzu.vmware.com
   version: 0.3.0-build.2
-  releasedAt: "2021-10-26T17:53:17Z"
+  releasedAt: "2021-10-27T16:07:58Z"
   valuesSchema:
     openAPIv3:
       title: ootb-supply-chain-testing
@@ -38,7 +38,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:2132e5ed028c433ba1f8c1b8f9c4520c209e583507fb335c3fa275f1037a4b5f
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:2132e5ed028c433ba1f8c1b8f9c4520c209e583507fb335c3fa275f1037a4b5f
       template:
       - ytt:
           ignoreUnknownComments: true
