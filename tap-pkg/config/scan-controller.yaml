@@ -15,13 +15,5 @@ spec:
     versionSelection:
       constraints: 1.0.0-beta.2
       prereleases: {}
-  values:
-  - secretRef:
-      name: scan-controller-values
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: scan-link-system
 
 #@ end
