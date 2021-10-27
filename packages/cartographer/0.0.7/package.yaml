@@ -1,11 +1,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: cartographer.carto.run.0.0.7
+  name: cartographer.tanzu.vmware.com.0.0.7
   annotations:
     kapp.k14s.io/change-group: carto.run/meta
 spec:
-  refName: cartographer.carto.run
+  refName: cartographer.tanzu.vmware.com
   version: 0.0.7
   releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/0.0.7
   releasedAt: "2021-10-22T20:31:39Z"
@@ -16,7 +16,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:35bfc11d92c14446863e251ad659a7232825212229d529a40d28c468c70392ec
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:35bfc11d92c14446863e251ad659a7232825212229d529a40d28c468c70392ec
       template:
       - ytt:
           ignoreUnknownComments: true
