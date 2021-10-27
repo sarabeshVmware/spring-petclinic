@@ -2,7 +2,6 @@ apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
   name: services-toolkit.tanzu.vmware.com.0.4.0-rc.2
-  namespace: scp-toolkit
 spec:
   refName: services-toolkit.tanzu.vmware.com
   version: 0.4.0-rc.2
