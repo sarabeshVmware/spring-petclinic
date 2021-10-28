@@ -117,7 +117,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package:aed1df0002a800e9aac41fbbba524aeb0327bb1d96a390082e1f6b62164bf8e3"
+          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:aed1df0002a800e9aac41fbbba524aeb0327bb1d96a390082e1f6b62164bf8e3"
       template:
       - ytt:
           paths:
