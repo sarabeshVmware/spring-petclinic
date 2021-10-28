@@ -46,3 +46,7 @@ buildservice:
 
 #@schema/type any=True
 tap_gui: {}
+
+#@schema/type any=True
+learning-center:
+  ingressDomain: learningcenter.mydomain.com
