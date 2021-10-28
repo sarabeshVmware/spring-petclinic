@@ -18,6 +18,7 @@ spec:
     refName: appliveview.tanzu.vmware.com
     versionSelection:
       constraints: 0.3.0-build6
+      prereleases: {}
   values:
   - secretRef:
       name: app-live-view-values
