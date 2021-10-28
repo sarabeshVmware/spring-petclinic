@@ -12,6 +12,7 @@ packages:
   - name: services-toolkit
     versions:
       - 0.4.0-rc.1
+      - 0.4.0-rc.2
   - name: cartographer
     versions:
       - 0.0.6
@@ -68,6 +69,25 @@ packages:
   - name: learning-center
     versions:
       - 1.0.8-build.1
+  - name: cartographer
+    versions:
+      - 0.0.7
+  - name: ootb-templates
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-basic
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-testing
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-testing-scanning
+    versions:
+      - 0.3.0-build.2
+  - name: spring-boot-conventions
+    versions:
+      - 0.1.1
+  
   
   
   ## TAP repo bundle version 0.3.0-build.1
@@ -77,6 +97,7 @@ packages:
   ## TAP repo bundle version 0.3.0-build.2
   # Changed version: app-live-view, scan-controller, grype-scanner, build-service
   # Newly added package: tap
+
   ## TAP repo bundle version 0.3.0-build.3
   # Changed Versions: tap-profiles, image-policy-webhook, tap-gui
   # Newly added package: learning-center, learning-center-workshops
