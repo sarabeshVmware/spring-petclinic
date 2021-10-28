@@ -12,6 +12,7 @@ packages:
   - name: services-toolkit
     versions:
       - 0.4.0-rc.1
+      - 0.4.0-rc.2
   - name: cartographer
     versions:
       - 0.0.6
@@ -71,8 +72,6 @@ packages:
   - name: cartographer
     versions:
       - 0.0.7
-    versions:
-      - 1.0.8-build.1
   - name: ootb-templates
     versions:
       - 0.3.0-build.2
@@ -85,6 +84,10 @@ packages:
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.3.0-build.2
+  - name: spring-boot-conventions
+    versions:
+      - 0.1.1
+  
   
   
   ## TAP repo bundle version 0.3.0-build.1
