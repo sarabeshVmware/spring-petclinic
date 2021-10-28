@@ -127,3 +127,12 @@ spec:
             tanzunet_password:
               type: string
               default: ""
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+        learning_center:
+          type: object
+          additionalProperties: true
+          properties:
+            ingressDomain: learningcenter.mydomain.com
