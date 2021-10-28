@@ -1,19 +1,19 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.0.3.0-build.1
+  name: tap.tanzu.vmware.com.0.3.0-build.4
 spec:
   refName: tap.tanzu.vmware.com
-  version: 0.3.0-build.1
+  version: 0.3.0-build.4
   releaseNotes: |
-    Beta release 0.3.0-build.1 of Tanzu Application Platform.
+    Beta release 0.3.0-build.4 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2021-10-19T00:00:00Z"
+  releasedAt: "2021-10-28T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image:  dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:ad08e507bcc368806560edda48718260e7bf0094c2c7f13b0e29eeff5ca87f1d
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:561b7bc979c73e24b802e7fa0546acaf07cf08d5aacf3db27b50c8ae9a97a8ce
       template:
       - ytt:
           paths:
@@ -33,10 +33,6 @@ spec:
           type: string
           default: full
           description: "Valid values one of: full, dev-light, operator-light, shared-tools"
-        supply_chain:
-          type: string
-          default: ""
-          description: "Valid values one of: <empty>, testing"
         rw_app_registry:
           type: object
           additionalProperties: false
@@ -67,56 +63,31 @@ spec:
         app_accelerator:
           type: object
           additionalProperties: true
-          properties:
-            server:
-              type: object
-              additionalProperties: true
-              properties:
-                service_type:
-                  type: string
-                  default: NodePort
-                watched_namespace:
-                  type: string
-                  default: default
-                engine_invocation_url:
-                  type: string
-                  default: http://acc-engine.accelerator-system.svc.cluster.local/invocations
-            engine:
-              type: object
-              additionalProperties: true
-              properties:
-                service_type:
-                  type: string
-                  default: ClusterIP
+          properties: {}
         app_live_view:
           type: object
           additionalProperties: true
-          properties:
-            server_namespace:
-              type: string
-              default: app-live-view
+          properties: {}
         cnrs:
           type: object
           additionalProperties: true
-          properties:
-            provider:
-              type: string
-              default: local
-        default_supply_chain:
+          properties: {}
+        ootb-supply-chain-basic:
           type: object
           additionalProperties: true
           properties: {}
-        default_supply_chain_testing:
+        ootb-supply-chain-testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+        ootb-supply-chain-testing-scanning:
           type: object
           additionalProperties: true
           properties: {}
         image_policy_webhook:
           type: object
           additionalProperties: true
-          properties:
-            warn_on_unmatched:
-              type: boolean
-              default: true
+          properties: {}
         buildservice:
           type: object
           additionalProperties: true
@@ -127,3 +98,11 @@ spec:
             tanzunet_password:
               type: string
               default: ""
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+        learning_center:
+          type: object
+          additionalProperties: true
+          properties: {}

@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"gitlab.eng.vmware.com/tap/tap-packages/scripts/pkg"
@@ -63,7 +64,11 @@ func IsISO8601Date(fl validator.FieldLevel) bool {
 
 func main() {
 	fpath := os.Args[1]
+	log.Printf("Validating file extention...")
+	pkg.CheckFileExtension(fpath, ".yaml")
 	packageFile := GetPackageFile(fpath)
+	log.Printf("Validating Image reference in package CR file: %s", fpath)
+	ValidateImage(packageFile.Spec.Template.Spec.Fetch[0].ImgpkgBundle.Image)
 	log.Printf("Validating package CR file: %s", fpath)
 	validate = validator.New()
 	log.Printf("Registring custom validator for ISO8601 date validation")
@@ -74,13 +79,23 @@ func main() {
 		log.Println(validationErrors)
 		for _, err := range validationErrors {
 			if err.Tag() == "ISO8601date" {
-				log.Println("Please provide field ", err.StructNamespace(), "in format", err.Tag())
+				log.Fatalln("Please provide field ", err.StructNamespace(), "in format", err.Tag())
 			} else {
-				log.Println("Field ", err.StructNamespace(), "is", err.Tag())
+				log.Fatalln("Field ", err.StructNamespace(), "is", err.Tag())
 			}
 			log.Println()
 		}
 	} else {
-		log.Println("package CR file:", fpath ,"validated successfully")
+		log.Println("package CR file:", fpath, "validated successfully")
+	}
+}
+
+func ValidateImage(Image string) {
+	InValidImage := strings.Contains(Image, "pivotal.io")
+	DevImage := strings.Contains(Image, "dev")
+	if InValidImage || !DevImage {
+		log.Fatalln("Please provide image reference which points to dev.registry.tanzu.vmware.com")
+	} else {
+		log.Println("Image reference in package CR is validated successfully")
 	}
 }

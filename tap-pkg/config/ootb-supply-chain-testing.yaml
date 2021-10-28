@@ -3,25 +3,31 @@
 #@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled(profiles.full) and data.values.supply_chain == "testing":
+#@ in_enabled_profile = profiles.is_any_enabled([
+#@   profiles.full, profiles.dev_light, profiles.operator_light])
+
+#@ if in_enabled_profile:
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: default-supply-chain-testing
+  name: ootb-supply-chain-testing
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting cartographer"
+    kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
+    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates" 
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: default-supply-chain-testing.tanzu.vmware.com
+    refName: ootb-supply-chain-testing.tanzu.vmware.com
     versionSelection:
-      constraints: 0.2.0
+      constraints: 0.3.0-build.3
+      prereleases: {}
+        
   values:
   - secretRef:
-      name: default-supply-chain-testing-values
+      name: ootb-supply-chain-testing-values
 
 #@ def values():
 #@overlay/match missing_ok=True
@@ -36,10 +42,10 @@ registry:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: default-supply-chain-testing-values
+  name: ootb-supply-chain-testing-values
   namespace: tap-install
 type: Opaque
 stringData:
-  values.yml: #@ yaml.encode(overlay.apply(data.values.default_supply_chain_testing, values()))
+  values.yml: #@ yaml.encode(overlay.apply(data.values.ootb_supply_chain_testing, values()))
 
 #@ end

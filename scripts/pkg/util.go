@@ -2,6 +2,7 @@ package pkg
 
 import (
 	"log"
+	"path/filepath"
 )
 
 func CheckError(err error) bool {
@@ -10,4 +11,12 @@ func CheckError(err error) bool {
 		return true
 	}
 	return false
+}
+
+func CheckFileExtension(path string, ext string) {
+	fileExtension := filepath.Ext(path)
+	log.Println("File", path, "ext is", fileExtension)
+	if fileExtension != ext {
+		log.Fatalln("Please change file extension to: ", ext)
+	}
 }

@@ -6,16 +6,13 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: scan-controller
+  name: spring-boot-conventions
   namespace: tap-install
-  annotations:
-    kapp.k14s.io/change-group: scancontroller
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: scanning.apps.tanzu.vmware.com
+    refName: spring-boot-conventions.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-beta.2
-      prereleases: {}
+      constraints: 0.1.1
 
 #@ end

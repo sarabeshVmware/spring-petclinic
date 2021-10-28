@@ -6,16 +6,17 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: scan-controller
+  name: ootb-templates
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-group: scancontroller
+    kapp.k14s.io/change-rule: "upsert after upserting cartographer"
+    kapp.k14s.io/change-group: ootb-templates
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: scanning.apps.tanzu.vmware.com
+    refName: ootb-templates.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-beta.2
+      constraints: 0.3.0-build.3
       prereleases: {}
 
 #@ end
