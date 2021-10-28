@@ -2,8 +2,6 @@
 ---
 #! enum: "full", "dev-light", "operator-light", "shared-tools"
 profile: full
-#! enum: "", "testing"
-supply_chain: ""
 
 rw_app_registry:
   server_repo: ""
@@ -39,8 +37,7 @@ ootb_supply_chain_testing: {}
 ootb_supply_chain_testing_scanning: {}
 
 #@schema/type any=True
-image_policy_webhook:
-  warn_on_unmatched: true
+image_policy_webhook: {}
 
 #@schema/type any=True
 buildservice:
@@ -51,5 +48,4 @@ buildservice:
 tap_gui: {}
 
 #@schema/type any=True
-learning_center:
-  ingressDomain: learningcenter.mydomain.com
+learning_center: {}

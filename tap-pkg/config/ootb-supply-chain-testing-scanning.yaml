@@ -6,7 +6,7 @@
 #@ in_enabled_profile = profiles.is_any_enabled([
 #@   profiles.full, profiles.dev_light, profiles.operator_light])
 
-#@ if in_enabled_profile and data.values.supply_chain == "":
+#@ if in_enabled_profile:
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -15,9 +15,8 @@ metadata:
   name: ootb-supply-chain-testing-scanning
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting cartographer"
-  #kapp.k14s.io/change-rule: "upsert after upserting " 
-  #TODO rule for ootb-templates
+    kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
+    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates" 
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

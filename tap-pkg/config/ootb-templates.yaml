@@ -10,6 +10,7 @@ metadata:
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-rule: "upsert after upserting cartographer"
+    kapp.k14s.io/change-group: ootb-templates
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
