@@ -1,0 +1,12 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-templates.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Templates
+  shortDescription: Out of The Box Templates.
+  longDescription: Tanzu App Platform Out of The Box Templates to be used with Supply Chains.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware

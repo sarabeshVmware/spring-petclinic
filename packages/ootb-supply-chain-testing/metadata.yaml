@@ -1,0 +1,14 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-supply-chain-testing.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Supply Chain with Testing
+  shortDescription: Out of The Box Supply Chain with Testing.
+  longDescription: |-
+    Tanzu App Platform Out of The Box Supply Chain with Testing powers workloads that
+    require running tests.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware

@@ -1,0 +1,12 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-supply-chain-basic.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Supply Chain Basic
+  shortDescription: Out of The Box Supply Chain Basic.
+  longDescription: Tanzu App Platform Out of The Box Supply Chain Basic.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware
