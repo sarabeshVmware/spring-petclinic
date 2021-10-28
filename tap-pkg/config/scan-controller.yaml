@@ -8,6 +8,8 @@ kind: PackageInstall
 metadata:
   name: scan-controller
   namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-group: scancontroller
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

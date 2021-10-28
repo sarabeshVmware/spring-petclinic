@@ -8,6 +8,8 @@ kind: PackageInstall
 metadata:
   name: grype-scanner
   namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule: "upsert after upserting scancontroller"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

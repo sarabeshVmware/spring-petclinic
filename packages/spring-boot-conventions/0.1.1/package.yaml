@@ -16,13 +16,13 @@ spec:
       - imgpkgBundle:
           image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:28995bfb0ee323f738e7612f28e278d0b89f174019feccc60ee58132f7d30b76
       template:
-      - ytt:
-          paths:
-          - spring-boot-convention-server/bundle.yaml
       - kbld:
           paths:
-          - '-'
           - .imgpkg/images.yml
           - spring-boot-convention-server/server.yaml
+      - ytt:
+          paths:
+          - '-'
+          - spring-boot-convention-server/bundle.yaml
       deploy:
       - kapp: {}
