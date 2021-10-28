@@ -13,7 +13,7 @@ spec:
   packageRef:
     refName: services-toolkit.tanzu.vmware.com
     versionSelection:
-      constraints: 0.4.0-rc.1
+      constraints: 0.4.0-rc.2
       prereleases: {}
 
 #@ end

@@ -1,0 +1,51 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
+#@ load("_profiles.star", "profiles")
+
+#@ in_enabled_profile = profiles.is_any_enabled([
+#@   profiles.full, profiles.dev_light, profiles.operator_light])
+
+#@ if in_enabled_profile:
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: ootb-supply-chain-testing-scanning
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
+    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates" 
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.3.0-build.2
+      prereleases: {}
+        
+  values:
+  - secretRef:
+      name: ootb-supply-chain-testing-scanning-values
+
+#@ def values():
+#@overlay/match missing_ok=True
+registry:
+  #@overlay/match missing_ok=True
+  server: #@ data.values.rw_app_registry.server_repo.split("/", 1)[0]
+  #@overlay/match missing_ok=True
+  repository: #@ data.values.rw_app_registry.server_repo.split("/", 1)[1]
+#@ end
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ootb-supply-chain-testing-scanning-values
+  namespace: tap-install
+type: Opaque
+stringData:
+  values.yml: #@ yaml.encode(overlay.apply(data.values.ootb_supply_chain_testing_scanning, values()))
+
+#@ end
