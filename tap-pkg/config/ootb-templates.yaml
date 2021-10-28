@@ -1,0 +1,21 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light, profiles.operator_light]):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: ootb-templates
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule: "upsert after upserting cartographer"
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: ootb-templates.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.3.0-build.2
+      prereleases: {}
+
+#@ end

@@ -33,10 +33,10 @@ spec:
           type: string
           default: full
           description: "Valid values one of: full, dev-light, operator-light, shared-tools"
-        supply_chain:
-          type: string
-          default: ""
-          description: "Valid values one of: <empty>, testing"
+        # supply_chain:
+        #   type: string
+        #   default: ""
+        #   description: "Valid values one of: <empty>, testing"
         rw_app_registry:
           type: object
           additionalProperties: false
@@ -102,11 +102,15 @@ spec:
             # provider:
             #   type: string
             #   default: local
-        default_supply_chain:
+        ootb-supply-chain-basic:
           type: object
           additionalProperties: true
           properties: {}
-        default_supply_chain_testing:
+        ootb-supply-chain-testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+        ootb-supply-chain-testing-scanning:
           type: object
           additionalProperties: true
           properties: {}

@@ -30,10 +30,13 @@ cartographer: {}
 cnrs: {}
 
 #@schema/type any=True
-default_supply_chain: {}
+ootb_supply_chain_basic: {}
 
 #@schema/type any=True
-default_supply_chain_testing: {}
+ootb_supply_chain_testing: {}
+
+#@schema/type any=True
+ootb_supply_chain_testing_scanning: {}
 
 #@schema/type any=True
 image_policy_webhook:
@@ -48,5 +51,5 @@ buildservice:
 tap_gui: {}
 
 #@schema/type any=True
-learning-center:
+learning_center:
   ingressDomain: learningcenter.mydomain.com
