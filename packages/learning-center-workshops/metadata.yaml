@@ -1,0 +1,16 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  # This will be the name of our package
+  name: "workshops.learningcenter.tanzu.vmware.com"
+spec:
+  displayName: "Workshop Building Tutorial"
+  longDescription: "Learn how to build workshops in the Learning Center"
+  shortDescription: "Workshop Building Tutorial"
+  providerName: VMware
+  supportDescription: Support available from VMware. Refer to the VMware Product Guide for specific support terms.
+  maintainers:
+  - name: Learning Center for VMware TAP Team
+  categories:
+  - education
+  - enablement

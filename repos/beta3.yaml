@@ -12,6 +12,7 @@ packages:
   - name: services-toolkit
     versions:
       - 0.4.0-rc.1
+      - 0.4.0-rc.2
   - name: cartographer
     versions:
       - 0.0.6
@@ -20,9 +21,11 @@ packages:
       - 0.3.0-build6
   - name: scan-controller
     versions:
+      - 1.0.0-beta
       - 1.0.0-beta.2
   - name: grype-scanner
     versions:
+      - 1.0.0-beta
       - 1.0.0-beta.2
   - name: default-supply-chain-testing
     versions:
@@ -42,6 +45,7 @@ packages:
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.0
+      - 1.0.0-beta.1
   - name: api-portal
     versions:
       - 1.0.3
@@ -50,13 +54,40 @@ packages:
       - 1.0.3
   - name: build-service
     versions:
+      - 1.3.0
       - 1.3.1
   - name: tap-gui
     versions:
-        - 0.3.0-rc.1
+      - 0.3.0-rc.1
+      - 0.3.0-rc.3
   - name: tap
     versions:
-        - 0.3.0-build.2
+      - 0.3.0-build.3
+  - name: learning-center-workshops
+    versions:
+      - 1.0.4-build.1
+  - name: learning-center
+    versions:
+      - 1.0.8-build.1
+  - name: cartographer
+    versions:
+      - 0.0.7
+  - name: ootb-templates
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-basic
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-testing
+    versions:
+      - 0.3.0-build.2
+  - name: ootb-supply-chain-testing-scanning
+    versions:
+      - 0.3.0-build.2
+  - name: spring-boot-conventions
+    versions:
+      - 0.1.1
+  
   
   
   ## TAP repo bundle version 0.3.0-build.1
@@ -66,3 +97,7 @@ packages:
   ## TAP repo bundle version 0.3.0-build.2
   # Changed version: app-live-view, scan-controller, grype-scanner, build-service
   # Newly added package: tap
+
+  ## TAP repo bundle version 0.3.0-build.3
+  # Changed Versions: tap-profiles, image-policy-webhook, tap-gui
+  # Newly added package: learning-center, learning-center-workshops

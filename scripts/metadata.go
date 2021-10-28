@@ -1,7 +1,6 @@
 package main
 
 import (
-	
 	"log"
 	"os"
 
@@ -41,6 +40,8 @@ var validate *validator.Validate
 
 func main() {
 	fpath := os.Args[1]
+	log.Printf("Validating file extention...")
+	pkg.CheckFileExtension(fpath, ".yaml")
 	pkgm := GetPackageMetadataFile(fpath)
 	log.Printf("Validating package metadata CR file: %s", fpath)
 	validate = validator.New()
@@ -53,6 +54,7 @@ func main() {
 			log.Println()
 		}
 	} else {
-		log.Println("package metadata CR file:", fpath ,"validated successfully")}
+		log.Println("package metadata CR file:", fpath, "validated successfully")
+	}
 
 }

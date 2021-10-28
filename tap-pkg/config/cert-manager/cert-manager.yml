@@ -5,7 +5,31 @@
 
 #@ if data.values.install_cert_manager:
 
---- #@ template.replace(library.get("upstream").eval())
+#@ def cert_mgr_updates():
+#@overlay/match by=overlay.subset({"kind": "Deployment"}),expects="1+"
+---
+spec:
+  template:
+    spec:
+      #@overlay/match missing_ok=True
+      imagePullSecrets:
+      #@overlay/append
+      - name: registry-creds
+#@overlay/append
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: registry-creds
+  namespace: cert-manager
+  annotations:
+    secretgen.carvel.dev/image-pull-secret: ""
+type: kubernetes.io/dockerconfigjson
+data:
+  .dockerconfigjson: e30K
+#@ end
+
+--- #@ template.replace(overlay.apply(library.get("upstream").eval(), cert_mgr_updates()))
 
 #@overlay/match by=overlay.subset({"metadata": {"labels": {"app.kubernetes.io/instance": "cert-manager"}}}),expects="1+"
 ---
