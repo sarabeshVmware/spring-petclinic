@@ -51,6 +51,7 @@ packages:
     versions:
       - 0.3.0-rc.1
       - 0.3.0-rc.3
+      - 0.3.0-rc.4
   - name: tap
     versions:
       - 0.3.0-build.4
