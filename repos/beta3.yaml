@@ -54,13 +54,17 @@ packages:
       - 0.3.0-rc.4
   - name: tap
     versions:
+<<<<<<< HEAD
       - 0.3.0-build.4
+=======
+      - 0.3.0-build.5
+>>>>>>> validatemrs
   - name: learning-center-workshops
     versions:
-      - 1.0.4-build.1
+      - 1.0.5-build.1
   - name: learning-center
     versions:
-      - 1.0.8-build.1
+      - 1.0.9-build.1
   - name: cartographer
     versions:
       - 0.0.7
@@ -78,7 +82,7 @@ packages:
       - 0.3.0-build.3
   - name: spring-boot-conventions
     versions:
-      - 0.1.1
+      - 0.1.2
   
   
   
@@ -98,4 +102,6 @@ packages:
   # Changed Versions: services-toolkit, cartographer
   # Newly added package: out-of-the-box supply chains and templates, springboot-conventions
 
-  
+  ## TAP repo bundle version 0.3.0-build.5
+  # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
+ 

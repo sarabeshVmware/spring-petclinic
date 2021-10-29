@@ -1,0 +1,34 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.shared_tools]):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: learning-center
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-group: learningcenter
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: learningcenter.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.0.9-build.1
+      prereleases: {}
+  values:
+  - secretRef:
+      name: learning-center-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: learning-center-values
+  namespace: tap-install
+stringData:
+  values.yaml: #@ yaml.encode(data.values.learning_center)
+
+#@ end
