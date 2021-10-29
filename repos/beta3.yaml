@@ -54,11 +54,7 @@ packages:
       - 0.3.0-rc.4
   - name: tap
     versions:
-<<<<<<< HEAD
-      - 0.3.0-build.4
-=======
       - 0.3.0-build.5
->>>>>>> validatemrs
   - name: learning-center-workshops
     versions:
       - 1.0.5-build.1
