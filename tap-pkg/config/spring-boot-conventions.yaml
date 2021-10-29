@@ -8,6 +8,8 @@ kind: PackageInstall
 metadata:
   name: spring-boot-conventions
   namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule: "upsert after upserting conventions"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
