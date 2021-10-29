@@ -28,7 +28,7 @@ spec:
               default: false
             domain:
               type: string
-              description: "Optional: Set a custom domain for the Knative services."
+              description: "Optional: Set a custom domain for CoreDNS. Only applicable when \"local_dns\" is set to \"true\", \"provider\" is set to \"local\" and running on Kind."
               examples:
                 - "example.com"
         ingress:
