@@ -1,0 +1,108 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releaseNotes: |
+    Beta release 0.3.0-build.5 of Tanzu Application Platform.
+    This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2021-10-29T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:9ce537fc6d8b2fa243032a42689d2ebc286142681adaf47fc9d503cb00e53454
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: "Valid values one of: full, dev-light, operator-light, shared-tools"
+        rw_app_registry:
+          type: object
+          additionalProperties: false
+          description: "Read-write registry credentials"
+          properties:
+            server_repo:
+              type: string
+              default: ""
+            username:
+              type: string
+              default: ""
+            password:
+              type: string
+              default: ""
+        install_cert_manager:
+          type: boolean
+          default: true
+        install_flux:
+          type: boolean
+          default: true
+        install_tekton:
+          type: boolean
+          default: true
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+        app_accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+        app_live_view:
+          type: object
+          additionalProperties: true
+          properties: {}
+        cnrs:
+          type: object
+          additionalProperties: true
+          properties: {}
+        ootb-supply-chain-basic:
+          type: object
+          additionalProperties: true
+          properties: {}
+        ootb-supply-chain-testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+        ootb-supply-chain-testing-scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+        buildservice:
+          type: object
+          additionalProperties: true
+          properties:
+            tanzunet_username:
+              type: string
+              default: ""
+            tanzunet_password:
+              type: string
+              default: ""
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+        learning_center:
+          type: object
+          additionalProperties: true
+          properties: {}

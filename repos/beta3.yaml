@@ -62,13 +62,13 @@ packages:
       - 0.3.0-rc.3
   - name: tap
     versions:
-      - 0.3.0-build.3
+      - 0.3.0-build.5
   - name: learning-center-workshops
     versions:
-      - 1.0.4-build.1
+      - 1.0.5-build.1
   - name: learning-center
     versions:
-      - 1.0.8-build.1
+      - 1.0.9-build.1
   - name: cartographer
     versions:
       - 0.0.7
@@ -86,7 +86,7 @@ packages:
       - 0.3.0-build.2
   - name: spring-boot-conventions
     versions:
-      - 0.1.1
+      - 0.1.2
   
   
   
@@ -101,3 +101,7 @@ packages:
   ## TAP repo bundle version 0.3.0-build.3
   # Changed Versions: tap-profiles, image-policy-webhook, tap-gui
   # Newly added package: learning-center, learning-center-workshops
+
+  ## TAP repo bundle version 0.3.0-build.4
+  # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
+ 

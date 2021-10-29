@@ -17,7 +17,7 @@ spec:
   packageRef:
     refName: learningcenter.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.8-build.1
+      constraints: 1.0.9-build.1
       prereleases: {}
   values:
   - secretRef:
