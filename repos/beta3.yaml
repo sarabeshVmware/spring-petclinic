@@ -102,6 +102,6 @@ packages:
   # Changed Versions: tap-profiles, image-policy-webhook, tap-gui
   # Newly added package: learning-center, learning-center-workshops
 
-  ## TAP repo bundle version 0.3.0-build.4
+  ## TAP repo bundle version 0.3.0-build.5
   # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
  
