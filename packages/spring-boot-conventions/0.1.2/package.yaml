@@ -2,11 +2,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: spring-boot-conventions.tanzu.vmware.com.0.1.1
+  name: spring-boot-conventions.tanzu.vmware.com.0.1.2
 spec:
   refName: spring-boot-conventions.tanzu.vmware.com
-  version: 0.1.1
-  releasedAt: 2021-10-25T00:00:00Z
+  version: 0.1.2
+  releasedAt: 2021-10-29T00:00:00Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -14,7 +14,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:28995bfb0ee323f738e7612f28e278d0b89f174019feccc60ee58132f7d30b76
+          image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:61038bd6bb2129a1493d1e36f14635eb4a63eeb7ff0822c96db6f8b3ee066e73
       template:
       - kbld:
           paths:
