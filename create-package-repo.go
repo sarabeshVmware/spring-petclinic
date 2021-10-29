@@ -33,7 +33,7 @@ type BundleRef struct {
 }
 
 func main() {
-	var OciRegistry = "dev.registry.tanzu.vmware.com/tanzu-application-platform"
+	var OciRegistry = "dev.registry.tanzu.vmware.com/tanzu-advanced-edition"
 	var PackagesDirectoryPath = filepath.Join("./", "packages")
 	var RepoDirectoryPath = filepath.Join("./", "repos")
 	var GeneratedRepoDirectoryPath = filepath.Join(RepoDirectoryPath, "generated")
