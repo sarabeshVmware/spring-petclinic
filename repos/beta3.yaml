@@ -67,15 +67,19 @@ packages:
   - name: ootb-templates
     versions:
       - 0.3.0-build.3
+      - 0.3.0-build.4
   - name: ootb-supply-chain-basic
     versions:
       - 0.3.0-build.3
+      - 0.3.0-build.4
   - name: ootb-supply-chain-testing
     versions:
       - 0.3.0-build.3
+      - 0.3.0-build.4
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.3.0-build.3
+      - 0.3.0-build.4
   - name: spring-boot-conventions
     versions:
       - 0.1.2
@@ -101,3 +105,6 @@ packages:
   ## TAP repo bundle version 0.3.0-build.5
   # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
  
+  ## TAP repo bundle version 0.3.0-build.6
+  # Changed versions: ootb-templates (!128), ootb-supply-chain-basic (!128), ootb-supply-chain-testing (!128), ootb-supply-chain-testing-scanning (!128)
+  # Hotfixes: services-toolkit (!130), scan-controller (!131), grype-scanner (!131)
