@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: ootb-supply-chain-testing.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0-build.3
+      constraints: 0.3.0-build.4
       prereleases: {}
   values:
   - secretRef:
