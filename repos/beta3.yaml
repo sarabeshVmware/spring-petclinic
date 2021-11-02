@@ -54,7 +54,7 @@ packages:
       - 0.3.0-rc.4
   - name: tap
     versions:
-      - 0.3.0-build.5
+      - 0.3.0-build.6
   - name: learning-center-workshops
     versions:
       - 1.0.5-build.1
@@ -106,5 +106,5 @@ packages:
   # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
  
   ## TAP repo bundle version 0.3.0-build.6
-  # Changed versions: ootb-templates (!128), ootb-supply-chain-basic (!128), ootb-supply-chain-testing (!128), ootb-supply-chain-testing-scanning (!128)
+  # Changed versions: ootb-templates (!128), ootb-supply-chain-basic (!128), ootb-supply-chain-testing (!128), ootb-supply-chain-testing-scanning (!128), tap (!129)
   # Hotfixes: services-toolkit (!130), scan-controller (!131), grype-scanner (!131)
