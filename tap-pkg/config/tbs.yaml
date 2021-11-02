@@ -1,6 +1,5 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
-#@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev_light, profiles.operator_light]):
@@ -9,7 +8,7 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: tbs
+  name: buildservice
   namespace: tap-install
 spec:
   serviceAccountName: tap-install-sa
@@ -20,24 +19,14 @@ spec:
       prereleases: {}
   values:
   - secretRef:
-      name: tbs-values
-
-#@ def tbs_values():
-#@overlay/match missing_ok=True
-kp_default_repository: #@ data.values.rw_app_registry.server_repo
-#@overlay/match missing_ok=True
-kp_default_repository_username: #@ data.values.rw_app_registry.username
-#@overlay/match missing_ok=True
-kp_default_repository_password: #@ data.values.rw_app_registry.password
-#@ end
-
+      name: buildservice-values
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: tbs-values
+  name: buildservice-values
   namespace: tap-install
 stringData:
-  tbs-values.yaml: #@ yaml.encode(overlay.apply(data.values.buildservice, tbs_values()))
+  values.yaml: #@ yaml.encode(data.values.buildservice)
 
 #@ end

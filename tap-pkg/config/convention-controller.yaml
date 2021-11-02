@@ -6,7 +6,7 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: convention-controller
+  name: conventions-controller
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-group: conventions

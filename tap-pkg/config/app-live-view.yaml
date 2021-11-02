@@ -8,7 +8,7 @@
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: app-live-view
+  name: appliveview
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-rule: "upsert after upserting conventions"
@@ -21,14 +21,14 @@ spec:
       prereleases: {}
   values:
   - secretRef:
-      name: app-live-view-values
+      name: appliveview-values
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: app-live-view-values
+  name: appliveview-values
   namespace: tap-install
 stringData:
-  values.yml: #@ yaml.encode(data.values.app_live_view)
+  values.yml: #@ yaml.encode(data.values.appliveview)
 
 #@ end

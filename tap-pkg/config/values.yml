@@ -3,11 +3,6 @@
 #! enum: "full", "dev-light", "operator-light", "shared-tools"
 profile: full
 
-rw_app_registry:
-  server_repo: ""
-  username: ""
-  password: ""
-
 install_cert_manager: true
 install_flux: true
 install_tekton: true
@@ -16,10 +11,10 @@ install_tekton: true
 api_portal: {}
 
 #@schema/type any=True
-app_accelerator: {}
+accelerator: {}
 
 #@schema/type any=True
-app_live_view: {}
+appliveview: {}
 
 #@schema/type any=True
 cartographer: {}
@@ -40,12 +35,10 @@ ootb_supply_chain_testing_scanning: {}
 image_policy_webhook: {}
 
 #@schema/type any=True
-buildservice:
-  tanzunet_username: ""
-  tanzunet_password: ""
+buildservice: {}
 
 #@schema/type any=True
 tap_gui: {}
 
 #@schema/type any=True
-learning_center: {}
+learningcenter: {}
