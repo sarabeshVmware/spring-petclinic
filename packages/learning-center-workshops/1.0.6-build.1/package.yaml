@@ -1,0 +1,26 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: "workshops.learningcenter.tanzu.vmware.com.1.0.6-build.1"
+spec:
+  refName: "workshops.learningcenter.tanzu.vmware.com"
+  version: "1.0.6-build.1"
+  releasedAt: "2021-11-02T23:27:12Z"
+  licenses: 
+  - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: "dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:2a37707809b1d02c8fe90481255d7784cb3130f9527c2b8147a5175aee2f3577"
+      template:
+      - ytt:
+          paths:
+          - "config/"
+      - kbld:
+          paths:
+          - ".imgpkg/images.yml"
+          - "-"
+      deploy:
+      - kapp: {}
