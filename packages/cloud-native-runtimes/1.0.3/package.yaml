@@ -17,6 +17,7 @@ spec:
         provider:
           type: string
           description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on a local Kubernetes cluster provider."
+          default: ""
           examples:
             - local
         local_dns:
@@ -29,6 +30,7 @@ spec:
             domain:
               type: string
               description: "Optional: Set a custom domain for CoreDNS. Only applicable when \"local_dns\" is set to \"true\", \"provider\" is set to \"local\" and running on Kind."
+              default: ""
               examples:
                 - "example.com"
         ingress:
@@ -44,12 +46,14 @@ spec:
                 namespace:
                   type: string
                   description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+                  default: ""
             internal:
               type: object
               properties:
                 namespace:
                   type: string
                   description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+                  default: ""
         pdb:
           type: object
           properties:
