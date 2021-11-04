@@ -1,12 +1,15 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap-gui.tanzu.vmware.com.0.3.0-rc.1
+  name: tap-gui.tanzu.vmware.com.0.3.0
 spec:
   refName: tap-gui.tanzu.vmware.com
-  version: 0.3.0-rc.1
-  releasedAt: "2021-10-20T14:46:26Z"
-  releaseNotes: various improvements to Workload Visibility plugin
+  version: 0.3.0
+  releasedAt: "2021-11-04T14:25:09Z"
+  releaseNotes: no need to delete server pod when changing config, tanzu logo links to homepage, small improvements to workloads tab
+  capacityRequirementsDescription: |
+    Minimal. Tanzu Application Platform GUI has been observed consuming <1 CPU
+    and ~150MB memory in test environments.
   valuesSchema:
     openAPIv3:
       title: Tanzu Application Platform GUI Configuration Schema
@@ -1228,7 +1231,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
+          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0
       template:
       - ytt:
           paths:
