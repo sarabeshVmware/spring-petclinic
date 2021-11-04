@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]) and data.values.supply_chain == "testing":
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: ootb-supply-chain-testing.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0-build.4
+      constraints: 0.3.0-build.5
       prereleases: {}
   values:
   - secretRef:
