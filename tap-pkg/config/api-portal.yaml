@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.shared_tools]):
+#@ if profiles.is_any_enabled([profiles.full]):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1

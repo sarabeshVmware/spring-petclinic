@@ -1,6 +1,6 @@
 #@data/values-schema
 ---
-#! enum: "full", "dev-light", "operator-light", "shared-tools"
+#! enum: "full", "dev-light"
 profile: full
 
 install_cert_manager: true
