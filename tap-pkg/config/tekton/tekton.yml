@@ -4,7 +4,7 @@
 #@ load("@ytt:template", "template")
 #@ load("/_profiles.star", "profiles")
 
-#@ if data.values.install_tekton and profiles.is_any_enabled([profiles.full, profiles.operator_light]):
+#@ if data.values.install_tekton and profiles.is_any_enabled([profiles.full]):
 
 #@ def tekton_updates():
 #@overlay/match by=overlay.subset({"kind": "Deployment"}),expects="1+"
