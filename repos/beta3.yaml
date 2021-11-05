@@ -29,7 +29,7 @@ packages:
       - 0.4.0
   - name: developer-conventions
     versions:
-      - 0.3.0-build.1
+      - 0.3.0
   - name: insight-metadata-store
     versions:
       - 1.0.0-beta.1
@@ -54,13 +54,13 @@ packages:
       - 0.3.0-rc.4
   - name: tap
     versions:
-      - 0.3.0-build.6
+      - 0.3.0-build.7
   - name: learning-center-workshops
     versions:
-      - 1.0.5-build.1
+      - 1.0.6-build.1
   - name: learning-center
     versions:
-      - 1.0.9-build.1
+      - 1.0.11-build.1
   - name: cartographer
     versions:
       - 0.0.7
@@ -108,3 +108,7 @@ packages:
   ## TAP repo bundle version 0.3.0-build.6
   # Changed versions: ootb-templates (!128), ootb-supply-chain-basic (!128), ootb-supply-chain-testing (!128), ootb-supply-chain-testing-scanning (!128), tap (!129)
   # Hotfixes: services-toolkit (!130), scan-controller (!131), grype-scanner (!131)
+
+  ## TAP repo bundle version 0.3.0-build.7
+  # Changed versions: developer-conventions (!139, !141), learning-center (!140), learning-center-workshops (!140)
+  # Hotfixes: cloud-native-runtimes (!138)
