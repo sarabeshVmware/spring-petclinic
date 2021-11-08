@@ -8,7 +8,7 @@ spec:
   version: 0.3.0
   releaseNotes: |
         Release 0.3.0 of the App Live View package
-  releasedAt: 2021-10-25T00:00:00Z
+  releasedAt: 2021-11-08T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
@@ -19,19 +19,15 @@ spec:
           type: array
           items:
             type: string
-        server_namespace:
-          description: The namespace to which ALV server is deployed
-          default: app-live-view
-          type: string   
         service_type:
-          description: The service type for the Application Live View server can be LoadBalancer, NodePort, or ClusterIP
-          default: LoadBalancer
-          type: string       
+          description: The service type for the Application Live View server can be ClusterIP, LoadBalancer or NodePort
+          default: ClusterIP
+          type: string      
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle:0.3.0
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:9c6d7be28c81ccf55b44369073f2954a6ad24495018f84288ab7c614cd15735e
       template:
       - ytt:
           paths:
