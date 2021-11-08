@@ -14,14 +14,12 @@ packages:
       - 0.4.0
   - name: app-live-view
     versions:
-      - 0.3.0-build6
+      - 0.3.0
   - name: scan-controller
     versions:
-      - 1.0.0-beta
       - 1.0.0-beta.2
   - name: grype-scanner
     versions:
-      - 1.0.0-beta
       - 1.0.0-beta.2
   - name: app-accelerator
     versions:
@@ -34,7 +32,6 @@ packages:
       - 1.0.0-beta.1
   - name: image-policy-webhook
     versions:
-      - 1.0.0-beta.0
       - 1.0.0-beta.1
   - name: api-portal
     versions:
@@ -44,14 +41,13 @@ packages:
       - 1.0.3
   - name: build-service
     versions:
-      - 1.3.0
       - 1.3.1
   - name: tap-gui
     versions:
       - 0.3.0
   - name: tap
     versions:
-      - 0.3.0-build.8
+      - 0.3.0
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
@@ -63,53 +59,16 @@ packages:
       - 0.0.7
   - name: ootb-templates
     versions:
-      - 0.3.0-build.3
-      - 0.3.0-build.4
+      - 0.3.0-build.5
   - name: ootb-supply-chain-basic
     versions:
-      - 0.3.0-build.3
-      - 0.3.0-build.4
+      - 0.3.0-build.5
   - name: ootb-supply-chain-testing
     versions:
-      - 0.3.0-build.3
-      - 0.3.0-build.4
+      - 0.3.0-build.5
   - name: ootb-supply-chain-testing-scanning
     versions:
-      - 0.3.0-build.3
-      - 0.3.0-build.4
+      - 0.3.0-build.5
   - name: spring-boot-conventions
     versions:
       - 0.1.2
-  
-  
-  
-  ## TAP repo bundle version 0.3.0-build.1
-  # Changed version: app-accelerator, app-live-view, developer-conventions, insight-metadata-store, api-portal, cloud-native-runtimes, services-toolkit
-  # Newly added package: tap-gui
-  
-  ## TAP repo bundle version 0.3.0-build.2
-  # Changed version: app-live-view, scan-controller, grype-scanner, build-service
-  # Newly added package: tap
-
-  ## TAP repo bundle version 0.3.0-build.3
-  # Changed Versions: tap-profiles, image-policy-webhook, tap-gui
-  # Newly added package: learning-center, learning-center-workshops
-
-  ## TAP repo bundle version 0.3.0-build.4
-  # Changed Versions: services-toolkit, cartographer
-  # Newly added package: out-of-the-box supply chains and templates, springboot-conventions
-
-  ## TAP repo bundle version 0.3.0-build.5
-  # Changed Versions: tap-profiles, learning-center, learning-center-workshops, spring-boot-conventions
- 
-  ## TAP repo bundle version 0.3.0-build.6
-  # Changed versions: ootb-templates (!128), ootb-supply-chain-basic (!128), ootb-supply-chain-testing (!128), ootb-supply-chain-testing-scanning (!128), tap (!129)
-  # Hotfixes: services-toolkit (!130), scan-controller (!131), grype-scanner (!131)
-
-  ## TAP repo bundle version 0.3.0-build.7
-  # Changed versions: developer-conventions (!139, !141), learning-center (!140), learning-center-workshops (!140)
-  # Hotfixes: cloud-native-runtimes (!138)
-
-  ## TAP repo bundle version 0.3.0-build.8
-  # Changed versions: services-toolkit (!134), tap-gui (!145), learning-center (!148), learning-center-workshops (!148)
-  # Hotfixes: tap (!143, !149)

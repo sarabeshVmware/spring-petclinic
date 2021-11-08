@@ -1,5 +1,6 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
@@ -21,7 +22,6 @@ spec:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
       constraints: 1.3.1
-      prereleases: {}
   values:
   - secretRef:
       name: buildservice-values
