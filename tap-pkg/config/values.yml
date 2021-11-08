@@ -22,6 +22,8 @@ cartographer: {}
 #@schema/type any=True
 cnrs: {}
 
+supply_chain: basic
+
 #@schema/type any=True
 ootb_supply_chain_basic: {}
 

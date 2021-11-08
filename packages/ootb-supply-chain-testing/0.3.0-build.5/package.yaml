@@ -1,0 +1,52 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-testing.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: ootb-supply-chain-testing.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releasedAt: "2021-11-04T15:49:11Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-testing
+      properties:
+        cluster_builder:
+          type: string
+          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:6921bdb9eb1bc547676072f12842ebc994ed3340f422e1e21da7f5228f5dd9c1
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
