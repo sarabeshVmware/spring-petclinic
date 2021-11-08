@@ -149,13 +149,12 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: services-toolkit.tanzu.vmware.com.0.4.0-rc.1
-  namespace: scp-toolkit
+  name: services-toolkit.tanzu.vmware.com.0.4.0
 spec:
   refName: services-toolkit.tanzu.vmware.com
-  version: 0.4.0-rc.1
-  releaseNotes: https://docs.vmware.com/en/SCP-Toolkit/0.4/scp-toolkit-0-4/GUID-release_notes.html
-  releasedAt: 2021-10-18T09:45:46Z
+  version: 0.4.0
+  releaseNotes: https://docs.vmware.com/en/Services-Toolkit/0.4/services-toolkit-0-4/GUID-release_notes.html
+  releasedAt: 2021-10-26T12:01:05Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -165,7 +164,7 @@ spec:
       - kapp: {}
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:c0ece472adf0f93efbff9ef12b0b0bd8fb68a7205d4e963f5a31bc35e5ba819c
+          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:16fdd9fc8f04c78f148724bd75c8e08ea3f261d24a01a9d06dbe48ad09c98d90
       template:
       - ytt:
           paths:
@@ -175,57 +174,6 @@ spec:
           - '-'
           - kbld.yaml
           - .imgpkg/images.yml  
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: PackageMetadata
-metadata:
-  name: cartographer.tanzu.vmware.com
-spec:
-  displayName: "Cartographer"
-  providerName: "VMware"
-  shortDescription: "Kubernetes native Supply Chain Choreographer."
-  supportDescription: "https://tanzu.vmware.com/support"
-  longDescription: |-
-    Cartographer allows users to configure Kubernetes resources into re-usable
-    Supply Chains that can be used to define all of the stages that an
-    Application Workload must go through to get to an environment.
-  maintainers:
-    - name: "VMware"
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: Package
-metadata:
-  name: cartographer.tanzu.vmware.com.0.0.6
-spec:
-  refName: cartographer.tanzu.vmware.com
-  version: 0.0.6
-  releaseNotes: |-
-    Initial Release of Supply Chain Choreographer - see
-    https://github.com/vmware-tanzu/cartographer/blob/main/site/content/docs/about.md
-  releasedAt: 2021-09-22T21:31:59Z
-  valuesSchema:
-    openAPIv3:
-      properties: {}
-  template:
-    spec:
-      fetch:
-      - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:f7e402cfa7c9404afdb51f9c6967c688e2595660b9335429ed5a880fc2caa80f
-      template:
-      - ytt:
-          ignoreUnknownComments: true
-          inline:
-            paths:
-              namespace.yaml: |-
-                apiVersion: v1
-                kind: Namespace
-                metadata:
-                  name: cartographer-system
-      - kbld: {}
-      deploy:
-      - kapp:
-          rawOptions:
-          - --wait-timeout=5m
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
@@ -243,13 +191,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: appliveview.tanzu.vmware.com.0.3.0-build5
+  name: appliveview.tanzu.vmware.com.0.3.0
 spec:
   refName: appliveview.tanzu.vmware.com
-  version: 0.3.0-build5
+  version: 0.3.0
   releaseNotes: |
-        Release 0.3.0-build5 of the App Live View package
-  releasedAt: 2021-10-22T00:00:00Z
+        Release 0.3.0 of the App Live View package
+  releasedAt: 2021-11-08T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
@@ -260,19 +208,15 @@ spec:
           type: array
           items:
             type: string
-        server_namespace:
-          description: The namespace to which ALV server is deployed
-          default: app-live-view
-          type: string   
         service_type:
-          description: The service type for the Application Live View server can be LoadBalancer, NodePort, or ClusterIP
+          description: The service type for the Application Live View server can be ClusterIP, LoadBalancer or NodePort
           default: ClusterIP
-          type: string       
+          type: string      
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle:0.3.0-build5
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:9c6d7be28c81ccf55b44369073f2954a6ad24495018f84288ab7c614cd15735e
       template:
       - ytt:
           paths:
@@ -308,12 +252,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: scanning.apps.tanzu.vmware.com.1.0.0-beta
+  name: scanning.apps.tanzu.vmware.com.1.0.0-beta.2
 spec:
   refName: scanning.apps.tanzu.vmware.com
-  version: 1.0.0-beta
+  version: 1.0.0-beta.2
   releaseNotes: |
     Beta release of the Supply Chain Security Tools - Scan package
+  releasedAt: 2021-10-22T20:32:45Z
   valuesSchema:
     openAPIv3:
       title: scanning.apps.tanzu.vmware.com values schema
@@ -325,14 +270,14 @@ spec:
         metadataStoreUrl:
           type: string
           description: Url of the Insight Metadata Store deployed in the cluster
-          default: https://metadata-store-app.metadata-store.svc.cluster.local:8443
-        metadataStoreCa:
-          type: string
-          description: CA Cert of the Insight Metadata Store deployed in the cluster
           default: ""
-        metadataStoreTokenSecret:
+        metadataStoreCaSecret:
           type: string
-          description: Name of the Secret for the Insight Metadata Store Token deployed in the cluster
+          description: Name of deployed Secret with key ca.crt holding the CA Cert of the Insight Metadata Store deployed in the cluster
+          default: ""
+        metadataStoreClusterRole:
+          type: string
+          description: Name of the deployed ClusterRole for read/write access to the Insight Metadata Store deployed in the cluster
           default: ""
         resources:
           type: object
@@ -379,7 +324,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.1
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-beta.2.build.1
       template:
       - ytt:
           paths:
@@ -410,12 +355,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: grype.scanning.apps.tanzu.vmware.com.1.0.0-beta
+  name: grype.scanning.apps.tanzu.vmware.com.1.0.0-beta.2
 spec:
   refName: grype.scanning.apps.tanzu.vmware.com
-  version: 1.0.0-beta
+  version: 1.0.0-beta.2
   releaseNotes: |
     Beta release of the Supply Chain Security Tools - Scan package
+  releasedAt: 2021-10-22T20:32:45Z
   valuesSchema:
     openAPIv3:
       title: grype.scanning.apps.tanzu.vmware.com values schema
@@ -461,7 +407,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.1
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-beta.2.build.1
       template:
       - ytt:
           paths:
@@ -472,77 +418,6 @@ spec:
           - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: PackageMetadata
-metadata:
-  name: default-supply-chain-testing.tanzu.vmware.com
-spec:
-  displayName: Tanzu App Platform Default Supply Chain with Testing
-  shortDescription: Default Software Supply Chain with testing.
-  longDescription: |-
-    Tanzu App Platform Default Supply Chain with Testing powers workloads that
-    require running tests.
-  providerName: VMware
-  supportDescription: https://github.com/vmware-tanzu/cartographer
-  maintainers:
-  - name: VMware
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: Package
-metadata:
-  name: default-supply-chain-testing.tanzu.vmware.com.0.2.0
-spec:
-  refName: default-supply-chain-testing.tanzu.vmware.com
-  version: 0.2.0
-  releasedAt: "2021-10-06T14:04:19Z"
-  valuesSchema:
-    openAPIv3:
-      title: default-supply-chain-testing
-      properties:
-        templates_namespace:
-          type: string
-          description: Name of the namespace where shared templates are installed to. This variable should point to the namespace where this package is being installed into.
-          default: tap-install
-          examples:
-          - tap-install
-        cluster_builder:
-          type: string
-          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
-          default: default
-          examples:
-          - default
-        service_account:
-          type: string
-          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
-          default: default
-          examples:
-          - default
-        registry.server:
-          type: string
-          description: Name of the registry server where application images should be pushed to.
-          default: index.docker.io
-          examples:
-          - index.docker.io
-          - gcr.io
-        registry.repository:
-          type: string
-          description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
-          examples:
-          - web-team
-  template:
-    spec:
-      fetch:
-      - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/default-supply-chain-testing/source-test-to-url@sha256:a6e51fbb85d738f6557a1b5230838149175b72fcd5e017afa74c6fc0a4295f19
-      template:
-      - ytt:
-          ignoreUnknownComments: true
-      - kbld: {}
-      deploy:
-      - kapp:
-          rawOptions:
-          - --wait-timeout=5m
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
@@ -651,21 +526,21 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: developer-conventions.tanzu.vmware.com.0.3.0-build.1
+  name: developer-conventions.tanzu.vmware.com.0.3.0
 spec:
   refName: developer-conventions.tanzu.vmware.com
-  version: 0.3.0-build.1
+  version: 0.3.0
   valuesSchema:
     openAPIv3:
       properties: {}
-  releasedAt: 2021-10-19T00:00:00Z
+  releasedAt: 2021-11-02T00:00:00Z
   releaseNotes: |
     Developer Conventions contents package
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.3.0-build.1
+          image: registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.3.0
       template:
       - ytt:
           paths:
@@ -674,66 +549,6 @@ spec:
           paths:
           - '-'
           - .imgpkg/images.yml
-      deploy:
-      - kapp: {}
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: PackageMetadata
-metadata:
-  name: default-supply-chain.tanzu.vmware.com
-spec:
-  displayName: Tanzu App Platform Default Supply Chain
-  longDescription: Tanzu App Platform Default Supply Chain powering default workflows
-  shortDescription: Default Supply Chain
-  providerName: VMware
-  maintainers:
-  - name: Lisa Burns
-  - name: Paul Warren
-  - name: Harsha Nandiwada
-  - name: Kiwi Bui
-  - name: Ming Xiao
-  - name: Anthony Pensiero
-  supportDescription: https://tanzu.vmware.com/support
-
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: Package
-metadata:
-  name: default-supply-chain.tanzu.vmware.com.0.2.0
-spec:
-  refName: default-supply-chain.tanzu.vmware.com
-  version: 0.2.0
-  releaseNotes: |
-    Default supply chain contents package
-  valuesSchema:
-    openAPIv3:
-      title: default-supply-chain.tanzu.vmware.com values schema
-      examples:
-      - registry:
-          server: https://youregistry.io
-          repository: sample-repo
-      properties:
-        registry.server:
-          type: string
-          description: registry hostname
-          default: https://yourregistry.io
-          examples:
-          - https://yourregistry.io
-        registry.repository:
-          type: string
-          description: Registry repository
-          default: sample-repo
-          examples:
-          - sample-repo
-  template:
-    spec:
-      fetch:
-      - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/default-supply-chain/default-supply-chain@sha256:35dd6b5e67fec0df0e1294ff1bfc65c6ce55fdecb1917240cf0efe71edbd8666
-      template:
-      - ytt:
-          paths:
-          - config/
       deploy:
       - kapp: {}
 ---
@@ -760,6 +575,7 @@ spec:
   version: 1.0.0-beta.1
   releaseNotes: |
     Beta release of the Metadata Store component package
+  releasedAt: "2021-10-20T15:34:57Z"
   valuesSchema:
     openAPIv3:
       title: metadata-store.tanzu.vmware.com values schema
@@ -930,17 +746,18 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: image-policy-webhook.signing.run.tanzu.vmware.com.1.0.0-beta.0
+  name: image-policy-webhook.signing.run.tanzu.vmware.com.1.0.0-beta.1
 spec:
   refName: image-policy-webhook.signing.run.tanzu.vmware.com
-  version: 1.0.0-beta.0
+  version: 1.0.0-beta.1
   releaseNotes: |
-    Image Policy Webhook v1.0.0-beta.0
+    Image Policy Webhook v1.0.0-beta.1
+  releasedAt: 2021-10-26T14:00:00Z
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:v1.0.0-beta.0
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle:1.0.0-beta.1
       template:
       - ytt:
           paths:
@@ -955,9 +772,9 @@ spec:
     openAPIv3:
       title: image-policy-webhook.signing.run.tanzu.vmware.com values schema
       examples:
-      - warn_on_unmatched: true
+      - allow_unmatched_images: true
       properties:
-        warn_on_unmatched:
+        allow_unmatched_images:
           type: boolean
           description: |
             Feature flag for enabling admission of images that do not match any patterns in the image policy configuration.
@@ -1070,6 +887,7 @@ spec:
         provider:
           type: string
           description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on a local Kubernetes cluster provider."
+          default: ""
           examples:
             - local
         local_dns:
@@ -1081,7 +899,8 @@ spec:
               default: false
             domain:
               type: string
-              description: "Optional: Set a custom domain for the Knative services."
+              description: "Optional: Set a custom domain for CoreDNS. Only applicable when \"local_dns\" is set to \"true\", \"provider\" is set to \"local\" and running on Kind."
+              default: ""
               examples:
                 - "example.com"
         ingress:
@@ -1097,12 +916,14 @@ spec:
                 namespace:
                   type: string
                   description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+                  default: ""
             internal:
               type: object
               properties:
                 namespace:
                   type: string
                   description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+                  default: ""
         pdb:
           type: object
           properties:
@@ -1266,13 +1087,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: buildservice.tanzu.vmware.com.1.3.0
+  name: buildservice.tanzu.vmware.com.1.3.1
 spec:
   refName: buildservice.tanzu.vmware.com
-  version: 1.3.0
-  releasedAt: "2021-09-28T00:00:00Z"
+  version: 1.3.1
+  releasedAt: "2021-10-25T00:00:00Z"
   capacityRequirementsDescription: Cluster with nodes > 50GB ephemeral storage, Registry > 5GB available space
-  releaseNotes: https://docs.pivotal.io/build-service/1-3/release-notes.html
+  releaseNotes: https://docs.vmware.com/en/Tanzu-Build-Service/1.3/vmware-tanzu-build-service-v13/GUID-release-notes.html
   valuesSchema:
     openAPIv3:
       title: buildservice.tanzu.vmware.com values schema
@@ -1309,7 +1130,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: registry.tanzu.vmware.com/build-service/bundle:1.3.0
+          image: registry.tanzu.vmware.com/build-service/bundle@sha256:c1b63312ca2333298ede54f6121f17c53bb7d1b68256dbd6dccbc1ba88abded1
       template:
       - ytt:
           paths:
@@ -1339,12 +1160,15 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap-gui.tanzu.vmware.com.0.3.0-rc.1
+  name: tap-gui.tanzu.vmware.com.0.3.0
 spec:
   refName: tap-gui.tanzu.vmware.com
-  version: 0.3.0-rc.1
-  releasedAt: "2021-10-20T14:46:26Z"
-  releaseNotes: various improvements to Workload Visibility plugin
+  version: 0.3.0
+  releasedAt: "2021-11-04T14:25:09Z"
+  releaseNotes: no need to delete server pod when changing config, tanzu logo links to homepage, small improvements to workloads tab
+  capacityRequirementsDescription: |
+    Minimal. Tanzu Application Platform GUI has been observed consuming <1 CPU
+    and ~150MB memory in test environments.
   valuesSchema:
     openAPIv3:
       title: Tanzu Application Platform GUI Configuration Schema
@@ -2566,7 +2390,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0-rc.1
+          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0
       template:
       - ytt:
           paths:
@@ -2575,5 +2399,674 @@ spec:
           paths:
           - '-'
           - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: tap.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Application Platform"
+  shortDescription: "Package to install a set of TAP components to get you started based on your use case."
+  longDescription: "Tanzu Application Platform package lets you install a setup of TAP components in one go. You can chose your use case by just selecting a profile."
+  providerName: "VMware"
+  maintainers:
+  - name: "Dmitriy Kalinin"
+  supportDescription: "https://tanzu.vmware.com/support"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.0.3.0
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 0.3.0
+  releaseNotes: |
+    Beta release 0.3.0 of Tanzu Application Platform.
+    This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2021-11-08T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:ee33f014b8dbe35569154b162b6774a587b9195641673c53a83b8d3caa820f8d
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: "Profile to install. Valid values: full, dev-light"
+        install_cert_manager:
+          type: boolean
+          default: true
+          description: "Install cert-manager"
+        install_flux:
+          type: boolean
+          default: true
+          description: "Install FluxCD source-controller"
+        install_tekton:
+          type: boolean
+          default: true
+          description: "Install Tekton"
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "API Portal configuration"
+        accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Accelerator configuration"
+        appliveview:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "App Live View configuration"
+        cnrs:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Cloud Native Runtimes configuration"
+        ootb_supply_chain_basic:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Basic configuration"
+        ootb_supply_chain_testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing configuration"
+        ootb_supply_chain_testing_scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing Scanning configuration"
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Image Policy Webhook configuration"
+        buildservice:
+          type: object
+          description: "Build Service configuration"
+          properties:
+            kp_default_repository:
+              type: string
+              description: docker repository (required)
+              examples:
+              - registry.io/build-service
+            kp_default_repository_username:
+              type: string
+              description: registry username (required)
+              examples:
+              - janedoe@vmware.com
+            kp_default_repository_password:
+              type: string
+              description: registry password (required)
+              examples:
+              - password
+            tanzunet_username:
+              type: string
+              description: tanzunet registry username (required for dependency updater feature)
+              examples:
+              - janedoe@vmware.com
+            tanzunet_password:
+              type: string
+              description: tanzunet registry password (required for dependency updater feature)
+              examples:
+              - password
+            ca_cert_data:
+              type: string
+              description: tbs registry ca certificate (used for self signed registry)
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "TAP GUI configuration"
+        learningcenter:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Learning Center configuration"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  # This will be the name of our package
+  name: "workshops.learningcenter.tanzu.vmware.com"
+spec:
+  displayName: "Workshop Building Tutorial"
+  longDescription: "Learn how to build workshops in the Learning Center"
+  shortDescription: "Workshop Building Tutorial"
+  providerName: VMware
+  supportDescription: Support available from VMware. Refer to the VMware Product Guide for specific support terms.
+  maintainers:
+  - name: Learning Center for VMware TAP Team
+  categories:
+  - education
+  - enablement
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: "workshops.learningcenter.tanzu.vmware.com.1.0.7-build.1"
+spec:
+  refName: "workshops.learningcenter.tanzu.vmware.com"
+  version: "1.0.7-build.1"
+  releasedAt: "2021-11-04T19:38:16Z"
+  licenses: 
+  - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: "dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:bc866f95990c7eab41b61dcb53cf3eab2912ea203eb422b600dd14e9bc355a41"
+      template:
+      - ytt:
+          paths:
+          - "config/"
+      - kbld:
+          paths:
+          - ".imgpkg/images.yml"
+          - "-"
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  # This will be the name of our package
+  name: "learningcenter.tanzu.vmware.com"
+spec:
+  displayName: "Learning Center for Tanzu Application Platform"
+  longDescription: "The learning center is a self-hosted platform that allows content creators to create workshops with markdown files that are then displayed to the learner in an instructional wizard user interface."
+  shortDescription: "Guided technical workshops"
+  iconSVGBase64: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCA1OC44NiI+CiAgPGc+CiAgICA8Zz4KICAgICAgPHBhdGggZD0iTTM5LjMsNTIuNjdIMjFhMi4zNSwyLjM1LDAsMCwxLTEuODYtLjg5TDcuNTIsMzcuMjRhMi4zOCwyLjM4LDAsMCwxLS40NS0yLjA2bDQuNDItMTcuOGEyLjQyLDIuNDIsMCwwLDEsMS4yNS0xLjU2TDI5LjEyLDcuNjFhMi4zOSwyLjM5LDAsMCwxLDIuMTIsMGwxNi41OSw4LjIyYTIuMzQsMi4zNCwwLDAsMSwxLjI2LDEuNThsNC4yMiwxNy44YTIuMzgsMi4zOCwwLDAsMS0uNDYsMkw0MS4xNSw1MS43OUEyLjM3LDIuMzcsMCwwLDEsMzkuMyw1Mi42N1pNMjEsNTAuMjJIMzkuMjZMNTAuOTEsMzUuNzMsNDYuNzEsMTgsMzAuMTksOS44MiwxMy44NywxOCw5LjQ2LDM1Ljc0WiIgc3R5bGU9ImZpbGw6ICMyMzhmY2YiLz4KICAgICAgPGc+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSI1MS4yMiAxMi41NSA1My4zIDEwLjg0IDMxLjQxIDAgMzEuNDEgMi43NCA1MS4yMiAxMi41NSIgc3R5bGU9ImZpbGw6ICMxYmJmZDMiLz4KICAgICAgICA8cG9seWdvbiBwb2ludHM9IjMuMiAzOC4wMiAwLjUzIDM4LjYxIDE1LjggNTcuNzcgMTcgNTUuMzQgMy4yIDM4LjAyIiBzdHlsZT0iZmlsbDogIzc5YmY0MyIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iMjguOTUgMi43NSAyOC45NSAwLjAxIDcuMzUgMTAuODQgOS4zNyAxMi41OCAyOC45NSAyLjc1IiBzdHlsZT0iZmlsbDogIzFiYmZkMyIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iNy45MSAxNC41NiA1LjgzIDEyLjc3IDAgMzYuMjEgMi42OCAzNS42MiA3LjkxIDE0LjU2IiBzdHlsZT0iZmlsbDogIzFkNDQ4OSIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iNTcuNzEgMzUuNjMgNjAuMzggMzYuMjIgNTQuODMgMTIuNzcgNTIuNzEgMTQuNTEgNTcuNzEgMzUuNjMiIHN0eWxlPSJmaWxsOiAjMWQ0NDg5Ii8+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSI1Ny4xNiAzOC4wMiA0My4yMSA1NS4zNyA0NC40IDU3LjggNTkuODMgMzguNjEgNTcuMTYgMzguMDIiIHN0eWxlPSJmaWxsOiAjNzliZjQzIi8+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSIxOS4yMSA1Ni40IDE4LjAxIDU4Ljg2IDQyLjE4IDU4Ljg2IDQwLjk4IDU2LjQgMTkuMjEgNTYuNCIgc3R5bGU9ImZpbGw6ICMxYmJmZDMiLz4KICAgICAgPC9nPgogICAgPC9nPgogIDwvZz4KPC9zdmc+Cg==
+  providerName: VMware
+  supportDescription: Support available from VMware. Refer to the VMware Product Guide for specific support terms.
+  maintainers:
+  - name: Learning Center for Tanzu Application Platform Team
+  categories:
+  - education
+  - enablement
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: "learningcenter.tanzu.vmware.com.1.0.14-build.1"
+spec:
+  refName: "learningcenter.tanzu.vmware.com"
+  version: "1.0.14-build.1"
+  releasedAt: "2021-11-04T19:38:16Z"
+  licenses: 
+  - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
+  valuesSchema:
+    openAPIv3:
+      title: "learningcenter.tanzu.vmware.com values schema"
+      examples:
+      - ingressDomain: learningcenter.mydomain.com
+        namespace: educates
+      properties:
+        namespace:
+          type: string
+          description: The namespace in which to deploy Educates
+          default: educates
+        ingressDomain:
+          type: string
+          description: DNS parent subdomain used for training portal and workshop ingresses. This property is required.
+          examples:
+          - learningcenter.mydomain.com
+          - 192.168.0.2.nip.io
+        ingressClass:
+          type: string
+          description: Ingress class for where multiple ingress controllers exist and need to use that which is not marked as the default
+        ingressSecret:
+          type: object
+          description: SSL certificate for secure ingress. Must be a wildcard certificate for children of DNS parent ingress subdomain
+          properties:
+            certificate:
+              type: string
+              description: Certificate - PEM format
+            privateKey:
+              type: string
+              description: Private key - PEM format
+            secretName:
+              type: string
+              description: If you already have a secret to use with a ingress resource, you can use this property to define it. (This property will take precedence over certificate and privateKey properties )
+        storageClass:
+          type: string
+          description: Configuration for persistent volumes. The default storage class specified by the cluster will be used if not defined
+        storageUser:
+          type: string
+          description: Storage group may need to be set where a cluster has pod security policies enabled, usually setting it to one. Storage user and storage group can be set in exceptional case where storage class used maps to NFS storage and storage server requires specific user and group always be used
+        storageGroup:
+          type: string
+          description: Storage group may need to be set where a cluster has pod security policies enabled, usually setting it to one. Storage user and storage group can be set in exceptional case where storage class used maps to NFS storage and storage server requires specific user and group always be used
+        portalCredentials:
+          type: object
+          description: Credentials for accessing training portal instances. If not specified then random passwords are generated which can be obtained from the custom resource for the training portal
+          properties:
+            systemAdmin:
+              type: object
+              properties:
+                username:
+                  type: string
+                  default: educates
+                password:
+                  type: string
+            clientAccess:
+              type: object
+              properties:
+                username:
+                  type: string
+                  default: robot@educates
+                password:
+                  type: string
+        imageRegistry:
+          type: object
+          description: Primary image registry where Educates container images are stored. It is only necessary to define the host and credentials when that image registry requires authentication to access images
+          properties:
+            host:
+              description: Private registry domain
+              type: string
+            username:
+              type: string
+            password:
+              type: string
+        prepullImages:
+          type: array
+          description: Prepull images to nodes in cluster. Should be empty list if no images should be prepulled. Normally you would only want to prepull workshop images. This is done to reduce start up times for sessions
+          items:
+            type: string
+          default: base-environment
+          examples:
+          - training-portal
+          - docker-registry
+          - dind-rootless
+          - base-environment
+          - jdk8-environment
+          - jdk11-environment
+          - conda-environment
+        dockerDaemon:
+          type: object
+          properties:
+            networkMTU:
+              type: integer
+              description: Docker daemon settings when building docker images in a workshop is enabled
+              default: 1500
+            proxyCache:
+              type: object
+              description: Proxy cache provides a way of partially getting around image pull limits for Docker Hub image registry, with the remote URL being set to "https://registry-1.docker.io
+              properties:
+                remoteURL:
+                  type: integer
+                username:
+                  type: integer
+                password:
+                  type: integer
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:c5b29f394753a920ffb1bf9a2285f02181167ad93af0395cbefbd0cc79dc1a7d"
+      template:
+      - ytt:
+          paths:
+          - "config/"
+      - kbld:
+          paths:
+          - "kbld-bundle.yml"
+          - ".imgpkg/images.yml"
+          - "-"
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: cartographer.tanzu.vmware.com
+spec:
+  displayName: "Cartographer"
+  providerName: "VMware"
+  shortDescription: "Kubernetes native Supply Chain Choreographer."
+  supportDescription: "https://tanzu.vmware.com/support"
+  longDescription: |-
+    Cartographer allows users to configure Kubernetes resources into re-usable
+    Supply Chains that can be used to define all of the stages that an
+    Application Workload must go through to get to an environment.
+  maintainers:
+    - name: "VMware"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cartographer.tanzu.vmware.com.0.0.7
+  annotations:
+    kapp.k14s.io/change-group: carto.run/meta
+spec:
+  refName: cartographer.tanzu.vmware.com
+  version: 0.0.7
+  releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/0.0.7
+  releasedAt: "2021-10-22T20:31:39Z"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:35bfc11d92c14446863e251ad659a7232825212229d529a40d28c468c70392ec
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          inline:
+            paths:
+              namespace.yaml: |-
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cartographer-system
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-templates.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Templates
+  shortDescription: Out of The Box Templates.
+  longDescription: Tanzu App Platform Out of The Box Templates to be used with Supply Chains.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-templates.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: ootb-templates.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releasedAt: "2021-11-04T15:49:10Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-templates
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:ed0606dcbabb0e2864cfab84ddefd0222cbf4a952d7dea998969a8e596960aa3
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-supply-chain-basic.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Supply Chain Basic
+  shortDescription: Out of The Box Supply Chain Basic.
+  longDescription: Tanzu App Platform Out of The Box Supply Chain Basic.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-basic.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: ootb-supply-chain-basic.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releasedAt: "2021-11-04T15:49:11Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-basic
+      properties:
+        cluster_builder:
+          type: string
+          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:d8f3ddd7475bb9ba7a550ee10ce8aba82ae3e1f15db178bc7c616967ed2e2f88
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-supply-chain-testing.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Supply Chain with Testing
+  shortDescription: Out of The Box Supply Chain with Testing.
+  longDescription: |-
+    Tanzu App Platform Out of The Box Supply Chain with Testing powers workloads that
+    require running tests.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-testing.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: ootb-supply-chain-testing.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releasedAt: "2021-11-04T15:49:11Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-testing
+      properties:
+        cluster_builder:
+          type: string
+          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:6921bdb9eb1bc547676072f12842ebc994ed3340f422e1e21da7f5228f5dd9c1
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-supply-chain-testing-scanning.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Supply Chain with Testing and Scanning
+  shortDescription: Out of The Box Supply Chain with Testing and Scanning.
+  longDescription: |-
+    Tanzu App Platform Out of The Box Supply Chain with Testing and Scanning powers workloads that
+    require source scanning and image scanning.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-testing-scanning.tanzu.vmware.com.0.3.0-build.5
+spec:
+  refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
+  version: 0.3.0-build.5
+  releasedAt: "2021-11-04T15:49:12Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-testing-scanning
+      properties:
+        cluster_builder:
+          type: string
+          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:7805db5d6bac433f6739c82f03c5e88457081ac84f58136321612f32554b0b2a
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: spring-boot-conventions.tanzu.vmware.com
+spec:
+  displayName: "Tanzu Spring Boot Conventions Server"
+  longDescription: "The Spring Boot convention server ships by default with Tanzu Application Platform (TAP). This convention applies runtime best practice configurations to all Spring Boot apps deployed to the platform."
+  shortDescription: "Default Spring Boot convention server."
+  providerName: "VMware"
+  maintainers:
+  - name: "Scott Andrews"
+  - name: "Rashed Kamal"
+  supportDescription: "https://tanzu.vmware.com/support"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: spring-boot-conventions.tanzu.vmware.com.0.1.2
+spec:
+  refName: spring-boot-conventions.tanzu.vmware.com
+  version: 0.1.2
+  releasedAt: 2021-10-29T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:61038bd6bb2129a1493d1e36f14635eb4a63eeb7ff0822c96db6f8b3ee066e73
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - spring-boot-convention-server/server.yaml
+      - ytt:
+          paths:
+          - '-'
+          - spring-boot-convention-server/bundle.yaml
       deploy:
       - kapp: {}
