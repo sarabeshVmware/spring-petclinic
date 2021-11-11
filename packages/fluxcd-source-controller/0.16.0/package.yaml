@@ -1,0 +1,51 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: fluxcd.source.controller.tanzu.vmware.com.0.16.0
+spec:
+  refName: fluxcd.source.controller.tanzu.vmware.com
+  version: 0.16.0
+  releasedAt: 2021-10-28T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
+      template:
+      - ytt:
+          inline:
+            paths:
+              secretgen.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                ---
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: canonical-registry-secret
+                  namespace: flux-system
+                  annotations:
+                    secretgen.carvel.dev/image-pull-secret: ""
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: e30K
+                ---
+                #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"name":"source-controller"}}),expects="1+"
+                ---
+                spec:
+                  template:
+                    spec:
+                      #@overlay/match missing_ok=True
+                      imagePullSecrets:
+                      - name: canonical-registry-secret
+          paths:
+            - "config/"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
