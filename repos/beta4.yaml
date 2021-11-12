@@ -41,7 +41,7 @@ packages:
       - 1.0.3
   - name: build-service
     versions:
-      - 1.3.1
+      - 1.3.3
   - name: tap-gui
     versions:
       - 0.3.0
