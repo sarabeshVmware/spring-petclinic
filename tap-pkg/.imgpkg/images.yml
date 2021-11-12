@@ -2,13 +2,6 @@
 apiVersion: imgpkg.carvel.dev/v1alpha1
 images:
 - annotations:
-    kbld.carvel.dev/id: fluxcd/source-controller:v0.15.4
-    kbld.carvel.dev/origins: |
-      - resolved:
-          tag: v0.15.4
-          url: fluxcd/source-controller:v0.15.4
-  image: index.docker.io/fluxcd/source-controller@sha256:4a8c513efb7c38b35ecf5b92f1a1383c9bad00732ad5d17a0af79e7afe0e1cc9
-- annotations:
     kbld.carvel.dev/id: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.28.0@sha256:bd27a0bfeaddc7a340617e2469b6fe9c5eeaee175dc34176c6ef2d6ba6025745
   image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller@sha256:bd27a0bfeaddc7a340617e2469b6fe9c5eeaee175dc34176c6ef2d6ba6025745
 - annotations:
