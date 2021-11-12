@@ -1,0 +1,158 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: scst-store.tanzu.vmware.com.1.0.0-build.3
+spec:
+  refName: scst-store.tanzu.vmware.com
+  version: 1.0.0-build.3
+  releaseNotes: ""
+  releasedAt: "2021-11-12T00:00:00Z"
+  valuesSchema:
+    openAPIv3:
+      title: metadata-store.tanzu.vmware.com values schema
+      examples:
+      - db_host: metadata-store-db
+        db_user: metadata-store-user
+        db_password: password0123456
+        db_name: metadata-store
+        db_port: "5432"
+        db_sslmode: verify-full
+        app_service_type: NodePort
+        api_port: 9443
+        api_host: localhost
+        auth_proxy_port: 8443
+        auth_proxy_host: 0.0.0.0
+        use_cert_manager: "true"
+        databaseRequestStorage: 10Gi
+        pg_req_memory: 1Gi
+        pg_limit_memory: 4Gi
+        app_req_memory: 128Mi
+        app_req_cpu: 100m
+        app_limit_memory: 512Mi
+        app_limit_cpu: 250m
+        app_replicas: 1
+        db_replicas: 1
+        add_default_rw_service_account: "true"
+      properties:
+        db_host:
+          type: string
+          description: The address to the postgres database host that the metdata-store app uses to connect. The default is set to metadata-store-db which is the postgres service name. Changing this does not change the postgres service name
+          default: metadata-store-db
+          examples:
+          - metadata-store-db
+          - some-dns-name.example.com
+          - 192.168.0.1
+        db_user:
+          type: string
+          description: The database user to create and use for updating and querying. The metadata postgres section create this user. The metadata api server uses this username to connect to the database.
+          default: metadata-store-user
+        db_password:
+          type: string
+          description: The database user password.
+          default: ""
+        db_name:
+          type: string
+          description: The name of the database to use.
+          default: metadata-store
+        db_port:
+          type: string
+          description: The database port to use. This is the port to use when connecting to the database pod.
+          default: "5432"
+        db_sslmode:
+          type: string
+          description: Determines the security connection between API server and Postgres database. This can be set to 'verify-ca' or 'verify-full'
+          default: verify-full
+          examples:
+          - verify-ca
+          - verify-full
+        app_service_type:
+          type: string
+          description: The type of service to use for the metadata app service. This can be set to 'Nodeport' or 'LoadBalancer'.
+          default: NodePort
+          examples:
+          - NodePort
+          - LoadBalancer
+        api_port:
+          type: integer
+          description: The internal port for the metadata app api endpoint. This will be used by the kube-rbac-proxy sidecar.
+          default: 9443
+        api_host:
+          type: string
+          description: The internal hostname for the metadata api endpoint. This will be used by the kube-rbac-proxy sidecar.
+          default: localhost
+        auth_proxy_port:
+          type: integer
+          description: The external port address of the of the kube-rbac-proxy sidecar
+          default: 8443
+        auth_proxy_host:
+          type: string
+          description: The binding ip address of the kube-rbac-proxy sidecar
+          default: 0.0.0.0
+        use_cert_manager:
+          type: string
+          description: Cert manager is required to be installed to use this flag. When true, this creates certificates object to be signed by cert manager for the API server and Postgres database. If false, the certificate object have to be provided by the user.
+          default: "true"
+        storageClassName:
+          type: string
+          description: The storage class name of the persistent volume used by Postgres database for storing data. The default value will use the default class name defined on the cluster.
+          default: ""
+        databaseRequestStorage:
+          type: string
+          description: The storage requested of the persistent volume used by Postgres database for storing data.
+          default: 10Gi
+        pg_req_memory:
+          type: string
+          description: Memory request for postgres container in metadata-store-db deployment
+          default: 1Gi
+        pg_limit_memory:
+          type: string
+          description: Memory limit for postgres container in metadata-store-db deployment
+          default: 4Gi
+        app_req_memory:
+          type: string
+          description: Memory request for metadata-store-app container
+          default: 128Mi
+        app_req_cpu:
+          type: string
+          description: CPU request for metadata-store-app container
+          default: 100m
+        app_limit_memory:
+          type: string
+          description: Memory limit for metadata-store-app container
+          default: 512Mi
+        app_limit_cpu:
+          type: string
+          description: CPU limit for metadata-store-app container
+          default: 250m
+        app_replicas:
+          type: integer
+          description: The number of replicas for the metadata-store-app
+          default: 1
+        db_replicas:
+          type: integer
+          description: The number of replicas for the metadata-store-db
+          default: 1
+        priority_class_name:
+          type: string
+          description: If specified, this value is the name of the desired PriorityClass for the metadata-store-db deployment
+          default: ""
+        add_default_rw_service_account:
+          type: string
+          description: Adds a read-write service account which can be used to obtain access token to use metadata-store CLI
+          default: "true"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:be3a939eebe92ed0e73c94afb39282417551aa79603e4bcce7cf9a49633e0418
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - deployment/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
