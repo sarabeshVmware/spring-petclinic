@@ -10,6 +10,8 @@ import (
 )
 
 func Install(configFile string, valuesDir string, preCleanup bool, postCleanup bool) {
+	tap.HandlePrerequisites()
+
 	log.Printf("Request: Install packages")
 	config := GetConfig(configFile, valuesDir)
 

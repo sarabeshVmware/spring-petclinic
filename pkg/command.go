@@ -4,6 +4,7 @@
 package pkg
 
 import (
+	"fmt"
 	"log"
 	"os/exec"
 	"strings"
@@ -67,4 +68,21 @@ func RunWithBash_DontLogCommand(command string) ([]byte, error) {
 
 func RunWithBash_DontLogCommand_AllowError(command string) ([]byte, error) {
 	return RunCommandWithBash(command, true, true)
+}
+
+func RunAndDisown(command string) (int, *exec.Cmd) {
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	cmd := exec.Command(commandName, arguments...)
+	err := cmd.Start()
+	pid := cmd.Process.Pid
+	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
+	CheckError(err)
+	log.Printf("Command started, PID: %d", pid)
+	return pid, cmd
+}
+
+func KillPID(pid int) {
+	log.Printf("Killing PID: %d", pid)
+	Run(fmt.Sprintf("kill %d", pid))
 }

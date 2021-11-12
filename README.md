@@ -13,6 +13,7 @@ Usage:
 Available Commands:
   clean       Clean packages, secrets, package repositories etc..
   completion  generate the autocompletion script for the specified shell
+  e2e         End-to-end testing
   help        Help about any command
   install     Install packages
 
@@ -78,3 +79,26 @@ packages:
           --pre-cleanup          Cleanup namespace, secrets, repository and packages before installation.
       -v, --values-dir string    Directory containing values schemas. (default "$PROJECT_DIR/tap-packaging-tests/tap-install/values")
     ```
+
+## E2E Testing
+### Steps
+```
+➜ go run tap-tests.go e2e -h                                
+End-to-end testing
+
+Usage:
+  tap-tests e2e [flags]
+
+Flags:
+  -h, --help                            help for e2e
+      --innerloop-source-build-deploy   Test innerloop: source build deploy. (default true)
+      --install                         Install packages pre-testing.
+      --post-cleanup                    Cleanup namespace, secrets, repository and packages after testing.
+      --pre-cleanup                     Cleanup namespace, secrets, repository and packages before installation.
+```
+
+#### Steps for Innerloop
+1. Populate `tap-tests/e2e/innerloop/source-build-deploy.yaml`: tanzunet and container registry credentials.
+2. Populate `tap-install/values/tanzu-build-service.yaml`: tanzunet and container registry credentials.
+3. Populate `tap-install/values/default-supply-chain.yaml`: container registry credentials.
+4. Run: `go run tap-tests.go e2e --innerloop-source-build-deploy [--install] [--pre-cleanup] [--post-cleanup]`

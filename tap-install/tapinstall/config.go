@@ -5,6 +5,7 @@ package tapinstall
 
 import (
 	"os"
+	"path/filepath"
 
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 	"gopkg.in/yaml.v3"
@@ -26,4 +27,8 @@ func GetConfig(configFile string, valuesDir string) Config {
 	tap.CheckError(err)
 	config.ValuesDirectory = valuesDir
 	return config
+}
+
+func GetDefaultValuesDir() string {
+	return filepath.Join(filepath.Dir(tap.GetCurrentDir()), "values")
 }
