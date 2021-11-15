@@ -1,0 +1,35 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: appliveview.tanzu.vmware.com.0.4.0-build.1
+spec:
+  refName: appliveview.tanzu.vmware.com
+  version: 0.4.0-build.1
+  releaseNotes: |
+        Release 0.4.0-build.1 of the App Live View package
+  releasedAt: 2021-11-15T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      title: appliveview.tanzu.vmware.com values schema
+      properties:
+        service_type:
+          description: The service type for the Application Live View server can be ClusterIP, LoadBalancer or NodePort
+          default: ClusterIP
+          type: string       
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:05e673e2cc0c5135bb6a06a2f8e7dc2107a289ce9bfebe4384082c5fde0dc543
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
