@@ -1,0 +1,18 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: tekton-pipelines
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: tekton.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.29.0
+
+#@ end
