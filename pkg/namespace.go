@@ -56,7 +56,7 @@ data:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: service-account # use value from "Install Default Supply Chain"
+  name: default # use value from "Install Default Supply Chain"
 secrets:
   - name: registry-credentials
 imagePullSecrets:
@@ -96,7 +96,7 @@ roleRef:
   name: kapp-permissions
 subjects:
   - kind: ServiceAccount
-    name: service-account # use value from "Install Default Supply Chain"
+    name: default # use value from "Install Default Supply Chain"
 `
 	os.WriteFile(tempFile.Name(), []byte(configuration), 0666)
 	ApplyConfigurationInNamespace(tempFile.Name(), namespace)
