@@ -4,6 +4,7 @@ secrets:
     registry: registry.tanzu.vmware.com
     username: # TANZUNET_USERNAME
     password: # TANZUNET_PASSWORD
+    namespace: tap-install
 package_repository:
   name: tanzu-tap-repository
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.2.0
