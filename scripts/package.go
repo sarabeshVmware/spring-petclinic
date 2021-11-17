@@ -69,6 +69,8 @@ func main() {
 	packageFile := GetPackageFile(fpath)
 	log.Printf("Validating Image reference in package CR file: %s", fpath)
 	ValidateImage(packageFile.Spec.Template.Spec.Fetch[0].ImgpkgBundle.Image)
+	log.Printf("Validating template section in package CR file: %s", fpath)
+	ValidateTemplateSection(packageFile)
 	log.Printf("Validating package CR file: %s", fpath)
 	validate = validator.New()
 	log.Printf("Registring custom validator for ISO8601 date validation")
@@ -98,4 +100,26 @@ func ValidateImage(Image string) {
 	} else {
 		log.Println("Image reference in package CR is validated successfully")
 	}
+}
+
+func ValidateTemplateSection(packageFile PackageCR) {
+	isKbldPresent, isPathPresentInKbldPath := false, false
+	for _, template := range packageFile.Spec.Template.Spec.Template {
+		if len(template.Kbld.Paths) != 0 {
+			isKbldPresent = true
+			for _, path := range template.Kbld.Paths {
+				if path == ".imgpkg/images.yml" {
+					isPathPresentInKbldPath = true
+					break
+				}
+			}
+		}
+	}
+	if !isKbldPresent {
+		log.Fatal("kbld entry is absent in the template section.")
+	}
+	if !isPathPresentInKbldPath {
+		log.Fatal(`".imgpkg/images.yml" entry is absent in the kbld, in the template section.`)
+	}
+	log.Print("template section validated successfully.")
 }
