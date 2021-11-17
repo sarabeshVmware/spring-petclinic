@@ -21,7 +21,9 @@ func Install(configFile string, valuesDir string, preCleanup bool, postCleanup b
 	}
 
 	tap.CreateNamespace(config.Namespace)
-	tap.CreateImagepullSecrets(config.Secrets, config.Namespace)
+	for _, secret := range config.Secrets {
+		tap.CreateTanzuSecret(secret)
+	}
 	tap.AddPackageRepository(config.PackageRepository, config.Namespace)
 	tap.CheckPackageRepositoryStatus(config.PackageRepository, config.Namespace)
 	tap.ListPackages(config.Namespace)
