@@ -14,7 +14,7 @@ packages:
       - 0.4.0
   - name: app-live-view
     versions:
-      - 0.3.0
+      - 0.4.0-build.1
   - name: scan-controller
     versions:
       - 1.0.0-beta.2
@@ -29,13 +29,13 @@ packages:
       - 0.3.0
   - name: insight-metadata-store
     versions:
-      - 1.0.0-beta.1
+      - 1.0.0-build.3
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.1
   - name: api-portal
     versions:
-      - 1.0.3
+      - 1.0.4
   - name: cloud-native-runtimes
     versions:
       - 1.0.3
@@ -75,3 +75,13 @@ packages:
   - name: fluxcd-source-controller
     versions:
       - 0.16.0
+  - name: tekton-pipelines
+    versions:
+      - 0.29.0
+
+# TAP repo bunlde 0.4.0-build.1
+
+# TAP repo bunlde 0.4.0-build.2
+#  Version changes: app live view, api portal, insight metadata store
+#  New packages: tekton-pipeloines
+#  Added scan controller additional value configuration support to tap-pkg.

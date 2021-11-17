@@ -2,12 +2,6 @@
 apiVersion: imgpkg.carvel.dev/v1alpha1
 images:
 - annotations:
-    kbld.carvel.dev/id: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller:v0.28.0@sha256:bd27a0bfeaddc7a340617e2469b6fe9c5eeaee175dc34176c6ef2d6ba6025745
-  image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/controller@sha256:bd27a0bfeaddc7a340617e2469b6fe9c5eeaee175dc34176c6ef2d6ba6025745
-- annotations:
-    kbld.carvel.dev/id: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook:v0.28.0@sha256:af6c1fc18a6dddc661baa5d44b7159c0e770d0e74bcbe3b4d7087274f9567fa0
-  image: gcr.io/tekton-releases/github.com/tektoncd/pipeline/cmd/webhook@sha256:af6c1fc18a6dddc661baa5d44b7159c0e770d0e74bcbe3b4d7087274f9567fa0
-- annotations:
     kbld.carvel.dev/id: quay.io/jetstack/cert-manager-cainjector:v1.5.3
     kbld.carvel.dev/origins: |
       - resolved:
