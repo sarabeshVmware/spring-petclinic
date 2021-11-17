@@ -14,6 +14,6 @@ func Cleanup(configFile string, valuesDir string) {
 	log.Printf("Request: Cleanup")
 	tap.UninstallPackages(config.Namespace)
 	tap.DeletePackageRepository(config.Namespace)
-	tap.DeleteImagepullSecrets(config.Namespace)
+	tap.DeleteTanzuSecrets(config.Namespace)
 	tap.DeleteNamespace(config.Namespace)
 }
