@@ -13,6 +13,7 @@ secrets:
 package_repository:
   name: tanzu-tap-repository
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.2.0
+  namespace: tap-install
 packages:
   ## INDEPENDENT PACKAGES:
   - name: accelerator.apps.tanzu.vmware.com

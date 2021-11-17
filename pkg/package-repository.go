@@ -13,8 +13,9 @@ import (
 )
 
 type PackageRepository struct {
-	Name  string `yaml:"name"`
-	Image string `yaml:"image"`
+	Name      string `yaml:"name"`
+	Image     string `yaml:"image"`
+	Namespace string `yaml:"namespace"`
 }
 
 type PackageRepoOutput struct {
@@ -24,9 +25,10 @@ type PackageRepoOutput struct {
 	Status     string `json:"status"`
 }
 
-func AddPackageRepository(packageRepository PackageRepository, namespace string) {
+func AddPackageRepository(packageRepository PackageRepository) {
 	log.Printf("Adding package repository CR: %s", packageRepository.Name)
-	Run(fmt.Sprintf("tanzu package repository add %s --url %s -n %s", packageRepository.Name, packageRepository.Image, namespace))
+	Run(fmt.Sprintf("tanzu package repository add %s --url %s -n %s", packageRepository.Name, packageRepository.Image, packageRepository.Namespace))
+	CheckPackageRepositoryStatus(packageRepository)
 }
 
 func ListPackageRepositories(namespace string) []PackageRepoOutput {
@@ -46,9 +48,9 @@ func DeletePackageRepository(namespace string) {
 	}
 }
 
-func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace string) {
+func CheckPackageRepositoryStatus(packageRepository PackageRepository) {
 	log.Printf("Checking package repository status: %s", packageRepository.Name)
-	packageRepositoryStatus, _ := Run(fmt.Sprintf("tanzu package repository get %s -n %s -o json", packageRepository.Name, namespace))
+	packageRepositoryStatus, _ := Run(fmt.Sprintf("tanzu package repository get %s -n %s -o json", packageRepository.Name, packageRepository.Namespace))
 	jsonparser.ArrayEach(packageRepositoryStatus, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
 		repository, err := jsonparser.GetString(value, "repository")
 		CheckError(err)
@@ -57,7 +59,7 @@ func CheckPackageRepositoryStatus(packageRepository PackageRepository, namespace
 			CheckError(err)
 			if status == "Reconciling" || status == "" {
 				time.Sleep(5 * time.Second)
-				CheckPackageRepositoryStatus(packageRepository, namespace)
+				CheckPackageRepositoryStatus(packageRepository)
 			} else if status == "Reconcile succeeded" {
 				log.Printf("Reconcile succeeded for package repository: %s", packageRepository.Name)
 			} else {
