@@ -1,0 +1,28 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: developer-conventions.tanzu.vmware.com.0.4.0-build1
+spec:
+  refName: developer-conventions.tanzu.vmware.com
+  version: 0.4.0-build1
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  releasedAt: 2021-11-16T23:50+00:00
+  releaseNotes: |
+    Developer Conventions contents package
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.4.0-build1
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
