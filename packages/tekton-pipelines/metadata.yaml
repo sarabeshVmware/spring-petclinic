@@ -1,0 +1,13 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: tekton.tanzu.vmware.com
+spec:
+  displayName: "Tekton Pipelines"
+  longDescription: "Tekton is a powerful and flexible open-source framework for creating CI/CD systems, allowing developers to build, test, and deploy across cloud providers and on-premise systems."
+  shortDescription: "Tekton Pipelines is a framework for creating CI/CD systems."
+  providerName: "VMware"
+  supportDescription: "https://tanzu.vmware.com/support"
+  maintainers:
+    - name: "VMware"

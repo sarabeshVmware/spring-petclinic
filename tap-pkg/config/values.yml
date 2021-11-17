@@ -4,7 +4,6 @@
 profile: full
 
 install_cert_manager: true
-install_tekton: true
 
 #@schema/type any=True
 api_portal: {}
