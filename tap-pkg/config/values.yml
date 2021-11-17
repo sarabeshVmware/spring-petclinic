@@ -36,6 +36,9 @@ ootb_supply_chain_testing_scanning: {}
 image_policy_webhook: {}
 
 #@schema/type any=True
+scanning: {}
+
+#@schema/type any=True
 grype: {}
 
 #@schema/type any=True
