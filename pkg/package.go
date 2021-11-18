@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/buger/jsonparser"
@@ -17,10 +16,13 @@ import (
 )
 
 type Package struct {
-	Name          string `yaml:"name"`
-	InstalledName string `yaml:"installed_name"`
-	Version       string `yaml:"version"`
-	UseValuesFile string `yaml:"use_values_file"`
+	Description         string   `yaml:"description"`
+	Name                string   `yaml:"name"`
+	Namespace           string   `yaml:"namespace"`
+	Package             string   `yaml:"package"`
+	ValuesFile          string   `yaml:"values_file,omitempty"`
+	Version             string   `yaml:"version"`
+	PackageDependencies []string `yaml:"package_dependencies,omitempty"`
 }
 
 type PackageInstalledOutput struct {
@@ -44,63 +46,102 @@ func ListInstalledPackages(namespace string) []PackageInstalledOutput {
 	return packages
 }
 
-func ListValuesSchema(packages []Package, namespace string) {
-	for _, packageInfo := range packages {
-		log.Printf("Values schemas for package: %s", packageInfo.Name)
-		Run(fmt.Sprintf("tanzu package available get %s/%s --values-schema -n %s", packageInfo.Name, packageInfo.Version, namespace))
+func ListValuesSchema(packageInfo Package) {
+	log.Printf("Values schemas for package: %s", packageInfo.Package)
+	Run(fmt.Sprintf("tanzu package available get %s/%s --values-schema -n %s", packageInfo.Package, packageInfo.Version, packageInfo.Namespace))
+}
+
+func GetDependentPackagesInfo(parentPackage Package, packagesList []Package) []Package {
+	dependentPackagesInfo := []Package{}
+	for _, packageDependency := range parentPackage.PackageDependencies {
+		for _, packageInfo := range packagesList {
+			if packageInfo.Package == packageDependency {
+				dependentPackagesInfo = append(dependentPackagesInfo, packageInfo)
+			}
+		}
+	}
+	return dependentPackagesInfo
+}
+
+func CheckIfPackageInstalled(packageInfo Package) bool {
+	log.Printf("Checking if package is installed: %s", packageInfo.Package)
+	packageInstalled := false
+	for _, installedPackage := range ListInstalledPackages(packageInfo.Namespace) {
+		if packageInfo.Package == installedPackage.PackageName {
+			packageInstalled = true
+		}
+	}
+	return packageInstalled
+}
+
+func GetPackageInfoFromName(packageName string, packagesList []Package) Package {
+	for _, packageInfo := range packagesList {
+		if packageInfo.Name == packageName {
+			return packageInfo
+		}
+	}
+	log.Fatalf("Package not found in the provided list: %s", packageName)
+	return Package{}
+}
+
+func InstallPackage(packageInfo Package, packagesList []Package) {
+	log.Printf("Installing package: %s", packageInfo.Package)
+
+	if CheckIfPackageInstalled(packageInfo) {
+		log.Printf("Package already installed: %s", packageInfo.Package)
+		return
+	}
+
+	// install package dependencies:
+	for _, dependentPackageInfo := range GetDependentPackagesInfo(packageInfo, packagesList) {
+		log.Printf("Installing package dependency: %s", dependentPackageInfo.Package)
+		InstallPackage(dependentPackageInfo, packagesList)
+	}
+
+	// pre-requisites for packages:
+	if packageInfo.Package == "appliveview.tanzu.vmware.com" {
+		log.Printf("Handling pre-requisites for appliveview:")
+		HandleAppLiveViewPreRequisites(packageInfo)
+	}
+	if packageInfo.Package == "scanning.apps.tanzu.vmware.com" {
+		log.Printf("Handling pre-requisites for scan-controller:")
+		HandleScanControllerPreRequisites(packageInfo)
+	}
+	// install:
+	installCmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.Name, packageInfo.Package, packageInfo.Version, packageInfo.Namespace)
+	if packageInfo.ValuesFile != "" {
+		installCmd += fmt.Sprintf(" -f %s", packageInfo.ValuesFile)
+	}
+	if packageInfo.Package == "cnrs.tanzu.vmware.com" || packageInfo.Package == "buildservice.tanzu.vmware.com" {
+		installCmd += " --poll-timeout 30m"
+	}
+	Run(installCmd)
+
+	ValidatePackage(packageInfo)
+
+	// handle post-installation:
+	if packageInfo.Package == "cnrs.tanzu.vmware.com" {
+		log.Printf("Handling post-installation for cloud-native-runtimes:")
+		HandleCloudNativeRuntimesPostInstallation()
+	}
+	if packageInfo.Package == "image-policy-webhook.signing.run.tanzu.vmware.com" {
+		log.Printf("Handling post-installation for image-policy-webhook:")
+		HandleImagePolicyWebhookPostInstallation()
 	}
 }
 
-func InstallPackages(packages []Package, namespace string, ValuesDirectory string) {
-	for _, packageInfo := range packages {
-		log.Printf("Installing package: %s", packageInfo.Name)
-
-		// pre-requisites for packages:
-		if packageInfo.Name == "appliveview.tanzu.vmware.com" {
-			log.Printf("Handling pre-requisites for appliveview:")
-			HandleAppLiveViewPreRequisites(packageInfo, ValuesDirectory)
-		}
-		if packageInfo.Name == "scanning.apps.tanzu.vmware.com" {
-			log.Printf("Handling pre-requisites for scan-controller:")
-			HandleScanControllerPreRequisites(packageInfo, ValuesDirectory)
-		}
-
-		// install:
-		installCmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.InstalledName, packageInfo.Name, packageInfo.Version, namespace)
-		if packageInfo.UseValuesFile != "" {
-			installCmd += fmt.Sprintf(" -f %s", filepath.Join(ValuesDirectory, packageInfo.UseValuesFile))
-		}
-		if packageInfo.Name == "cnrs.tanzu.vmware.com" || packageInfo.Name == "buildservice.tanzu.vmware.com" {
-			installCmd += " --poll-timeout 30m"
-		}
-		Run(installCmd)
-
-		ValidatePackage(packageInfo, namespace)
-
-		// handle post-installation:
-		if packageInfo.Name == "cnrs.tanzu.vmware.com" {
-			log.Printf("Handling post-installation for cloud-native-runtimes:")
-			HandleCloudNativeRuntimesPostInstallation()
-		}
-		if packageInfo.Name == "image-policy-webhook.signing.run.tanzu.vmware.com" {
-			log.Printf("Handling post-installation for image-policy-webhook:")
-			HandleImagePolicyWebhookPostInstallation()
-		}
-	}
-}
-
-func ValidatePackage(packageInfo Package, namespace string) {
-	log.Printf("Validating package: %s", packageInfo.Name)
-	packageInstalled, _ := Run(fmt.Sprintf("tanzu package installed get %s -n %s -o json", packageInfo.InstalledName, namespace))
+func ValidatePackage(packageInfo Package) {
+	log.Printf("Validating package: %s", packageInfo.Package)
+	packageInstalled, _ := Run(fmt.Sprintf("tanzu package installed get %s -n %s -o json", packageInfo.Name, packageInfo.Namespace))
 	status, err := jsonparser.GetString(packageInstalled, "[0]", "status")
 	CheckError(err)
 	if status == "Reconciling" || status == "" {
 		time.Sleep(5 * time.Second)
-		ValidatePackage(packageInfo, namespace)
+		ValidatePackage(packageInfo)
 	} else if status == "Reconcile succeeded" {
-		log.Printf("Reconcile succeeded for package install: %s", packageInfo.Name)
+		log.Printf("Reconcile succeeded for package install: %s", packageInfo.Package)
 	} else {
-		log.Fatalf("Reconcile not succeeded for package install: %s", packageInfo.Name)
+		log.Fatalf("Reconcile not succeeded for package install: %s", packageInfo.Package)
 	}
 }
 
@@ -112,9 +153,8 @@ func UninstallPackages(namespace string) {
 	}
 }
 
-func HandleAppLiveViewPreRequisites(packageInfo Package, ValuesDirectory string) {
-	valuesSchemaFile := filepath.Join(ValuesDirectory, packageInfo.UseValuesFile)
-	appliveviewSchemaBytes, err := os.ReadFile(valuesSchemaFile)
+func HandleAppLiveViewPreRequisites(packageInfo Package) {
+	appliveviewSchemaBytes, err := os.ReadFile(packageInfo.ValuesFile)
 	CheckError(err)
 	appliveviewSchema := struct {
 		ServerNamespace string `yaml:"server_namespace"`
@@ -128,7 +168,7 @@ func HandleAppLiveViewPreRequisites(packageInfo Package, ValuesDirectory string)
 	}
 }
 
-func HandleScanControllerPreRequisites(packageInfo Package, ValuesDirectory string) {
+func HandleScanControllerPreRequisites(packageInfo Package) {
 	tempFile, err := ioutil.TempFile("", "configuration*.yaml")
 	CheckError(err)
 	defer os.Remove(tempFile.Name())
@@ -175,8 +215,7 @@ automountServiceAccountToken: false
 	metadataStoreUrl, _ := RunWithBash(`kubectl -n metadata-store get service -o name | grep app | xargs kubectl -n metadata-store get -o jsonpath='{.spec.ports[].name}{"://"}{.metadata.name}{"."}{.metadata.namespace}{".svc.cluster.local:"}{.spec.ports[].port}'`)
 	metadataStoreCa, _ := RunWithBash(`kubectl get secret app-tls-cert -n metadata-store -o json | jq -r '.data."ca.crt"' | base64 -d`)
 	metadataStoreToken, _ := RunWithBash(`kubectl get secret $(kubectl get sa -n metadata-store metadata-store-read-write-client -o json | jq -r '.secrets[0].name') -n metadata-store -o json | jq -r '.data.token' | base64 -d`)
-	valuesSchemaFile := filepath.Join(ValuesDirectory, packageInfo.UseValuesFile)
-	scanControllerBytes, err := os.ReadFile(valuesSchemaFile)
+	scanControllerBytes, err := os.ReadFile(packageInfo.ValuesFile)
 	CheckError(err)
 	scanControllerSchema := struct {
 		MetadataStoreUrl         string `yaml:"metadataStoreUrl"`
@@ -189,7 +228,7 @@ automountServiceAccountToken: false
 	scanControllerSchema.MetadataStoreCa = string(metadataStoreCa)
 	scanControllerBytes, err = yaml.Marshal(&scanControllerSchema)
 	CheckError(err)
-	err = os.WriteFile(valuesSchemaFile, scanControllerBytes, 0666)
+	err = os.WriteFile(packageInfo.ValuesFile, scanControllerBytes, 0666)
 	CheckError(err)
 	log.Printf("Updated values schema for scan-controller: \n%s", string(scanControllerBytes))
 
