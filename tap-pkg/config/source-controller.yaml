@@ -14,6 +14,5 @@ spec:
     refName: controller.source.apps.tanzu.vmware.com
     versionSelection:
       constraints: 0.1.2
-      prereleases: {}
 
 #@ end
