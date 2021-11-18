@@ -33,59 +33,59 @@ func VerifyImageRepositoryReadyStatus(name string, namespace string) {
 	}
 }
 
-func verifyBuildsAreGenerated(namespace string) {
-	log.Printf("Checking if builds are generated in namespace: %s", namespace)
-	buildsBytes, _ := tap.Run(fmt.Sprintf("kubectl get build -n %s", namespace))
-	builds := strings.TrimSpace(string(buildsBytes))
-	if builds == fmt.Sprintf("No resources found in %s namespace.", namespace) {
-		log.Printf("Builds not generated in namespace: %s", namespace)
-		time.Sleep(5 * time.Second)
-		verifyBuildsAreGenerated(namespace)
-	} else {
-		log.Printf("Builds generated in namespace: %s", namespace)
-	}
-}
+// func verifyBuildsAreGenerated(namespace string) {
+// 	log.Printf("Checking if builds are generated in namespace: %s", namespace)
+// 	buildsBytes, _ := tap.Run(fmt.Sprintf("kubectl get build -n %s", namespace))
+// 	builds := strings.TrimSpace(string(buildsBytes))
+// 	if builds == fmt.Sprintf("No resources found in %s namespace.", namespace) {
+// 		log.Printf("Builds not generated in namespace: %s", namespace)
+// 		time.Sleep(5 * time.Second)
+// 		verifyBuildsAreGenerated(namespace)
+// 	} else {
+// 		log.Printf("Builds generated in namespace: %s", namespace)
+// 	}
+// }
 
-func verifyBuildIsNotInUnknownState(buildName string, namespace string) {
-	log.Printf("Checking if build is in unknown state: %s", buildName)
-	buildStateBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1=="%s")print $2}'`, namespace, buildName))
-	buildState := strings.TrimSpace(string(buildStateBytes))
-	if buildState == "Unknown" {
-		log.Printf("Build in unknown state: %s", buildName)
-		time.Sleep(5 * time.Second)
-		verifyBuildIsNotInUnknownState(buildName, namespace)
-	} else {
-		log.Printf("Build not in unknown state: %s", buildName)
-		log.Printf("Build image: %s", buildState)
-	}
-}
+// func verifyBuildIsNotInUnknownState(buildName string, namespace string) {
+// 	log.Printf("Checking if build is in unknown state: %s", buildName)
+// 	buildStateBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1=="%s")print $2}'`, namespace, buildName))
+// 	buildState := strings.TrimSpace(string(buildStateBytes))
+// 	if buildState == "Unknown" {
+// 		log.Printf("Build in unknown state: %s", buildName)
+// 		time.Sleep(5 * time.Second)
+// 		verifyBuildIsNotInUnknownState(buildName, namespace)
+// 	} else {
+// 		log.Printf("Build not in unknown state: %s", buildName)
+// 		log.Printf("Build image: %s", buildState)
+// 	}
+// }
 
-func VerifyBuildStatus(pattern string, namespace string, verifyBuildsGeneration bool) {
-	log.Printf("Checking build status for pattern: %s", pattern)
-	if verifyBuildsGeneration {
-		verifyBuildsAreGenerated(namespace)
-	}
+// func VerifyBuildStatus(pattern string, namespace string, verifyBuildsGeneration bool) {
+// 	log.Printf("Checking build status for pattern: %s", pattern)
+// 	if verifyBuildsGeneration {
+// 		verifyBuildsAreGenerated(namespace)
+// 	}
 
-	log.Printf("Getting build names matching pattern: %s", pattern)
-	buildNamesBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1~"%s")print $1}' | xargs`, namespace, pattern))
-	buildNames := strings.Split(strings.TrimSpace(string(buildNamesBytes)), " ")
-	allBuildsFailed := true
-	for _, buildName := range buildNames {
-		log.Printf("Checking build status for build: %s", buildName)
-		verifyBuildIsNotInUnknownState(buildName, namespace)
-		buildStateBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1=="%s")print $3}'`, namespace, buildName))
-		buildState := strings.TrimSpace(string(buildStateBytes))
-		log.Printf("Build %s status: %s", buildName, buildState)
-		if buildState == "True" {
-			log.Printf("Build ready: %s", buildName)
-			allBuildsFailed = false
-			break
-		}
-	}
-	if allBuildsFailed {
-		log.Fatalf("No builds ready for the pattern: %s", pattern)
-	}
-}
+// 	log.Printf("Getting build names matching pattern: %s", pattern)
+// 	buildNamesBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1~"%s")print $1}' | xargs`, namespace, pattern))
+// 	buildNames := strings.Split(strings.TrimSpace(string(buildNamesBytes)), " ")
+// 	allBuildsFailed := true
+// 	for _, buildName := range buildNames {
+// 		log.Printf("Checking build status for build: %s", buildName)
+// 		verifyBuildIsNotInUnknownState(buildName, namespace)
+// 		buildStateBytes, _ := tap.RunWithBash(fmt.Sprintf(`kubectl get build -n %s | awk '{if($1=="%s")print $3}'`, namespace, buildName))
+// 		buildState := strings.TrimSpace(string(buildStateBytes))
+// 		log.Printf("Build %s status: %s", buildName, buildState)
+// 		if buildState == "True" {
+// 			log.Printf("Build ready: %s", buildName)
+// 			allBuildsFailed = false
+// 			break
+// 		}
+// 	}
+// 	if allBuildsFailed {
+// 		log.Fatalf("No builds ready for the pattern: %s", pattern)
+// 	}
+// }
 
 func VerifyKnativeServiceStatus(name string, namespace string) {
 	log.Printf("Checking knative service status for: %s", name)
@@ -146,7 +146,7 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	}
 }
 
-func VerifyBuildStatus3(){
+func VerifyBuildStatus(){
 	count := 30
 	for count <= 30{
 		if count == 0{
