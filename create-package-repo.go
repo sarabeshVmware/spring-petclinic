@@ -45,6 +45,11 @@ func main() {
 	if len(os.Args) > 3 {
 		channelToPush = os.Args[3]
 	}
+
+	if len(os.Args) > 4 {
+		OciRegistry = os.Args[4]
+	}
+
 	channelDir := filepath.Join(GeneratedRepoDirectoryPath, channel)
 	imgpkgDir := filepath.Join(channelDir, ".imgpkg")
 	packagesDir := filepath.Join(channelDir, "packages")
