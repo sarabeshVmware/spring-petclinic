@@ -99,21 +99,15 @@ func InstallPackage(packageInfo Package, packagesList []Package) {
 	}
 
 	// pre-requisites for packages:
-	if packageInfo.Package == "appliveview.tanzu.vmware.com" {
-		log.Printf("Handling pre-requisites for appliveview:")
-		HandleAppLiveViewPreRequisites(packageInfo)
-	}
 	if packageInfo.Package == "scanning.apps.tanzu.vmware.com" {
 		log.Printf("Handling pre-requisites for scan-controller:")
 		HandleScanControllerPreRequisites(packageInfo)
 	}
+
 	// install:
-	installCmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", packageInfo.Name, packageInfo.Package, packageInfo.Version, packageInfo.Namespace)
+	installCmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s --poll-timeout 30m", packageInfo.Name, packageInfo.Package, packageInfo.Version, packageInfo.Namespace)
 	if packageInfo.ValuesFile != "" {
 		installCmd += fmt.Sprintf(" -f %s", packageInfo.ValuesFile)
-	}
-	if packageInfo.Package == "cnrs.tanzu.vmware.com" || packageInfo.Package == "buildservice.tanzu.vmware.com" {
-		installCmd += " --poll-timeout 30m"
 	}
 	Run(installCmd)
 
@@ -150,21 +144,6 @@ func UninstallPackages(namespace string) {
 	for _, each := range installedpackages {
 		log.Printf("Uninstalling package: %s", each.Name)
 		Run(fmt.Sprintf("tanzu package installed delete %s -n %s -y", each.Name, namespace))
-	}
-}
-
-func HandleAppLiveViewPreRequisites(packageInfo Package) {
-	appliveviewSchemaBytes, err := os.ReadFile(packageInfo.ValuesFile)
-	CheckError(err)
-	appliveviewSchema := struct {
-		ServerNamespace string `yaml:"server_namespace"`
-	}{}
-	err = yaml.Unmarshal([]byte(appliveviewSchemaBytes), &appliveviewSchema)
-	CheckError(err)
-	if appliveviewSchema.ServerNamespace != "" {
-		CreateNamespace(appliveviewSchema.ServerNamespace)
-	} else {
-		CreateNamespace("app-live-view")
 	}
 }
 
