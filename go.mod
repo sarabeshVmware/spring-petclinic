@@ -15,9 +15,11 @@ require (
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/moby/sys/mount v0.3.0 // indirect
 	github.com/moby/term v0.0.0-20210619224110-3f7ff695adc6 // indirect
+	github.com/pivotal/kpack v0.4.2 // indirect
 	github.com/spf13/cobra v1.2.1
 	github.com/theupdateframework/notary v0.7.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+	k8s.io/api v0.22.3 // indirect
 	k8s.io/apimachinery v0.22.3 // indirect
 	k8s.io/client-go v0.22.3 // indirect
 )

@@ -78,7 +78,8 @@ func InnerloopSourceBuildDeploy(installPackages bool, preCleanup bool, postClean
 
 func verify(workload string, namespace string, oldString string, newString string, testNew bool) {
 	e2e.VerifyImageRepositoryReadyStatus(workload, namespace)
-	e2e.VerifyBuildStatus(fmt.Sprintf("%s-build-*", workload), namespace, true)
+	// e2e.VerifyBuildStatus(fmt.Sprintf("%s-build-*", workload), namespace, true)
+	e2e.VerifyBuildStatus3()
 	e2e.VerifyKnativeServiceStatus(workload, namespace)
 	e2e.VerifyWorkloadStatus(workload, namespace)
 	e2e.VerifyApplicationRunningWithValidationString(e2e.GetEnvoyExternalIP(), "tanzu-java-web-app.tap-install.example.com", oldString, newString, testNew)

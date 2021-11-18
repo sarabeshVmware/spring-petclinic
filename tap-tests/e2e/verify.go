@@ -3,6 +3,7 @@
 
 package e2e
 
+
 import (
 	"fmt"
 	"io/ioutil"
@@ -10,8 +11,11 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
+	"github.com/pivotal/kpack/pkg/apis/build/v1alpha2"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	//util "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg/util"
+	"context"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func VerifyImageRepositoryReadyStatus(name string, namespace string) {
@@ -140,4 +144,45 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	} else {
 		log.Fatalf("Application %s not validated, expected: %s, got: %s", host, validationString, resultString)
 	}
+}
+
+func VerifyBuildStatus3(){
+	count := 30
+	for count <= 30{
+		if count == 0{
+			log.Fatalf("Builds are not generated after 5 mins")
+			break
+		}
+		result := GetBuilds()
+		if len(result.Items) != 0{
+			latestBuildIndex :=  len(result.Items) - 1 
+			lastConditionIndex := len(result.Items[0].Status.Status.Conditions) - 1
+			//Expect(result.Items[0].Status.Status.Conditions[lastConditionIndex].Status).To(Equal(corev1.ConditionTrue))
+			if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionUnknown{
+				log.Printf("Build %s status is Unknown", result.Items[latestBuildIndex].ObjectMeta.Name)
+				//time.Sleep(5 * time.Second)
+				
+			} else if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionTrue{
+				log.Printf("Build %s status is verified successfully. Status is %s", result.Items[latestBuildIndex].ObjectMeta.Name, result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status)
+				break
+			}
+		} else{
+			log.Println("Builds are not generated yet")
+		}
+		log.Printf("Waiting for 10s for builds getting generated ...")
+		time.Sleep(10 * time.Second)
+		count -= 1
+	}
+	
+	
+	
+
+		
+}
+func GetBuilds() v1alpha2.BuildList{
+	var restClient = tap.GetRestClient()
+	result := v1alpha2.BuildList{}
+	request := restClient.Get()
+	request.AbsPath("/apis/kpack.io/v1alpha2/builds").Do(context.TODO()).Into(&result)
+	return result
 }
