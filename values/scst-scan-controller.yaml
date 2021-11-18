@@ -1,5 +1,3 @@
-# scanning.apps.tanzu.vmware.com: Supply Chain Security Tools for VMware Tanzu - Scan
-
 metadataStoreUrl: "https://metadata-store-app.metadata-store.svc.cluster.local:8443"
 metadataStoreTokenSecret: "metadata-store-secret"
 ## Ensure the certificate is indented by two spaces. Uncomment below:

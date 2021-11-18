@@ -1,0 +1,4 @@
+registry:
+  repository: <REGISTRY-REPOSITORY>
+  server: <REGISTRY-SERVER>
+service_account: "default"

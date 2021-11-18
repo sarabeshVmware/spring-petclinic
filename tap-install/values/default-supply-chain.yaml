@@ -1,7 +1,0 @@
-# default-supply-chain.tanzu.vmware.com: Tanzu App Platform Default Supply Chain
-# default-supply-chain-testing.tanzu.vmware.com: Tanzu App Platform Default Supply Chain with Testing
-
-registry:
-  repository: # REGISTRY-REPOSITORY
-  server: # REGISTRY-SERVER
-service_account: service-account
