@@ -1,0 +1,165 @@
+## profiles
+- description: "Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case."
+  name: tap-full
+  namespace: tap-install
+  package: tap.tanzu.vmware.com
+  values_file: ./values/tap-profile-full.yaml
+  version: 0.3.0
+- description: "Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case."
+  name: tap-dev-light
+  namespace: tap-install
+  package: tap.tanzu.vmware.com
+  values_file: ./values/tap-profile-dev-light.yaml
+  version: 0.3.0
+
+## packages
+- description: "Application Accelerator for VMware Tanzu: Used to create new projects and configurations."
+  name: app-accelerator
+  namespace: tap-install
+  package: accelerator.apps.tanzu.vmware.com
+  values_file: ./values/app-accelerator.yaml
+  version: 0.4.0
+- description: "API portal: A unified user interface to enable search, discovery and try-out of API endpoints at ease."
+  name: api-portal
+  namespace: tap-install
+  package: api-portal.tanzu.vmware.com
+  version: 1.0.3
+- description: "Application Live View for VMware Tanzu: App for monitoring and troubleshooting running apps"
+  name: app-live-view
+  namespace: tap-install
+  package: appliveview.tanzu.vmware.com
+  package_dependencies:
+    - controller.conventions.apps.tanzu.vmware.com
+  values_file: ./values/app-live-view.yaml
+  version: 0.3.0
+- description: "Tanzu Build Service: Tanzu Build Service enables the building and automation of containerized software workflows securely and at scale."
+  name: tanzu-build-service
+  namespace: tap-install
+  package: buildservice.tanzu.vmware.com
+  values_file: ./values/tanzu-build-service.yaml
+  version: 1.3.1
+- description: "Cartographer: Kubernetes native Supply Chain Choreographer."
+  name: cartographer
+  namespace: tap-install
+  package: cartographer.tanzu.vmware.com
+  version: 0.0.7
+- description: "Cloud Native Runtimes: Cloud Native Runtimes is a serverless runtime based on Knative"
+  name: cloud-native-runtimes
+  namespace: tap-install
+  package: cnrs.tanzu.vmware.com
+  values_file: ./values/cloud-native-runtimes.yaml
+  version: 1.0.3
+- description: "Convention Service for VMware Tanzu: Convention Service enables app operators to consistently apply desired runtime configurations to fleets of workloads."
+  name: convention-controller
+  namespace: tap-install
+  package: controller.conventions.apps.tanzu.vmware.com
+  version: 0.4.2
+- description: "Tanzu Source Controller: Tanzu Source Controller enables workload create/update from source code."
+  name: source-controller
+  namespace: tap-install
+  package: controller.source.apps.tanzu.vmware.com
+  version: 0.1.2
+- description: "Tanzu App Platform Developer Conventions: Developer Conventions"
+  name: developer-conventions
+  namespace: tap-install
+  package: developer-conventions.tanzu.vmware.com
+  package_dependencies:
+    - appliveview.tanzu.vmware.com
+  version: 0.3.0
+- description: "Service Bindings for Kubernetes: Service Bindings for Kubernetes implements the Service Binding Specification."
+  name: service-bindings
+  namespace: tap-install
+  package: service-bindings.labs.vmware.com
+  version: 0.5.0
+- description: "Services Toolkit: The Services Toolkit enables the management, lifecycle, discoverability and connectivity of Service Resources (databases, message queues, DNS records, etc.)."
+  name: services-toolkit
+  namespace: tap-install
+  package: services-toolkit.tanzu.vmware.com
+  version: 0.4.0
+- description: "Tanzu Spring Boot Conventions Server: Default Spring Boot convention server."
+  name: spring-boot-conventions
+  namespace: tap-install
+  package: spring-boot-conventions.tanzu.vmware.com
+  package_dependencies:
+    - controller.conventions.apps.tanzu.vmware.com
+  version: 0.1.2
+- description: "Tanzu Application Platform GUI: web app graphical user interface for Tanzu Application Platform"
+  name: tap-gui
+  namespace: tap-install
+  package: tap-gui.tanzu.vmware.com
+  values_file: ./values/tap-gui.yaml
+  version: 0.3.0
+- description: "Tanzu App Platform Out of The Box Supply Chain Basic: Out of The Box Supply Chain Basic."
+  name: ootb-supply-chain-basic
+  namespace: tap-install
+  package: ootb-supply-chain-basic.tanzu.vmware.com
+  package_dependencies:
+    - cartographer.tanzu.vmware.com
+    - ootb-templates.tanzu.vmware.com
+  values_file: ./values/ootb-supply-chain.yaml
+  version: 0.3.0-build.5
+- description: "Tanzu App Platform Out of The Box Supply Chain with Testing and Scanning: Out of The Box Supply Chain with Testing and Scanning."
+  name: ootb-supply-chain-testing-scanning
+  namespace: tap-install
+  package: ootb-supply-chain-testing-scanning.tanzu.vmware.com
+  package_dependencies:
+    - cartographer.tanzu.vmware.com
+    - ootb-templates.tanzu.vmware.com
+  values_file: ./values/ootb-supply-chain.yaml
+  version: 0.3.0-build.5
+- description: "Tanzu App Platform Out of The Box Supply Chain with Testing: Out of The Box Supply Chain with Testing."
+  name: ootb-supply-chain-testing
+  namespace: tap-install
+  package: ootb-supply-chain-testing.tanzu.vmware.com
+  package_dependencies:
+    - cartographer.tanzu.vmware.com
+    - ootb-templates.tanzu.vmware.com
+  values_file: ./values/ootb-supply-chain.yaml
+  version: 0.3.0-build.5
+- description: "Tanzu App Platform Out of The Box Templates: Out of The Box Templates."
+  name: ootb-templates
+  namespace: tap-install
+  package: ootb-templates.tanzu.vmware.com
+  version: 0.3.0-build.5
+- description: "Tanzu Supply Chain Security Tools - Store: The Metadata Store enables saving and querying image, package, and vulnerability data."
+  name: metadata-store
+  namespace: tap-install
+  package: scst-store.tanzu.vmware.com
+  values_file: ./values/scst-store.yaml
+  version: 1.0.0-beta.1
+- description: "Image Policy Webhook: The Image Policy Webhook allows platform operators to define a policy that will use cosign to verify signatures of container images"
+  name: image-policy-webhook
+  namespace: tap-install
+  package: image-policy-webhook.signing.run.tanzu.vmware.com
+  package_dependencies:
+    - scst-store.tanzu.vmware.com
+  values_file: ./values/scst-sign.yaml
+  version: 1.0.0-beta.1
+- description: "Supply Chain Security Tools for VMware Tanzu - Scan: Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains."
+  name: scan-controller
+  namespace: tap-install
+  package: scanning.apps.tanzu.vmware.com
+  package_dependencies:
+    - scst-store.tanzu.vmware.com
+  values_file: ./values/scst-scan-controller.yaml
+  version: 1.0.0-beta.2
+- description: "Grype Scanner for Supply Chain Security Tools for VMware Tanzu - Scan: Default scan templates using Anchore Grype"
+  name: grype-scanner
+  namespace: tap-install
+  package: grype.scanning.apps.tanzu.vmware.com
+  package_dependencies:
+    - scanning.apps.tanzu.vmware.com
+  version: 1.0.0-beta.2
+- description: "Learning Center for Tanzu Application Platform: Guided technical workshops"
+  name: learning-center
+  namespace: tap-install
+  package: learningcenter.tanzu.vmware.com
+  values_file: ./values/learning-center.yaml
+  version: 1.0.14-build.1
+- description: "Workshop Building Tutorial: Workshop Building Tutorial"
+  name: learning-center-workshops
+  namespace: tap-install
+  package: workshops.learningcenter.tanzu.vmware.com
+  package_dependencies:
+    - learningcenter.tanzu.vmware.com
+  version: 1.0.7-build.1
