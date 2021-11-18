@@ -7,6 +7,11 @@ import (
 	"log"
 	"path/filepath"
 	"runtime"
+	"os"
+	"path"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 func CheckError(err error) bool {
@@ -20,4 +25,25 @@ func CheckError(err error) bool {
 func GetCurrentDir() string {
 	_, filename, _, _ := runtime.Caller(1)
 	return filepath.Dir(filename)
+}
+
+func GetClientset() *kubernetes.Clientset {
+	var homeDir, _ = os.UserHomeDir()
+	var kubeconfig = path.Join(homeDir, ".kube", "config")
+
+	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return clientset
+}
+
+func GetRestClient() rest.Interface {
+	return GetClientset().RESTClient()
 }
