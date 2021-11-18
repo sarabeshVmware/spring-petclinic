@@ -1,4 +1,0 @@
-# appliveview.tanzu.vmware.com: Application Live View for VMware Tanzu
-
-connector_namespaces: [default]
-server_namespace: app-live-view
