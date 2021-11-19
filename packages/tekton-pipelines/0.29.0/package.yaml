@@ -13,12 +13,8 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:1d6203fdaf10f5dec6ebc35d24bd29173d7c5adc9d5f15d3a8574d362d0fb4b7
+          image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:9c15da57a699bd50e89988de0db343b55d67ce587bd1e1e36183516e1698e8cf
       template:
-      - kbld:
-          paths:
-          - .imgpkg/images.yml
-          - config.yml
       - ytt:
           inline:
             paths:
@@ -45,7 +41,11 @@ spec:
                       imagePullSecrets:
                       - name: private-registry-secret
           paths:
-          - '-'
           - config.yml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+          - kbld.yml
       deploy:
       - kapp: {}
