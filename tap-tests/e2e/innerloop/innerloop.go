@@ -7,36 +7,23 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path/filepath"
 
-	//"time"
-
-	//"github.com/mitchellh/mapstructure"
-	//"reflect"
-	// "github.com/docker/cli/cli/command/registry"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
-	tapInstall "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-install/tapinstall"
 	e2e "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-tests/e2e"
 	"gopkg.in/yaml.v3"
 )
 
-func InnerloopSourceBuildDeploy(installPackages bool, preCleanup bool, postCleanup bool) {
+func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	log.Printf("Testing innerloop (source build deploy):")
-	configFile := filepath.Join(tap.GetCurrentDir(), "source-build-deploy.yaml")
-	valuesDir := tapInstall.GetDefaultValuesDir()
 
-	config := tapInstall.GetConfig(configFile, valuesDir)
-	scRepository, scServer := GetSCRegistryDetails(valuesDir)
+	namespace := tapPackageInfo.Name
 
+	scRepository, scServer := GetSCRegistryDetails(tapPackageInfo.ValuesFile)
 	acceleratorProject := "tanzu-java-web-app"
 	workload := "tanzu-java-web-app"
 	sourceImage := fmt.Sprintf("%s-src", workload)
 	oldString := "Greetings from Spring Boot + Tanzu!"
 	newString := "Greetings from Spring Boot + TAP!"
-
-	if installPackages {
-		tapInstall.Install(configFile, valuesDir, preCleanup, false)
-	}
 
 	// tap.RunWithBash(`ps aux | grep -i kubectl | grep -v grep | awk {'print $2'} | xargs kill`)
 	// pidAppAcceleratorPortForward, _ := tap.RunAndDisown("kubectl -n accelerator-system port-forward svc/acc-ui-server 8877:80")
@@ -56,23 +43,19 @@ func InnerloopSourceBuildDeploy(installPackages bool, preCleanup bool, postClean
 	e2e.ListAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)
 
-	tap.SetupDeveloperNamespacePostInstallation(config.Namespace)
-	e2e.DeleteWorkload(workload, config.Namespace)
-	e2e.CreateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, config.Namespace)
+	tap.SetupDeveloperNamespacePostInstallation(namespace)
+	e2e.DeleteWorkload(workload, namespace)
+	e2e.CreateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, namespace)
 
-	verify(workload, config.Namespace, oldString, newString, false)
+	verify(workload, namespace, oldString, newString, false)
 
 	e2e.UpdateFile("tanzu-java-web-app/src/main/java/com/example/springboot/HelloController.java", oldString, newString)
 	e2e.UpdateFile("tanzu-java-web-app/src/test/java/com/example/springboot/HelloControllerTest.java", oldString, newString)
-	e2e.UpdateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, config.Namespace)
+	e2e.UpdateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, namespace)
 
-	verify(workload, config.Namespace, oldString, newString, true)
+	verify(workload, namespace, oldString, newString, true)
 
 	log.Printf("Innerloop (source build deploy) successful.")
-
-	if postCleanup {
-		tapInstall.Cleanup(configFile, valuesDir)
-	}
 }
 
 func verify(workload string, namespace string, oldString string, newString string, testNew bool) {
@@ -84,7 +67,7 @@ func verify(workload string, namespace string, oldString string, newString strin
 	e2e.VerifyApplicationRunningWithValidationString(e2e.GetEnvoyExternalIP(), "tanzu-java-web-app.tap-install.example.com", oldString, newString, testNew)
 }
 
-func GetSCRegistryDetails(valuesDir string) (string, string) {
+func GetSCRegistryDetails(valuesFile string) (string, string) {
 	type supplyChainSchema struct {
 		SupplyChain          string `yaml:"supply_chain"`
 		OotbSupplyChainBasic struct {
@@ -110,7 +93,7 @@ func GetSCRegistryDetails(valuesDir string) (string, string) {
 	var repository string
 	var server string
 
-	supplyChainSchemaBytes, err := os.ReadFile(filepath.Join(valuesDir, "tap-values.yaml"))
+	supplyChainSchemaBytes, err := os.ReadFile(valuesFile)
 	tap.CheckError(err)
 	err = yaml.Unmarshal(supplyChainSchemaBytes, &scSchema)
 	tap.CheckError(err)
@@ -130,6 +113,6 @@ func GetSCRegistryDetails(valuesDir string) (string, string) {
 		log.Println("Invalid Supply chain schema in values.yaml file")
 	}
 
-	fmt.Print(repository, server)
+	log.Printf("Supply chain: repository %s, server %s", repository, server)
 	return repository, server
 }
