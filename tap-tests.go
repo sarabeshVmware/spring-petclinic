@@ -52,10 +52,15 @@ func main() {
 
 func createCommand() *cobra.Command {
 	var createResourcesFile string
+	var installPrerequisites bool
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create resources",
 		Run: func(cmd *cobra.Command, args []string) {
+			if installPrerequisites {
+				tap.HandlePrerequisites()
+			}
+
 			log.Printf("Creating resources from file: %s", createResourcesFile)
 
 			createResourcesBytes, err := os.ReadFile(createResourcesFile)
@@ -80,6 +85,7 @@ func createCommand() *cobra.Command {
 		},
 	}
 	createCmd.Flags().StringVarP(&createResourcesFile, "create-resources-file", "f", filepath.Join(tap.GetCurrentDir(), "create-resources.yaml"), "Create resources YAML file.")
+	createCmd.Flags().BoolVar(&installPrerequisites, "install-prerequisites", false, "Install prerequisites such as kapp-controller, secretgen-controller, cert-manager, flux-system, etc.")
 	return createCmd
 }
 
@@ -101,16 +107,12 @@ func installCommand() *cobra.Command {
 	*/
 
 	var valuesFile, developerNamespace string
-	var installPrerequisites bool
 	installCmd := &cobra.Command{
 		Use:       "install package1 [package2, ..]",
 		Short:     "Install package",
 		Args:      cobra.MinimumNArgs(1),
 		ValidArgs: packagesNames, // NOTE: Requires https://github.com/spf13/cobra/pull/841 to be merged to function properly
 		Run: func(cmd *cobra.Command, args []string) {
-			if installPrerequisites {
-				tap.HandlePrerequisites()
-			}
 			for _, packageName := range args {
 				packageInfo := tap.GetPackageInfoFromName(packageName, packagesList)
 				if valuesFile != "" {
@@ -124,7 +126,6 @@ func installCommand() *cobra.Command {
 		},
 	}
 	installCmd.Flags().StringVarP(&valuesFile, "values-file", "f", "", "Values schema YAML file.")
-	installCmd.Flags().BoolVar(&installPrerequisites, "install-prerequisites", false, "Install prerequisites such as kapp-controller, secretgen-controller, cert-manager, flux-system, etc.")
 	installCmd.Flags().StringVar(&developerNamespace, "developer-namespace", "", "Setup developer namespace.")
 	return installCmd
 }
