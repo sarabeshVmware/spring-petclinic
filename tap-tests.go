@@ -27,6 +27,15 @@ func setLogger() {
 	log.SetOutput(mw)
 }
 
+func getPackagesList() []tap.Package {
+	packagesFileBytes, err := os.ReadFile(filepath.Join(tap.GetCurrentDir(), "packages.yaml"))
+	tap.CheckError(err)
+	packagesList := []tap.Package{}
+	err = yaml.Unmarshal(packagesFileBytes, &packagesList)
+	tap.CheckError(err)
+	return packagesList
+}
+
 func main() {
 	setLogger()
 	rootCmd := &cobra.Command{
@@ -75,11 +84,7 @@ func createCommand() *cobra.Command {
 }
 
 func installCommand() *cobra.Command {
-	packagesFileBytes, err := os.ReadFile(filepath.Join(tap.GetCurrentDir(), "packages.yaml"))
-	tap.CheckError(err)
-	packagesList := []tap.Package{}
-	err = yaml.Unmarshal(packagesFileBytes, &packagesList)
-	tap.CheckError(err)
+	packagesList := getPackagesList()
 
 	packagesNames := []string{}
 	for _, packageInfo := range packagesList {
@@ -111,7 +116,7 @@ func installCommand() *cobra.Command {
 				if valuesFile != "" {
 					packageInfo.ValuesFile = valuesFile
 				}
-				tap.InstallPackage(packageInfo, packagesList)
+				tap.InstallPackageByInfo(packageInfo, packagesList)
 			}
 			if developerNamespace != "" {
 				tap.SetupDeveloperNamespacePostInstallation(developerNamespace)
@@ -143,19 +148,28 @@ func cleanupCommand() *cobra.Command {
 }
 
 func e2eCommand() *cobra.Command {
-	var innerloopSourceBuildDeploy, installPackages, preCleanup, postCleanup bool
+	packagesList := getPackagesList()
+
 	e2eCmd := &cobra.Command{
 		Use:   "e2e",
 		Short: "End-to-end testing",
+	}
+
+	var install bool
+	innerloopCmd := &cobra.Command{
+		Use:   "innerloop",
+		Short: "End-to-end innerloop test",
 		Run: func(cmd *cobra.Command, args []string) {
-			if innerloopSourceBuildDeploy {
-				innerloop.InnerloopSourceBuildDeploy(installPackages, preCleanup, postCleanup)
+			if install {
+				tap.InstallPackageByName("tap-dev-light", packagesList)
+				tap.InstallPackageByName("app-accelerator", packagesList)
 			}
+			tapPackageInfo := tap.GetPackageInfoFromName("tap-dev-light", packagesList)
+			innerloop.InnerloopSourceBuildDeploy(tapPackageInfo)
 		},
 	}
-	e2eCmd.Flags().BoolVar(&innerloopSourceBuildDeploy, "innerloop-source-build-deploy", true, "Test innerloop: source build deploy.")
-	e2eCmd.Flags().BoolVar(&installPackages, "install", false, "Install packages pre-testing.")
-	e2eCmd.Flags().BoolVar(&preCleanup, "pre-cleanup", false, "Cleanup namespace, secrets, repository and packages before installation.")
-	e2eCmd.Flags().BoolVar(&postCleanup, "post-cleanup", false, "Cleanup namespace, secrets, repository and packages after testing.")
+	innerloopCmd.Flags().BoolVar(&install, "install", false, "Install packages pre-testing.")
+
+	e2eCmd.AddCommand(innerloopCmd)
 	return e2eCmd
 }
