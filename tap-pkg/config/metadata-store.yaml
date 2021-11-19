@@ -1,11 +1,12 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.build]):
+#@ if profiles.is_pkg_enabled("scst-store.tanzu.vmware.com"):
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: metadata-store
+  name: scst-store
   namespace: tap-install
 spec:
   serviceAccountName: tap-install-sa
@@ -14,4 +15,5 @@ spec:
     versionSelection:
       constraints: 1.0.0-build.4
       prereleases: {}
+#@ end
 #@ end
