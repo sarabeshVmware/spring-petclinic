@@ -16,7 +16,8 @@ spec:
   packageRef:
     refName: developer-conventions.tanzu.vmware.com
     versionSelection:
-      constraints: 0.4.0-build1 
+      constraints: 0.4.0-build1
+      prereleases: {} 
 
 #@ end
 #@ end
