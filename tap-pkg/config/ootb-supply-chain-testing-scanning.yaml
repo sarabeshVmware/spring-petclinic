@@ -2,7 +2,8 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]) and data.values.supply_chain == "testing_scanning":
+#@ if profiles.is_any_enabled([profiles.full, profiles.build]) and data.values.supply_chain == "testing_scanning":
+#@ if profiles.is_pkg_enabled("ootb-supply-chain-testing-scanning.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -33,4 +34,5 @@ type: Opaque
 stringData:
   values.yml: #@ yaml.encode(data.values.ootb_supply_chain_testing_scanning)
 
+#@ end
 #@ end

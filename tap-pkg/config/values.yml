@@ -1,9 +1,13 @@
 #@data/values-schema
 ---
-#! enum: "full", "dev-light"
+#! enum: "full", "dev", "build", "run"
 profile: full
 
 install_cert_manager: true
+
+#! e.g. "tap-gui.tanzu.vmware.com"
+excluded_packages:
+- ""
 
 #@schema/type any=True
 api_portal: {}

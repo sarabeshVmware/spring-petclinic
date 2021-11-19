@@ -3,6 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full]):
+#@ if profiles.is_pkg_enabled("workshops.learningcenter.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -20,4 +21,5 @@ spec:
       constraints: 1.0.7-build.1
       prereleases: {}
 
+#@ end
 #@ end

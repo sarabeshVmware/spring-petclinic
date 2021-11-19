@@ -1,6 +1,7 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+#@ if profiles.is_pkg_enabled("ootb-templates.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -19,4 +20,5 @@ spec:
       constraints: 0.3.0-build.5
       prereleases: {}
 
+#@ end
 #@ end

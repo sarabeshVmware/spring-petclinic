@@ -1,6 +1,7 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev]):
+#@ if profiles.is_pkg_enabled("developer-conventions.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -17,4 +18,5 @@ spec:
     versionSelection:
       constraints: 0.3.0
 
+#@ end
 #@ end

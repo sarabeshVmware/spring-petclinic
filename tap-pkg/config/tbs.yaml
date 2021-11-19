@@ -3,9 +3,12 @@
 #@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+#@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
+
 #@ buildservice_values = data.values.buildservice
-#@ if profiles.is_any_enabled([profiles.dev_light]):
+
+#@ if profiles.is_any_enabled([profiles.dev]):
 #@   buildservice_values = struct.decode(data.values.buildservice)
 #@   buildservice_values["disable_smart_warmer"] = "true"
 #@ end
@@ -34,4 +37,5 @@ metadata:
 stringData:
   values.yaml: #@ yaml.encode(buildservice_values)
 
+#@ end
 #@ end
