@@ -1,32 +1,17 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
-
-#! TODO does not work without manual configuration
-#! ---
-#! apiVersion: packaging.carvel.dev/v1alpha1
-#! kind: PackageInstall
-#! metadata:
-#!   name: metadata-store
-#!   namespace: tap-install
-#! spec:
-#!   serviceAccountName: tap-install-sa
-#!   packageRef:
-#!     refName: scst-store.tanzu.vmware.com
-#!     versionSelection:
-#!       constraints: 1.0.0-beta.0
-#!       prereleases: {}
-#!   values:
-#!   - secretRef:
-#!       name: metadata-store-values
-#! ---
-#! apiVersion: v1
-#! kind: Secret
-#! metadata:
-#!   name: metadata-store-values
-#!   namespace: tap-install
-#! stringData:
-#!   scst-store-values.yaml: |
-#!     db_password: "CHANGEME!!"
-
+#@ if profiles.is_any_enabled([profiles.full]):
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: metadata-store
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: scst-store.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.0.0-build.4
+      prereleases: {}
 #@ end
