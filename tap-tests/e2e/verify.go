@@ -14,7 +14,6 @@ import (
 	"github.com/pivotal/kpack/pkg/apis/build/v1alpha2"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 
-	//util "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg/util"
 	"context"
 
 	corev1 "k8s.io/api/core/v1"
@@ -166,7 +165,7 @@ func VerifyBuildStatus() {
 
 			} else if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionTrue {
 				log.Printf("Build %s status is verified successfully. Status is %s", result.Items[latestBuildIndex].ObjectMeta.Name,
-				 result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status)
+					result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status)
 				break
 			}
 		} else {
