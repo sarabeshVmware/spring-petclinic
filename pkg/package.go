@@ -84,7 +84,7 @@ func GetPackageInfoFromName(packageName string, packagesList []Package) Package 
 	return Package{}
 }
 
-func InstallPackage(packageInfo Package, packagesList []Package) {
+func InstallPackageByInfo(packageInfo Package, packagesList []Package) {
 	log.Printf("Installing package: %s", packageInfo.Package)
 
 	if CheckIfPackageInstalled(packageInfo) {
@@ -95,7 +95,7 @@ func InstallPackage(packageInfo Package, packagesList []Package) {
 	// install package dependencies:
 	for _, dependentPackageInfo := range GetDependentPackagesInfo(packageInfo, packagesList) {
 		log.Printf("Installing package dependency: %s", dependentPackageInfo.Package)
-		InstallPackage(dependentPackageInfo, packagesList)
+		InstallPackageByInfo(dependentPackageInfo, packagesList)
 	}
 
 	// pre-requisites for packages:
@@ -122,6 +122,11 @@ func InstallPackage(packageInfo Package, packagesList []Package) {
 		log.Printf("Handling post-installation for image-policy-webhook:")
 		HandleImagePolicyWebhookPostInstallation()
 	}
+}
+
+func InstallPackageByName(packageName string, packagesList []Package) {
+	packageInfo := GetPackageInfoFromName(packageName, packagesList)
+	InstallPackageByInfo(packageInfo, packagesList)
 }
 
 func ValidatePackage(packageInfo Package) {
