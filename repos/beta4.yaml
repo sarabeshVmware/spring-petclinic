@@ -47,7 +47,7 @@ packages:
       - 0.3.0
   - name: tap
     versions:
-      - 0.4.0-build.2
+      - 0.4.0-build.3
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
