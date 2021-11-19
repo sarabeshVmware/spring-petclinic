@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 
+	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -47,19 +48,20 @@ func GetServiceExternalIp(serviceName string, namespace string) string {
 	)
 	var externalIp string
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
-	if err != nil {
-		log.Println("BuildConfigFromFlags Failed")
-	}
+	tap.CheckError(err)
 	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		log.Println("NewForConfig Failed")
-	}
+	tap.CheckError(err)
 	svcList, err := clientset.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{
 		FieldSelector: "metadata.name=" + serviceName,
 	})
+	tap.CheckError(err)
 	for _, svc := range svcList.Items {
 		externalIp = svc.Status.LoadBalancer.Ingress[0].IP
-		break
+		if externalIp == "" { // if no IP, check for hostname
+			externalIp = svc.Status.LoadBalancer.Ingress[0].Hostname
+		} else {
+			break
+		}
 	}
 	return externalIp
 }
