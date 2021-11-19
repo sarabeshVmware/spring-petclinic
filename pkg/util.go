@@ -5,10 +5,11 @@ package pkg
 
 import (
 	"log"
-	"path/filepath"
-	"runtime"
 	"os"
 	"path"
+	"path/filepath"
+	"runtime"
+
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"

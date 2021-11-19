@@ -25,7 +25,7 @@ func GenerateAcceleratorProject(label string, projectName string, repositoryPref
 	tap.RunWithBash(fmt.Sprintf(`tanzu accelerator generate %s --options '{"projectName":"%s", "repositoryPrefix":"%s", "includeKubernetes": true}' --server-url http://%s`, label, projectName, repositoryPrefix, serverIP))
 	if unzip {
 		out, err := tap.Run_AllowError(fmt.Sprintf("ls -lt %s", projectName))
-		if err == nil{
+		if err == nil {
 			tap.Run(fmt.Sprintf("rm -r %s", projectName))
 		}
 		log.Printf("Output: \n%s", string(out))
