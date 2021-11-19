@@ -1,6 +1,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.run]):
+#@ if profiles.is_pkg_enabled("services-toolkit.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -16,4 +17,5 @@ spec:
       constraints: 0.4.0
       prereleases: {}
 
+#@ end
 #@ end

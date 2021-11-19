@@ -1,6 +1,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+#@ if profiles.is_pkg_enabled("tekton.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -15,4 +16,5 @@ spec:
     versionSelection:
       constraints: 0.29.0
 
+#@ end
 #@ end

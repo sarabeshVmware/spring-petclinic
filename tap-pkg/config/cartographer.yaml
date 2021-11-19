@@ -1,6 +1,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build, profiles.run]):
+#@ if profiles.is_pkg_enabled("cartographer.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -17,4 +18,5 @@ spec:
     versionSelection:
       constraints: 0.0.7
 
+#@ end
 #@ end

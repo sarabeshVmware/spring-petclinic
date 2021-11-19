@@ -3,6 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full]):
+#@ if profiles.is_pkg_enabled("learningcenter.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -31,4 +32,5 @@ metadata:
 stringData:
   values.yaml: #@ yaml.encode(data.values.learningcenter)
 
+#@ end
 #@ end

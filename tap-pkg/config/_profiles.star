@@ -21,6 +21,10 @@ def _is_any_enabled(profiles):
   return data.values.profile in profiles
 end
 
+def _is_pkg_enabled(name):
+  return (name not in data.values.excluded_packages) 
+end
+
 profiles = struct.make(
 	full=_full_profile,
 	dev=_dev_profile,
@@ -29,4 +33,5 @@ profiles = struct.make(
 
 	is_any_enabled=_is_any_enabled,
 	is_enabled=_is_enabled,
+	is_pkg_enabled=_is_pkg_enabled,
 )

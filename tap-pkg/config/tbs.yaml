@@ -4,6 +4,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+#@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ buildservice_values = data.values.buildservice
 
@@ -36,4 +37,5 @@ metadata:
 stringData:
   values.yaml: #@ yaml.encode(buildservice_values)
 
+#@ end
 #@ end

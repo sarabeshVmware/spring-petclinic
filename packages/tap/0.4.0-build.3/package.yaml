@@ -33,6 +33,12 @@ spec:
           type: string
           default: full
           description: "Profile to install. Valid values: full, dev, build, run"
+        excluded_packages:
+          type: array
+          items:
+            type: string
+          default: []
+          description: "List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])"
         install_cert_manager:
           type: boolean
           default: true

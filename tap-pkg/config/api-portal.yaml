@@ -3,6 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full]):
+#@ if profiles.is_pkg_enabled("api-portal.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -28,4 +29,5 @@ metadata:
 stringData:
   values.yml: #@ yaml.encode(data.values.api_portal)
 
+#@ end
 #@ end

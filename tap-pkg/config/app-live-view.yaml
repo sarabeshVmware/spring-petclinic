@@ -3,6 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.run]):
+#@ if profiles.is_pkg_enabled("appliveview.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -31,4 +32,5 @@ metadata:
 stringData:
   values.yml: #@ yaml.encode(data.values.appliveview)
 
+#@ end
 #@ end
