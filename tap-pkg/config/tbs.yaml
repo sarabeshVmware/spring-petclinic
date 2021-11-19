@@ -3,9 +3,11 @@
 #@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+
 #@ buildservice_values = data.values.buildservice
-#@ if profiles.is_any_enabled([profiles.dev_light]):
+
+#@ if profiles.is_any_enabled([profiles.dev]):
 #@   buildservice_values = struct.decode(data.values.buildservice)
 #@   buildservice_values["disable_smart_warmer"] = "true"
 #@ end

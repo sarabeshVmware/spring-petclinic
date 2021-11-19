@@ -1,6 +1,6 @@
 #@data/values-schema
 ---
-#! enum: "full", "dev-light"
+#! enum: "full", "dev", "build", "run"
 profile: full
 
 install_cert_manager: true

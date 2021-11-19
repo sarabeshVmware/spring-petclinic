@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev_light]) and data.values.supply_chain == "testing_scanning":
+#@ if profiles.is_any_enabled([profiles.full, profiles.build]) and data.values.supply_chain == "testing_scanning":
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
