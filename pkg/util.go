@@ -17,7 +17,7 @@ import (
 
 func CheckError(err error) bool {
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err.Error())
 		return true
 	}
 	return false
