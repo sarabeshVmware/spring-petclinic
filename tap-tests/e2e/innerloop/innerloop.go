@@ -16,8 +16,7 @@ import (
 func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	log.Printf("Testing innerloop (source build deploy):")
 
-	namespace := tapPackageInfo.Name
-
+	namespace := tapPackageInfo.Namespace
 	scRepository, scServer := GetSCRegistryDetails(tapPackageInfo.ValuesFile)
 	acceleratorProject := "tanzu-java-web-app"
 	workload := "tanzu-java-web-app"
