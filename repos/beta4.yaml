@@ -26,10 +26,10 @@ packages:
       - 0.4.0
   - name: developer-conventions
     versions:
-      - 0.3.0
+      - 0.4.0-build1
   - name: insight-metadata-store
     versions:
-      - 1.0.0-build.3
+      - 1.0.0-build.4
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.1
@@ -47,7 +47,7 @@ packages:
       - 0.3.0
   - name: tap
     versions:
-      - 0.4.0-build.2
+      - 0.4.0-build.3
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
@@ -85,3 +85,7 @@ packages:
 #  Version changes: app live view, api portal, insight metadata store
 #  New packages: tekton-pipeloines
 #  Added scan controller additional value configuration support to tap-pkg.
+
+# TAP repo bunlde 0.4.0-build.3
+#  Version changes: developer-conventions, insight-metadata-store
+#  Added tap profiles dev, run, build
