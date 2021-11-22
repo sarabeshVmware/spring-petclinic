@@ -1,4 +1,4 @@
-profile: dev-light
+profile: dev
 install_cert_manager: true
 appliveview:
   server_namespace: tap-install

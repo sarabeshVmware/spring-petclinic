@@ -4,13 +4,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.3.0
+  version: 0.4.0-build.3
 - description: "Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case."
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.3.0
+  version: 0.4.0-build.3
 
 ## packages
 - description: "Application Accelerator for VMware Tanzu: Used to create new projects and configurations."
@@ -23,7 +23,7 @@
   name: api-portal
   namespace: tap-install
   package: api-portal.tanzu.vmware.com
-  version: 1.0.3
+  version: 1.0.4
 - description: "Application Live View for VMware Tanzu: App for monitoring and troubleshooting running apps"
   name: app-live-view
   namespace: tap-install
@@ -31,13 +31,13 @@
   package_dependencies:
     - controller.conventions.apps.tanzu.vmware.com
   values_file: ./values/app-live-view.yaml
-  version: 0.3.0
+  version: 0.4.0-build.1
 - description: "Tanzu Build Service: Tanzu Build Service enables the building and automation of containerized software workflows securely and at scale."
   name: tanzu-build-service
   namespace: tap-install
   package: buildservice.tanzu.vmware.com
   values_file: ./values/tanzu-build-service.yaml
-  version: 1.3.1
+  version: 1.3.3
 - description: "Cartographer: Kubernetes native Supply Chain Choreographer."
   name: cartographer
   namespace: tap-install
@@ -65,7 +65,7 @@
   package: developer-conventions.tanzu.vmware.com
   package_dependencies:
     - appliveview.tanzu.vmware.com
-  version: 0.3.0
+  version: 0.4.0-build1
 - description: "Service Bindings for Kubernetes: Service Bindings for Kubernetes implements the Service Binding Specification."
   name: service-bindings
   namespace: tap-install
@@ -134,7 +134,7 @@
   package_dependencies:
     - scst-store.tanzu.vmware.com
   values_file: ./values/scst-sign.yaml
-  version: 1.0.0-beta.1
+  version: 1.0.0-build.4
 - description: "Supply Chain Security Tools for VMware Tanzu - Scan: Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains."
   name: scan-controller
   namespace: tap-install

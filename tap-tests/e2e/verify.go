@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"github.com/pivotal/kpack/pkg/apis/build/v1alpha2"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 
@@ -157,11 +157,25 @@ func VerifyBuildStatus() {
 		result := GetBuilds()
 		if len(result.Items) != 0 {
 			latestBuildIndex := len(result.Items) - 1
-			lastConditionIndex := len(result.Items[0].Status.Status.Conditions) - 1
-			//Expect(result.Items[0].Status.Status.Conditions[lastConditionIndex].Status).To(Equal(corev1.ConditionTrue))
+			log.Println(" Latest Build Index :" , latestBuildIndex)
+			conditionsLength := len(result.Items[latestBuildIndex].Status.Status.Conditions)
+			log.Println("Conditions length :" , conditionsLength)
+			lastConditionIndex := 0
+			if conditionsLength == 0{
+				//lastConditionIndex = len(result.Items[latestBuildIndex].Status.Status.Conditions) - 1
+				log.Printf("Waiting for 5s for conditions getting generated ...")
+				time.Sleep(5 * time.Second)
+				count -= 1
+				continue
+
+			} else if conditionsLength > 1{
+				lastConditionIndex = len(result.Items[latestBuildIndex].Status.Status.Conditions) - 1
+			}
+			
+			
 			if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionUnknown {
 				log.Printf("Build %s status is Unknown", result.Items[latestBuildIndex].ObjectMeta.Name)
-				//time.Sleep(5 * time.Second)
+				
 
 			} else if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionTrue {
 				log.Printf("Build %s status is verified successfully. Status is %s", result.Items[latestBuildIndex].ObjectMeta.Name,
