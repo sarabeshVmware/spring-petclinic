@@ -2,11 +2,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: controller.source.apps.tanzu.vmware.com.0.1.2
+  name: controller.source.apps.tanzu.vmware.com.0.2.0
 spec:
   refName: controller.source.apps.tanzu.vmware.com
-  version: 0.1.2
-  releasedAt: 2021-09-16T00:00:00Z
+  version: 0.2.0
+  releasedAt: 2021-11-18T00:00:00Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -14,7 +14,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:d4e9bca1c7520346dbc26087e8470380fd5339e4b3c3bf97d8e64bb58efc4c2c
       template:
       - kbld:
           paths:
