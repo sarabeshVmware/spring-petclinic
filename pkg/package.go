@@ -52,10 +52,12 @@ func ListValuesSchema(packageInfo Package) {
 }
 
 func GetDependentPackagesInfo(parentPackage Package, packagesList []Package) []Package {
+	log.Printf("Checking for package dependencies: %s", parentPackage.Package)
 	dependentPackagesInfo := []Package{}
 	for _, packageDependency := range parentPackage.PackageDependencies {
 		for _, packageInfo := range packagesList {
 			if packageInfo.Package == packageDependency {
+				log.Printf("Dependency for package %s: %s", packageInfo.Package, packageDependency)
 				dependentPackagesInfo = append(dependentPackagesInfo, packageInfo)
 			}
 		}
@@ -68,9 +70,11 @@ func CheckIfPackageInstalled(packageInfo Package) bool {
 	packageInstalled := false
 	for _, installedPackage := range ListInstalledPackages(packageInfo.Namespace) {
 		if packageInfo.Package == installedPackage.PackageName {
+			log.Printf("Package found: %s", packageInfo.Package)
 			packageInstalled = true
 		}
 	}
+	log.Printf("Package not found: %s", packageInfo.Package)
 	return packageInstalled
 }
 
