@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"github.com/pivotal/kpack/pkg/apis/build/v1alpha2"
 	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
 
