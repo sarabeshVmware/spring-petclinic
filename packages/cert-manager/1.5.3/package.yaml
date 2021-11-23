@@ -1,0 +1,42 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cert-manager.tanzu.vmware.com.1.5.3+tap.1
+spec:
+  refName: cert-manager.tanzu.vmware.com
+  version: 1.5.3+tap.1
+  releasedAt: "2021-08-23T17:22:51Z"
+  releaseNotes: cert-manager 1.5.3 https://github.com/jetstack/cert-manager/releases/tag/v1.5.3
+  licenses:
+  - 'VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)'
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: projects-stg.registry.vmware.com/tkg//packages/standard/cert-manager:v1.5.3_vmware.2-tkg.1-20211114
+      template:
+      - ytt:
+          paths:
+          - config/
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+          - --kube-api-qps=20
+          - --kube-api-burst=30
+  capacityRequirementsDescription: Varies significantly based on number of Certificate objects
+  valuesSchema:
+    openAPIv3:
+      title: cert-manager.tanzu.vmware.com.1.5.3+tap.1 values schema
+      examples:
+      - namespace: cert-manager
+      properties:
+        namespace:
+          type: string
+          description: The namespace in which to deploy cert-manager.
+          default: cert-manager
