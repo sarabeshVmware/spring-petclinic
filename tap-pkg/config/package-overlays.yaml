@@ -1,0 +1,24 @@
+#@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:data", "data")
+
+#@ def build_package_overlay(package):
+kind: PackageInstall
+metadata:
+  name: #@ package
+#@ end
+
+#@ for package in data.values.package_overlays:
+
+#@overlay/match by=overlay.subset(build_package_overlay(package.name))
+---
+metadata:
+  #@overlay/match missing_ok=True
+  annotations:
+    #@ i=0
+    #@ for secret in package.secrets:
+    #@overlay/match missing_ok=True
+    #@yaml/text-templated-strings
+    ext.packaging.carvel.dev/ytt-paths-from-secret-name.(@= str(i) @): #@ secret.name
+    #@ i=i+1
+    #@ end
+#@ end
