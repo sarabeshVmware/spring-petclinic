@@ -1,5 +1,11 @@
 ---
 packages:
+  - name: cert-manager
+    versions:
+      - 1.5.3
+  - name: contour
+    versions:
+      - 1.18.2
   - name: convention-controller
     versions:
       - 0.4.2
@@ -78,12 +84,6 @@ packages:
   - name: tekton-pipelines
     versions:
       - 0.29.0
-  - name: cert-manager
-    versions:
-      - 1.5.3
-  - name: contour
-    versions:
-      - 1.18.2
 
 # TAP repo bunlde 0.4.0-build.1
 
