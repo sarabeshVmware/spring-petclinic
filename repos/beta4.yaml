@@ -47,7 +47,7 @@ packages:
       - 0.3.0
   - name: tap
     versions:
-      - 0.4.0-build.4
+      - 0.4.0-build.5
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
@@ -78,6 +78,12 @@ packages:
   - name: tekton-pipelines
     versions:
       - 0.29.0
+  - name: cert-manager
+    versions:
+      - 1.5.3
+  - name: contour
+    versions:
+      - 1.18.2
 
 # TAP repo bunlde 0.4.0-build.1
 
@@ -93,3 +99,6 @@ packages:
 # TAP repo bundle 0.4.0-build.4
 # - Version changes: source-controller (!174), service-bindings (!175), spring-boot-conventions (!176)
 # - Other Changes: Add in overlays for packages as well as missing metadata_store values in tap-profile (!173)
+
+# TAP repo bundle 0.4.0-build.5
+# New packages: contour and cert-manager
