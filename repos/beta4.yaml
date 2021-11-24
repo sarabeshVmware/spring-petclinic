@@ -1,14 +1,20 @@
 ---
 packages:
+  - name: cert-manager
+    versions:
+      - 1.5.3+tap.1
+  - name: contour
+    versions:
+      - 1.18.2+tap.1
   - name: convention-controller
     versions:
       - 0.4.2
   - name: service-binding
     versions:
-      - 0.5.0
+      - 0.6.0
   - name: source-controller
     versions:
-      - 0.1.2
+      - 0.2.0
   - name: services-toolkit
     versions:
       - 0.4.0
@@ -26,10 +32,10 @@ packages:
       - 0.4.0
   - name: developer-conventions
     versions:
-      - 0.3.0
+      - 0.4.0-build1
   - name: insight-metadata-store
     versions:
-      - 1.0.0-build.3
+      - 1.0.0-build.4
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.1
@@ -47,7 +53,7 @@ packages:
       - 0.3.0
   - name: tap
     versions:
-      - 0.4.0-build.2
+      - 0.4.0-build.5
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
@@ -71,7 +77,7 @@ packages:
       - 0.3.0-build.5
   - name: spring-boot-conventions
     versions:
-      - 0.1.2
+      - 0.2.0
   - name: fluxcd-source-controller
     versions:
       - 0.16.0
@@ -85,3 +91,14 @@ packages:
 #  Version changes: app live view, api portal, insight metadata store
 #  New packages: tekton-pipeloines
 #  Added scan controller additional value configuration support to tap-pkg.
+
+# TAP repo bunlde 0.4.0-build.3
+#  Version changes: developer-conventions, insight-metadata-store
+#  Added tap profiles dev, run, build
+
+# TAP repo bundle 0.4.0-build.4
+# - Version changes: source-controller (!174), service-bindings (!175), spring-boot-conventions (!176)
+# - Other Changes: Add in overlays for packages as well as missing metadata_store values in tap-profile (!173)
+
+# TAP repo bundle 0.4.0-build.5
+# New packages: contour and cert-manager

@@ -1,0 +1,66 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cert-manager.tanzu.vmware.com.1.5.3+tap.1
+spec:
+  refName: cert-manager.tanzu.vmware.com
+  version: 1.5.3+tap.1
+  releasedAt: "2021-08-23T17:22:51Z"
+  releaseNotes: cert-manager 1.5.3 https://github.com/jetstack/cert-manager/releases/tag/v1.5.3
+  licenses:
+  - 'VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)'
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/cert-manager-pkg:v1.5.3_vmware.2-tkg.1-20211114
+      template:
+      - ytt:
+          inline:
+            paths:
+              secretgen.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                ---
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: canonical-registry-secret
+                  namespace: cert-manager
+                  annotations:
+                    secretgen.carvel.dev/image-pull-secret: ""
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: e30K
+                ---
+                #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"cert-manager"}}),expects="1+"
+                ---
+                spec:
+                  template:
+                    spec:
+                      #@overlay/match missing_ok=True
+                      imagePullSecrets:
+                      - name: canonical-registry-secret
+          paths:
+          - config/
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
+          - --kube-api-qps=20
+          - --kube-api-burst=30
+  capacityRequirementsDescription: Varies significantly based on number of Certificate objects
+  valuesSchema:
+    openAPIv3:
+      title: cert-manager.tanzu.vmware.com.1.5.3+tap.1 values schema
+      examples:
+      - namespace: cert-manager
+      properties:
+        namespace:
+          type: string
+          description: The namespace in which to deploy cert-manager.
+          default: cert-manager

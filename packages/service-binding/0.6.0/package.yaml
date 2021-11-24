@@ -2,11 +2,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: controller.source.apps.tanzu.vmware.com.0.1.2
+  name: service-bindings.labs.vmware.com.0.6.0
 spec:
-  refName: controller.source.apps.tanzu.vmware.com
-  version: 0.1.2
-  releasedAt: 2021-09-16T00:00:00Z
+  refName: service-bindings.labs.vmware.com
+  version: 0.6.0
+  releasedAt: 2021-11-19T00:00:00Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -14,12 +14,12 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:ddab81804d0489113fd03b5057946001fbb2c322a58b39798ccaaac0f0eafb03
+          image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:e8f52ce61238d3b3f16f0ce0a2f1ae13a4e62e97f0c948457de83025760b66a6
       template:
       - kbld:
           paths:
           - .imgpkg/images.yml
-          - config/source-controller.yaml
+          - config/service-bindings.yaml
       - ytt:
           paths:
           - "-"

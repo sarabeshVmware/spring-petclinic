@@ -1,20 +1,24 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build, profiles.run]):
-#@ if profiles.is_pkg_enabled("controller.source.apps.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("cert-manager.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: source-controller
+  name: cert-manager
   namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-group: cert-manager
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: controller.source.apps.tanzu.vmware.com
+    refName: cert-manager.tanzu.vmware.com
     versionSelection:
-      constraints: 0.2.0
+      constraints: 1.5.3+tap.1
+      prereleases: {}
 
 #@ end
 #@ end
+

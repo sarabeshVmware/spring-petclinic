@@ -3,8 +3,6 @@
 #! enum: "full", "dev", "build", "run"
 profile: full
 
-install_cert_manager: true
-
 #! e.g. "tap-gui.tanzu.vmware.com"
 excluded_packages:
 - ""
@@ -42,6 +40,9 @@ image_policy_webhook: {}
 scanning: {}
 
 #@schema/type any=True
+metadata_store: {}
+
+#@schema/type any=True
 grype: {}
 
 #@schema/type any=True
@@ -52,3 +53,11 @@ tap_gui: {}
 
 #@schema/type any=True
 learningcenter: {}
+
+package_overlays:
+- name: ""
+  secrets:
+    - name: ""
+
+#@schema/type any=True
+extra: {}
