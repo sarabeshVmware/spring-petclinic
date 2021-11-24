@@ -13,9 +13,41 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: projects-stg.registry.vmware.com/tkg//packages/standard/contour:v1.18.2_vmware.1-tkg.1-20211114
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg:v1.18.2_vmware.1-tkg.1-20211114
       template:
       - ytt:
+          inline:
+            paths:
+              secretgen.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                ---
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name: canonical-registry-secret
+                  namespace: tanzu-system-ingress 
+                  annotations:
+                    secretgen.carvel.dev/image-pull-secret: ""
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: e30K
+                ---
+                #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"tanzu-system-ingress"}}),expects="1+"
+                ---
+                spec:
+                  template:
+                    spec:
+                      #@overlay/match missing_ok=True
+                      imagePullSecrets:
+                      - name: canonical-registry-secret
+                #@overlay/match by=overlay.subset({"kind":"DaemonSet","metadata":{"namespace":"tanzu-system-ingress"}}),expects="1+"
+                ---
+                spec:
+                  template:
+                    spec:
+                      #@overlay/match missing_ok=True
+                      imagePullSecrets:
+                      - name: canonical-registry-secret
           paths:
           - config/
           ignoreUnknownComments: true

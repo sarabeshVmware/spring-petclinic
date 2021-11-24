@@ -3,8 +3,6 @@
 #! enum: "full", "dev", "build", "run"
 profile: full
 
-install_cert_manager: true
-
 #! e.g. "tap-gui.tanzu.vmware.com"
 excluded_packages:
 - ""

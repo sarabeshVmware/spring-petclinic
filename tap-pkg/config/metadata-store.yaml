@@ -11,6 +11,8 @@ kind: PackageInstall
 metadata:
   name: metadata-store
   namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule: "upsert after upserting cert-manager" 
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
