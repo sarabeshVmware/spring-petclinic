@@ -2,10 +2,10 @@
 packages:
   - name: cert-manager
     versions:
-      - 1.5.3
+      - 1.5.3+tap.1
   - name: contour
     versions:
-      - 1.18.2
+      - 1.18.2+tap.1
   - name: convention-controller
     versions:
       - 0.4.2
