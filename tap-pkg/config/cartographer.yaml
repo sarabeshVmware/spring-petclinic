@@ -12,6 +12,7 @@ metadata:
   annotations:
     kapp.k14s.io/change-group: cartographer
     kapp.k14s.io/change-rule: "upsert after upserting cert-manager" 
+    kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

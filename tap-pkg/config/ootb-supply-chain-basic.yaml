@@ -14,6 +14,7 @@ metadata:
   annotations:
     kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
     kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates" 
+    kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
