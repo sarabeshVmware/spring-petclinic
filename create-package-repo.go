@@ -79,9 +79,15 @@ func main() {
 		}
 	}()
 
+	exclude_filepath := []string{
+		"packages/cert-manager/metadata.yaml",
+		"packages/contour/metadata.yaml"}
+
 	for _, p := range repository.Packages {
 		metadataFilepath := filepath.Join(PackagesDirectoryPath, p.Name, "metadata.yaml")
-		copyYaml(metadataFilepath, outputFile)
+		if !excluded_filepath(metadataFilepath, exclude_filepath) {
+			copyYaml(metadataFilepath, outputFile)
+		}
 
 		for _, version := range p.Versions {
 			packageFilepath := filepath.Join(PackagesDirectoryPath, p.Name, version, "package.yaml")
@@ -142,4 +148,13 @@ func check(e error) {
 	if e != nil {
 		panic(e)
 	}
+}
+
+func excluded_filepath(filepath string, exclude_filepath []string) bool {
+	for _, path := range exclude_filepath {
+		if path == filepath {
+			return true
+		}
+	}
+	return false
 }

@@ -54,6 +54,9 @@ tap_gui: {}
 #@schema/type any=True
 learningcenter: {}
 
+#@schema/type any=True
+contour: {}
+
 package_overlays:
 - name: ""
   secrets:
