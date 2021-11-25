@@ -9,9 +9,9 @@ spec:
   longDescription: |
     The Services Toolkit comprises a number of Kubernetes native components which support the management, lifecycle, discoverability and connectivity of Service Resources (databases, message queues, DNS records, etc.) on Kubernetes. These components are:
     * Service Offering
-    * Service API Projection
-    * Service Resource Replication
     * Service Resource Claims
+    * Service API Projection (Experimental)
+    * Service Resource Replication (Experimental)
   maintainers:
   - name: The Services Control Plane team
   providerName: VMware
