@@ -1,0 +1,65 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: buildservice.tanzu.vmware.com.1.4.0-build.1
+spec:
+  refName: buildservice.tanzu.vmware.com
+  version: 1.4.0-build.1
+  releasedAt: "2021-11-24T00:00:00Z"
+  capacityRequirementsDescription: Cluster with nodes > 50GB ephemeral storage, Registry > 5GB available space
+  releaseNotes: https://docs-preprod.vmware.com/en/Tanzu-Build-Service/1.4/vmware-tanzu-build-service-v14/GUID-release-notes.html
+  valuesSchema:
+    openAPIv3:
+      title: buildservice.tanzu.vmware.com values schema
+      properties:
+        kp_default_repository:
+          type: string
+          description: docker repository (required)
+          examples:
+          - registry.io/build-service
+        kp_default_repository_username:
+          type: string
+          description: registry username (required)
+          examples:
+          - janedoe@vmware.com
+        kp_default_repository_password:
+          type: string
+          description: registry password (required)
+          examples:
+          - password
+        tanzunet_username:
+          type: string
+          description: tanzunet registry username (required for dependency updater feature)
+          examples:
+          - janedoe@vmware.com
+        tanzunet_password:
+          type: string
+          description: tanzunet registry password (required for dependency updater feature)
+          examples:
+          - password
+        descriptor_name:
+          type: string
+          description: name of descriptor to import (required for dependency updater feature)
+          examples:
+          - lite
+          - full
+        ca_cert_data:
+          type: string
+          description: tbs registry ca certificate (used for self signed registry)
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:17f20ba59e5cc6188cafd43ed585eb2d8b4bbb71dce8ebbee5d13686babeb6f8
+      template:
+      - ytt:
+          paths:
+          - values.yaml
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
