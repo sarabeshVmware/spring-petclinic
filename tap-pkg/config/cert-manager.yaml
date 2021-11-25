@@ -11,7 +11,6 @@ metadata:
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-group: cert-manager
-  annotations: 
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
