@@ -1,0 +1,128 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.0.4.0-build.6
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 0.4.0-build.6
+  releaseNotes: |
+    Beta release 0.4.0-build.6 of Tanzu Application Platform.
+    This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2021-11-25T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:fd753f35d5fce588716ddebe1c321d435f33306296e0bc503360f53ca83f2e1e
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: "Profile to install. Valid values: full, dev, build, run"
+        excluded_packages:
+          type: array
+          items:
+            type: string
+          default: []
+          description: "List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])"
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "API Portal configuration"
+        accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Accelerator configuration"
+        appliveview:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "App Live View configuration"
+        cnrs:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Cloud Native Runtimes configuration"
+        ootb_supply_chain_basic:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Basic configuration"
+        ootb_supply_chain_testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing configuration"
+        ootb_supply_chain_testing_scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing Scanning configuration"
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Image Policy Webhook configuration"
+        buildservice:
+          type: object
+          description: "Build Service configuration"
+          properties:
+            kp_default_repository:
+              type: string
+              description: docker repository (required)
+              examples:
+              - registry.io/build-service
+            kp_default_repository_username:
+              type: string
+              description: registry username (required)
+              examples:
+              - janedoe@vmware.com
+            kp_default_repository_password:
+              type: string
+              description: registry password (required)
+              examples:
+              - password
+            tanzunet_username:
+              type: string
+              description: tanzunet registry username (required for dependency updater feature)
+              examples:
+              - janedoe@vmware.com
+            tanzunet_password:
+              type: string
+              description: tanzunet registry password (required for dependency updater feature)
+              examples:
+              - password
+            ca_cert_data:
+              type: string
+              description: tbs registry ca certificate (used for self signed registry)
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "TAP GUI configuration"
+        learningcenter:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Learning Center configuration"
+        scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Scan controller configuration"
