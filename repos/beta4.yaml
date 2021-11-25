@@ -17,10 +17,10 @@ packages:
       - 0.2.0
   - name: services-toolkit
     versions:
-      - 0.4.0
+      - 0.5.0-rc.2
   - name: app-live-view
     versions:
-      - 0.4.0-build.1
+      - 1.0.0-build.1
   - name: scan-controller
     versions:
       - 1.0.0-beta.2
@@ -41,7 +41,7 @@ packages:
       - 1.0.0-beta.1
   - name: api-portal
     versions:
-      - 1.0.4
+      - 1.0.6
   - name: cloud-native-runtimes
     versions:
       - 1.0.3
@@ -50,10 +50,10 @@ packages:
       - 1.3.3
   - name: tap-gui
     versions:
-      - 0.3.0
+      - 1.0.0-rc.40
   - name: tap
     versions:
-      - 0.4.0-build.5
+      - 0.4.0-build.6
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.1
@@ -102,3 +102,7 @@ packages:
 
 # TAP repo bundle 0.4.0-build.5
 # New packages: contour and cert-manager
+
+# TAP repo bundle 0.4.0-build.6
+# - Version changes: services-toolkit (!180), app-live-view (!181), tap-gui (!182), api-portal (!183)
+# - Other Changes: Added metadata-store to 'build' TAP profile (!172), Multiple change rules in tap-pkg/config (!188)
