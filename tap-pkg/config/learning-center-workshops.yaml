@@ -12,8 +12,8 @@ metadata:
   name: learningcenter-workshops
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting learningcenter"
-    kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
+    kapp.k14s.io/change-rule.learningcenter: "upsert after upserting learningcenter"
+    kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

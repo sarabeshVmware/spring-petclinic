@@ -10,9 +10,9 @@ metadata:
   name: ootb-templates
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting cartographer"
+    kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
     kapp.k14s.io/change-group: ootb-templates
-    kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
+    kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
