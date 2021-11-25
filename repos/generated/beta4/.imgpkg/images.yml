@@ -100,8 +100,8 @@ images:
           url: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg:v1.18.2_vmware.1-tkg.1-20211114
   image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
 - annotations:
-    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:5ffba14a74d18b07347171ee11929857a50c2651fcdb095ebf20f987df0af69b
-  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:5ffba14a74d18b07347171ee11929857a50c2651fcdb095ebf20f987df0af69b
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:944ddccaefc6adf6168402b335cd9e5ed2bac8cca715f84f3ac65fbbdd0f8cda
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:944ddccaefc6adf6168402b335cd9e5ed2bac8cca715f84f3ac65fbbdd0f8cda
 - annotations:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1
   image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:fcf95067b792e8a043cc51638fcd0001875d2895bf09349b34a9d2b0056850a1

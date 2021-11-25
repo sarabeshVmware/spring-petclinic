@@ -1,19 +1,5 @@
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: PackageMetadata
-metadata:
-  name: cert-manager.tanzu.vmware.com
-spec:
-  displayName: cert-manager
-  longDescription: Provides certificate management provisioning within the cluster
-  shortDescription: Certificate management
-  providerName: VMware
-  maintainers:
-  - name: Nicholas Seemiller
-  categories:
-  - certificate management
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
   name: cert-manager.tanzu.vmware.com.1.5.3+tap.1
@@ -79,24 +65,6 @@ spec:
           type: string
           description: The namespace in which to deploy cert-manager.
           default: cert-manager
----
-apiVersion: data.packaging.carvel.dev/v1alpha1
-kind: PackageMetadata
-metadata:
-  name: contour.tanzu.vmware.com
-spec:
-  displayName: contour
-  shortDescription: An ingress controller
-  longDescription: An Envoy-based ingress controller that supports dynamic configuration updates and multi-team ingress delegation. See https://projectcontour.io for more information.
-  providerName: VMware
-  maintainers:
-  - name: Steve Kriss
-  - name: Steve Sloka
-  - name: Nick Young
-  - name: Sunjay Bhatia
-  - name: Nicholas Seemiller
-  categories:
-  - ingress
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
@@ -406,9 +374,9 @@ spec:
   longDescription: |
     The Services Toolkit comprises a number of Kubernetes native components which support the management, lifecycle, discoverability and connectivity of Service Resources (databases, message queues, DNS records, etc.) on Kubernetes. These components are:
     * Service Offering
-    * Service API Projection
-    * Service Resource Replication
     * Service Resource Claims
+    * Service API Projection (Experimental)
+    * Service Resource Replication (Experimental)
   maintainers:
   - name: The Services Control Plane team
   providerName: VMware
@@ -2765,19 +2733,19 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.0.4.0-build.5
+  name: tap.tanzu.vmware.com.0.4.0-build.7
 spec:
   refName: tap.tanzu.vmware.com
-  version: 0.4.0-build.5
+  version: 0.4.0-build.7
   releaseNotes: |
-    Beta release 0.4.0-build.5 of Tanzu Application Platform.
+    Beta release 0.4.0-build.7 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
   releasedAt: "2021-11-23T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:5ffba14a74d18b07347171ee11929857a50c2651fcdb095ebf20f987df0af69b
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:944ddccaefc6adf6168402b335cd9e5ed2bac8cca715f84f3ac65fbbdd0f8cda
       template:
       - ytt:
           paths:
