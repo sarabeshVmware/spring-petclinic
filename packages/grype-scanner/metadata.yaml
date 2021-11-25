@@ -1,13 +1,12 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: grype.scanning.apps.tanzu.vmware.com
+  name: scst-grype.apps.tanzu.vmware.com
 spec:
-  displayName: "Grype Scanner for Supply Chain Security Tools for VMware Tanzu - Scan"
+  displayName: "Grype for Supply Chain Security Tools - Scan"
   shortDescription: "Default scan templates using Anchore Grype"
   longDescription: |-
-    Default scan templates using Anchore Grype for Supply Chain Security Tools
-    for VMware Tanzu - Scan.
+    Default scan templates using Anchore Grype for Supply Chain Security Tools - Scan.
   iconSVGBase64: ""
   providerName: "VMware"
   maintainers:
