@@ -6,13 +6,10 @@
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
-#@ buildservice_values = struct.decode(data.values.buildservice)
-
-#@ if not buildservice_values["descriptor_name"]:
-#@   buildservice_values["descriptor_name"] = "lite"
-#@ end
+#@ buildservice_values = data.values.buildservice
 
 #@ if profiles.is_any_enabled([profiles.dev]):
+#@   buildservice_values = struct.decode(data.values.buildservice)
 #@   buildservice_values["disable_smart_warmer"] = "true"
 #@ end
 
@@ -29,7 +26,7 @@ spec:
   packageRef:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
-      constraints: 1.4.0-build.1
+      constraints: 1.3.3
   values:
   - secretRef:
       name: buildservice-values
