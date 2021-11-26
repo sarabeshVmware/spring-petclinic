@@ -1,0 +1,51 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tekton.tanzu.vmware.com.0.30.0
+spec:
+  refName: tekton.tanzu.vmware.com
+  version: 0.30.0
+  releasedAt: "2021-11-18T17:05:37Z"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:a68ebab27505789fccc463b71f111e4ed2ae85c52c7118c268a795cc878df690
+      template:
+      - ytt:
+          inline:
+            paths:
+              secregen.yaml: |
+                #@ load("@ytt:overlay", "overlay")
+                ---
+                apiVersion: v1
+                kind: Secret
+                metadata:
+                  name:  private-registry-secret
+                  namespace: tekton-pipelines
+                  annotations:
+                      secretgen.carvel.dev/image-pull-secret: ""
+                type: kubernetes.io/dockerconfigjson
+                data:
+                  .dockerconfigjson: e30K
+
+                #@overlay/match by=overlay.subset({"kind":"Deployment","metadata":{"namespace":"tekton-pipelines"}}),expects="2+"
+                ---
+                spec:
+                  template:
+                    spec:
+                      #@overlay/match missing_ok=True
+                      imagePullSecrets:
+                      - name: private-registry-secret
+          paths:
+          - config.yml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+          - kbld.yml
+      deploy:
+      - kapp: {}
