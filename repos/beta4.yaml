@@ -23,10 +23,10 @@ packages:
       - 1.0.0-build.1
   - name: scan-controller
     versions:
-      - 1.0.0-beta.2
+      - 1.0.0
   - name: grype-scanner
     versions:
-      - 1.0.0-beta.2
+      - 1.0.0
   - name: app-accelerator
     versions:
       - 0.4.0
@@ -35,7 +35,7 @@ packages:
       - 0.4.0-build1
   - name: insight-metadata-store
     versions:
-      - 1.0.0-build.4
+      - 1.0.0-build.5
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.1
@@ -56,10 +56,10 @@ packages:
       - 0.4.0-build.7
   - name: learning-center-workshops
     versions:
-      - 1.0.7-build.1
+      - 1.0.7-build.6
   - name: learning-center
     versions:
-      - 1.0.14-build.1
+      - 1.0.14-build.5
   - name: cartographer
     versions:
       - 0.0.7
@@ -83,7 +83,7 @@ packages:
       - 0.16.0
   - name: tekton-pipelines
     versions:
-      - 0.29.0
+      - 0.30.0
 
 # TAP repo bunlde 0.4.0-build.1
 
@@ -106,3 +106,15 @@ packages:
 # TAP repo bundle 0.4.0-build.6
 # - Version changes: services-toolkit (!180), app-live-view (!181), tap-gui (!182), api-portal (!183)
 # - Other Changes: Added metadata-store to 'build' TAP profile (!172), Multiple change rules in tap-pkg/config (!188)
+
+# TAP repo bundle 0.4.0-build.7
+# - Version changes: 
+#   - insight-metadata-store 1.0.0-build.4->1.0.0-build.5 (!189)
+#   - grype-scanner 1.0.0-beta.2->1.0.0 (!191)
+#   - scan-controller 1.0.0-beta.2->1.0.0 (!191)
+#   - tekton-pipelines 0.29.0->0.30.0 (!192)
+#   - learning-center 1.0.14-build.1->1.0.14-build.5 (!193)
+#   - learning-center-workshops 1.0.14-build.1->1.0.14-build.6 (!193)
+# - Other Changes: 
+#   - Removing metadata files for contour and cert-manager; adding convention service to run profile (!190)
+#   - Adding Contour to tap-pkg; adding new values parameters in contour pkg (!194)
