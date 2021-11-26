@@ -70,6 +70,10 @@ spec:
           type: string
           description: The namespace in which to deploy Contour and Envoy.
           default: tanzu-system-ingress
+        infrastructure_provider:
+          type: string
+          description: The infrastructur in which to deploy Contour and Envoy. example:- vsphere, aws
+          default: vsphere
         contour:
           type: object
           description: Settings for the Contour component.
@@ -101,6 +105,7 @@ spec:
                 type:
                   type: string
                   description: The type of Kubernetes service to provision for Envoy.
+                  default: NodePort
                 externalTrafficPolicy:
                   type: string
                   description: The external traffic policy for the Envoy service.

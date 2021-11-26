@@ -138,6 +138,10 @@ spec:
           type: string
           description: The namespace in which to deploy Contour and Envoy.
           default: tanzu-system-ingress
+        infrastructure_provider:
+          type: string
+          description: The infrastructur in which to deploy Contour and Envoy. example:- vsphere, aws
+          default: vsphere
         contour:
           type: object
           description: Settings for the Contour component.
@@ -169,6 +173,7 @@ spec:
                 type:
                   type: string
                   description: The type of Kubernetes service to provision for Envoy.
+                  default: NodePort
                 externalTrafficPolicy:
                   type: string
                   description: The external traffic policy for the Envoy service.
@@ -386,12 +391,12 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: services-toolkit.tanzu.vmware.com.0.4.0
+  name: services-toolkit.tanzu.vmware.com.0.5.0-rc.2
 spec:
   refName: services-toolkit.tanzu.vmware.com
-  version: 0.4.0
-  releaseNotes: https://docs.vmware.com/en/Services-Toolkit/0.4/services-toolkit-0-4/GUID-release_notes.html
-  releasedAt: 2021-10-26T12:01:05Z
+  version: 0.5.0-rc.2
+  releaseNotes: https://docs.vmware.com/en/Services-Toolkit/0.5/services-toolkit-0-5/GUID-release_notes.html
+  releasedAt: "2021-11-23T14:10:05Z"
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -401,7 +406,7 @@ spec:
       - kapp: {}
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:16fdd9fc8f04c78f148724bd75c8e08ea3f261d24a01a9d06dbe48ad09c98d90
+          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:30810e678bf1761684fc45a6aee4a65a8fff1c549b66753d5c14e0f64b5d71d6
       template:
       - ytt:
           paths:
@@ -428,13 +433,13 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: appliveview.tanzu.vmware.com.0.4.0-build.1
+  name: appliveview.tanzu.vmware.com.1.0.0-build.1
 spec:
   refName: appliveview.tanzu.vmware.com
-  version: 0.4.0-build.1
+  version: 1.0.0-build.1
   releaseNotes: |
-        Release 0.4.0-build.1 of the App Live View package
-  releasedAt: 2021-11-15T00:00:00Z
+        Release 1.0.0-build.1 of the App Live View package
+  releasedAt: 2021-11-24T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
@@ -447,7 +452,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:05e673e2cc0c5135bb6a06a2f8e7dc2107a289ce9bfebe4384082c5fde0dc543
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:e4e7abe2e41b45b7f0d244f958951246e62107f8b565192c336628a5fb88b8b1
       template:
       - ytt:
           paths:
@@ -1082,14 +1087,15 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: api-portal.tanzu.vmware.com.1.0.4
+  name: api-portal.tanzu.vmware.com.1.0.6
 spec:
   refName: api-portal.tanzu.vmware.com
-  version: 1.0.4
-  releasedAt: "2021-11-12T00:00:00Z"
+  version: 1.0.6
+  releasedAt: "2021-11-24T00:00:00Z"
   releaseNotes: |
-    - Enable the direct visit to the view detail page when a single API group is configured with the API portal
-    - Enable the user to apply default resource allocation and allow override configuration for API portal instances during installation
+    - UI improvements
+    - Installing API portal with metadata and specifying SSO secret name
+    - Automatically create API portal namespace
   valuesSchema:
     openAPIv3:
       title: api-portal.tanzu.vmware.com values schema
@@ -1157,7 +1163,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.4
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.6
       template:
       - ytt:
           paths:
@@ -1475,12 +1481,12 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap-gui.tanzu.vmware.com.0.3.0
+  name: tap-gui.tanzu.vmware.com.1.0.0-rc.40
 spec:
   refName: tap-gui.tanzu.vmware.com
-  version: 0.3.0
-  releasedAt: "2021-11-04T14:25:09Z"
-  releaseNotes: no need to delete server pod when changing config, tanzu logo links to homepage, small improvements to workloads tab
+  version: 1.0.0-rc.40
+  releasedAt: "2021-11-23T00:07:51Z"
+  releaseNotes: App Accelerator plugin added
   capacityRequirementsDescription: |
     Minimal. Tanzu Application Platform GUI has been observed consuming <1 CPU
     and ~150MB memory in test environments.
@@ -1502,10 +1508,23 @@ spec:
           description: |
             the type for the Kubernetes Service which exposes Backstage. Common
             values are "ClusterIP", "NodePort" and "LoadBalancer".
-        app-config:
+        app_config:
           $schema: https://backstage.io/schema/config-v1
           title: Application Configuration Schema
           type: object
+          definitions:
+            LoginPageConfig:
+              type: object
+              properties:
+                id:
+                  visibility: frontend
+                  type: string
+                title:
+                  visibility: frontend
+                  type: string
+                message:
+                  visibility: frontend
+                  type: string
           properties:
             app:
               type: object
@@ -1728,6 +1747,30 @@ spec:
                           type: string
                         region:
                           type: string
+                allowGuestAccess:
+                  visibility: frontend
+                  type: boolean
+                loginPage:
+                  type: object
+                  properties:
+                    auth0:
+                      $ref: '#/definitions/LoginPageConfig'
+                    bitbucket:
+                      $ref: '#/definitions/LoginPageConfig'
+                    github:
+                      $ref: '#/definitions/LoginPageConfig'
+                    gitlab:
+                      $ref: '#/definitions/LoginPageConfig'
+                    google:
+                      $ref: '#/definitions/LoginPageConfig'
+                    oidc:
+                      $ref: '#/definitions/LoginPageConfig'
+                    okta:
+                      $ref: '#/definitions/LoginPageConfig'
+                    onelogin:
+                      $ref: '#/definitions/LoginPageConfig'
+                    microsoft:
+                      $ref: '#/definitions/LoginPageConfig'
                 environment:
                   description: |-
                     The 'environment' attribute added as an optional parameter to have configurable environment value for `auth.providers`.
@@ -1742,6 +1785,44 @@ spec:
                       description: The secret attribute of session object.
                       visibility: secret
                       type: string
+                keyStore:
+                  description: To control how to store JWK data in auth-backend
+                  type: object
+                  properties:
+                    provider:
+                      enum:
+                      - database
+                      - firestore
+                      - memory
+                      type: string
+                    firestore:
+                      type: object
+                      properties:
+                        host:
+                          description: The host to connect to
+                          type: string
+                        port:
+                          description: The port to connect to
+                          type: number
+                        ssl:
+                          description: Whether to use SSL when connecting.
+                          type: boolean
+                        projectId:
+                          description: The Google Cloud Project ID
+                          type: string
+                        keyFilename:
+                          description: |-
+                            Local file containing the Service Account credentials.
+                            You can omit this value to automatically read from
+                            GOOGLE_APPLICATION_CREDENTIALS env which is useful for local
+                            development.
+                          type: string
+                        path:
+                          description: The path to use for the collection. Defaults to 'sessions'
+                          type: string
+                        timeout:
+                          description: Timeout used for database operations. Defaults to 10000ms
+                          type: number
             backend:
               description: Generic backend configuration.
               type: object
@@ -2047,9 +2128,6 @@ spec:
                               If not set, environment variables or aws config file will be used to authenticate.
                             visibility: secret
                             type: object
-                            required:
-                            - accessKeyId
-                            - secretAccessKey
                             properties:
                               accessKeyId:
                                 description: User access key id
@@ -2195,6 +2273,182 @@ spec:
                     - type
                 storageUrl:
                   type: string
+            integrations:
+              description: Configuration for integrations towards various external repository provider systems
+              type: object
+              properties:
+                azure:
+                  description: Integration configuration for Azure
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given Azure instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                bitbucket:
+                  description: Integration configuration for Bitbucket
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given Bitbucket instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      apiBaseUrl:
+                        description: The base url for the Bitbucket API, for example https://api.bitbucket.org/2.0
+                        visibility: frontend
+                        type: string
+                      username:
+                        description: The username to use for authenticated requests.
+                        visibility: secret
+                        type: string
+                      appPassword:
+                        description: Bitbucket app password used to authenticate requests.
+                        visibility: secret
+                        type: string
+                github:
+                  description: Integration configuration for GitHub
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The hostname of the given GitHub instance
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: Token used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      apiBaseUrl:
+                        description: The base url for the GitHub API, for example https://api.github.com
+                        visibility: frontend
+                        type: string
+                      rawBaseUrl:
+                        description: The base url for GitHub raw resources, for example https://raw.githubusercontent.com
+                        visibility: frontend
+                        type: string
+                      apps:
+                        description: GitHub Apps configuration
+                        visibility: backend
+                        type: array
+                        items:
+                          type: object
+                          required:
+                          - appId
+                          - clientId
+                          - clientSecret
+                          - privateKey
+                          - webhookSecret
+                          properties:
+                            appId:
+                              description: The numeric GitHub App ID, string for environment variables
+                              type:
+                              - string
+                              - number
+                            privateKey:
+                              description: The private key to use for auth against the app
+                              visibility: secret
+                              type: string
+                            webhookSecret:
+                              description: The secret used for webhooks
+                              visibility: secret
+                              type: string
+                            clientId:
+                              description: The client ID to use
+                              type: string
+                            clientSecret:
+                              description: The client secret to use
+                              visibility: secret
+                              type: string
+                gitlab:
+                  description: Integration configuration for GitLab
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The host of the target that this matches on, e.g. "gitlab.com".
+                        visibility: frontend
+                        type: string
+                      apiBaseUrl:
+                        description: |-
+                          The base URL of the API of this provider, e.g.
+                          "https://gitlab.com/api/v4", with no trailing slash.
+
+                          May be omitted specifically for public GitLab; then it will be deduced.
+                        visibility: frontend
+                        type: string
+                      token:
+                        description: |-
+                          The authorization token to use for requests to this provider.
+
+                          If no token is specified, anonymous access is used.
+                        visibility: secret
+                        type: string
+                      baseUrl:
+                        description: |-
+                          The baseUrl of this provider, e.g. "https://gitlab.com", which is
+                          passed into the GitLab client.
+
+                          If no baseUrl is provided, it will default to https://${host}.
+                        visibility: frontend
+                        type: string
+                googleGcs:
+                  description: Integration configuration for Google Cloud Storage
+                  type: object
+                  properties:
+                    clientEmail:
+                      description: Service account email used to authenticate requests.
+                      visibility: backend
+                      type: string
+                    privateKey:
+                      description: Service account private key used to authenticate requests.
+                      visibility: secret
+                      type: string
+                awsS3:
+                  description: Integration configuration for AWS S3 Service
+                  type: array
+                  items:
+                    type: object
+                    required:
+                    - host
+                    properties:
+                      host:
+                        description: The host of the target that this matches on, e.g. "amazonaws.com".
+                        visibility: frontend
+                        type: string
+                      accessKeyId:
+                        description: Account access key used to authenticate requests.
+                        visibility: backend
+                        type: string
+                      secretAccessKey:
+                        description: Account secret key used to authenticate requests.
+                        visibility: secret
+                        type: string
+                      roleArn:
+                        description: ARN of the role to be assumed
+                        visibility: backend
+                        type: string
             catalog:
               description: Configuration options for the catalog plugin.
               type: object
@@ -2479,6 +2733,76 @@ spec:
                         type: string
                       plural:
                         type: string
+            scaffolder:
+              description: Configuration options for the scaffolder plugin
+              type: object
+              properties:
+                defaultAuthor:
+                  description: The commit author info used when new components are created.
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    email:
+                      type: string
+                defaultCommitMessage:
+                  description: The commit message used when new components are created.
+                  type: string
+                github:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  properties:
+                    visibility:
+                      description: The visibility to set on created repositories.
+                      enum:
+                      - internal
+                      - private
+                      - public
+                      type: string
+                gitlab:
+                  type: object
+                  required:
+                  - api
+                  properties:
+                    api:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    visibility:
+                      description: The visibility to set on created repositories.
+                      enum:
+                      - internal
+                      - private
+                      - public
+                      type: string
+                azure:
+                  type: object
+                  required:
+                  - api
+                  - baseUrl
+                  properties:
+                    baseUrl:
+                      type: string
+                    api:
+                      type: object
+                      additionalProperties:
+                        type: string
+                bitbucket:
+                  type: object
+                  required:
+                  - api
+                  properties:
+                    api:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    visibility:
+                      description: The visibility to set on created repositories.
+                      enum:
+                      - private
+                      - public
+                      type: string
             proxy:
               description: |-
                 A list of forwarding-proxies. Each key is a route to match,
@@ -2522,182 +2846,6 @@ spec:
                   required:
                   - target
                 - type: string
-            integrations:
-              description: Configuration for integrations towards various external repository provider systems
-              type: object
-              properties:
-                azure:
-                  description: Integration configuration for Azure
-                  type: array
-                  items:
-                    type: object
-                    required:
-                    - host
-                    properties:
-                      host:
-                        description: The hostname of the given Azure instance
-                        visibility: frontend
-                        type: string
-                      token:
-                        description: Token used to authenticate requests.
-                        visibility: secret
-                        type: string
-                bitbucket:
-                  description: Integration configuration for Bitbucket
-                  type: array
-                  items:
-                    type: object
-                    required:
-                    - host
-                    properties:
-                      host:
-                        description: The hostname of the given Bitbucket instance
-                        visibility: frontend
-                        type: string
-                      token:
-                        description: Token used to authenticate requests.
-                        visibility: secret
-                        type: string
-                      apiBaseUrl:
-                        description: The base url for the Bitbucket API, for example https://api.bitbucket.org/2.0
-                        visibility: frontend
-                        type: string
-                      username:
-                        description: The username to use for authenticated requests.
-                        visibility: secret
-                        type: string
-                      appPassword:
-                        description: Bitbucket app password used to authenticate requests.
-                        visibility: secret
-                        type: string
-                github:
-                  description: Integration configuration for GitHub
-                  type: array
-                  items:
-                    type: object
-                    required:
-                    - host
-                    properties:
-                      host:
-                        description: The hostname of the given GitHub instance
-                        visibility: frontend
-                        type: string
-                      token:
-                        description: Token used to authenticate requests.
-                        visibility: secret
-                        type: string
-                      apiBaseUrl:
-                        description: The base url for the GitHub API, for example https://api.github.com
-                        visibility: frontend
-                        type: string
-                      rawBaseUrl:
-                        description: The base url for GitHub raw resources, for example https://raw.githubusercontent.com
-                        visibility: frontend
-                        type: string
-                      apps:
-                        description: GitHub Apps configuration
-                        visibility: backend
-                        type: array
-                        items:
-                          type: object
-                          required:
-                          - appId
-                          - clientId
-                          - clientSecret
-                          - privateKey
-                          - webhookSecret
-                          properties:
-                            appId:
-                              description: The numeric GitHub App ID, string for environment variables
-                              type:
-                              - string
-                              - number
-                            privateKey:
-                              description: The private key to use for auth against the app
-                              visibility: secret
-                              type: string
-                            webhookSecret:
-                              description: The secret used for webhooks
-                              visibility: secret
-                              type: string
-                            clientId:
-                              description: The client ID to use
-                              type: string
-                            clientSecret:
-                              description: The client secret to use
-                              visibility: secret
-                              type: string
-                gitlab:
-                  description: Integration configuration for GitLab
-                  type: array
-                  items:
-                    type: object
-                    required:
-                    - host
-                    properties:
-                      host:
-                        description: The host of the target that this matches on, e.g. "gitlab.com".
-                        visibility: frontend
-                        type: string
-                      apiBaseUrl:
-                        description: |-
-                          The base URL of the API of this provider, e.g.
-                          "https://gitlab.com/api/v4", with no trailing slash.
-
-                          May be omitted specifically for public GitLab; then it will be deduced.
-                        visibility: frontend
-                        type: string
-                      token:
-                        description: |-
-                          The authorization token to use for requests to this provider.
-
-                          If no token is specified, anonymous access is used.
-                        visibility: secret
-                        type: string
-                      baseUrl:
-                        description: |-
-                          The baseUrl of this provider, e.g. "https://gitlab.com", which is
-                          passed into the GitLab client.
-
-                          If no baseUrl is provided, it will default to https://${host}.
-                        visibility: frontend
-                        type: string
-                googleGcs:
-                  description: Integration configuration for Google Cloud Storage
-                  type: object
-                  properties:
-                    clientEmail:
-                      description: Service account email used to authenticate requests.
-                      visibility: backend
-                      type: string
-                    privateKey:
-                      description: Service account private key used to authenticate requests.
-                      visibility: secret
-                      type: string
-                awsS3:
-                  description: Integration configuration for AWS S3 Service
-                  type: array
-                  items:
-                    type: object
-                    required:
-                    - host
-                    properties:
-                      host:
-                        description: The host of the target that this matches on, e.g. "amazonaws.com".
-                        visibility: frontend
-                        type: string
-                      accessKeyId:
-                        description: Account access key used to authenticate requests.
-                        visibility: backend
-                        type: string
-                      secretAccessKey:
-                        description: Account secret key used to authenticate requests.
-                        visibility: secret
-                        type: string
-                      roleArn:
-                        description: ARN of the role to be assumed
-                        visibility: backend
-                        type: string
           description: This is the schema describing the structure of the app-config.yaml configuration file.
   licenses:
   - VMware Proprietary
@@ -2705,7 +2853,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:0.3.0
+          image: dev.registry.tanzu.vmware.com/tap-gui/bundle:1.0.0-rc.40
       template:
       - ytt:
           paths:
@@ -2745,7 +2893,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:944ddccaefc6adf6168402b335cd9e5ed2bac8cca715f84f3ac65fbbdd0f8cda
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:856653594e418b3c0807eb91a867cdaac5eadd38f51cf96175d660f0ed205698
       template:
       - ytt:
           paths:
