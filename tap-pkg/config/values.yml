@@ -3,6 +3,9 @@
 #! enum: "full", "dev", "build", "run"
 profile: full
 
+#! set to true if CEIP policy has been read
+ceip_policy_disclosed: false
+
 #! e.g. "tap-gui.tanzu.vmware.com"
 excluded_packages:
 - ""
