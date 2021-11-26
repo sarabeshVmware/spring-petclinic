@@ -1,9 +1,9 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: scanning.apps.tanzu.vmware.com
+  name: scst-scan.apps.tanzu.vmware.com
 spec:
-  displayName: "Supply Chain Security Tools for VMware Tanzu - Scan"
+  displayName: "Supply Chain Security Tools - Scan"
   shortDescription: "Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains."
   longDescription: |-
     Supply Chain Security Tools - Scan aims to help Tanzu customers build and
