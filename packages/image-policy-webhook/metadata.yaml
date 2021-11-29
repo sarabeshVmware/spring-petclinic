@@ -5,13 +5,14 @@ metadata:
 spec:
   displayName: "Image Policy Webhook"
   longDescription: "The Image Policy Webhook allows platform operators to define a policy that will restrict unsigned images on a Kubernetes cluster. This component contains logic to communicate with external registries and verify signatures on container images, making a decision based on the results of this verification. Currently, this component supports cosign signatures and its key formats."
-  shortDescription: "The Image Policy Webhook allows platform operators to define a policy that will use cosign to verify signatures of container images"
+  shortDescription: "Image Policy Webhook enables defining of a policy to restrict unsigned container images."
   supportDescription: "https://tanzu.vmware.com/support"
   providerName: "VMware"
   categories:
   - policy
   maintainers:
   - name: "Adam Dawson"
+  - name: "Adam Shamblin"
   - name: "Andrés Torres"
   - name: "Denny Hoang"
   - name: "Der Wei Chan"
