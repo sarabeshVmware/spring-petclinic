@@ -10,7 +10,7 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.4.0-build.3
+  version: 0.4.0-build.7
 
 ## packages
 - description: "Application Accelerator for VMware Tanzu: Used to create new projects and configurations."
