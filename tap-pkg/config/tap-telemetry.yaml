@@ -1,0 +1,11 @@
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: tap-telemetry
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: tap-telemetry.tanzu.vmware.com
+    versionSelection:
+      constraints: 0.1.0

@@ -1,0 +1,15 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: tap-telemetry.tanzu.vmware.com
+spec:
+  displayName: Telemetry Collector for Tanzu Application Platform
+  providerName: VMware
+  shortDescription: Tanzu Application Plaform Telemetry
+  supportDescription: Support available from VMware. Refer to the VMware Product Guide for specific support terms.
+  longDescription: |-
+    Tanzu Application Platform(TAP) Telemetry is a telemetry collector. It
+    allows VMware to collect usage data for various TAP components as well
+    as the objects users create using TAP components.
+  maintainers:
+  - name: VMware
