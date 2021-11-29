@@ -1,5 +1,4 @@
 profile: dev
-install_cert_manager: true
 appliveview:
   server_namespace: tap-install
   service_type: "LoadBalancer"
@@ -18,6 +17,15 @@ ootb_supply_chain_basic:
   registry:
     server: <SERVER>
     repository: <REPOSITORY>
+cnrs:
+  ingress:
+    reuse_crds: true
+    external:
+      namespace: tanzu-system-ingress
+contour:
+  envoy:
+    service:
+      type: LoadBalancer
 # ootb_supply_chain_testing:
 #   registry:
 #     server: <SERVER>
