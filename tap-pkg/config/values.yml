@@ -34,6 +34,9 @@ ootb_supply_chain_testing: {}
 ootb_supply_chain_testing_scanning: {}
 
 #@schema/type any=True
+ootb_delivery_basic: {}
+
+#@schema/type any=True
 image_policy_webhook: {}
 
 #@schema/type any=True

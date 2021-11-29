@@ -13,14 +13,14 @@ metadata:
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
-    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates" 
+    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates"
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0-build.5
+      constraints: 0.4.0-build.1
       prereleases: {}
   values:
   - secretRef:
