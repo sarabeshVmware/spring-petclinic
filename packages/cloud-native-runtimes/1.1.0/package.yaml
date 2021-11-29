@@ -1,0 +1,102 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cnrs.tanzu.vmware.com.1.1.0
+spec:
+  refName: cnrs.tanzu.vmware.com
+  version: 1.1.0
+  releasedAt: 2021-11-26T22:20:00Z
+  releaseNotes: |
+    Release 1.1.0 of the Cloud Native Runtimes app package
+  capacityRequirementsDescription: Cluster with one node requires >6 CPUs, >6.0GB RAM, >30GB storage. Cluster with multiple nodes requires >2 CPUs, >4.0GB RAM, >20GB storage for each node.
+  valuesSchema:
+    openAPIv3:
+      title: cnrs.tanzu.vmware.com.1.1.0 values schema
+      properties:
+        provider:
+          type: string
+          description: "Optional: Kubernetes cluster provider. To be specified if deploying CNR on TKGs or on a local Kubernetes cluster provider."
+          default: ""
+          examples:
+            - local
+            - tkgs
+        domain_name:
+          type: string
+          description: "Optional: Default domain name for Knative Services."
+          default: example.com
+          examples:
+            - example.com
+        domain_config:
+          type: object
+          description: "Optional: Overrides the config-domain configmap in namespace knative-serving. Must be valid YAML."
+          default: ""
+          examples:
+            example.com: |
+              selector:
+                app: nonprofit
+        local_dns:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: "Optional: Only for when \"provider\" is set to \"local\" and running on Kind. Set to true to enable local DNS."
+              default: false
+            domain:
+              type: string
+              description: "Optional: Set a custom domain for CoreDNS. Only applicable when \"local_dns.enable\" is set to \"true\", \"provider\" is set to \"local\" and running on Kind."
+              default: example.com
+              examples:
+                - example.com
+        ingress:
+          type: object
+          properties:
+            reuse_crds:
+              type: boolean
+              description: "Optional: Only valid if a Contour instance already present in the cluster. Set to \"true\" if you want CNR to re-use the cluster's existing Contour CRDs."
+              default: false
+            external:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+                  default: ""
+            internal:
+              type: object
+              properties:
+                namespace:
+                  type: string
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+                  default: ""
+        pdb:
+          type: object
+          properties:
+            enable:
+              type: boolean
+              description: "Optional: Set to true to enable Pod Disruption Budget. If provider local is set to \"local\", the PDB will be disabled automatically."
+              default: true
+  template:
+    spec:
+      fetch:
+        - imgpkgBundle:
+            image: dev.registry.tanzu.vmware.com/serverless/1.1.0-build.2@sha256:214c9f03b1c49f9bd16433f7a4cc2b0d3624b61072be6a3aca188ecd036db3c6
+      template:
+        - kbld:
+            paths:
+              - .imgpkg/images.yml
+              - config/kbld.yaml
+              - config/serving
+              - config/net-contour
+              - config/eventing
+              - config/net-certmanager
+              - config/aws-event-sources
+        - ytt:
+            ignoreUnknownComments: true
+            paths:
+              - "-"
+              - config/ytt/
+              - config/yttlib/
+              - config/kapp.yaml
+      deploy:
+        - kapp: {}
