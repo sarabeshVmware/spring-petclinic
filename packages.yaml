@@ -126,7 +126,7 @@
   namespace: tap-install
   package: scst-store.tanzu.vmware.com
   values_file: ./values/scst-store.yaml
-  version: 1.0.0-beta.1
+  version: 1.0.0-build.5
 - description: "Image Policy Webhook: The Image Policy Webhook allows platform operators to define a policy that will use cosign to verify signatures of container images"
   name: image-policy-webhook
   namespace: tap-install
@@ -142,24 +142,24 @@
   package_dependencies:
     - scst-store.tanzu.vmware.com
   values_file: ./values/scst-scan-controller.yaml
-  version: 1.0.0-beta.2
+  version: 1.0.0
 - description: "Grype Scanner for Supply Chain Security Tools for VMware Tanzu - Scan: Default scan templates using Anchore Grype"
   name: grype-scanner
   namespace: tap-install
   package: grype.scanning.apps.tanzu.vmware.com
   package_dependencies:
     - scanning.apps.tanzu.vmware.com
-  version: 1.0.0-beta.2
+  version: 1.0.0
 - description: "Learning Center for Tanzu Application Platform: Guided technical workshops"
   name: learning-center
   namespace: tap-install
   package: learningcenter.tanzu.vmware.com
   values_file: ./values/learning-center.yaml
-  version: 1.0.14-build.1
+  version: 1.0.14-build.5
 - description: "Workshop Building Tutorial: Workshop Building Tutorial"
   name: learning-center-workshops
   namespace: tap-install
   package: workshops.learningcenter.tanzu.vmware.com
   package_dependencies:
     - learningcenter.tanzu.vmware.com
-  version: 1.0.7-build.1
+  version: 1.0.14-build.6
