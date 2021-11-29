@@ -38,7 +38,7 @@ func GetEnvoyExternalIP() string {
 	log.Printf("Getting envoy external IP:")
 	// envoyExternalIPBytes, _ := tap.RunWithBash(`kubectl get svc -n contour-external | awk '{if($1=="envoy")print $4}'`)
 	// envoyExternalIP := strings.TrimSpace(string(envoyExternalIPBytes))
-	envoyExternalIP := GetServiceExternalIp("envoy", "contour-external")
+	envoyExternalIP := GetServiceExternalIp("envoy", "tanzu-system-ingress")
 	log.Printf("Envoy external IP: %s", envoyExternalIP)
 	return envoyExternalIP
 }
