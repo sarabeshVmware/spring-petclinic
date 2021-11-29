@@ -1,0 +1,1 @@
+provider: # if deploying on a local cluster such as Kind, set provider as "local"

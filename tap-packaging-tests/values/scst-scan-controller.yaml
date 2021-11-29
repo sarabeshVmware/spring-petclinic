@@ -1,0 +1,9 @@
+metadataStoreUrl: "https://metadata-store-app.metadata-store.svc.cluster.local:8443"
+metadataStoreTokenSecret: "metadata-store-secret"
+## Ensure the certificate is indented by two spaces. Uncomment below:
+# metadataStoreCa: |-
+#   -----BEGIN CERTIFICATE-----
+#   MIIC8TCCAdmgAwIBAgIRAIGDgx7Dk/2unVKuT9KXetUwDQYJKoZIhvcNAQELBQAw
+#   ...
+#   hOSbQ50VLo+YPF9NtTPRaS7QaIcFWot0EPwBMOCZR6Dd1HU6Qg==
+#   -----END CERTIFICATE-----
