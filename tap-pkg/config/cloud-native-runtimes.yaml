@@ -19,7 +19,7 @@ spec:
   packageRef:
     refName: cnrs.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.3
+      constraints: 1.1.0
   values:
   - secretRef:
       name: cnrs-values
