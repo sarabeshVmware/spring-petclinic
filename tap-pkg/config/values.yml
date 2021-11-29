@@ -25,6 +25,8 @@ cnrs:
     reuse_crds: true
     external:
       namespace: tanzu-system-ingress
+    internal:
+      namespace: tanzu-system-ingress
 
 supply_chain: basic
 
