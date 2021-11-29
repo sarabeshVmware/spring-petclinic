@@ -70,14 +70,48 @@ func CheckIfPackageInstalled(packageInfo Package) bool {
 	packageInstalled := false
 	for _, installedPackage := range ListInstalledPackages(packageInfo.Namespace) {
 		if packageInfo.Package == installedPackage.PackageName {
-			log.Printf("Package found: %s", packageInfo.Package)
-			packageInstalled = true
-			return packageInstalled
+			count := 10
+			for count >= 0 {
+				if count == 0 {
+					log.Printf("Package is not in Reconcile Succeded state after 10 mins. Uninstalling it...")
+					UninstallPackage(packageInfo.Namespace, installedPackage.Name)
+					packageInstalled = false
+					break
+				}
+				installedPackageStatus := GetInstalledPackageStatus(installedPackage.Name, packageInfo.Namespace)
+				if installedPackageStatus == "Reconcile succeeded" {
+					log.Printf("Package %s is installed. Status is :%s", packageInfo.Package, installedPackage.Status)
+					packageInstalled = true
+					break
+
+				} else if installedPackageStatus == "Reconciling" || installedPackageStatus == "Reconcile Failed" {
+					log.Printf("Package %s is installed. Status is :%s", packageInfo.Package, installedPackage.Status)
+					//packageInstalled = true
+					log.Printf("Wating for 1 minute ...")
+					time.Sleep(1 * time.Minute)
+					count -= 1
+				}
+
+			}
 		}
 	}
-	log.Printf("Package not found: %s", packageInfo.Package)
 	return packageInstalled
 }
+
+func GetInstalledPackageStatus(installedPackageName string, namespace string) string {
+	var packageInstall []PackageInstalledOutput
+	status := ""
+	log.Printf("Checking packageInstall status for package: %s", installedPackageName)
+	pkgi, _ := Run(fmt.Sprintf("tanzu package installed get %s -n %s -o json", installedPackageName, namespace))
+	err := json.Unmarshal(pkgi, &packageInstall)
+	CheckError(err)
+	if len(packageInstall) > 0 {
+		log.Printf("packageInstall status for package: %s is: %s", installedPackageName, packageInstall[0].Status)
+		return packageInstall[0].Status
+	}
+	return status
+}
+
 
 func GetPackageInfoFromName(packageName string, packagesList []Package) Package {
 	for _, packageInfo := range packagesList {
@@ -157,6 +191,10 @@ func UninstallPackages(namespace string) {
 	}
 }
 
+func UninstallPackage(namespace string, InstalledPackageName string) {
+	log.Printf("Uninstalling package: %s", InstalledPackageName)
+	Run(fmt.Sprintf("tanzu package installed delete %s -n %s -y", InstalledPackageName, namespace))
+}
 func HandleScanControllerPreRequisites(packageInfo Package) {
 	tempFile, err := ioutil.TempFile("", "configuration*.yaml")
 	CheckError(err)
