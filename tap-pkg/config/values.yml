@@ -20,7 +20,11 @@ appliveview: {}
 cartographer: {}
 
 #@schema/type any=True
-cnrs: {}
+cnrs:
+  ingress:
+    reuse_crds: true
+    external:
+      namespace: tanzu-system-ingress
 
 supply_chain: basic
 
