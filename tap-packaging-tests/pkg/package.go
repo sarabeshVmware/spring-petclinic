@@ -94,6 +94,9 @@ func CheckIfPackageInstalled(packageInfo Package) bool {
 
 			}
 		}
+		if !packageInstalled {
+			log.Printf("Package not found: %s", packageInfo.Package)
+		}
 	}
 	return packageInstalled
 }
@@ -111,7 +114,6 @@ func GetInstalledPackageStatus(installedPackageName string, namespace string) st
 	}
 	return status
 }
-
 
 func GetPackageInfoFromName(packageName string, packagesList []Package) Package {
 	for _, packageInfo := range packagesList {
