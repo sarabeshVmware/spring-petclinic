@@ -87,7 +87,7 @@ func CheckIfPackageInstalled(packageInfo Package) bool {
 				} else if installedPackageStatus == "Reconciling" || installedPackageStatus == "Reconcile Failed" {
 					log.Printf("Package %s is installed. Status is :%s", packageInfo.Package, installedPackage.Status)
 					//packageInstalled = true
-					log.Printf("Wating for 1 minute ...")
+					log.Printf("Waiting for 1 minute ...")
 					time.Sleep(1 * time.Minute)
 					count -= 1
 				}
