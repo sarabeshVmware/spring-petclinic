@@ -15,11 +15,6 @@ accelerator: {}
 
 #@schema/type any=True
 appliveview: {}
-cnrs:
-    ingress:
-      reuse_crds: true
-      external:
-        namespace: tanzu-system-ingress
 
 #@schema/type any=True
 cartographer: {}

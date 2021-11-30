@@ -13,5 +13,5 @@ secrets:
     namespace: tap-install
 package_repositories:
   - name: tanzu-tap-repository
-    image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.4.0-build.7
+    image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.4.0-build.9
     namespace: tap-install
