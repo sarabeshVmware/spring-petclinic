@@ -27,11 +27,31 @@ end
 
 def _merge_ingress_values(pkg_values, ingress_values):
   pkg_values_dict = struct.decode(pkg_values)
-  pkg_values_dict['ingressEnabled'] = ingress_values.ingressEnabled
-  pkg_values_dict['ingressDomain'] = ingress_values.ingressDomain
-  pkg_values_dict['tls'] = {}
-  pkg_values_dict['tls']['namespace'] = ingress_values.tls.namespace
-  pkg_values_dict['tls']['secretName'] = ingress_values.tls.secretName
+  ingress_values_dict = struct.decode(ingress_values)
+
+  if 'ingressEnabled' in ingress_values_dict and 'ingressEnabled' not in pkg_values_dict:
+    pkg_values_dict['ingressEnabled'] = ingress_values['ingressEnabled']
+  end
+
+  if 'ingressDomain' in ingress_values_dict and 'ingressDomain' not in pkg_values_dict:
+    pkg_values_dict['ingressDomain'] = ingress_values.ingressDomain
+  end
+
+  if 'tls' in ingress_values_dict:
+    if 'tls' not in pkg_values_dict:
+      pkg_values_dict['tls'] = {}
+    end
+
+    if 'namespace' in ingress_values_dict['tls'] and 'namespace' not in pkg_values_dict['tls']:
+      pkg_values_dict['tls']['namespace'] = ingress_values.tls.namespace
+    end
+
+    if 'secretName' in ingress_values_dict['tls'] and 'secretName' not in pkg_values_dict['tls']:
+      pkg_values_dict['tls']['secretName'] = ingress_values.tls.secretName
+    end
+  end
+
+
   return struct.encode(pkg_values_dict)
 end
 
