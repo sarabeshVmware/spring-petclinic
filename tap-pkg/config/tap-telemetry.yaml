@@ -1,3 +1,8 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build, profiles.run]):
+
+---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
@@ -10,3 +15,6 @@ spec:
     versionSelection:
       constraints: 0.1.0
       prereleases: {}
+
+#@ end
+
