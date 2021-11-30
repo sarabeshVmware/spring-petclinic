@@ -35,7 +35,8 @@ packages:
       - 0.4.0-build1
   - name: insight-metadata-store
     versions:
-      - 1.0.0-build.5
+      - 1.0.0-beta.2
+
   - name: image-policy-webhook
     versions:
       - 1.0.0-beta.1
@@ -44,7 +45,7 @@ packages:
       - 1.0.6
   - name: cloud-native-runtimes
     versions:
-      - 1.0.3
+      - 1.1.0
   - name: build-service
     versions:
       - 1.3.3
@@ -53,7 +54,7 @@ packages:
       - 1.0.0-rc.40
   - name: tap
     versions:
-      - 0.4.0-build.7
+      - 0.4.0-build.8
   - name: learning-center-workshops
     versions:
       - 1.0.7-build.6
@@ -118,3 +119,7 @@ packages:
 # - Other Changes: 
 #   - Removing metadata files for contour and cert-manager; adding convention service to run profile (!190)
 #   - Adding Contour to tap-pkg; adding new values parameters in contour pkg (!194)
+
+# TAP repo bundle 0.4.0-build.8
+# - Version changes: 
+#   - insight-metadata-store 1.0.0-build.5->1.0.0-beta.2, cloud-native-runtimes 1.0.3->1.1.0
