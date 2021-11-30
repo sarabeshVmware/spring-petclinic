@@ -5,6 +5,7 @@ metadata:
 spec:
   refName: tap-telemetry.tanzu.vmware.com
   version: 0.1.0
+  releasedAt: "2021-11-30T00:00:00Z"
   releaseNotes: Initial release of tap-telemetry.
   valuesSchema:
     openAPIv3:
