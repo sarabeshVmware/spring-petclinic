@@ -11,7 +11,7 @@ kind: PackageInstall
 metadata:
   name: tap-gui
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
