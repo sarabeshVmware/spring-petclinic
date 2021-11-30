@@ -22,7 +22,7 @@ def _is_any_enabled(profiles):
 end
 
 def _is_pkg_enabled(name):
-  return (name not in data.values.excluded_packages) 
+  return (name not in data.values.excluded_packages)
 end
 
 def _merge_ingress_values(pkg_values, ingress_values):
