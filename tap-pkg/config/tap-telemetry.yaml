@@ -9,3 +9,4 @@ spec:
     refName: tap-telemetry.tanzu.vmware.com
     versionSelection:
       constraints: 0.1.0
+      prereleases: {}
