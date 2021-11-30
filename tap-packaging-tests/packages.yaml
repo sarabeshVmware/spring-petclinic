@@ -4,13 +4,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.4.0-build.3
+  version: 0.4.0-build.9
 - description: "Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case."
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.4.0-build.7
+  version: 0.4.0-build.9
 
 ## packages
 - description: "Application Accelerator for VMware Tanzu: Used to create new projects and configurations."
@@ -18,7 +18,7 @@
   namespace: tap-install
   package: accelerator.apps.tanzu.vmware.com
   values_file: ./values/app-accelerator.yaml
-  version: 0.4.0
+  version: 0.5.0
 - description: "API portal: A unified user interface to enable search, discovery and try-out of API endpoints at ease."
   name: api-portal
   namespace: tap-install
@@ -42,7 +42,7 @@
   name: cartographer
   namespace: tap-install
   package: cartographer.tanzu.vmware.com
-  version: 0.0.8
+  version: 0.0.8-rc.7
 - description: "Cloud Native Runtimes: Cloud Native Runtimes is a serverless runtime based on Knative"
   name: cloud-native-runtimes
   namespace: tap-install

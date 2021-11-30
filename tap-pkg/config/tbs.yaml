@@ -34,6 +34,7 @@ spec:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
       constraints: 1.4.0-build.1
+      prereleases: {}
   values:
   - secretRef:
       name: buildservice-values
