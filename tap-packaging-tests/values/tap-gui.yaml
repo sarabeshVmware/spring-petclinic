@@ -1,0 +1,54 @@
+namespace: tap-gui
+service_type: <SERVICE-TYPE>
+app-config:
+  app:
+    baseUrl: https://<EXTERNAL-IP>:<PORT>
+  integrations:
+    gitlab: # Other integrations available
+      - host: <GITLAB-HOST>
+        apiBaseUrl: https://<GITLAB-URL>/api/v4
+        token: <GITLAB-TOKEN>
+  catalog:
+    locations:
+      - type: url
+        target: https://<GIT-CATALOG-URL>/catalog-info.yaml
+  backend:
+    baseUrl: https://<EXTERNAL-IP>:<PORT>
+    cors:
+      origin: https://<EXTERNAL-IP>:<PORT>
+  # database: # Only needed if you intend to support with an existing PostgreSQL database. The catalog is still refreshed from Git.
+  #     client: pg
+  #      connection:
+  #        host: <PGSQL-HOST>
+  #        port: <PGSQL-PORT>
+  #        user: <PGSQL-USER>
+  #        password: <PGSQL-PWD>
+  #        ssl: {rejectUnauthorized: false} # May be needed if using self-signed certs
+
+  # techdocs: # Only needed if you want to enable TechDocs capability. Requires running the TechDoc CLI to generate TechDocs from catalog Markdown to S3 compatible bucket called out in Additional Resources documentation.
+  #  builder: 'external'
+  #  generator:
+  #    runIn: 'docker'
+  #  publisher:
+  #    type: 'awsS3'
+  #    awsS3:
+  #      bucketName: '<S3-BUCKET-NAME>'
+  #      credentials:
+  #        accessKeyId: '<S3-ACCESS-KEY>'
+  #        secretAccessKey: '<S3-SECRET-KEY>'
+  #      region: '<S3-REGION>'
+  #      s3ForcePathStyle: false # Set value to true if using local S3 solution (Minio)
+
+  # auth: # Only needed if you want to enable OIDC login integration, otherwise only Guest mode is enabled
+  #  environment: development
+  #  session:
+  #    secret: custom session secret # Unique string required by auth-backend to save browser session state
+  #  providers:
+  #    oidc: # Detailed configuration of the OIDC auth capabilities are documented here: https://backstage.io/docs/auth/oauth
+  #      development:
+  #        metadataUrl: <AUTH-OIDC-METADATA-URL> # metadataUrl is a json file with generic oidc provider config. It contains the authorizationUrl and tokenUrl. These values are read from the metadataUrl file by Backstage and so they do not need to be specified explicitly here. To support OIDC authentication, you must create an OAuth client in your upstream provider, when setting up the client make sure to include the authorized redirect URI as: https://[BASE_URL]/api/auth/oidc/handler/frame
+  #        clientId: <AUTH-OIDC-CLIENT-ID>
+  #        clientSecret: <AUTH-OIDC-CLIENT-SECRET>
+  #        tokenSignedResponseAlg: <AUTH-OIDC-TOKEN-SIGNED-RESPONSE-ALG> # default='RS256'
+  #        scope: <AUTH-OIDC-SCOPE> # default='openid profile email'
+  #        prompt: <TYPE> # default=none (allowed values: auto, none, consent, login)

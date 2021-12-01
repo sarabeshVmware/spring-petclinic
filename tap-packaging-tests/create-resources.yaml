@@ -1,0 +1,17 @@
+namespaces:
+  - tap-install
+secrets:
+  - name: tanzunet-registry
+    registry: registry.tanzu.vmware.com
+    username: <TANZUNET-USERNAME>
+    password: <TANZUNET-PASSWORD>
+    namespace: tap-install
+  - name: registry-credentials
+    registry: <TAP-REGISTRY>
+    username: <TAP-REGISTRY-USERNAME>
+    password: <TAP-REGISTRY-PASSWORD>
+    namespace: tap-install
+package_repositories:
+  - name: tanzu-tap-repository
+    image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.4.0-build.7
+    namespace: tap-install
