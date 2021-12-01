@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	//tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 	"gopkg.in/yaml.v3"
 )
 
@@ -163,10 +162,8 @@ func excluded_filepath(filepath string, exclude_filepath []string) bool {
 }
 
 func UpdatePackagesFile(betaFilePath string){
-	//betaFilePath := "/Users/kdhaduk/latest/tap-packaging-tests/beta4.yaml"
-	packagesFilePath := "/Users/kdhaduk/Documents/Kubernates/tap-packages/tap-packaging-tests/packages.yaml"
-	// betaFilePath := "beta4.yaml"
-	// packagesFilePath := "packages.yaml"
+	packagesFilePath := "tap-packaging-tests/packages.yaml"
+	fmt.Println("Updating ", packagesFilePath)
 	sourceFile, err := os.ReadFile(betaFilePath)
 	check(err)
 	destFile, err := os.ReadFile(packagesFilePath)	
@@ -214,5 +211,5 @@ func UpdatePackagesFile(betaFilePath string){
 	// write to file
 	err = os.WriteFile(packagesFilePath, changedDestFile, 0644)
 	check(err)
-
+	fmt.Println(packagesFilePath, "Updated successfully.")
 	}
