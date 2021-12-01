@@ -1,3 +1,0 @@
-db_password: "PASSWORD-0123"
-app_service_type: "LoadBalancer"
-db_host: "metadata-store-db"
