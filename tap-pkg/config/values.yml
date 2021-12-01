@@ -3,6 +3,9 @@
 #! enum: "full", "dev", "build", "run"
 profile: full
 
+#! set to true if CEIP policy has been read
+ceip_policy_disclosed: false
+
 #! e.g. "tap-gui.tanzu.vmware.com"
 excluded_packages:
 - ""
@@ -38,6 +41,9 @@ ootb_supply_chain_testing: {}
 
 #@schema/type any=True
 ootb_supply_chain_testing_scanning: {}
+
+#@schema/type any=True
+ootb_delivery_basic: {}
 
 #@schema/type any=True
 image_policy_webhook: {}
