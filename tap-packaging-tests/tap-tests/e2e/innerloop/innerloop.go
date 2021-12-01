@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
-	e2e "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-tests/e2e"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
+	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/tap-tests/e2e"
 	"gopkg.in/yaml.v3"
 )
 
