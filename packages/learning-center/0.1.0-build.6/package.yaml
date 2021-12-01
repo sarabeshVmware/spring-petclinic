@@ -2,11 +2,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: "learningcenter.tanzu.vmware.com.1.0.11-build.1"
+  name: "learningcenter.tanzu.vmware.com.0.1.0-build.6"
 spec:
   refName: "learningcenter.tanzu.vmware.com"
-  version: "1.0.11-build.1"
-  releasedAt: "2021-11-02T23:27:12Z"
+  version: "0.1.0-build.6"
+  releasedAt: "2021-12-01T13:18:48Z"
   licenses: 
   - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
   valuesSchema:
@@ -14,12 +14,12 @@ spec:
       title: "learningcenter.tanzu.vmware.com values schema"
       examples:
       - ingressDomain: learningcenter.mydomain.com
-        namespace: educates
+        namespace: learningcenter
       properties:
         namespace:
           type: string
-          description: The namespace in which to deploy Educates
-          default: educates
+          description: The namespace in which to deploy Learning Center
+          default: learningcenter
         ingressDomain:
           type: string
           description: DNS parent subdomain used for training portal and workshop ingresses. This property is required.
@@ -60,7 +60,7 @@ spec:
               properties:
                 username:
                   type: string
-                  default: educates
+                  default: learningcenter
                 password:
                   type: string
             clientAccess:
@@ -68,12 +68,12 @@ spec:
               properties:
                 username:
                   type: string
-                  default: robot@educates
+                  default: robot@learningcenter
                 password:
                   type: string
         imageRegistry:
           type: object
-          description: Primary image registry where Educates container images are stored. It is only necessary to define the host and credentials when that image registry requires authentication to access images
+          description: Primary image registry where Learning Center container images are stored. It is only necessary to define the host and credentials when that image registry requires authentication to access images
           properties:
             host:
               description: Private registry domain
@@ -117,7 +117,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:17938a2dadf24d18482c27d29752e089953356ff1146c8a66c703cb36dab7617"
+          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:08559b7c25cea67109a53d9deb05bc16d1d6408ba9a3264ad752eed4a5bbbbd8"
       template:
       - ytt:
           paths:
