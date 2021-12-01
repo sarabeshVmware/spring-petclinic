@@ -4,10 +4,10 @@ load("@ytt:struct", "struct")
 
 _full_profile = "full"
 _dev_profile = "dev"
-_build_profile = "build"
-_run_profile = "run"
+_build_profile = "build" # currently disabled
+_run_profile = "run" # currently disabled
 
-_all_profiles = [_full_profile, _dev_profile, _build_profile, _run_profile]
+_all_profiles = [_full_profile, _dev_profile]
 
 if not data.values.profile in _all_profiles:
   assert.fail("Expected profile to be one of: {}".format(_all_profiles))
