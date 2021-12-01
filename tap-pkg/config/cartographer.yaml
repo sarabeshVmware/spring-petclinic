@@ -18,7 +18,8 @@ spec:
   packageRef:
     refName: cartographer.tanzu.vmware.com
     versionSelection:
-      constraints: 0.0.7
+      constraints: 0.0.8-rc.7
+      prereleases: {}
 
 #@ end
 #@ end
