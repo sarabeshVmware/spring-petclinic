@@ -11,8 +11,7 @@ spec:
   releasedAt: 2021-11-29T00:00:00Z
   valuesSchema:
     openAPIv3:
-      title: appliveview.tanzu.vmware.com values schema
-       
+      properties: {}
   template:
     spec:
       fetch:
