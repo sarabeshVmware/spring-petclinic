@@ -12,7 +12,7 @@ spec:
   valuesSchema:
     openAPIv3:
       title: appliveview.tanzu.vmware.com values schema
-       
+      properties: {}
   template:
     spec:
       fetch:
