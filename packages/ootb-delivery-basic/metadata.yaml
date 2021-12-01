@@ -1,0 +1,12 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: ootb-delivery-basic.tanzu.vmware.com
+spec:
+  displayName: Tanzu App Platform Out of The Box Delivery Basic
+  shortDescription: Out of The Box Delivery Basic.
+  longDescription: Tanzu App Platform Out of The Box Delivery Basic.
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support
+  maintainers:
+  - name: VMware

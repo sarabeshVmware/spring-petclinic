@@ -1,25 +1,39 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
-#@ if profiles.is_pkg_enabled("ootb-templates.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("ootb-delivery-basic.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: ootb-templates
+  name: ootb-delivery-basic
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-rule.cartographer: "upsert after upserting cartographer"
-    kapp.k14s.io/change-group: ootb-templates
+    kapp.k14s.io/change-rule.ootb-templates: "upsert after upserting ootb-templates"
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: ootb-templates.tanzu.vmware.com
+    refName: ootb-delivery-basic.tanzu.vmware.com
     versionSelection:
       constraints: 0.4.0-build.1
       prereleases: {}
+  values:
+  - secretRef:
+      name: ootb-delivery-basic-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ootb-delivery-basic-values
+  namespace: tap-install
+type: Opaque
+stringData:
+  values.yml: #@ yaml.encode(data.values.ootb_delivery_basic)
 
 #@ end
 #@ end
