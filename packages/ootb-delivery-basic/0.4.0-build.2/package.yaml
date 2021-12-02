@@ -1,0 +1,31 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-delivery-basic.tanzu.vmware.com.0.4.0-build.2
+spec:
+  refName: ootb-delivery-basic.tanzu.vmware.com
+  version: 0.4.0-build.2
+  releasedAt: "2021-12-02T21:22:44Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-delivery-basic
+      properties:
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Deliverable is submitted to utilize for providing registry credentials to ImageRepository and permissions for kapp-controller to deploy the application.
+          default: default
+          examples:
+          - default
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:ddbef93d83d9b6963302d46891fbc2c448b6269e2cc72cf58e01573d5ce5796a
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
