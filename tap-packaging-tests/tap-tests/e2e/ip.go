@@ -20,7 +20,7 @@ func GetAppAcceleratorExternalIP() string {
 	log.Printf("Getting app accelerator external IP:")
 	// appAccExternalIPBytes, _ := tap.RunWithBash(`kubectl get svc -A | awk '{if($2=="acc-ui-server")print $5}'`)
 	// appAccExternalIP := strings.TrimSpace(string(appAccExternalIPBytes))
-	appAccExternalIP := GetServiceExternalIp("acc-ui-server", "accelerator-system")
+	appAccExternalIP := GetServiceExternalIp("acc-server", "accelerator-system")
 	log.Printf("App Accelerator external IP: %s", appAccExternalIP)
 	return appAccExternalIP
 }

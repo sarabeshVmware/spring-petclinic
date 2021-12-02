@@ -1,7 +1,4 @@
 profile: dev
-appliveview:
-  server_namespace: tap-install
-  service_type: "LoadBalancer"
 buildservice:
   tanzunet_username: <TANZUNET-USERNAME>
   tanzunet_password: <TANZUNET-PASSWORD>
