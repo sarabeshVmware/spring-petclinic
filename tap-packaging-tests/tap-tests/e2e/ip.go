@@ -57,12 +57,13 @@ func GetServiceExternalIp(serviceName string, namespace string) string {
 	})
 	tap.CheckError(err)
 	for _, svc := range svcList.Items {
-		externalIp = svc.Status.LoadBalancer.Ingress[0].IP
-		if externalIp == "" { // if no IP, check for hostname
-			externalIp = svc.Status.LoadBalancer.Ingress[0].Hostname
-		} else {
-			break
-		}
+		if len(svc.Status.LoadBalancer.Ingress) != 0{
+			externalIp = svc.Status.LoadBalancer.Ingress[0].IP
+			if externalIp == "" { // if no IP, check for hostname
+				externalIp = svc.Status.LoadBalancer.Ingress[0].Hostname
+			} else {
+				break
+			}}
 	}
 	return externalIp
 }
