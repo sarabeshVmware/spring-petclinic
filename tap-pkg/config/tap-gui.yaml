@@ -11,14 +11,14 @@ kind: PackageInstall
 metadata:
   name: tap-gui
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: tap-gui.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-rc.40
+      constraints: 1.0.0-rc.65
       prereleases: {}
   values:
   - secretRef:
