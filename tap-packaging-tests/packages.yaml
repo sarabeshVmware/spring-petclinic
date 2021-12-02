@@ -39,7 +39,7 @@
   name: cartographer
   namespace: tap-install
   package: cartographer.tanzu.vmware.com
-  version: 0.0.7
+  version: 0.0.8-rc.7
 - description: 'Cloud Native Runtimes: Cloud Native Runtimes is a serverless runtime based on Knative'
   name: cloud-native-runtimes
   namespace: tap-install
@@ -85,13 +85,13 @@
   namespace: tap-install
   package: tap-gui.tanzu.vmware.com
   values_file: ./values/tap-gui.yaml
-  version: 1.0.0-rc.40
+  version: 1.0.0-rc.65
 - description: 'Tanzu App Platform Out of The Box Supply Chain Basic: Out of The Box Supply Chain Basic.'
   name: ootb-supply-chain-basic
   namespace: tap-install
   package: ootb-supply-chain-basic.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.3.0-build.5
+  version: 0.4.0-build.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -100,7 +100,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing-scanning.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.3.0-build.5
+  version: 0.4.0-build.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -109,7 +109,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.3.0-build.5
+  version: 0.4.0-build.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -117,7 +117,7 @@
   name: ootb-templates
   namespace: tap-install
   package: ootb-templates.tanzu.vmware.com
-  version: 0.3.0-build.5
+  version: 0.4.0-build.1
 - description: 'Tanzu Supply Chain Security Tools - Store: The Metadata Store enables saving and querying image, package, and vulnerability data.'
   name: metadata-store
   namespace: tap-install
@@ -152,11 +152,11 @@
   namespace: tap-install
   package: learningcenter.tanzu.vmware.com
   values_file: ./values/learning-center.yaml
-  version: 1.0.14-build.5
+  version: 0.1.0-build.6
 - description: 'Workshop Building Tutorial: Workshop Building Tutorial'
   name: learning-center-workshops
   namespace: tap-install
   package: workshops.learningcenter.tanzu.vmware.com
-  version: 1.0.7-build.6
+  version: 0.1.0-build.7
   package_dependencies:
     - learningcenter.tanzu.vmware.com
