@@ -3,7 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.run]):
-#@ if profiles.is_pkg_enabled("appliveview.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("run.appliveview.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -16,9 +16,9 @@ metadata:
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: appliveview.tanzu.vmware.com
+    refName: run.appliveview.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-build.2
+      constraints: 1.0.0-build.3
       prereleases: {}
   values:
   - secretRef:
