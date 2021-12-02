@@ -1,5 +1,4 @@
 profile: full
-install_cert_manager: true
 appliveview:
   server_namespace: tap-install
   service_type: "LoadBalancer"
@@ -26,3 +25,4 @@ ootb_supply_chain_basic:
 #   registry:
 #     server: <SERVER>
 #     repository: <REPOSITORY>
+ceip_policy_disclosed: true

@@ -39,8 +39,6 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	// Setting Env variable ACC_SERVER_URL
 	tap.RunWithBash(fmt.Sprintf("export ACC_SERVER_URL=http://%s", appAccExternalIP))
 
-	e2e.GetAppLiveViewExternalIP()
-
 	e2e.ListAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)
 
