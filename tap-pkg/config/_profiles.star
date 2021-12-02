@@ -4,10 +4,10 @@ load("@ytt:struct", "struct")
 
 _full_profile = "full"
 _dev_profile = "dev"
-_build_profile = "build"
-_run_profile = "run"
+_build_profile = "build" # currently disabled
+_run_profile = "run" # currently disabled
 
-_all_profiles = [_full_profile, _dev_profile, _build_profile, _run_profile]
+_all_profiles = [_full_profile, _dev_profile]
 
 if not data.values.profile in _all_profiles:
   assert.fail("Expected profile to be one of: {}".format(_all_profiles))
@@ -22,7 +22,37 @@ def _is_any_enabled(profiles):
 end
 
 def _is_pkg_enabled(name):
-  return (name not in data.values.excluded_packages) 
+  return (name not in data.values.excluded_packages)
+end
+
+def _merge_ingress_values(pkg_values, ingress_values):
+  pkg_values_dict = struct.decode(pkg_values)
+  ingress_values_dict = struct.decode(ingress_values)
+
+  if 'ingressEnabled' in ingress_values_dict and 'ingressEnabled' not in pkg_values_dict:
+    pkg_values_dict['ingressEnabled'] = ingress_values['ingressEnabled']
+  end
+
+  if 'ingressDomain' in ingress_values_dict and 'ingressDomain' not in pkg_values_dict:
+    pkg_values_dict['ingressDomain'] = ingress_values.ingressDomain
+  end
+
+  if 'tls' in ingress_values_dict:
+    if 'tls' not in pkg_values_dict:
+      pkg_values_dict['tls'] = {}
+    end
+
+    if 'namespace' in ingress_values_dict['tls'] and 'namespace' not in pkg_values_dict['tls']:
+      pkg_values_dict['tls']['namespace'] = ingress_values.tls.namespace
+    end
+
+    if 'secretName' in ingress_values_dict['tls'] and 'secretName' not in pkg_values_dict['tls']:
+      pkg_values_dict['tls']['secretName'] = ingress_values.tls.secretName
+    end
+  end
+
+
+  return struct.encode(pkg_values_dict)
 end
 
 profiles = struct.make(
@@ -34,4 +64,5 @@ profiles = struct.make(
 	is_any_enabled=_is_any_enabled,
 	is_enabled=_is_enabled,
 	is_pkg_enabled=_is_pkg_enabled,
+    merge_ingress_values=_merge_ingress_values,
 )

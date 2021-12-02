@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 )
 
 func DeleteWorkload(workload string, namespace string) {

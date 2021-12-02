@@ -34,3 +34,4 @@ contour:
 #   registry:
 #     server: <SERVER>
 #     repository: <REPOSITORY>
+ceip_policy_disclosed: true

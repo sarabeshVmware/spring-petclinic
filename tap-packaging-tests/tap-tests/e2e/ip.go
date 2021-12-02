@@ -9,11 +9,11 @@ import (
 	"os"
 	"path/filepath"
 
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/clientcmd"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 func GetAppAcceleratorExternalIP() string {

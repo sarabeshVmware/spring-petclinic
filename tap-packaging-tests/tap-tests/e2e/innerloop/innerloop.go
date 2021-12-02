@@ -8,8 +8,8 @@ import (
 	"log"
 	"os"
 
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
-	e2e "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-tests/e2e"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
+	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/tap-tests/e2e"
 	"gopkg.in/yaml.v3"
 )
 
@@ -38,8 +38,6 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 
 	// Setting Env variable ACC_SERVER_URL
 	tap.RunWithBash(fmt.Sprintf("export ACC_SERVER_URL=http://%s", appAccExternalIP))
-
-	e2e.GetAppLiveViewExternalIP()
 
 	e2e.ListAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)

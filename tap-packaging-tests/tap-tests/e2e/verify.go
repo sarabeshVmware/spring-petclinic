@@ -10,8 +10,9 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
 	"github.com/pivotal/kpack/pkg/apis/build/v1alpha2"
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 
 	"context"
 
@@ -156,25 +157,23 @@ func VerifyBuildStatus() {
 		result := GetBuilds()
 		if len(result.Items) != 0 {
 			latestBuildIndex := len(result.Items) - 1
-			log.Println(" Latest Build Index :" , latestBuildIndex)
+			log.Println(" Latest Build Index :", latestBuildIndex)
 			conditionsLength := len(result.Items[latestBuildIndex].Status.Status.Conditions)
-			log.Println("Conditions length :" , conditionsLength)
+			log.Println("Conditions length :", conditionsLength)
 			lastConditionIndex := 0
-			if conditionsLength == 0{
+			if conditionsLength == 0 {
 				//lastConditionIndex = len(result.Items[latestBuildIndex].Status.Status.Conditions) - 1
 				log.Printf("Waiting for 5s for conditions getting generated ...")
 				time.Sleep(5 * time.Second)
 				count -= 1
 				continue
 
-			} else if conditionsLength > 1{
+			} else if conditionsLength > 1 {
 				lastConditionIndex = len(result.Items[latestBuildIndex].Status.Status.Conditions) - 1
 			}
-			
-			
+
 			if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionUnknown {
 				log.Printf("Build %s status is Unknown", result.Items[latestBuildIndex].ObjectMeta.Name)
-				
 
 			} else if (result.Items[latestBuildIndex].Status.Status.Conditions[lastConditionIndex].Status) == corev1.ConditionTrue {
 				log.Printf("Build %s status is verified successfully. Status is %s", result.Items[latestBuildIndex].ObjectMeta.Name,

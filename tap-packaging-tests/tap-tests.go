@@ -14,8 +14,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	"github.com/spf13/cobra"
-	tap "gitlab.eng.vmware.com/tap/tap-packaging-tests/pkg"
-	innerloop "gitlab.eng.vmware.com/tap/tap-packaging-tests/tap-tests/e2e/innerloop"
+	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
+	innerloop "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/tap-tests/e2e/innerloop"
 )
 
 func setLogger() {
