@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
 	"gopkg.in/yaml.v3"
 )
 
@@ -161,12 +162,12 @@ func excluded_filepath(filepath string, exclude_filepath []string) bool {
 	return false
 }
 
-func UpdatePackagesFile(betaFilePath string){
+func UpdatePackagesFile(betaFilePath string) {
 	packagesFilePath := "tap-packaging-tests/packages.yaml"
 	fmt.Println("Updating ", packagesFilePath)
 	sourceFile, err := os.ReadFile(betaFilePath)
 	check(err)
-	destFile, err := os.ReadFile(packagesFilePath)	
+	destFile, err := os.ReadFile(packagesFilePath)
 	check(err)
 
 	type BetaPackages struct {
@@ -192,16 +193,17 @@ func UpdatePackagesFile(betaFilePath string){
 	err = yaml.Unmarshal(destFile, &testpkg)
 
 	check(err)
-	for i, val := range testpkg{
-		for _, betaval := range beta4pkgs.Packages{
-			if val.Name == betaval.Name{
+	for i, val := range testpkg {
+		for _, betaval := range beta4pkgs.Packages {
+			if (val.Name == betaval.Name) || ((val.Name == "tap-full" || val.Name == "tap-dev-light") && betaval.Name == "tap") {
 				lastIndex := len(betaval.Versions) - 1
-				if val.Version == betaval.Versions[lastIndex]{
+				if val.Version == betaval.Versions[lastIndex] {
 					fmt.Printf("Version already updated for package %s \n", val.Name)
-				}else{
-				fmt.Printf("Changing version for package %s from %s to %s \n", val.Name, val.Version, betaval.Versions[lastIndex])
+				} else {
+					fmt.Printf("Changing version for package %s from %s to %s \n", val.Name, val.Version, betaval.Versions[lastIndex])
 
-				testpkg[i].Version = betaval.Versions[lastIndex]}
+					testpkg[i].Version = betaval.Versions[lastIndex]
+				}
 			}
 		}
 	}
@@ -212,4 +214,4 @@ func UpdatePackagesFile(betaFilePath string){
 	err = os.WriteFile(packagesFilePath, changedDestFile, 0644)
 	check(err)
 	fmt.Println(packagesFilePath, "Updated successfully.")
-	}
+}
