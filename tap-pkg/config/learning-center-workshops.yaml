@@ -19,7 +19,7 @@ spec:
   packageRef:
     refName: workshops.learningcenter.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.7-build.6
+      constraints: 0.1.0-build.7
       prereleases: {}
 
 #@ end
