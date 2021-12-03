@@ -42,7 +42,6 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	e2e.ListAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)
 
-	tap.SetupDeveloperNamespacePostInstallation(namespace)
 	e2e.DeleteWorkload(workload, namespace)
 	e2e.CreateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, namespace)
 
