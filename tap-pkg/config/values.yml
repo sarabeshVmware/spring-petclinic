@@ -73,6 +73,3 @@ package_overlays:
 - name: ""
   secrets:
     - name: ""
-
-#@schema/type any=True
-extra: {}
