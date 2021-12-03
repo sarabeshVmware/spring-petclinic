@@ -6,7 +6,7 @@ metadata:
 spec:
   refName: cnrs.tanzu.vmware.com
   version: 1.1.0
-  releasedAt: 2021-11-26T22:20:00Z
+  releasedAt: 2021-12-01T17:31:00Z
   releaseNotes: |
     Release 1.1.0 of the Cloud Native Runtimes app package
   capacityRequirementsDescription: Cluster with one node requires >6 CPUs, >6.0GB RAM, >30GB storage. Cluster with multiple nodes requires >2 CPUs, >4.0GB RAM, >20GB storage for each node.
@@ -35,6 +35,12 @@ spec:
             example.com: |
               selector:
                 app: nonprofit
+        default_tls_secret:
+          type: string
+          description: "Optional: Overrides the config-contour configmap in namespace knative-serving."
+          default: ""
+          examples:
+            - tanzu-system-ingress/default-cert
         local_dns:
           type: object
           properties:
@@ -76,11 +82,15 @@ spec:
               type: boolean
               description: "Optional: Set to true to enable Pod Disruption Budget. If provider local is set to \"local\", the PDB will be disabled automatically."
               default: true
+        domain_template:
+          type: string
+          description: "Optional: Specifies the golang text template string to use when constructing the Knative service's DNS name."
+          default: "{{.Name}}.{{.Namespace}}.{{.Domain}}"
   template:
     spec:
       fetch:
         - imgpkgBundle:
-            image: dev.registry.tanzu.vmware.com/serverless/1.1.0-build.2@sha256:214c9f03b1c49f9bd16433f7a4cc2b0d3624b61072be6a3aca188ecd036db3c6
+            image: dev.registry.tanzu.vmware.com/serverless/1.1.0-build.7@sha256:9c0f7069e7bcaff3bf91e8958c8b24644ecd13927ee0e64011e058172ccd8315
       template:
         - kbld:
             paths:
