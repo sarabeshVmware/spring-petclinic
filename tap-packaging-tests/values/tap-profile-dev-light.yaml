@@ -1,4 +1,7 @@
 profile: dev
+accelerator:
+  server:
+    service_type: "LoadBalancer"
 buildservice:
   tanzunet_username: <TANZUNET-USERNAME>
   tanzunet_password: <TANZUNET-PASSWORD>
