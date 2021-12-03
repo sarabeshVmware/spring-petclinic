@@ -3,19 +3,19 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.4.0-build.10
+  version: 0.4.0-build.12
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.4.0-build.10
+  version: 0.4.0-build.12
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
   package: accelerator.apps.tanzu.vmware.com
   values_file: ./values/app-accelerator.yaml
-  version: 0.5.0
+  version: 0.5.1
 - description: 'API portal: A unified user interface to enable search, discovery and try-out of API endpoints at ease.'
   name: api-portal
   namespace: tap-install
@@ -26,7 +26,7 @@
   namespace: tap-install
   package: appliveview.tanzu.vmware.com
   values_file: ./values/app-live-view.yaml
-  version: 1.0.0-build.2
+  version: 1.0.0-build.3
   package_dependencies:
     - controller.conventions.apps.tanzu.vmware.com
 - description: 'Tanzu Build Service: Tanzu Build Service enables the building and automation of containerized software workflows securely and at scale.'
@@ -85,13 +85,13 @@
   namespace: tap-install
   package: tap-gui.tanzu.vmware.com
   values_file: ./values/tap-gui.yaml
-  version: 1.0.0-rc.65
+  version: 1.0.0-rc.72
 - description: 'Tanzu App Platform Out of The Box Supply Chain Basic: Out of The Box Supply Chain Basic.'
   name: ootb-supply-chain-basic
   namespace: tap-install
   package: ootb-supply-chain-basic.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.4.0-build.1
+  version: 0.4.0-build.2
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -100,7 +100,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing-scanning.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.4.0-build.1
+  version: 0.4.0-build.2
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -109,7 +109,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.4.0-build.1
+  version: 0.4.0-build.2
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -117,7 +117,7 @@
   name: ootb-templates
   namespace: tap-install
   package: ootb-templates.tanzu.vmware.com
-  version: 0.4.0-build.1
+  version: 0.4.0-build.2
 - description: 'Tanzu Supply Chain Security Tools - Store: The Metadata Store enables saving and querying image, package, and vulnerability data.'
   name: metadata-store
   namespace: tap-install
