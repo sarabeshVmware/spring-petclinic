@@ -6,12 +6,12 @@ spec:
   refName: scst-scan.apps.tanzu.vmware.com
   version: 1.0.0
   releaseNotes: Supply Chain Security Tools - Scan (Scan Controller) v1.0.0
-  releasedAt: 2021-11-25T15:28:04Z
+  releasedAt: 2021-12-02T21:36:00Z
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:b8117138f075b75aae93fc6c11c02ad0e36eb3192476ade57dcda039d17139e2
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-build.2@sha256:3b08d3858bf5e7b09c44c0b2973bbeb38df95e459c664f669872b1e7bf0dc470
       template:
       - ytt:
           paths:
@@ -30,26 +30,30 @@ spec:
           type: string
           description: Deployment namespace for the Scan Controller
           default: scan-link-system
-        metadataStore.url:
-          type: string
-          description: Url of the Insight Metadata Store deployed in the cluster
-          default: "https://metadata-store-app.metadata-store.svc.cluster.local:8443"
-        metadataStore.caSecret:
+        metadataStore:
           type: object
-          description: CA Cert of the Insight Metadata Store deployed in the cluster
+          description: Configure integration with an Insight Metadata Store deployed in the cluster
           properties:
-            name:
+            url:
               type: string
-              description: Name of deployed Secret with key ca.crt holding the CA Cert of the Insight Metadata Store
-              default: "app-tls-cert"
-            importFromNamespace:
+              description: Url of the Insight Metadata Store
+              default: https://metadata-store-app.metadata-store.svc.cluster.local:8443
+            caSecret:
+              type: object
+              description: CA Cert of the Insight Metadata Store deployed in the cluster
+              properties:
+                name:
+                  type: string
+                  description: Name of deployed Secret with key ca.crt holding the CA Cert of the Insight Metadata Store
+                  default: app-tls-cert
+                importFromNamespace:
+                  type: string
+                  description: Namespace from which to import the Insight Metadata Store CA Cert
+                  default: metadata-store
+            clusterRole:
               type: string
-              description: Namespace from which to import the Insight Metadata Store CA Cert
-              default: "metadata-store"
-        metadataStore.clusterRole:
-          type: string
-          description: Name of the deployed ClusterRole for read/write access to the Insight Metadata Store deployed in the cluster
-          default: "metadata-store-read-write"
+              description: Name of the deployed ClusterRole for read/write access to the Insight Metadata Store
+              default: metadata-store-read-write
         resources:
           type: object
           properties:
