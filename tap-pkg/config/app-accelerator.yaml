@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: accelerator.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.5.0
+      constraints: 0.5.1
   values:
   - secretRef:
       name: accelerator-values

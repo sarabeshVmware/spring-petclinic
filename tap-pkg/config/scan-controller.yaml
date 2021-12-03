@@ -20,7 +20,6 @@ spec:
     refName: scst-scan.apps.tanzu.vmware.com
     versionSelection:
       constraints: 1.0.0
-      prereleases: {}
   values:
   - secretRef:
       name: scanning-values

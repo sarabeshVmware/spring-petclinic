@@ -33,7 +33,7 @@ packages:
       - 1.0.0
   - name: app-accelerator
     versions:
-      - 0.5.0
+      - 0.5.1
   - name: developer-conventions
     versions:
       - 0.4.0-build1
@@ -56,7 +56,7 @@ packages:
       - 1.4.0-build.1
   - name: tap-gui
     versions:
-      - 1.0.0-rc.65
+      - 1.0.0-rc.72
   - name: tap
     versions:
       - 0.4.0-build.12
@@ -167,5 +167,11 @@ packages:
 #   - ootb-supply-chain-testing 0.4.0-build.1->0.4.0-build.2
 #   - ootb-supply-chain-testing-scanning 0.4.0-build.1->0.4.0-build.2
 #   - ootb-delivery-basic 0.4.0-build.1->0.4.0-build.2
+#   - app-accelerator 0.5.0->0.5.1
+#   - tap-gui 1.0.0-rc.65->1.0.0-rc.72
+#   - grype-scanner 1.0.0
+#   - scan-controller 1.0.0
+#   - cloud-native-runtimes 1.1.0-build.2->1.1.0-build.7
+#   - app-live-view 1.0.0-build.2->1.0.0-build.3
 #  New packages:
-#   - app-live-view-conventions
+#   - app-live-view-conventions 1.0.0-build.3
