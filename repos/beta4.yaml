@@ -21,8 +21,10 @@ packages:
       - 0.5.0-rc.3
   - name: app-live-view
     versions:
-      - 1.0.0-build.1
-      - 1.0.0-build.2
+      - 1.0.0-build.3
+  - name: app-live-view-conventions
+    versions:
+      - 1.0.0-build.3
   - name: scan-controller
     versions:
       - 1.0.0
@@ -57,7 +59,7 @@ packages:
       - 1.0.0-rc.65
   - name: tap
     versions:
-      - 0.4.0-build.11
+      - 0.4.0-build.12
   - name: learning-center-workshops
     versions:
       - 0.1.0-build.7
@@ -69,16 +71,16 @@ packages:
       - 0.0.8-rc.7
   - name: ootb-templates
     versions:
-      - 0.4.0-build.1
+      - 0.4.0-build.2
   - name: ootb-supply-chain-basic
     versions:
-      - 0.4.0-build.1
+      - 0.4.0-build.2
   - name: ootb-supply-chain-testing
     versions:
-      - 0.4.0-build.1
+      - 0.4.0-build.2
   - name: ootb-supply-chain-testing-scanning
     versions:
-      - 0.4.0-build.1
+      - 0.4.0-build.2
   - name: spring-boot-conventions
     versions:
       - 0.2.0
@@ -90,7 +92,7 @@ packages:
       - 0.30.0
   - name: ootb-delivery-basic
     versions:
-      - 0.4.0-build.1
+      - 0.4.0-build.2
   - name: tap-telemetry
     versions:
       - 0.1.0
@@ -157,3 +159,13 @@ packages:
 #   - tap-gui 1.0.0-rc.40->1.0.0-rc.65,
 #   - learning-center 1.0.14-build.5->0.1.0-build.6
 #   - learning-center-workshops 1.0.14-build.6->0.1.0-build.7
+
+# TAP repo bundle 0.4.0-build.12
+# - Version changes: 
+#   - ootb-templates 0.4.0-build.1->0.4.0-build.2
+#   - ootb-supply-chain-basic 0.4.0-build.1->0.4.0-build.2
+#   - ootb-supply-chain-testing 0.4.0-build.1->0.4.0-build.2
+#   - ootb-supply-chain-testing-scanning 0.4.0-build.1->0.4.0-build.2
+#   - ootb-delivery-basic 0.4.0-build.1->0.4.0-build.2
+#  New packages:
+#   - app-live-view-conventions
