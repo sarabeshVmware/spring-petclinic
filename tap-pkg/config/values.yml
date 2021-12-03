@@ -5,7 +5,6 @@ profile: full
 
 #! set to true if CEIP policy has been read.
 #! For more information on VMware's Customer Experience Improvement Program, visit this link: https://www.vmware.com/solutions/trustvmware/ceip-products.html.
-#! This page also includes documentation for how to opt-out of data collection.
 #! boolean: true/false
 ceip_policy_disclosed: false
 
