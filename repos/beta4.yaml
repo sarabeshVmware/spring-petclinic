@@ -21,10 +21,10 @@ packages:
       - 0.5.0-rc.3
   - name: app-live-view
     versions:
-      - 1.0.0-build.3
+      - 1.0.0
   - name: app-live-view-conventions
     versions:
-      - 1.0.0-build.3
+      - 1.0.0
   - name: scan-controller
     versions:
       - 1.0.0
@@ -59,7 +59,7 @@ packages:
       - 1.0.0-rc.72
   - name: tap
     versions:
-      - 0.4.0-build.12
+      - 0.4.0-build.13
   - name: learning-center-workshops
     versions:
       - 0.1.0-build.7
@@ -175,3 +175,11 @@ packages:
 #   - app-live-view 1.0.0-build.2->1.0.0-build.3
 #  New packages:
 #   - app-live-view-conventions 1.0.0-build.3
+
+# TAP repo bundle 0.4.0-build.13
+# - Version changes: 
+#   - app-live-view-conventions 1.0.0-build.3->1.0.0 (!237)
+#   - app-live-view 1.0.0-build.3->1.0.0 (!237)
+# - Other Changes: 
+#   - Refined the CEIP messages to remove confusion around type. (!235)
+#   - Fixed missing values for scst-store. (!236)
