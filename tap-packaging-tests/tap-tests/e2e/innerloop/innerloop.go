@@ -35,14 +35,16 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	// defer tap.KillPID(pidAppLiveViewPortForward)
 
 	appAccExternalIP := e2e.GetAppAcceleratorExternalIP()
-
+	if appAccExternalIP == "" {
+		log.Fatalln("Unable to get App accelerator external IP")
+		os.Exit(1)
+	}
 	// Setting Env variable ACC_SERVER_URL
 	tap.RunWithBash(fmt.Sprintf("export ACC_SERVER_URL=http://%s", appAccExternalIP))
 
 	e2e.ListAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)
 
-	tap.SetupDeveloperNamespacePostInstallation(namespace)
 	e2e.DeleteWorkload(workload, namespace)
 	e2e.CreateWorkload(workload, scServer, scRepository, sourceImage, acceleratorProject, namespace)
 

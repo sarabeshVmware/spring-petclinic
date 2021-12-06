@@ -72,6 +72,7 @@ func CheckIfPackageInstalled(packageInfo Package) bool {
 		if packageInfo.Package == installedPackage.PackageName {
 			log.Printf("Package found: %s", packageInfo.Package)
 			packageInstalled = true
+			return packageInstalled
 		}
 	}
 	log.Printf("Package not found: %s", packageInfo.Package)
