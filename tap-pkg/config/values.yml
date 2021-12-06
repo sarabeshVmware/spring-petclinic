@@ -3,7 +3,9 @@
 #! enum: "full", "dev", "build", "run"
 profile: full
 
-#! set to true if CEIP policy has been read
+#! set to true if CEIP policy has been read.
+#! For more information on VMware's Customer Experience Improvement Program, visit this link: https://www.vmware.com/solutions/trustvmware/ceip-products.html.
+#! boolean: true/false
 ceip_policy_disclosed: false
 
 #! e.g. "tap-gui.tanzu.vmware.com"
