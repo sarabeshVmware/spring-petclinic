@@ -26,3 +26,7 @@ ootb_supply_chain_basic:
 #     server: <SERVER>
 #     repository: <REPOSITORY>
 ceip_policy_disclosed: true
+contour:
+  envoy:
+    service:
+      type: LoadBalancer
