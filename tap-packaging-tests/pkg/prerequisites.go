@@ -3,14 +3,41 @@
 
 package pkg
 
-import "log"
+import (
+	"context"
+	"log"
+
+	apiv1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
 
 func HandlePrerequisites() {
 	log.Printf("Handling prerequisites:")
-	DeployApp("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"})
-	// DeployApp("cert-manager", []string{"https://github.com/jetstack/cert-manager/releases/download/v1.5.4/cert-manager.yaml"})
-	DeployApp("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"})
-	// CreateNamespace("flux-system")
-	// CreateClusterRoleBinding("default-admin", "cluster-admin", "flux-system:default")
-	// DeployAppInNamespace("flux-source-controller", []string{"https://github.com/fluxcd/source-controller/releases/download/v0.15.4/source-controller.crds.yaml", "https://github.com/fluxcd/source-controller/releases/download/v0.15.4/source-controller.deployment.yaml"}, "flux-system")
+
+	deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
+	CheckError(err)
+
+	kappControllerInstalled, secretgenControllerInstalled := false, false
+	for _, item := range deployments.Items {
+		if item.Namespace == "kapp-controller" {
+			kappControllerInstalled = true
+		}
+		if item.Namespace == "secretgen-controller" {
+			secretgenControllerInstalled = true
+		}
+	}
+
+	if kappControllerInstalled {
+		log.Printf("kapp-controller already deployed.")
+	} else {
+		log.Printf("Deploying kapp-controller:")
+		DeployApp("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"})
+	}
+
+	if secretgenControllerInstalled {
+		log.Printf("secretgen-controller already deployed.")
+	} else {
+		log.Printf("Deploying secretgen-controller:")
+		DeployApp("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"})
+	}
 }
