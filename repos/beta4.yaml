@@ -17,7 +17,6 @@ packages:
       - 0.2.0
   - name: services-toolkit
     versions:
-      - 0.5.0-rc.2
       - 0.5.0-rc.3
   - name: app-live-view
     versions:
@@ -42,7 +41,6 @@ packages:
       - 1.0.0-beta.2
   - name: image-policy-webhook
     versions:
-      - 1.0.0-beta.1
       - 1.0.0-beta.2
   - name: api-portal
     versions:
@@ -52,14 +50,13 @@ packages:
       - 1.1.0
   - name: build-service
     versions:
-      - 1.3.4
       - 1.4.0-build.1
   - name: tap-gui
     versions:
       - 1.0.0-rc.72
   - name: tap
     versions:
-      - 0.4.0-build.13
+      - 0.4.0
   - name: learning-center-workshops
     versions:
       - 0.1.0-build.7
@@ -183,3 +180,8 @@ packages:
 # - Other Changes: 
 #   - Refined the CEIP messages to remove confusion around type. (!235)
 #   - Fixed missing values for scst-store. (!236)
+
+# TAP repo bundle 0.4.0
+# - Other Changes: 
+#   - add contour upsert for app-accelerator, learning-center, tap-gui (!241)
+#   - Use app-accelerator bundle 0.5.1: imgpkg fix (!244)
