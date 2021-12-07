@@ -13,7 +13,8 @@ metadata:
   namespace: tap-install
   annotations:
     kapp.k14s.io/change-group: learningcenter
-    kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
+    kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
+    kapp.k14s.io/change-rule.contour: "upsert after upserting contour"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
