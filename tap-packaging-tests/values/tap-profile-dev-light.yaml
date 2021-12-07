@@ -17,11 +17,6 @@ ootb_supply_chain_basic:
   registry:
     server: <SERVER>
     repository: <REPOSITORY>
-cnrs:
-  ingress:
-    reuse_crds: true
-    external:
-      namespace: tanzu-system-ingress
 contour:
   envoy:
     service:
