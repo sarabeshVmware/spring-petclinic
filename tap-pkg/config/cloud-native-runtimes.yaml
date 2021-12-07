@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.run]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.run]):
 #@ if profiles.is_pkg_enabled("cnrs.tanzu.vmware.com"):
 
 ---

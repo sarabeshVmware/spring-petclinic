@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.run]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.run]):
 #@ if profiles.is_pkg_enabled("service-bindings.labs.vmware.com"):
 
 ---

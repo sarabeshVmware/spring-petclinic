@@ -3,7 +3,7 @@
 #@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.dev, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ def user_values():
@@ -15,7 +15,7 @@
 #@ def default_values():
 ---
 descriptor_name: lite
-#@ if/end profiles.is_any_enabled([profiles.dev]):
+#@ if/end profiles.is_any_enabled([profiles.light]):
 disable_smart_warmer: "true"
 #@ end
 
