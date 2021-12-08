@@ -83,7 +83,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.5.0
+          image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:0.5.1
       template:
       - ytt:
           paths:
