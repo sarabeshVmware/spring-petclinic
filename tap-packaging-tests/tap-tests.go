@@ -52,14 +52,11 @@ func main() {
 
 func createCommand() *cobra.Command {
 	var createResourcesFile string
-	var installPrerequisites bool
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create resources",
 		Run: func(cmd *cobra.Command, args []string) {
-			if installPrerequisites {
-				tap.HandlePrerequisites()
-			}
+			tap.CheckPrerequisites()
 
 			log.Printf("Creating resources from file: %s", createResourcesFile)
 
@@ -85,7 +82,6 @@ func createCommand() *cobra.Command {
 		},
 	}
 	createCmd.Flags().StringVarP(&createResourcesFile, "create-resources-file", "f", filepath.Join(tap.GetCurrentDir(), "create-resources.yaml"), "Create resources YAML file.")
-	createCmd.Flags().BoolVar(&installPrerequisites, "install-prerequisites", false, "Install prerequisites such as kapp-controller, secretgen-controller, cert-manager, flux-system, etc.")
 	return createCmd
 }
 
@@ -113,6 +109,7 @@ func installCommand() *cobra.Command {
 		Args:      cobra.MinimumNArgs(1),
 		ValidArgs: packagesNames, // NOTE: Requires https://github.com/spf13/cobra/pull/841 to be merged to function properly
 		Run: func(cmd *cobra.Command, args []string) {
+			tap.CheckPrerequisites()
 			for _, packageName := range args {
 				packageInfo := tap.GetPackageInfoFromName(packageName, packagesList)
 				if valuesFile != "" {
@@ -161,6 +158,7 @@ func e2eCommand() *cobra.Command {
 		Use:   "innerloop",
 		Short: "End-to-end innerloop test",
 		Run: func(cmd *cobra.Command, args []string) {
+			tap.CheckPrerequisites()
 			if install {
 				tap.InstallPackageByName("tap-dev-light", packagesList)
 				tap.InstallPackageByName("app-accelerator", packagesList)

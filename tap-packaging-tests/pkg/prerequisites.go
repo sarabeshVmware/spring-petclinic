@@ -11,8 +11,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func HandlePrerequisites() {
-	log.Printf("Handling prerequisites:")
+func CheckPrerequisites() {
+	log.Printf("Checking prerequisites:")
 
 	deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
 	CheckError(err)
