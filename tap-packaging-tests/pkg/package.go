@@ -40,8 +40,8 @@ func ListPackages(namespace string) {
 func ListInstalledPackages(namespace string) []PackageInstalledOutput {
 	var packages []PackageInstalledOutput
 	log.Printf("Installed packages in namespace: %s", namespace)
-	packagesList, _ := Run(fmt.Sprintf("tanzu package installed list -n %s -o json", namespace))
-	err := json.Unmarshal(packagesList, &packages)
+	installedPackagesList, _ := Run(fmt.Sprintf("tanzu package installed list -n %s -o json", namespace))
+	err := json.Unmarshal(installedPackagesList, &packages)
 	CheckError(err)
 	return packages
 }
@@ -51,11 +51,20 @@ func ListValuesSchema(packageInfo Package) {
 	Run(fmt.Sprintf("tanzu package available get %s/%s --values-schema -n %s", packageInfo.Package, packageInfo.Version, packageInfo.Namespace))
 }
 
-func GetDependentPackagesInfo(parentPackage Package, packagesList []Package) []Package {
-	log.Printf("Checking for package dependencies: %s", parentPackage.Package)
+func GetPackagesList() []Package {
+	packagesFileBytes, err := os.ReadFile(GetPackagesYamlFilepath())
+	CheckError(err)
+	packagesList := []Package{}
+	err = yaml.Unmarshal(packagesFileBytes, &packagesList)
+	CheckError(err)
+	return packagesList
+}
+
+func GetDependentPackagesInfo(packageInfo Package) []Package {
+	log.Printf("Checking for package dependencies: %s", packageInfo.Package)
 	dependentPackagesInfo := []Package{}
-	for _, packageDependency := range parentPackage.PackageDependencies {
-		for _, packageInfo := range packagesList {
+	for _, packageDependency := range packageInfo.PackageDependencies {
+		for _, packageInfo := range GetPackagesList() {
 			if packageInfo.Package == packageDependency {
 				log.Printf("Dependency for package %s: %s", packageInfo.Package, packageDependency)
 				dependentPackagesInfo = append(dependentPackagesInfo, packageInfo)
@@ -115,8 +124,8 @@ func GetInstalledPackageStatus(installedPackageName string, namespace string) st
 	return status
 }
 
-func GetPackageInfoFromName(packageName string, packagesList []Package) Package {
-	for _, packageInfo := range packagesList {
+func GetPackageInfoFromName(packageName string) Package {
+	for _, packageInfo := range GetPackagesList() {
 		if packageInfo.Name == packageName {
 			return packageInfo
 		}
@@ -125,7 +134,7 @@ func GetPackageInfoFromName(packageName string, packagesList []Package) Package 
 	return Package{}
 }
 
-func InstallPackageByInfo(packageInfo Package, packagesList []Package) {
+func InstallPackageByInfo(packageInfo Package) {
 	log.Printf("Installing package: %s", packageInfo.Package)
 
 	if CheckIfPackageInstalled(packageInfo) {
@@ -134,9 +143,9 @@ func InstallPackageByInfo(packageInfo Package, packagesList []Package) {
 	}
 
 	// install package dependencies:
-	for _, dependentPackageInfo := range GetDependentPackagesInfo(packageInfo, packagesList) {
+	for _, dependentPackageInfo := range GetDependentPackagesInfo(packageInfo) {
 		log.Printf("Installing package dependency: %s", dependentPackageInfo.Package)
-		InstallPackageByInfo(dependentPackageInfo, packagesList)
+		InstallPackageByInfo(dependentPackageInfo)
 	}
 
 	// pre-requisites for packages:
@@ -165,9 +174,9 @@ func InstallPackageByInfo(packageInfo Package, packagesList []Package) {
 	}
 }
 
-func InstallPackageByName(packageName string, packagesList []Package) {
-	packageInfo := GetPackageInfoFromName(packageName, packagesList)
-	InstallPackageByInfo(packageInfo, packagesList)
+func InstallPackageByName(packageName string) {
+	packageInfo := GetPackageInfoFromName(packageName)
+	InstallPackageByInfo(packageInfo)
 }
 
 func ValidatePackage(packageInfo Package) {
