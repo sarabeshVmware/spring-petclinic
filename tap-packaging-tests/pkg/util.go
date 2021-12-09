@@ -28,6 +28,14 @@ func GetCurrentDir() string {
 	return filepath.Dir(filename)
 }
 
+func GetPackagesYamlFilepath() string {
+	return filepath.Join(filepath.Dir(GetCurrentDir()), "packages.yaml")
+}
+
+func GetValuesDirpath() string {
+	return filepath.Join(filepath.Dir(GetCurrentDir()), "values")
+}
+
 func GetClientset() *kubernetes.Clientset {
 	var homeDir, _ = os.UserHomeDir()
 	var kubeconfig = path.Join(homeDir, ".kube", "config")
