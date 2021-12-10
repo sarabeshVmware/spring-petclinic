@@ -61,4 +61,5 @@ packages:
   - name: tap-telemetry
     versions:
       - 0.1.0
+      - 0.1.1
   
