@@ -9,14 +9,14 @@ kind: PackageInstall
 metadata:
   name: services-toolkit
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: services-toolkit.tanzu.vmware.com
     versionSelection:
-      constraints: 0.5.0-rc.3
+      constraints: 0.5.0
       prereleases: {}
 
 #@ end
