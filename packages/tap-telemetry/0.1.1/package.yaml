@@ -14,7 +14,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/amoro-test/telemetry-bundle:0.1.1
+          image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle:0.1.1
       template:
       - ytt:
           paths:
