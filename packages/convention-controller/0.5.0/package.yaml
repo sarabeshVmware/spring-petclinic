@@ -1,0 +1,29 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.conventions.apps.tanzu.vmware.com.0.5.0
+spec:
+  refName: controller.conventions.apps.tanzu.vmware.com
+  version: 0.5.0
+  releasedAt: 2021-12-13T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:dc610ba492e687a3a6bbde3c3d50482853e04187ac9621aa6b8c35c7b6046a47
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/namespace.yaml
+          - config/convention-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
