@@ -92,7 +92,7 @@ packages:
       - 0.4.0-build.2
   - name: tap-telemetry
     versions:
-      - 0.1.0
+      - 0.1.1
   
 # TAP repo bunlde 0.4.0-build.1
 

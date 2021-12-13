@@ -8,12 +8,12 @@ spec:
   releaseNotes: |
     Beta release 0.4.0 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2021-12-07T00:00:00Z"
+  releasedAt: "2021-12-13T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:45523de99ff9228dcf21f6a16ed6da51ef317ab7833f87f623eb87833d3755f2
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:6733efb9efc317b39e690841c5c2e1bc8213867547be6a1d7752ff5b614f0ce3
       template:
       - ytt:
           paths:
