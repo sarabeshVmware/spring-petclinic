@@ -1,9 +1,9 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: scst-grype.apps.tanzu.vmware.com.1.0.0
+  name: grype.scanning.apps.tanzu.vmware.com.1.0.0
 spec:
-  refName: scst-grype.apps.tanzu.vmware.com
+  refName: grype.scanning.apps.tanzu.vmware.com
   version: 1.0.0
   releaseNotes: Supply Chain Security Tools - Scan (Grype Scanner) v1.0.0
   releasedAt: 2021-12-02T21:36:00Z
@@ -24,7 +24,7 @@ spec:
       - kapp: {}
   valuesSchema:
     openAPIv3:
-      title: scst-grype.apps.tanzu.vmware.com.1.0.0 values schema
+      title: grype.scanning.apps.tanzu.vmware.com.1.0.0 values schema
       properties:
         namespace:
           type: string

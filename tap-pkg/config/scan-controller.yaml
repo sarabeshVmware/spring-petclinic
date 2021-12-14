@@ -3,7 +3,7 @@
 #@ load("@ytt:yaml", "yaml")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.build]):
-#@ if profiles.is_pkg_enabled("scst-scan.apps.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("scanning.apps.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -17,7 +17,7 @@ metadata:
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: scst-scan.apps.tanzu.vmware.com
+    refName: scanning.apps.tanzu.vmware.com
     versionSelection:
       constraints: 1.0.0
   values:
