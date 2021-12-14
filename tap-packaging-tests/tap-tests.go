@@ -27,15 +27,6 @@ func setLogger() {
 	log.SetOutput(mw)
 }
 
-func getPackagesList() []tap.Package {
-	packagesFileBytes, err := os.ReadFile(filepath.Join(tap.GetCurrentDir(), "packages.yaml"))
-	tap.CheckError(err)
-	packagesList := []tap.Package{}
-	err = yaml.Unmarshal(packagesFileBytes, &packagesList)
-	tap.CheckError(err)
-	return packagesList
-}
-
 func main() {
 	setLogger()
 	rootCmd := &cobra.Command{
@@ -86,10 +77,8 @@ func createCommand() *cobra.Command {
 }
 
 func installCommand() *cobra.Command {
-	packagesList := getPackagesList()
-
 	packagesNames := []string{}
-	for _, packageInfo := range packagesList {
+	for _, packageInfo := range tap.GetPackagesList() {
 		packagesNames = append(packagesNames, packageInfo.Name)
 	}
 
@@ -111,11 +100,11 @@ func installCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			tap.CheckPrerequisites()
 			for _, packageName := range args {
-				packageInfo := tap.GetPackageInfoFromName(packageName, packagesList)
+				packageInfo := tap.GetPackageInfoFromName(packageName)
 				if valuesFile != "" {
 					packageInfo.ValuesFile = valuesFile
 				}
-				tap.InstallPackageByInfo(packageInfo, packagesList)
+				tap.InstallPackageByInfo(packageInfo)
 			}
 			if developerNamespace != "" {
 				tap.SetupDeveloperNamespacePostInstallation(developerNamespace)
@@ -146,8 +135,6 @@ func cleanupCommand() *cobra.Command {
 }
 
 func e2eCommand() *cobra.Command {
-	packagesList := getPackagesList()
-
 	e2eCmd := &cobra.Command{
 		Use:   "e2e",
 		Short: "End-to-end testing",
@@ -160,10 +147,10 @@ func e2eCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			tap.CheckPrerequisites()
 			if install {
-				tap.InstallPackageByName("tap-dev-light", packagesList)
-				tap.InstallPackageByName("app-accelerator", packagesList)
+				tap.InstallPackageByName("tap-dev-light")
+				tap.InstallPackageByName("app-accelerator")
 			}
-			tapPackageInfo := tap.GetPackageInfoFromName("tap-dev-light", packagesList)
+			tapPackageInfo := tap.GetPackageInfoFromName("tap-dev-light")
 			innerloop.InnerloopSourceBuildDeploy(tapPackageInfo)
 		},
 	}
