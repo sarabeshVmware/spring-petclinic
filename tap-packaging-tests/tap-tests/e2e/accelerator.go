@@ -17,7 +17,7 @@ func ListAccelerators() []byte {
 	return out
 }
 
-func CheckAccelerators(){
+func CheckAccelerators() {
 	count := 5
 	for count >= 0 {
 		if count == 0 {

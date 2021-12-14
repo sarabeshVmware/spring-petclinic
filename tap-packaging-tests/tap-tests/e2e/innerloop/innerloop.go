@@ -24,7 +24,7 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	oldString := "Greetings from Spring Boot + Tanzu!"
 	newString := "Greetings from Spring Boot + TAP!"
 
-	// tap.SetupDeveloperNamespacePostInstallation(namespace)
+	tap.SetupDeveloperNamespacePostInstallation(namespace)
 
 	// tap.RunWithBash(`ps aux | grep -i kubectl | grep -v grep | awk {'print $2'} | xargs kill`)
 	// pidAppAcceleratorPortForward, _ := tap.RunAndDisown("kubectl -n accelerator-system port-forward svc/acc-ui-server 8877:80")
