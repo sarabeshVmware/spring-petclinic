@@ -1,0 +1,102 @@
+---
+packages:
+  - name: cert-manager
+    versions:
+      - 1.5.3+tap.1
+  - name: contour
+    versions:
+      - 1.18.2+tap.1
+  - name: convention-controller
+    versions:
+      - 0.4.2
+  - name: service-binding
+    versions:
+      - 0.6.0
+  - name: source-controller
+    versions:
+      - 0.2.0
+  - name: services-toolkit
+    versions:
+      - 0.5.0
+  - name: app-live-view
+    versions:
+      - 1.0.0
+  - name: app-live-view-conventions
+    versions:
+      - 1.0.0
+  - name: scan-controller
+    versions:
+      - 1.0.0
+  - name: grype-scanner
+    versions:
+      - 1.0.0
+  - name: app-accelerator
+    versions:
+      - 0.5.1
+  - name: developer-conventions
+    versions:
+      - 0.4.0-build1
+  - name: insight-metadata-store
+    versions:
+      - 1.0.0
+  - name: image-policy-webhook
+    versions:
+      - 1.0.0-beta.2
+  - name: api-portal
+    versions:
+      - 1.0.6
+  - name: cloud-native-runtimes
+    versions:
+      - 1.1.0
+  - name: build-service
+    versions:
+      - 1.4.0-build.1
+  - name: tap-gui
+    versions:
+      - 1.0.0-rc.72
+  - name: tap
+    versions:
+      - 0.5.0-build.1
+  - name: learning-center-workshops
+    versions:
+      - 0.1.0-build.7
+  - name: learning-center
+    versions:
+      - 0.1.0-build.6
+  - name: cartographer
+    versions:
+      - 0.0.8-rc.7
+  - name: ootb-templates
+    versions:
+      - 0.4.0-build.2
+  - name: ootb-supply-chain-basic
+    versions:
+      - 0.4.0-build.2
+  - name: ootb-supply-chain-testing
+    versions:
+      - 0.4.0-build.2
+  - name: ootb-supply-chain-testing-scanning
+    versions:
+      - 0.4.0-build.2
+  - name: spring-boot-conventions
+    versions:
+      - 0.2.0
+  - name: fluxcd-source-controller
+    versions:
+      - 0.16.0
+  - name: tekton-pipelines
+    versions:
+      - 0.30.0
+  - name: ootb-delivery-basic
+    versions:
+      - 0.4.0-build.2
+  - name: tap-telemetry
+    versions:
+      - 0.1.1
+  
+# TAP repo bunlde 0.5.0-build.1
+# Version changes: 
+#   - insight-metadata-store 1.0.0-beta.2->1.0.0
+#   - services-toolkit 0.5.0-rc.3->0.5.0
+# Other changes:
+#   
