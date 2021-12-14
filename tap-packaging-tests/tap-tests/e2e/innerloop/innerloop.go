@@ -24,7 +24,7 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	oldString := "Greetings from Spring Boot + Tanzu!"
 	newString := "Greetings from Spring Boot + TAP!"
 
-	tap.SetupDeveloperNamespacePostInstallation(namespace)
+	// tap.SetupDeveloperNamespacePostInstallation(namespace)
 
 	// tap.RunWithBash(`ps aux | grep -i kubectl | grep -v grep | awk {'print $2'} | xargs kill`)
 	// pidAppAcceleratorPortForward, _ := tap.RunAndDisown("kubectl -n accelerator-system port-forward svc/acc-ui-server 8877:80")
@@ -40,9 +40,9 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 		os.Exit(1)
 	}
 	// Setting Env variable ACC_SERVER_URL
-	tap.RunWithBash(fmt.Sprintf("export ACC_SERVER_URL=http://%s", appAccExternalIP))
+	os.Setenv("ACC_SERVER_URL", fmt.Sprintf("http://%s", appAccExternalIP))
 
-	e2e.ListAccelerators()
+	e2e.CheckAccelerators()
 	e2e.GenerateAcceleratorProject(acceleratorProject, acceleratorProject, scServer, true, appAccExternalIP)
 
 	e2e.DeleteWorkload(workload, namespace)
@@ -106,12 +106,12 @@ func GetSCRegistryDetails(valuesFile string) (string, string) {
 		scregistry := scSchema.OotbSupplyChainTesting.Registry
 		repository = scregistry.Repository
 		server = scregistry.Server
-	} else if scSchema.SupplyChain == "scanning" {
+	} else if scSchema.SupplyChain == "testing_scanning" {
 		scregistry := scSchema.OotbSupplyChainTestingScanning.Registry
 		repository = scregistry.Repository
 		server = scregistry.Server
 	} else {
-		log.Println("Invalid Supply chain schema in values.yaml file")
+		log.Fatalln("Invalid Supply chain schema in values.yaml file")
 	}
 
 	log.Printf("Supply chain: repository %s, server %s", repository, server)
