@@ -23,7 +23,7 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	sourceImage := fmt.Sprintf("%s-src", workload)
 	oldString := "Greetings from Spring Boot + Tanzu!"
 	newString := "Greetings from Spring Boot + TAP!"
-
+	log.Println("Setting up Developer namespace: " ,namespace)
 	tap.SetupDeveloperNamespacePostInstallation(namespace)
 
 	// tap.RunWithBash(`ps aux | grep -i kubectl | grep -v grep | awk {'print $2'} | xargs kill`)
@@ -35,10 +35,7 @@ func InnerloopSourceBuildDeploy(tapPackageInfo tap.Package) {
 	// defer tap.KillPID(pidAppLiveViewPortForward)
 
 	appAccExternalIP := e2e.GetAppAcceleratorExternalIP()
-	if appAccExternalIP == "" {
-		log.Fatalln("Unable to get App accelerator external IP")
-		os.Exit(1)
-	}
+	
 	// Setting Env variable ACC_SERVER_URL
 	os.Setenv("ACC_SERVER_URL", fmt.Sprintf("http://%s", appAccExternalIP))
 
