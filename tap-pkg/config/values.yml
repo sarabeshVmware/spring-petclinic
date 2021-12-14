@@ -1,6 +1,6 @@
 #@data/values-schema
 ---
-#! enum: "full", "dev", "build", "run"
+#! enum: "full", "light"
 profile: full
 
 #! set to true if CEIP policy has been read.
