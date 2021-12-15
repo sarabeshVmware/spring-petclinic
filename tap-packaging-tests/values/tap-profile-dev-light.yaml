@@ -1,4 +1,4 @@
-profile: dev
+profile: light
 accelerator:
   server:
     service_type: "LoadBalancer"
