@@ -129,9 +129,14 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 		envoyExternalIP = "http://" + envoyExternalIP
 	}
 	req, err := http.NewRequest("GET", envoyExternalIP, nil)
+	//req.Close = true
 	tap.CheckError(err)
 	req.Host = host
 	resp, err := http.DefaultClient.Do(req)
+	log.Println("Status code is :", resp.StatusCode)
+	if resp.StatusCode != http.StatusOK {
+		log.Fatalf("Bad HTTP Response: %s", resp.Status)
+	}
 	tap.CheckError(err)
 	defer resp.Body.Close()
 	resultStringBytes, _ := ioutil.ReadAll(resp.Body)
@@ -140,6 +145,7 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	if resultString == validationString {
 		log.Printf("Application %s validated, got result: %s", host, validationString)
 	} else if testNew && resultString == oldString {
+		log.Println("Did not get Expected output. Waiting for 5 seconds...")
 		time.Sleep(5 * time.Second)
 		VerifyApplicationRunningWithValidationString(envoyExternalIP, host, oldString, newString, testNew)
 	} else {

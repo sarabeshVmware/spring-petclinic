@@ -65,5 +65,9 @@ func GetServiceExternalIp(serviceName string, namespace string) string {
 				break
 			}}
 	}
+	if externalIp == "" {
+		log.Fatalln("Unable to get external IP for service: ", serviceName)
+		os.Exit(1)
+	}
 	return externalIp
 }

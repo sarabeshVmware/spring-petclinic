@@ -11,24 +11,39 @@ import (
 	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 )
 
-func ListAccelerators() {
+func ListAccelerators() []byte {
 	log.Printf("Listing accelerators:")
-	_, err := tap.Run_AllowError("tanzu accelerator list")
-	if err != nil {
-		time.Sleep(5 * time.Second)
-		ListAccelerators()
-	}
+	out, _ := tap.Run("tanzu accelerator list")
+	return out
 }
 
+func CheckAccelerators() {
+	count := 5
+	for count >= 0 {
+		if count == 0 {
+			log.Printf("No accelerators found after 150 seconds ")
+			break
+		}
+		accout := ListAccelerators()
+		strout := string(accout)
+		if strout == "No accelerators found." {
+			log.Println("No accelerators found waiting for 30 secs. Output is :", strout)
+			time.Sleep(30 * time.Second)
+		} else {
+			log.Println("Accelerators found. Output is :\n", strout)
+			break
+		}
+	}
+}
 func GenerateAcceleratorProject(label string, projectName string, repositoryPrefix string, unzip bool, serverIP string) {
 	log.Printf("Generating accelerator project: %s", label)
 	tap.RunWithBash(fmt.Sprintf(`tanzu accelerator generate %s --options '{"projectName":"%s", "repositoryPrefix":"%s", "includeKubernetes": true}' --server-url http://%s`, label, projectName, repositoryPrefix, serverIP))
 	if unzip {
 		out, err := tap.Run_AllowError(fmt.Sprintf("ls -lt %s", projectName))
+		log.Printf("Output: \n%s", string(out))
 		if err == nil {
 			tap.Run(fmt.Sprintf("rm -r %s", projectName))
 		}
-		log.Printf("Output: \n%s", string(out))
 		tap.Run(fmt.Sprintf("unzip %s.zip", projectName))
 	}
 }
