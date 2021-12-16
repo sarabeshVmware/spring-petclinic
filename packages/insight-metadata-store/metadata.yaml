@@ -1,7 +1,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: scst-store.tanzu.vmware.com
+  name: metadata-store.apps.tanzu.vmware.com
 spec:
   displayName: "Supply Chain Security Tools - Store"
   longDescription: "The Metadata Store’s goal is to make it faster to identify and remediate vulnerable software packages across an enterprise’s codebase. We store image, package, and vulnerability metadata in a postgres database, which is queryable via our API, client lib, or CLI. We currently support posting Cyclone DX-formatted reports. The Metadata Store is part of the Scan/Store MVP, which enables teams to add source and image scanning to their pipeline, add an enforcement policy, save the output in the Metadata Store, and query for the data."

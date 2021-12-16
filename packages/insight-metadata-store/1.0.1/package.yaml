@@ -1,12 +1,12 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: metadata-store.apps.tanzu.vmware.com.1.0.0-beta.2
+  name: metadata-store.apps.tanzu.vmware.com.1.0.1
 spec:
   refName: metadata-store.apps.tanzu.vmware.com
-  version: 1.0.0-beta.2
+  version: 1.0.1
   releaseNotes: "https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/0.4/tap-0-4/GUID-scst-store-overview.html"
-  releasedAt: "2021-11-26T17:00:00Z"
+  releasedAt: 2021-12-16T15:27:01Z
   valuesSchema:
     openAPIv3:
       title: metadata-store.apps.tanzu.vmware.com values schema
@@ -184,7 +184,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:d5013d999ec32a1e6f0ca25b83c911cd263883e99f14559c406a9fd0526635af
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
       template:
       - ytt:
           ignoreUnknownComments: true
