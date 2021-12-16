@@ -38,9 +38,6 @@ func main() {
 	check(err)
 	input := make(map[string]string)
 	err = yaml.Unmarshal(inputBytes, &input)
-	for key, val := range input {
-		fmt.Println(key, ":", val)
-	}
 	OciRegistry := checkfound(input, "OciRegistry")
 	OciRegistryUsername := checkfound(input, "OciRegistryUsername")
 	OciRegistryPassword := checkfound(input, "OciRegistryPassword")
