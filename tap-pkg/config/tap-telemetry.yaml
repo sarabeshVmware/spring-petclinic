@@ -13,7 +13,7 @@ spec:
   packageRef:
     refName: tap-telemetry.tanzu.vmware.com
     versionSelection:
-      constraints: 0.1.1
+      constraints: 0.1.2
 
 #@ end
 
