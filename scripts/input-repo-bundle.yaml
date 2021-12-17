@@ -1,6 +1,0 @@
-OciRegistry : "dev.registry.tanzu.vmware.com/tanzu-application-platform"
-OciRegistryUsername : ""
-OciRegistryPassword : ""
-channel : "beta5"
-tag : "test"
-channelToPush : "test"

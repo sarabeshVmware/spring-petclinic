@@ -1,0 +1,12 @@
+# RegistryServer is the registry used for Package repo bundle push
+RegistryServer: "dev.registry.tanzu.vmware.com"
+# RegistryServerUsername is the username for RegistryServer
+RegistryServerUsername : "kdhaduk@vmware.com"
+# RegistryServerPassword is the password for RegistryServerPassword
+RegistryServerPassword : "password"
+# RegistryRepository is the repository under RegistryServer to which Package repo bundle will be pushed
+RegistryRepository : "tanzu-application-platform/kdhaduk/tap-repo"
+# Package information file name from tap-packages/repos directory
+releasefile : "beta5"
+# package repository bundle tag
+tag : "test"

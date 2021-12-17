@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -34,41 +33,22 @@ type BundleRef struct {
 }
 
 func main() {
-	inputBytes, err := os.ReadFile("scripts/input-repo-bundle.yaml")
-	check(err)
-	input := make(map[string]string)
-	err = yaml.Unmarshal(inputBytes, &input)
-	OciRegistry := checkfound(input, "OciRegistry")
-	OciRegistryUsername := checkfound(input, "OciRegistryUsername")
-	OciRegistryPassword := checkfound(input, "OciRegistryPassword")
-	channel := checkfound(input, "channel")
-	tag := checkfound(input, "tag")
-	channelToPush := checkfound(input, "channelToPush")
+	var OciRegistry = "dev.registry.tanzu.vmware.com/tanzu-application-platform"
 	var PackagesDirectoryPath = filepath.Join("./", "packages")
 	var RepoDirectoryPath = filepath.Join("./", "repos")
 	var GeneratedRepoDirectoryPath = filepath.Join(RepoDirectoryPath, "generated")
 	var repository Repository
-	var kbldusername = "svc.dap-delivery@vmware.com"
-	var kbldpassword = "VMware1!"
-	var kbldregistry = "dev.registry.tanzu.vmware.com"
-	// var OciRegistry = "dev.registry.tanzu.vmware.com/tanzu-application-platform"
-	// var OciRegistryUsername = kbldusername
-	// var OciRegistryPassword = kbldpassword
-	// channel := os.Args[1]
-	// tag := os.Args[2]
-	// channelToPush := "tap-packages"
-	// if len(os.Args) > 3 {
-	// 	channelToPush = os.Args[3]
-	// }
 
-	// if len(os.Args) > 4 {
-	// 	if len(os.Args) < 6 {
-	// 		log.Fatalln("Please pass username and password for OcI registry used for package repo bundle push.")
-	// 	}
-	// 	OciRegistry = os.Args[4]
-	// 	OciRegistryUsername = os.Args[5]
-	// 	OciRegistryPassword = os.Args[6]
-	// }
+	channel := os.Args[1]
+	tag := os.Args[2]
+	channelToPush := "tap-packages"
+	if len(os.Args) > 3 {
+		channelToPush = os.Args[3]
+	}
+
+	if len(os.Args) > 4 {
+		OciRegistry = os.Args[4]
+	}
 
 	channelDir := filepath.Join(GeneratedRepoDirectoryPath, channel)
 	imgpkgDir := filepath.Join(channelDir, ".imgpkg")
@@ -76,7 +56,7 @@ func main() {
 
 	// Remove any existing generated files
 	os.RemoveAll(fmt.Sprint(channelDir))
-	err = os.MkdirAll(imgpkgDir, 0755)
+	err := os.MkdirAll(imgpkgDir, 0755)
 	check(err)
 
 	err = os.MkdirAll(packagesDir, 0755)
@@ -116,15 +96,13 @@ func main() {
 	}
 
 	imagesLockFile := filepath.Join(imgpkgDir, "images.yml")
-	export_kbld_envs(kbldregistry, kbldusername, kbldpassword, false)
 	execCommand("kbld", []string{"--file", packagesDir, "--imgpkg-lock-output", imagesLockFile})
 
 	bundleLockFilename := "output.yaml"
 	//registryPathAndTag := OciRegistry + "/" + channel + ":latest"
 	registryPathAndTag := OciRegistry + "/" + channelToPush + ":" + tag
-	export_imgpkg_envs(OciRegistryUsername, OciRegistryPassword, false)
-	//execCommand("imgpkg", []string{"push", "--tty", "--bundle", registryPathAndTag, "--file", channelDir, "--lock-output", bundleLockFilename, "--registry-username", OciRegistryUsername, "--registry-password", OciRegistryPassword})
 	execCommand("imgpkg", []string{"push", "--tty", "--bundle", registryPathAndTag, "--file", channelDir, "--lock-output", bundleLockFilename})
+
 	bundleLockYamlFile, err := ioutil.ReadFile(bundleLockFilename)
 	check(err)
 
@@ -137,8 +115,6 @@ func main() {
 
 	fmt.Println("Updating packages version in packages.yaml from ", targetChannelFilename)
 	UpdatePackagesFile(targetChannelFilename)
-	export_kbld_envs(kbldregistry, kbldusername, kbldpassword, true)
-	export_imgpkg_envs(OciRegistryUsername, OciRegistryPassword, true)
 }
 
 func execCommand(command string, commandArgs []string) {
@@ -177,16 +153,6 @@ func check(e error) {
 	}
 }
 
-func checkfound(input map[string]string, field string) string {
-	val, found := input[field]
-	if !found || val == "" {
-		log.Fatalln("Please pass", field, "in the input file")
-	} else {
-		log.Println(field, "found in input file")
-	}
-	return val
-}
-
 func excluded_filepath(filepath string, exclude_filepath []string) bool {
 	for _, path := range exclude_filepath {
 		if path == filepath {
@@ -196,28 +162,6 @@ func excluded_filepath(filepath string, exclude_filepath []string) bool {
 	return false
 }
 
-func export_kbld_envs(registry string, username string, password string, unset bool) {
-	if unset {
-		os.Unsetenv("KBLD_REGISTRY_HOSTNAME")
-		os.Unsetenv("KBLD_REGISTRY_USERNAME")
-		os.Unsetenv("KBLD_REGISTRY_PASSWORD")
-	} else {
-		os.Setenv("KBLD_REGISTRY_HOSTNAME", registry)
-		os.Setenv("KBLD_REGISTRY_USERNAME", username)
-		os.Setenv("KBLD_REGISTRY_PASSWORD", password)
-	}
-
-}
-
-func export_imgpkg_envs(username string, password string, unset bool) {
-	if unset {
-		os.Unsetenv("IMGPKG_USERNAME")
-		os.Unsetenv("IMGPKG_PASSWORD")
-	} else {
-		os.Setenv("IMGPKG_USERNAME", username)
-		os.Setenv("IMGPKG_PASSWORD", password)
-	}
-}
 func UpdatePackagesFile(betaFilePath string) {
 	packagesFilePath := "tap-packaging-tests/packages.yaml"
 	fmt.Println("Updating ", packagesFilePath)
