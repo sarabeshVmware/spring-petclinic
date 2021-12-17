@@ -1,15 +1,15 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: metadata-store.apps.tanzu.vmware.com.1.0.0-build.5
+  name: scst-store.tanzu.vmware.com.1.0.0-build.5
 spec:
-  refName: metadata-store.apps.tanzu.vmware.com
+  refName: scst-store.tanzu.vmware.com
   version: 1.0.0-build.5
   releaseNotes: "https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/0.4/tap-0-4/GUID-scst-store-overview.html"
   releasedAt: "2021-11-24T23:00:00Z"
   valuesSchema:
     openAPIv3:
-      title: metadata-store.apps.tanzu.vmware.com values schema
+      title: scst-store.tanzu.vmware.com values schema
       examples:
       - db_host: metadata-store-db
         db_user: metadata-store-user
