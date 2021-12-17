@@ -32,7 +32,7 @@ packages:
       - 1.0.0
   - name: app-accelerator
     versions:
-      - 0.5.1
+      - 1.0.0
   - name: developer-conventions
     versions:
       - 0.4.0-build1
@@ -41,7 +41,7 @@ packages:
       - 1.0.0
   - name: image-policy-webhook
     versions:
-      - 1.0.0-beta.2
+      - 1.0.0-beta.3
   - name: api-portal
     versions:
       - 1.0.6
@@ -56,13 +56,13 @@ packages:
       - 1.0.0-rc.72
   - name: tap
     versions:
-      - 0.5.0-build.1
+      - 0.5.0-build.2
   - name: learning-center-workshops
     versions:
-      - 0.1.0-build.7
+      - 0.1.0
   - name: learning-center
     versions:
-      - 0.1.0-build.6
+      - 0.1.0
   - name: cartographer
     versions:
       - 0.0.8-rc.7
@@ -98,5 +98,11 @@ packages:
 # Version changes: 
 #   - insight-metadata-store 1.0.0-beta.2->1.0.0
 #   - services-toolkit 0.5.0-rc.3->0.5.0
-# Other changes:
-#   
+#  
+# TAP repo bunlde 0.5.0-build.2
+# Version changes: 
+#   - app-accelerator 0.5.1 ->1.0.0
+#   - learning-center-workshops 0.1.0-build.6->0.1.0
+#   - learning-center-workshops 0.1.0-build.7->0.1.0
+#   - image-policy-webhook 1.0.0-beta.2->1.0.0-beta.3
+ 
