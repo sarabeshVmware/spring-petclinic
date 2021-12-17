@@ -133,11 +133,11 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	tap.CheckError(err)
 	req.Host = host
 	resp, err := http.DefaultClient.Do(req)
+	tap.CheckError(err)
 	log.Println("Status code is :", resp.StatusCode)
 	if resp.StatusCode != http.StatusOK {
 		log.Fatalf("Bad HTTP Response: %s", resp.Status)
 	}
-	tap.CheckError(err)
 	defer resp.Body.Close()
 	resultStringBytes, _ := ioutil.ReadAll(resp.Body)
 	resultString := string(resultStringBytes)
