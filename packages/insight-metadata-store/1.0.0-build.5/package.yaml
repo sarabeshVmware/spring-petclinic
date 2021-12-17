@@ -9,7 +9,7 @@ spec:
   releasedAt: "2021-11-24T23:00:00Z"
   valuesSchema:
     openAPIv3:
-      title: scst-store.tanzu.vmware.com values schema
+      title: metadata-store.tanzu.vmware.com values schema
       examples:
       - db_host: metadata-store-db
         db_user: metadata-store-user

@@ -10,7 +10,7 @@ spec:
     Beta release of the Metadata Store component package
   valuesSchema:
     openAPIv3:
-      title: scst-store.tanzu.vmware.com values schema
+      title: metadata-store.tanzu.vmware.com values schema
       examples:
         - db_host: "metadata-store-db"
           db_user: "metadata-store-user"
