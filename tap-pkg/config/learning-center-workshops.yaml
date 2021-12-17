@@ -20,7 +20,6 @@ spec:
     refName: workshops.learningcenter.tanzu.vmware.com
     versionSelection:
       constraints: 0.1.0
-      prereleases: {}
 
 #@ end
 #@ end
