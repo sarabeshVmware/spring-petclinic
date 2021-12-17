@@ -2,10 +2,10 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: "workshops.learningcenter.tanzu.vmware.com.0.1.0-build.7"
+  name: "workshops.learningcenter.tanzu.vmware.com.0.1.0"
 spec:
   refName: "workshops.learningcenter.tanzu.vmware.com"
-  version: "0.1.0-build.7"
+  version: "0.1.0"
   releasedAt: "2021-12-01T13:18:48Z"
   licenses: 
   - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
