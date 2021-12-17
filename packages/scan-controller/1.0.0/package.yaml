@@ -6,12 +6,12 @@ spec:
   refName: scanning.apps.tanzu.vmware.com
   version: 1.0.0
   releaseNotes: Supply Chain Security Tools - Scan (Scan Controller) v1.0.0
-  releasedAt: 2021-12-15T22:32:00Z
+  releasedAt: 2021-12-17T16:47:00Z
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-build.4@sha256:64f26f97c23180c6a9b78a488a06517e2f9dc9fad9eb79ba7afd08ad2b6e9ffe
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-build.5@sha256:f0a39fdff4e8a41d12ab9139c71550a5819ad1d375c64963b895d21f4ca69b78
       template:
       - ytt:
           paths:
