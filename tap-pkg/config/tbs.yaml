@@ -14,9 +14,9 @@
 
 #@ def default_values():
 ---
-descriptor_name: lite
+descriptor_name: tap-1.0.0-lite
 #@ if/end profiles.is_any_enabled([profiles.light]):
-disable_smart_warmer: "true"
+disable_smart_warmer: true
 #@ end
 
 
@@ -33,7 +33,7 @@ spec:
   packageRef:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
-      constraints: 1.4.0-build.1
+      constraints: 1.4.2
       prereleases: {}
   values:
   - secretRef:
