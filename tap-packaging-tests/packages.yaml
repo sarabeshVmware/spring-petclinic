@@ -3,13 +3,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.5.0-build.2
+  version: 0.5.0-build.3
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.5.0-build.2
+  version: 0.5.0-build.3
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
@@ -25,12 +25,12 @@
   name: app-live-view
   namespace: tap-install
   package: run.appliveview.tanzu.vmware.com
-  version: 1.0.0
+  version: 1.0.1
 - description: 'Application Live View Conventions for VMware Tanzu: Application Live View convention server'
   name: app-live-view-conventions
   namespace: tap-install
   package: build.appliveview.tanzu.vmware.com
-  version: 1.0.0
+  version: 1.0.1
 - description: 'Tanzu Build Service: Tanzu Build Service enables the building and automation of containerized software workflows securely and at scale.'
   name: tanzu-build-service
   namespace: tap-install
@@ -52,7 +52,7 @@
   name: convention-controller
   namespace: tap-install
   package: controller.conventions.apps.tanzu.vmware.com
-  version: 0.4.2
+  version: 0.5.0
 - description: 'Tanzu Source Controller: Tanzu Source Controller enables workload create/update from source code.'
   name: source-controller
   namespace: tap-install
@@ -62,7 +62,7 @@
   name: developer-conventions
   namespace: tap-install
   package: developer-conventions.tanzu.vmware.com
-  version: 0.4.0-build1
+  version: 0.5.0-build.1
   package_dependencies:
     - appliveview.tanzu.vmware.com
 - description: 'Service Bindings for Kubernetes: Service Bindings for Kubernetes implements the Service Binding Specification.'
@@ -79,7 +79,7 @@
   name: spring-boot-conventions
   namespace: tap-install
   package: spring-boot-conventions.tanzu.vmware.com
-  version: 0.2.0
+  version: 0.3.0
   package_dependencies:
     - controller.conventions.apps.tanzu.vmware.com
 - description: 'Tanzu Application Platform GUI: web app graphical user interface for Tanzu Application Platform'
@@ -87,7 +87,7 @@
   namespace: tap-install
   package: tap-gui.tanzu.vmware.com
   values_file: ./values/tap-gui.yaml
-  version: 1.0.0-rc.72
+  version: 1.0.0
 - description: 'Tanzu App Platform Out of The Box Supply Chain Basic: Out of The Box Supply Chain Basic.'
   name: ootb-supply-chain-basic
   namespace: tap-install
