@@ -56,7 +56,7 @@ packages:
       - 1.0.0-rc.72
   - name: tap
     versions:
-      - 0.5.0-build.2
+      - 0.5.0-build.3
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -80,7 +80,7 @@ packages:
       - 0.4.0-build.2
   - name: spring-boot-conventions
     versions:
-      - 0.2.0
+      - 0.3.0
   - name: fluxcd-source-controller
     versions:
       - 0.16.0
@@ -105,4 +105,14 @@ packages:
 #   - learning-center-workshops 0.1.0-build.6->0.1.0
 #   - learning-center-workshops 0.1.0-build.7->0.1.0
 #   - image-policy-webhook 1.0.0-beta.2->1.0.0-beta.3
- 
+
+# TAP repo bunlde 0.5.0-build.3
+# Version changes: 
+#   - build-service 1.4.0-build.1 ->1.4.2
+#   - spring-boot-conventions 0.2.0->0.3.0
+#   - insight-metadata-store 1.0.0->1.0.1
+#   - developer-conventions 0.4.0-build1->0.5.0-build.1
+#   - tap-gui 1.0.0-rc.72->1.0.0
+#   - app-live-view 1.0.0->1.0.1
+#   - app-live-view-conventions 1.0.0->1.0.1
+#   - convention-controller 0.4.2->0.5.0

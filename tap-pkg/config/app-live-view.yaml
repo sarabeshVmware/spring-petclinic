@@ -19,8 +19,7 @@ spec:
   packageRef:
     refName: run.appliveview.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0
-      prereleases: {}
+      constraints: 1.0.1
   values:
   - secretRef:
       name: appliveview-values
