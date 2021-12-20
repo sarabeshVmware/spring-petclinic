@@ -6,12 +6,12 @@ spec:
   refName: grype.scanning.apps.tanzu.vmware.com
   version: 1.0.0
   releaseNotes: Supply Chain Security Tools - Scan (Grype Scanner) v1.0.0
-  releasedAt: 2021-12-02T21:36:00Z
+  releasedAt: 2021-12-17T16:47:00Z
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-build.2@sha256:ad6559641302cb236c9705df4a49ea8898b984ca8c8a376c59970352bd8f59dc
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-build.5@sha256:65645079ffe4f0d274b17eabb8e4f7d39729d53f59bdd6358e42d5cb79bfe1b2
       template:
       - ytt:
           paths:
