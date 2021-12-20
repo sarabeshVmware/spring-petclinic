@@ -19,8 +19,7 @@ spec:
   packageRef:
     refName: tap-gui.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-rc.72
-      prereleases: {}
+      constraints: 1.0.0
   values:
   - secretRef:
       name: tap-gui-values
