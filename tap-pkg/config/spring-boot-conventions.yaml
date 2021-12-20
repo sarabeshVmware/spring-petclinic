@@ -17,7 +17,7 @@ spec:
   packageRef:
     refName: spring-boot-conventions.tanzu.vmware.com
     versionSelection:
-      constraints: 0.2.0
+      constraints: 0.3.0
 
 #@ end
 #@ end
