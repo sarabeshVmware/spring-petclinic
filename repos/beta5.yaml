@@ -113,6 +113,10 @@ packages:
 #   - insight-metadata-store 1.0.0->1.0.1
 #   - developer-conventions 0.4.0-build1->0.5.0-build.1
 #   - tap-gui 1.0.0-rc.72->1.0.0
+#   - grype-scanner 1.0.0 artifact change
+#   - scan-controller 1.0.0 artifact change
+#   - convention-controller 0.4.2->0.5.0
 #   - app-live-view 1.0.0->1.0.1
 #   - app-live-view-conventions 1.0.0->1.0.1
 #   - convention-controller 0.4.2->0.5.0
+
