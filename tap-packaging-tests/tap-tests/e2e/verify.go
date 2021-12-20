@@ -132,6 +132,19 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	//req.Close = true
 	tap.CheckError(err)
 	req.Host = host
+
+	var retries int = 10
+	for retries > 0 {
+		resp, err := http.DefaultClient.Do(req)
+		if tap.CheckErrorWithoutExit(err) != true {
+			log.Println("Status code is :", resp.StatusCode)
+			break
+		} else {
+			retries -= 1
+			log.Printf("Retry after 30 seconds")
+			time.Sleep(30 * time.Second)
+		}
+	}
 	resp, err := http.DefaultClient.Do(req)
 	tap.CheckError(err)
 	log.Println("Status code is :", resp.StatusCode)
@@ -141,7 +154,6 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	defer resp.Body.Close()
 	resultStringBytes, _ := ioutil.ReadAll(resp.Body)
 	resultString := string(resultStringBytes)
-
 	if resultString == validationString {
 		log.Printf("Application %s validated, got result: %s", host, validationString)
 	} else if testNew && resultString == oldString {

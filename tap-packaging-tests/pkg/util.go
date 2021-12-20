@@ -23,6 +23,14 @@ func CheckError(err error) bool {
 	return false
 }
 
+func CheckErrorWithoutExit(err error) bool {
+	if err != nil {
+		log.Printf("ERROR: %s", err.Error())
+		return true
+	}
+	return false
+}
+
 func GetCurrentDir() string {
 	_, filename, _, _ := runtime.Caller(1)
 	return filepath.Dir(filename)
