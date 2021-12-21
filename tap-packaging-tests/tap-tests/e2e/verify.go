@@ -166,7 +166,7 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 
 func VerifyBuildStatus() {
 	count := 60
-	for count <= 30 {
+	for count <= 60 {
 		if count == 0 {
 			log.Fatalf("Builds are not generated after 5 mins")
 			break
