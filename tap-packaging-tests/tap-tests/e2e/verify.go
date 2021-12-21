@@ -147,7 +147,6 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 	}
 	resp, err := http.DefaultClient.Do(req)
 	tap.CheckError(err)
-	log.Println("Status code is :", resp.StatusCode)
 	if resp.StatusCode != http.StatusOK {
 		log.Fatalf("Bad HTTP Response: %s", resp.Status)
 	}
@@ -166,7 +165,7 @@ func VerifyApplicationRunningWithValidationString(envoyExternalIP string, host s
 }
 
 func VerifyBuildStatus() {
-	count := 30
+	count := 60
 	for count <= 30 {
 		if count == 0 {
 			log.Fatalf("Builds are not generated after 5 mins")
