@@ -25,6 +25,8 @@ func setLogger() {
 	tap.CheckError(err)
 	mw := io.MultiWriter(os.Stdout, logFile)
 	log.SetOutput(mw)
+
+	log.SetFlags(log.LstdFlags | log.Llongfile)
 }
 
 func main() {
