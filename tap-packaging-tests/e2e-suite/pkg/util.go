@@ -15,14 +15,12 @@ func RunCommand(command string) (string, error) {
 	arguments := strings.Split(command, " ")[1:]
 	cmd := exec.Command(commandName, arguments...)
 	stdoutStderr, err := cmd.CombinedOutput()
+
 	return string(stdoutStderr), err
 }
 
-func GetCurrentDir() string {
+func GetFileDir() string {
 	_, filename, _, _ := runtime.Caller(1)
-	return filepath.Dir(filename)
-}
 
-func GetPackagesYamlFilepath() string {
-	return filepath.Join(filepath.Dir(GetCurrentDir()), "packages.yaml")
+	return filepath.Dir(filename)
 }
