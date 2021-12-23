@@ -1,0 +1,35 @@
+---
+namespaces:
+  - tap-install
+package_repository:
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.5.0-build.5
+  name: tanzu-tap-repository
+  namespace: tap-install
+secret-1:
+  export: true
+  name: tanzunet-registry-creds
+  namespace: tap-install
+  password: <TANZUNET-PASSWORD>
+  registry: registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
+secret-2:
+  export: true
+  name: image-secret
+  namespace: tap-install
+  password: <TANZUNET-PASSWORD>
+  registry: dev.registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
+tap-full:
+  name: tap
+  namespace: tap-install
+  package_name: tap.tanzu.vmware.com
+  poll_timeout: 30m
+  values_file: tap-profile-full.yaml
+  version: 0.5.0-build.5
+tap-light:
+  name: tap
+  namespace: tap-install
+  package_name: tap.tanzu.vmware.com
+  poll_timeout: 30m
+  values_file: tap-profile-light.yaml
+  version: 0.5.0-build.5
