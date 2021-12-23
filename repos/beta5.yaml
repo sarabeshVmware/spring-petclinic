@@ -44,7 +44,7 @@ packages:
       - 1.0.0-beta.3
   - name: api-portal
     versions:
-      - 1.0.6
+      - 1.0.8
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
@@ -56,7 +56,7 @@ packages:
       - 1.0.0
   - name: tap
     versions:
-      - 0.5.0-build.3
+      - 0.5.0
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -65,19 +65,19 @@ packages:
       - 0.1.0
   - name: cartographer
     versions:
-      - 0.0.8-rc.7
+      - 0.1.0-rc.1
   - name: ootb-templates
     versions:
-      - 0.4.0-build.2
+      - 0.5.0-build.1
   - name: ootb-supply-chain-basic
     versions:
-      - 0.4.0-build.2
+      - 0.5.0-build.1
   - name: ootb-supply-chain-testing
     versions:
-      - 0.4.0-build.2
+      - 0.5.0-build.1
   - name: ootb-supply-chain-testing-scanning
     versions:
-      - 0.4.0-build.2
+      - 0.5.0-build.1
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -89,10 +89,10 @@ packages:
       - 0.30.0
   - name: ootb-delivery-basic
     versions:
-      - 0.4.0-build.2
+      - 0.5.0-build.1
   - name: tap-telemetry
     versions:
-      - 0.1.1
+      - 0.1.2
   
 # TAP repo bunlde 0.5.0-build.1
 # Version changes: 
@@ -120,3 +120,13 @@ packages:
 #   - app-live-view-conventions 1.0.0->1.0.1
 #   - convention-controller 0.4.2->0.5.0
 
+# TAP repo bunlde 0.5.0
+# Version changes: 
+#   - cartographer 0.0.8-rc.7 ->0.1.0-rc.1
+#   - ootb-templates 0.4.0-build.2->0.5.0-build.1
+#   - ootb-supply-chain-basic 0.4.0-build.2->0.5.0-build.1
+#   - ootb-supply-chain-testing 0.4.0-build.2->0.5.0-build.1
+#   - ootb-supply-chain-testing-scanning 0.4.0-build.2->0.5.0-build.1
+#   - ootb-delivery-basic 0.4.0-build.2->0.5.0-build.1
+#   - tap-telemetry 0.1.1->0.1.2
+#   - api-portal 1.0.6->1.0.8
