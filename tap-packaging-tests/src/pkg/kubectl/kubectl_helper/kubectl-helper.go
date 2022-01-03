@@ -81,6 +81,6 @@ func ValidateDeveloperConventions() bool {
 func GetImageRepositoryStatus(name string, namespace string) string {
 	log.Println("Get imagerepository status...")
 	imagerepos := kubectl_lib.GetImageRepositories(name, namespace)
-	log.Printf("magerepository status : %s", imagerepos[0].READY)
+	log.Printf("imagerepository status : %s", imagerepos[0].READY)
 	return imagerepos[0].READY
 }

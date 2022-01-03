@@ -21,7 +21,7 @@ func GetPodintent(name string, namespace string) []GetPodintentOutput {
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
-		cmd += fmt.Sprintf(" -A")
+		cmd += " -A"
 	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
@@ -70,7 +70,7 @@ func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
-		cmd += fmt.Sprintf(" -A")
+		cmd += " -A"
 	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
@@ -111,7 +111,7 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
-		cmd += fmt.Sprintf(" -A")
+		cmd += " -A"
 	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
@@ -119,11 +119,6 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	}
 	res1 = strings.TrimSuffix(res1, "\n")
 	temp := strings.Split(res1, "\n")
-	temp1 := strings.Fields(temp[0])
-	println("fields: ", len(temp1))
-	for _, element := range temp1 {
-		println(element, "index: ", strings.Index(temp[0], element))
-	}
 	imagerepos := []GetImageRepositoriesOutput{}
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
