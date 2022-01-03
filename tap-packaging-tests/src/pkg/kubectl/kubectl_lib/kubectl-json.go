@@ -16,7 +16,7 @@ func executeCmd(command string) (string, error) {
 	stdoutStderr, err := cmd.CombinedOutput()
 	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
 	if err != nil {
-		log.Println("something bad happened")
+		log.Printf("ERROR : %s", err.Error())
 	} else {
 		log.Printf("Output: \n%s", string(stdoutStderr))
 	}

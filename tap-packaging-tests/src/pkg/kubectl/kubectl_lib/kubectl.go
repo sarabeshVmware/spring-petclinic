@@ -3,17 +3,16 @@ package kubectl_lib
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 )
 
 type GetPodintentOutput struct {
-	NAME   string
-	READY  string
-	REASON string
-	AGE    string
+	NAME, READY, REASON, AGE string
 }
 
 func GetPodintent(name string, namespace string) []GetPodintentOutput {
+	podIntents := []GetPodintentOutput{}
 	cmd := "kubectl get podintent"
 	if name != "" {
 		cmd += fmt.Sprintf(" %s", name)
@@ -23,46 +22,45 @@ func GetPodintent(name string, namespace string) []GetPodintentOutput {
 	} else {
 		cmd += " -A"
 	}
-	res1, err1 := executeCmd(cmd)
-	if err1 != nil {
-		log.Println("something bad happened")
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return podIntents
 	}
-	res1 = strings.TrimSuffix(res1, "\n")
-	temp := strings.Split(res1, "\n")
-	podIntents := []GetPodintentOutput{}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return podIntents
+	}
+
+	headers := strings.Fields(temp[0])
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
 		var podIntent GetPodintentOutput
-		if len(words) == 4 {
-			podIntent = GetPodintentOutput{
-				NAME:   words[0],
-				READY:  words[1],
-				REASON: words[2],
-				AGE:    words[3],
+		index_inc := false
+		for index, value := range words {
+			if len(words) < len(headers) && headers[index] == "REASON" {
+				index_inc = true
 			}
-		} else {
-			podIntent = GetPodintentOutput{
-				NAME:  words[0],
-				READY: words[1],
-				AGE:   words[2],
+			if index_inc {
+				reflect.ValueOf(&podIntent).Elem().FieldByName(headers[index+1]).SetString(value)
+			} else {
+				reflect.ValueOf(&podIntent).Elem().FieldByName(headers[index]).SetString(value)
 			}
+
 		}
 		podIntents = append(podIntents, podIntent)
 	}
-	fmt.Printf("%+v\n", podIntents)
-	fmt.Printf("Name: %s, Ready: %s, Reason: %s, Age: %s ", podIntents[0].NAME, podIntents[0].READY, podIntents[0].REASON, podIntents[0].AGE)
+	fmt.Printf("podIntents: %+v\n", podIntents)
 	return podIntents
 }
 
 type GetWorkloadOutput struct {
-	NAME        string
-	SOURCE      string
-	SUPPLYCHAIN string
-	READY       string
-	REASON      string
+	NAME, SOURCE, SUPPLYCHAIN, READY, REASON string
 }
 
 func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
+	workloads := []GetWorkloadOutput{}
 	cmd := "kubectl get workload"
 	if workloadName != "" {
 		cmd += fmt.Sprintf(" %s", workloadName)
@@ -72,38 +70,36 @@ func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
 	} else {
 		cmd += " -A"
 	}
-	res1, err1 := executeCmd(cmd)
-	if err1 != nil {
-		log.Printf("something bad happened")
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return workloads
 	}
-	res1 = strings.TrimSuffix(res1, "\n")
-	temp := strings.Split(res1, "\n")
-	workloads := []GetWorkloadOutput{}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return workloads
+	}
+
+	headers := strings.Fields(temp[0])
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
-		wl := GetWorkloadOutput{
-			NAME:        words[0],
-			SOURCE:      words[1],
-			SUPPLYCHAIN: words[2],
-			READY:       words[3],
-			REASON:      words[4],
+		var wl GetWorkloadOutput
+		for index, value := range words {
+			reflect.ValueOf(&wl).Elem().FieldByName(headers[index]).SetString(value)
 		}
 		workloads = append(workloads, wl)
 	}
-	fmt.Printf("%+v\n", workloads)
+	fmt.Printf("workloads: %+v\n", workloads)
 	return workloads
 }
 
 type GetImageRepositoriesOutput struct {
-	NAME   string
-	IMAGE  string
-	URL    string
-	READY  string
-	REASON string
-	AGE    string
+	NAME, IMAGE, URL, READY, REASON, AGE string
 }
 
 func GetImageRepositories(name string, namespace string) []GetImageRepositoriesOutput {
+	imagerepos := []GetImageRepositoriesOutput{}
 	cmd := "kubectl get imagerepositories"
 	if name != "" {
 		cmd += fmt.Sprintf(" %s", name)
@@ -113,48 +109,44 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	} else {
 		cmd += " -A"
 	}
-	res1, err1 := executeCmd(cmd)
-	if err1 != nil {
-		log.Printf("something bad happened")
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return imagerepos
 	}
-	res1 = strings.TrimSuffix(res1, "\n")
-	temp := strings.Split(res1, "\n")
-	imagerepos := []GetImageRepositoriesOutput{}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return imagerepos
+	}
+
+	headers := strings.Fields(temp[0])
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
-		var wl GetImageRepositoriesOutput
-		if len(words) == 6 {
-			wl = GetImageRepositoriesOutput{
-				NAME:   words[0],
-				IMAGE:  words[1],
-				URL:    words[2],
-				READY:  words[3],
-				REASON: words[4],
-				AGE:    words[5],
+		var imagerepo GetImageRepositoriesOutput
+		index_inc := false
+		for index, value := range words {
+			if len(words) < len(headers) && headers[index] == "REASON" {
+				index_inc = true
 			}
-		} else {
-			wl = GetImageRepositoriesOutput{
-				NAME:  words[0],
-				IMAGE: words[1],
-				URL:   words[2],
-				READY: words[3],
-				AGE:   words[4],
+			if index_inc {
+				reflect.ValueOf(&imagerepo).Elem().FieldByName(headers[index+1]).SetString(value)
+			} else {
+				reflect.ValueOf(&imagerepo).Elem().FieldByName(headers[index]).SetString(value)
 			}
-
 		}
-		imagerepos = append(imagerepos, wl)
+		imagerepos = append(imagerepos, imagerepo)
 	}
-	fmt.Printf("%+v\n", imagerepos)
+	fmt.Printf("imagerepos: %+v\n", imagerepos)
 	return imagerepos
 }
 
 type GetBuildsOutput struct {
-	NAME      string
-	IMAGE     string
-	SUCCEEDED string
+	NAME, IMAGE, SUCCEEDED string
 }
 
 func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
+	builds := []GetBuildsOutput{}
 	cmd := "kubectl get builds"
 	if buildName != "" {
 		cmd += fmt.Sprintf(" %s", buildName)
@@ -164,52 +156,58 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	} else {
 		cmd += " -A"
 	}
-	res1, err1 := executeCmd(cmd)
-	if err1 != nil {
-		log.Printf("something bad happened")
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return builds
 	}
-	res1 = strings.TrimSuffix(res1, "\n")
-	temp := strings.Split(res1, "\n")
-	builds := []GetBuildsOutput{}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return builds
+	}
+
+	headers := strings.Fields(temp[0])
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
-		build := GetBuildsOutput{
-			NAME:      words[0],
-			IMAGE:     words[1],
-			SUCCEEDED: words[2],
+		var build GetBuildsOutput
+		for index, value := range words {
+			reflect.ValueOf(&build).Elem().FieldByName(headers[index]).SetString(value)
 		}
 		builds = append(builds, build)
 	}
-	fmt.Printf("%+v\n", builds)
+	fmt.Printf("builds: %+v\n", builds)
 	return builds
 }
 
 type GetLatestImageOutput struct {
-	NAME        string
-	LATESTIMAGE string
-	READY       string
+	NAME, LATESTIMAGE, READY string
 }
 
 func GetLatestImage(namespace string) GetLatestImageOutput {
+	var latestImage GetLatestImageOutput
 	cmd := "kubectl get images.kpac"
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
 		cmd += " -A"
 	}
-	res1, err1 := executeCmd(cmd)
-	if err1 != nil {
-		log.Printf("something bad happened")
-	}
-	res1 = strings.TrimSuffix(res1, "\n")
-	temp := strings.Split(res1, "\n")
-	words := strings.Fields(temp[1])
-	latestImage := GetLatestImageOutput{
-		NAME:        words[0],
-		LATESTIMAGE: words[1],
-		READY:       words[2],
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return latestImage
 	}
 
-	fmt.Printf("%+v\n", latestImage)
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return latestImage
+	}
+
+	headers, words := strings.Fields(temp[0]), strings.Fields(temp[1])
+
+	for index, value := range words {
+		reflect.ValueOf(&latestImage).Elem().FieldByName(headers[index]).SetString(value)
+	}
+	fmt.Printf("latestImage: %+v\n", latestImage)
 	return latestImage
 }
