@@ -1,4 +1,3 @@
-// package main
 package kubectl_lib
 
 import (
@@ -9,6 +8,20 @@ import (
 	"strings"
 	"time"
 )
+
+func executeCmd(command string) (string, error) {
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	cmd := exec.Command(commandName, arguments...)
+	stdoutStderr, err := cmd.CombinedOutput()
+	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
+	if err != nil {
+		log.Println("something bad happened")
+	} else {
+		log.Printf("Output: \n%s", string(stdoutStderr))
+	}
+	return string(stdoutStderr), err
+}
 
 type GetPodintentJsonOutput struct {
 	APIVersion string `json:"apiVersion"`
@@ -119,7 +132,7 @@ type GetPodintentJsonOutput struct {
 	} `json:"status"`
 }
 
-func GetPodintentJson(appName string, namespace string) {
+func GetPodintentJson(appName string, namespace string) *GetPodintentJsonOutput {
 	if appName == "" {
 		appName = "tanzu-java-web-app"
 	}
@@ -136,33 +149,7 @@ func GetPodintentJson(appName string, namespace string) {
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
-	// log.Printf("apiVersion: %s", raw.APIVersion)
-	// log.Printf("Kind: %s", raw.Kind)
-	// log.Printf("Metadata.Name: %s", raw.Metadata.Name)
-	// log.Printf("Metadata.Labels.AppKubernetesIoComponent: %s", raw.Metadata.Labels.AppKubernetesIoComponent)
-	// log.Printf("Metadata.Labels.CartoRunClusterSupplyChainName: %s", raw.Metadata.Labels.CartoRunClusterSupplyChainName)
-	// log.Printf("Metadata.Labels.CartoRunClusterTemplateName: %s", raw.Metadata.Labels.CartoRunClusterTemplateName)
-	// log.Printf("Metadata.Labels.CartoRunResourceName: %s", raw.Metadata.Labels.CartoRunResourceName)
-	// log.Printf("Metadata.Labels.CartoRunTemplateKind: %s", raw.Metadata.Labels.CartoRunTemplateKind)
-	// log.Printf("Metadata.Labels.CartoRunWorkloadName: %s", raw.Metadata.Labels.CartoRunWorkloadName)
-	// log.Printf("Metadata.Labels.CartoRunWorkloadNamespace: %s", raw.Metadata.Labels.CartoRunWorkloadNamespace)
-	// log.Printf("Metadata.Namespace: %s", raw.Metadata.Namespace)
-	// log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
-	// log.Printf("Status.Template.Metadata.Labels.TanzuAppLiveView: %s", raw.Status.Template.Metadata.Labels.TanzuAppLiveView)
-}
-
-func executeCmd(command string) (string, error) {
-	commandName := strings.Split(command, " ")[0]
-	arguments := strings.Split(command, " ")[1:]
-	cmd := exec.Command(commandName, arguments...)
-	stdoutStderr, err := cmd.CombinedOutput()
-	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
-	if err != nil {
-		log.Println("something bad happened")
-	} else {
-		log.Printf("Output: \n%s", string(stdoutStderr))
-	}
-	return string(stdoutStderr), err
+	return raw
 }
 
 type GetImageRepositoriesJsonOutput struct {
@@ -215,7 +202,7 @@ type GetImageRepositoriesJsonOutput struct {
 	} `json:"status"`
 }
 
-func GetImageRepositoriesJson(appName string, namespace string) {
+func GetImageRepositoriesJson(appName string, namespace string) *GetImageRepositoriesJsonOutput {
 	if appName == "" {
 		appName = "tanzu-java-web-app"
 	}
@@ -238,9 +225,5 @@ func GetImageRepositoriesJson(appName string, namespace string) {
 	for _, element := range raw.Status.Conditions {
 		fmt.Printf("%s ==> %s", element.Type, element.Status)
 	}
-}
-
-func main1() {
-	GetPodintentJson("", "")
-	GetImageRepositoriesJson("", "")
+	return raw
 }

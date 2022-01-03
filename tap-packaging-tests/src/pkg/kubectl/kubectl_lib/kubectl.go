@@ -16,7 +16,6 @@ type GetPodintentOutput struct {
 
 func GetPodintent(appName string, namespace string) {
 	cmd := fmt.Sprintf("kubectl get podintent %s -n %s", appName, namespace)
-	//  cmd := "kubectl get imagerepositories -A"
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Println("something bad happened")
@@ -26,11 +25,20 @@ func GetPodintent(appName string, namespace string) {
 	podIntents := []GetPodintentOutput{}
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
-		podIntent := GetPodintentOutput{
-			NAME:   words[0],
-			READY:  words[1],
-			REASON: "", // if ready is false then reason is populated
-			AGE:    words[2],
+		var podIntent GetPodintentOutput
+		if len(words) == 4 {
+			podIntent = GetPodintentOutput{
+				NAME:   words[0],
+				READY:  words[1],
+				REASON: words[2],
+				AGE:    words[3],
+			}
+		} else {
+			podIntent = GetPodintentOutput{
+				NAME:  words[0],
+				READY: words[1],
+				AGE:   words[2],
+			}
 		}
 		podIntents = append(podIntents, podIntent)
 	}
@@ -100,38 +108,36 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	}
 	res1 = strings.TrimSuffix(res1, "\n")
 	temp := strings.Split(res1, "\n")
+	temp1 := strings.Fields(temp[0])
+	println("fields: ", len(temp1))
+	for _, element := range temp1 {
+		println(element, "index: ", strings.Index(temp[0], element))
+	}
 	imagerepos := []GetImageRepositoriesOutput{}
 	for _, element := range temp[1:] {
 		words := strings.Fields(element)
-		wl := GetImageRepositoriesOutput{
-			NAME:   words[0],
-			IMAGE:  words[1],
-			URL:    words[2],
-			READY:  words[3],
-			REASON: words[4],
-			AGE:    words[5],
+		var wl GetImageRepositoriesOutput
+		if len(words) == 6 {
+			wl = GetImageRepositoriesOutput{
+				NAME:   words[0],
+				IMAGE:  words[1],
+				URL:    words[2],
+				READY:  words[3],
+				REASON: words[4],
+				AGE:    words[5],
+			}
+		} else {
+			wl = GetImageRepositoriesOutput{
+				NAME:  words[0],
+				IMAGE: words[1],
+				URL:   words[2],
+				READY: words[3],
+				AGE:   words[4],
+			}
+
 		}
 		imagerepos = append(imagerepos, wl)
 	}
 	fmt.Printf("%+v\n", imagerepos)
 	return imagerepos
-}
-
-func executeCmd1(command string) (string, error) {
-	commandName := strings.Split(command, " ")[0]
-	arguments := strings.Split(command, " ")[1:]
-	cmd := exec.Command(commandName, arguments...)
-	stdoutStderr, err := cmd.CombinedOutput()
-	log.Printf("Command executed: %s", command)
-	if err != nil {
-		fmt.Printf(fmt.Sprint(err) + ": " + string(stdoutStderr))
-	} else {
-		log.Printf("Output: \n%s", string(stdoutStderr))
-	}
-	return string(stdoutStderr), err
-}
-
-func main() {
-	GetPodintent("tanzu-java-web-app", "tap-install")
-	GetWorkload("", "")
 }

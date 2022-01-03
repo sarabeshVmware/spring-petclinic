@@ -1,13 +1,9 @@
 package kubectl_helper
 
 import (
-	// "fmt"
 	"log"
+	kubectl_lib "pkg/kubectl/kubectl_lib"
 	"strings"
-
-	// "os/exec"
-	// kubectl_lib "/Users/mdogra/tap-packages/tap-packaging-tests/pkg/kubectl/kubectl-lib"
-	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg/kubectl-lib"
 )
 
 func ValidateAppLiveViewLabels() bool {
