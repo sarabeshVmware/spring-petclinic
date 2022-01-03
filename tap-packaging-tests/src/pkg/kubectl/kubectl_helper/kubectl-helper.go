@@ -81,6 +81,19 @@ func ValidateDeveloperConventions() bool {
 func GetImageRepositoryStatus(name string, namespace string) string {
 	log.Println("Get imagerepository status...")
 	imagerepos := kubectl_lib.GetImageRepositories(name, namespace)
+	if len(imagerepos) > 1 {
+		log.Println("Multiple images found. Returning status of first image.")
+	}
 	log.Printf("imagerepository status : %s", imagerepos[0].READY)
 	return imagerepos[0].READY
+}
+
+func GetBuildStatus(name string, namespace string) string {
+	log.Println("Get build status...")
+	builds := kubectl_lib.GetBuilds(name, namespace)
+	if len(builds) > 1 {
+		log.Println("Multiple builds found. Returning status of first build.")
+	}
+	log.Printf("build status : %s", builds[0].SUCCEEDED)
+	return builds[0].SUCCEEDED
 }

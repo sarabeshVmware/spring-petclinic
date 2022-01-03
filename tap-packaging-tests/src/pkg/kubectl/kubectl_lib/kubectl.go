@@ -147,3 +147,39 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	fmt.Printf("%+v\n", imagerepos)
 	return imagerepos
 }
+
+type GetBuildsOutput struct {
+	NAME      string
+	IMAGE     string
+	SUCCEEDED string
+}
+
+func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
+	cmd := "kubectl get builds"
+	if buildName != "" {
+		cmd += fmt.Sprintf(" %s", buildName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	res1, err1 := executeCmd(cmd)
+	if err1 != nil {
+		log.Printf("something bad happened")
+	}
+	res1 = strings.TrimSuffix(res1, "\n")
+	temp := strings.Split(res1, "\n")
+	builds := []GetBuildsOutput{}
+	for _, element := range temp[1:] {
+		words := strings.Fields(element)
+		build := GetBuildsOutput{
+			NAME:      words[0],
+			IMAGE:     words[1],
+			SUCCEEDED: words[2],
+		}
+		builds = append(builds, build)
+	}
+	fmt.Printf("%+v\n", builds)
+	return builds
+}
