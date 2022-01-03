@@ -1,0 +1,246 @@
+// package main
+package kubectl_lib
+
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os/exec"
+	"strings"
+	"time"
+)
+
+type GetPodintentJsonOutput struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   struct {
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+		Generation        int       `json:"generation"`
+		Labels            struct {
+			AppKubernetesIoComponent       string `json:"app.kubernetes.io/component"`
+			CartoRunClusterSupplyChainName string `json:"carto.run/cluster-supply-chain-name"`
+			CartoRunClusterTemplateName    string `json:"carto.run/cluster-template-name"`
+			CartoRunResourceName           string `json:"carto.run/resource-name"`
+			CartoRunTemplateKind           string `json:"carto.run/template-kind"`
+			CartoRunWorkloadName           string `json:"carto.run/workload-name"`
+			CartoRunWorkloadNamespace      string `json:"carto.run/workload-namespace"`
+		} `json:"labels"`
+		Name            string `json:"name"`
+		Namespace       string `json:"namespace"`
+		OwnerReferences []struct {
+			APIVersion         string `json:"apiVersion"`
+			BlockOwnerDeletion bool   `json:"blockOwnerDeletion"`
+			Controller         bool   `json:"controller"`
+			Kind               string `json:"kind"`
+			Name               string `json:"name"`
+			UID                string `json:"uid"`
+		} `json:"ownerReferences"`
+		ResourceVersion string `json:"resourceVersion"`
+		UID             string `json:"uid"`
+	} `json:"metadata"`
+	Spec struct {
+		ServiceAccountName string `json:"serviceAccountName"`
+		Template           struct {
+			Metadata struct {
+				Annotations struct {
+					AppsTanzuVmwareComLiveUpdate         string `json:"apps.tanzu.vmware.com/live-update"`
+					DeveloperConventionsTargetContainers string `json:"developer.conventions/target-containers"`
+				} `json:"annotations"`
+				Labels struct {
+					AppKubernetesIoComponent       string `json:"app.kubernetes.io/component"`
+					AppsTanzuVmwareComWorkloadType string `json:"apps.tanzu.vmware.com/workload-type"`
+					CartoRunWorkloadName           string `json:"carto.run/workload-name"`
+				} `json:"labels"`
+			} `json:"metadata"`
+			Spec struct {
+				Containers []struct {
+					Image     string `json:"image"`
+					Name      string `json:"name"`
+					Resources struct {
+					} `json:"resources"`
+					SecurityContext struct {
+						RunAsUser int `json:"runAsUser"`
+					} `json:"securityContext"`
+				} `json:"containers"`
+				ServiceAccountName string `json:"serviceAccountName"`
+			} `json:"spec"`
+		} `json:"template"`
+	} `json:"spec"`
+	Status struct {
+		Conditions []struct {
+			LastTransitionTime time.Time `json:"lastTransitionTime"`
+			Status             string    `json:"status"`
+			Type               string    `json:"type"`
+		} `json:"conditions"`
+		ObservedGeneration int `json:"observedGeneration"`
+		Template           struct {
+			Metadata struct {
+				Annotations struct {
+					AppsTanzuVmwareComLiveUpdate                    string `json:"apps.tanzu.vmware.com/live-update"`
+					AutoscalingKnativeDevMaxScale                   string `json:"autoscaling.knative.dev/maxScale"`
+					AutoscalingKnativeDevMinScale                   string `json:"autoscaling.knative.dev/minScale"`
+					BootSpringIoActuator                            string `json:"boot.spring.io/actuator"`
+					BootSpringIoVersion                             string `json:"boot.spring.io/version"`
+					ConventionsAppsTanzuVmwareComAppliedConventions string `json:"conventions.apps.tanzu.vmware.com/applied-conventions"`
+					DeveloperAppsTanzuVmwareComImageSourceDigest    string `json:"developer.apps.tanzu.vmware.com/image-source-digest"`
+					DeveloperConventionsTargetContainers            string `json:"developer.conventions/target-containers"`
+				} `json:"annotations"`
+				Labels struct {
+					AppKubernetesIoComponent               string `json:"app.kubernetes.io/component"`
+					AppsTanzuVmwareComWorkloadType         string `json:"apps.tanzu.vmware.com/workload-type"`
+					CartoRunWorkloadName                   string `json:"carto.run/workload-name"`
+					ConventionsAppsTanzuVmwareComFramework string `json:"conventions.apps.tanzu.vmware.com/framework"`
+					TanzuAppLiveView                       string `json:"tanzu.app.live.view"`
+					TanzuAppLiveViewApplicationFlavours    string `json:"tanzu.app.live.view.application.flavours"`
+					TanzuAppLiveViewApplicationName        string `json:"tanzu.app.live.view.application.name"`
+				} `json:"labels"`
+			} `json:"metadata"`
+			Spec struct {
+				Containers []struct {
+					Env []struct {
+						Name  string `json:"name"`
+						Value string `json:"value"`
+					} `json:"env"`
+					Image string `json:"image"`
+					Name  string `json:"name"`
+					Ports []struct {
+						ContainerPort int    `json:"containerPort"`
+						Protocol      string `json:"protocol"`
+					} `json:"ports"`
+					Resources struct {
+					} `json:"resources"`
+					SecurityContext struct {
+						RunAsUser int `json:"runAsUser"`
+					} `json:"securityContext"`
+				} `json:"containers"`
+				ServiceAccountName string `json:"serviceAccountName"`
+			} `json:"spec"`
+		} `json:"template"`
+	} `json:"status"`
+}
+
+func GetPodintentJson(appName string, namespace string) {
+	if appName == "" {
+		appName = "tanzu-java-web-app"
+	}
+	if namespace == "" {
+		namespace = "tap-install"
+	}
+	cmd := fmt.Sprintf("kubectl get podintent %s -n %s -o json", appName, namespace)
+	res1, err1 := executeCmd(cmd)
+	if err1 != nil {
+		log.Println("something bad happened")
+	}
+	in := []byte(res1)
+	var raw *GetPodintentJsonOutput
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	// log.Printf("apiVersion: %s", raw.APIVersion)
+	// log.Printf("Kind: %s", raw.Kind)
+	// log.Printf("Metadata.Name: %s", raw.Metadata.Name)
+	// log.Printf("Metadata.Labels.AppKubernetesIoComponent: %s", raw.Metadata.Labels.AppKubernetesIoComponent)
+	// log.Printf("Metadata.Labels.CartoRunClusterSupplyChainName: %s", raw.Metadata.Labels.CartoRunClusterSupplyChainName)
+	// log.Printf("Metadata.Labels.CartoRunClusterTemplateName: %s", raw.Metadata.Labels.CartoRunClusterTemplateName)
+	// log.Printf("Metadata.Labels.CartoRunResourceName: %s", raw.Metadata.Labels.CartoRunResourceName)
+	// log.Printf("Metadata.Labels.CartoRunTemplateKind: %s", raw.Metadata.Labels.CartoRunTemplateKind)
+	// log.Printf("Metadata.Labels.CartoRunWorkloadName: %s", raw.Metadata.Labels.CartoRunWorkloadName)
+	// log.Printf("Metadata.Labels.CartoRunWorkloadNamespace: %s", raw.Metadata.Labels.CartoRunWorkloadNamespace)
+	// log.Printf("Metadata.Namespace: %s", raw.Metadata.Namespace)
+	// log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	// log.Printf("Status.Template.Metadata.Labels.TanzuAppLiveView: %s", raw.Status.Template.Metadata.Labels.TanzuAppLiveView)
+}
+
+func executeCmd(command string) (string, error) {
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	cmd := exec.Command(commandName, arguments...)
+	stdoutStderr, err := cmd.CombinedOutput()
+	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
+	if err != nil {
+		log.Println("something bad happened")
+	} else {
+		log.Printf("Output: \n%s", string(stdoutStderr))
+	}
+	return string(stdoutStderr), err
+}
+
+type GetImageRepositoriesJsonOutput struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   struct {
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+		Generation        int       `json:"generation"`
+		Labels            struct {
+			AppKubernetesIoComponent       string `json:"app.kubernetes.io/component"`
+			CartoRunClusterSupplyChainName string `json:"carto.run/cluster-supply-chain-name"`
+			CartoRunClusterTemplateName    string `json:"carto.run/cluster-template-name"`
+			CartoRunResourceName           string `json:"carto.run/resource-name"`
+			CartoRunTemplateKind           string `json:"carto.run/template-kind"`
+			CartoRunWorkloadName           string `json:"carto.run/workload-name"`
+			CartoRunWorkloadNamespace      string `json:"carto.run/workload-namespace"`
+		} `json:"labels"`
+		Name            string `json:"name"`
+		Namespace       string `json:"namespace"`
+		OwnerReferences []struct {
+			APIVersion         string `json:"apiVersion"`
+			BlockOwnerDeletion bool   `json:"blockOwnerDeletion"`
+			Controller         bool   `json:"controller"`
+			Kind               string `json:"kind"`
+			Name               string `json:"name"`
+			UID                string `json:"uid"`
+		} `json:"ownerReferences"`
+		ResourceVersion string `json:"resourceVersion"`
+		UID             string `json:"uid"`
+	} `json:"metadata"`
+	Spec struct {
+		Image    string `json:"image"`
+		Interval string `json:"interval"`
+	} `json:"spec"`
+	Status struct {
+		Artifact struct {
+			Checksum       string    `json:"checksum"`
+			LastUpdateTime time.Time `json:"lastUpdateTime"`
+			Path           string    `json:"path"`
+			Revision       string    `json:"revision"`
+			URL            string    `json:"url"`
+		} `json:"artifact"`
+		Conditions []struct {
+			LastTransitionTime time.Time `json:"lastTransitionTime"`
+			Status             string    `json:"status"`
+			Type               string    `json:"type"`
+		} `json:"conditions"`
+		ObservedGeneration int    `json:"observedGeneration"`
+		URL                string `json:"url"`
+	} `json:"status"`
+}
+
+func GetImageRepositoriesJson(appName string, namespace string) {
+	if appName == "" {
+		appName = "tanzu-java-web-app"
+	}
+	if namespace == "" {
+		namespace = "tap-install"
+	}
+	cmd := fmt.Sprintf("kubectl get imagerepositories %s -n %s -o json", appName, namespace)
+	res1, err1 := executeCmd(cmd)
+	if err1 != nil {
+		log.Println("something bad happened")
+	}
+	in := []byte(res1)
+	var raw *GetImageRepositoriesJsonOutput
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	log.Printf("apiVersion: %s", raw.APIVersion)
+	log.Printf("Kind: %s", raw.Kind)
+	fmt.Print("Conditions are:")
+	for _, element := range raw.Status.Conditions {
+		fmt.Printf("%s ==> %s", element.Type, element.Status)
+	}
+}
+
+func main1() {
+	GetPodintentJson("", "")
+	GetImageRepositoriesJson("", "")
+}
