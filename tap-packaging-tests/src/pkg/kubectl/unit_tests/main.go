@@ -8,4 +8,5 @@ import (
 
 func main() {
 	kubectl_helper.ValidateAppLiveViewLabels()
+	kubectl_helper.GetImageRepositoryStatus("tanzu-java-web-app", "tap-install")
 }

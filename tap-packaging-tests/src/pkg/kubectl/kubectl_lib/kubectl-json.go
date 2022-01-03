@@ -132,14 +132,8 @@ type GetPodintentJsonOutput struct {
 	} `json:"status"`
 }
 
-func GetPodintentJson(appName string, namespace string) *GetPodintentJsonOutput {
-	if appName == "" {
-		appName = "tanzu-java-web-app"
-	}
-	if namespace == "" {
-		namespace = "tap-install"
-	}
-	cmd := fmt.Sprintf("kubectl get podintent %s -n %s -o json", appName, namespace)
+func GetPodintentJson(name string, namespace string) *GetPodintentJsonOutput {
+	cmd := fmt.Sprintf("kubectl get podintent %s -n %s -o json", name, namespace)
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Println("something bad happened")
@@ -202,14 +196,8 @@ type GetImageRepositoriesJsonOutput struct {
 	} `json:"status"`
 }
 
-func GetImageRepositoriesJson(appName string, namespace string) *GetImageRepositoriesJsonOutput {
-	if appName == "" {
-		appName = "tanzu-java-web-app"
-	}
-	if namespace == "" {
-		namespace = "tap-install"
-	}
-	cmd := fmt.Sprintf("kubectl get imagerepositories %s -n %s -o json", appName, namespace)
+func GetImageRepositoriesJson(name string, namespace string) *GetImageRepositoriesJsonOutput {
+	cmd := fmt.Sprintf("kubectl get imagerepositories %s -n %s -o json", name, namespace)
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Println("something bad happened")

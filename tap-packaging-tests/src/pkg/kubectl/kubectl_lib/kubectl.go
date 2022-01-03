@@ -14,8 +14,16 @@ type GetPodintentOutput struct {
 	AGE    string
 }
 
-func GetPodintent(appName string, namespace string) {
-	cmd := fmt.Sprintf("kubectl get podintent %s -n %s", appName, namespace)
+func GetPodintent(name string, namespace string) []GetPodintentOutput {
+	cmd := "kubectl get podintent"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += fmt.Sprintf(" -A")
+	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Println("something bad happened")
@@ -44,6 +52,7 @@ func GetPodintent(appName string, namespace string) {
 	}
 	fmt.Printf("%+v\n", podIntents)
 	fmt.Printf("Name: %s, Ready: %s, Reason: %s, Age: %s ", podIntents[0].NAME, podIntents[0].READY, podIntents[0].REASON, podIntents[0].AGE)
+	return podIntents
 }
 
 type GetWorkloadOutput struct {
@@ -54,15 +63,16 @@ type GetWorkloadOutput struct {
 	REASON      string
 }
 
-func GetWorkload(workloadName string, namespace string) {
-	if namespace == "" {
-		namespace = "tap-install"
-	}
+func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
 	cmd := "kubectl get workload"
 	if workloadName != "" {
 		cmd += fmt.Sprintf(" %s", workloadName)
 	}
-	cmd += fmt.Sprintf(" -n %s", namespace)
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += fmt.Sprintf(" -A")
+	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Printf("something bad happened")
@@ -82,6 +92,7 @@ func GetWorkload(workloadName string, namespace string) {
 		workloads = append(workloads, wl)
 	}
 	fmt.Printf("%+v\n", workloads)
+	return workloads
 }
 
 type GetImageRepositoriesOutput struct {
@@ -94,14 +105,15 @@ type GetImageRepositoriesOutput struct {
 }
 
 func GetImageRepositories(name string, namespace string) []GetImageRepositoriesOutput {
-	if namespace == "" {
-		namespace = "tap-install"
-	}
 	cmd := "kubectl get imagerepositories"
 	if name != "" {
 		cmd += fmt.Sprintf(" %s", name)
 	}
-	cmd += fmt.Sprintf(" -n %s", namespace)
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += fmt.Sprintf(" -A")
+	}
 	res1, err1 := executeCmd(cmd)
 	if err1 != nil {
 		log.Printf("something bad happened")
