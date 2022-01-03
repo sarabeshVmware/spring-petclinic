@@ -3,7 +3,6 @@ package kubectl_lib
 import (
 	"fmt"
 	"log"
-	"os/exec"
 	"strings"
 )
 
