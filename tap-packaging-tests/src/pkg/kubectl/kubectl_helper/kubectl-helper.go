@@ -97,3 +97,10 @@ func GetBuildStatus(name string, namespace string) string {
 	log.Printf("build status : %s", builds[0].SUCCEEDED)
 	return builds[0].SUCCEEDED
 }
+
+func GetLatestImageStatus(namespace string) string {
+	log.Println("Get latest image status...")
+	image := kubectl_lib.GetLatestImage(namespace)
+	log.Printf("latest image status : %s", image.READY)
+	return image.READY
+}

@@ -183,3 +183,33 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	fmt.Printf("%+v\n", builds)
 	return builds
 }
+
+type GetLatestImageOutput struct {
+	NAME        string
+	LATESTIMAGE string
+	READY       string
+}
+
+func GetLatestImage(namespace string) GetLatestImageOutput {
+	cmd := "kubectl get images.kpac"
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	res1, err1 := executeCmd(cmd)
+	if err1 != nil {
+		log.Printf("something bad happened")
+	}
+	res1 = strings.TrimSuffix(res1, "\n")
+	temp := strings.Split(res1, "\n")
+	words := strings.Fields(temp[1])
+	latestImage := GetLatestImageOutput{
+		NAME:        words[0],
+		LATESTIMAGE: words[1],
+		READY:       words[2],
+	}
+
+	fmt.Printf("%+v\n", latestImage)
+	return latestImage
+}
