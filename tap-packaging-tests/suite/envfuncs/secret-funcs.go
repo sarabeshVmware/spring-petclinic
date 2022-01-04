@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"log"
 
-	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/e2e-suite/pkg"
+	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/pkg"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )

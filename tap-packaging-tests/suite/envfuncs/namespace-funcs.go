@@ -11,7 +11,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 
-	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/e2e-suite/pkg"
+	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/pkg"
 )
 
 func CreateNamespaces(namespaces []string) env.Func {

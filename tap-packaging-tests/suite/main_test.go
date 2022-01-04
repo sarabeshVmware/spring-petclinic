@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/e2e-suite/envfuncs"
-	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/e2e-suite/pkg"
+	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/envfuncs"
+	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/pkg"
 	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/env"
