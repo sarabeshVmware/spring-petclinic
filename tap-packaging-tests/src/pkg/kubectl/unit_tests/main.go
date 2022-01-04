@@ -14,7 +14,7 @@ func main() {
 
 	// Examples of kubectl json output parsing
 
-	f := kubectl_helper.ValidateAppLiveViewLabels()
+	f := kubectl_helper.ValidateAppLiveViewLabels("tanzu-java-web-app", "tap-install")
 	fmt.Println(f)
 
 }
