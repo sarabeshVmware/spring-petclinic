@@ -211,3 +211,38 @@ func GetLatestImage(namespace string) GetLatestImageOutput {
 	fmt.Printf("latestImage: %+v\n", latestImage)
 	return latestImage
 }
+
+type GetKsvcOutput struct {
+	NAME, URL, LATESTCREATED, LATESTREADY, READY, REASON string
+}
+
+func GetKsvcImage(name string, namespace string) GetLatestImageOutput {
+	var latestImage GetLatestImageOutput
+	cmd := "kubectl get ksvc"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := executeCmd(cmd)
+	if err != nil {
+		return latestImage
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return latestImage
+	}
+
+	headers, words := strings.Fields(temp[0]), strings.Fields(temp[1])
+
+	for index, value := range words {
+		reflect.ValueOf(&latestImage).Elem().FieldByName(headers[index]).SetString(value)
+	}
+	fmt.Printf("latestImage: %+v\n", latestImage)
+	return latestImage
+}
