@@ -1,20 +1,25 @@
 package main
 
 import (
-	"fmt"
 	kubectl_helper "pkg/kubectl/kubectl_helper"
+	kubectl_lib "pkg/kubectl/kubectl_lib"
 )
 
 func main() {
 
 	// Examples of kubectl linux cmd ouput parsing
-
-	a := kubectl_helper.GetLatestImageStatus("tap-install")
-	fmt.Printf("%+v\n", a)
+	kubectl_helper.GetLatestImageStatus("tap-install")
 
 	// Examples of kubectl json output parsing
+	kubectl_helper.ValidateAppLiveViewLabels("tanzu-java-web-app-git", "tap-install")
 
-	f := kubectl_helper.ValidateAppLiveViewLabels("tanzu-java-web-app", "tap-install")
-	fmt.Println(f)
+	// Testing kubectl lib methods
+	kubectl_lib.GetPodintent("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetWorkload("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetImageRepositories("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetBuilds("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetLatestImage("tap-install")
+	kubectl_lib.GetKsvc("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetSourceScan("tanzu-java-web-app-git", "tap-install")
 
 }
