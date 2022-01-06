@@ -17,9 +17,8 @@ func CheckPrerequisites() {
 
 	var retries int = 10
 	for retries > 0 {
-		deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
+		_, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
 		if CheckErrorWithoutExit(err) != true {
-			log.Println("Status code is :", deployments.StatusCode)
 			break
 		} else {
 			retries -= 1
