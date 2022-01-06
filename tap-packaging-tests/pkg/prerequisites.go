@@ -29,6 +29,7 @@ func CheckPrerequisites() {
 	}
 	deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
 	CheckError(err)
+
 	kappControllerInstalled, secretgenControllerInstalled := false, false
 	for _, item := range deployments.Items {
 		if item.Namespace == "kapp-controller" {
