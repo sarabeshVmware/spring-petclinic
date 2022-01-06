@@ -6,6 +6,7 @@ package pkg
 import (
 	"context"
 	"log"
+	"time"
 
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -14,9 +15,20 @@ import (
 func CheckPrerequisites() {
 	log.Printf("Checking prerequisites:")
 
+	var retries int = 10
+	for retries > 0 {
+		deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
+		if CheckErrorWithoutExit(err) != true {
+			log.Println("Status code is :", deployments.StatusCode)
+			break
+		} else {
+			retries -= 1
+			log.Printf("Retry after 30 seconds")
+			time.Sleep(30 * time.Second)
+		}
+	}
 	deployments, err := GetClientset().AppsV1().Deployments(apiv1.NamespaceAll).List(context.TODO(), metav1.ListOptions{})
-	CheckError(err)
-
+	checkError(err)
 	kappControllerInstalled, secretgenControllerInstalled := false, false
 	for _, item := range deployments.Items {
 		if item.Namespace == "kapp-controller" {
