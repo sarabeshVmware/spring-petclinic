@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/pkg"
+	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/exec"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
@@ -17,12 +17,12 @@ import (
 func InstallPackage(name string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("installing package %s", name)
-		output, err := e2e.InstallPackage(name, packageName, version, namespace, valuesFile, pollTimeout)
+		cmd, output, err := exec.TanzuInstallPackage(name, packageName, version, namespace, valuesFile, pollTimeout)
+		log.Printf("command executed: %s", cmd)
 		if err != nil {
 			return ctx, fmt.Errorf("error while installing package %s: %w: %s", name, err, output)
 		}
 		log.Printf("package %s installed: %s", name, output)
-
 		return ctx, nil
 	}
 }
@@ -30,12 +30,12 @@ func InstallPackage(name string, packageName string, version string, namespace s
 func UninstallPackage(name string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("uninstalling package %s", name)
-		output, err := e2e.UninstallPackage(name, namespace)
+		cmd, output, err := exec.TanzuUninstallPackage(name, namespace)
+		log.Printf("command executed: %s", cmd)
 		if err != nil {
 			return ctx, fmt.Errorf("error while uninstalling package %s: %w: %s", name, err, output)
 		}
 		log.Printf("package %s uninstalled: %s", name, output)
-
 		return ctx, nil
 	}
 }
@@ -43,28 +43,27 @@ func UninstallPackage(name string, namespace string) env.Func {
 func CheckIfPackageInstalled(name string, namespace string, recursiveCount int) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("checking package %s installation status", name)
-
 		log.Printf("getting package %s installation status", name)
-		packageInstalledStatus, err := e2e.GetPackageInstalledStatus(name, namespace)
+		cmd, output, err := exec.TanzuGetPackageInstalledStatus(name, namespace)
+		log.Printf("command executed: %s", cmd)
 		if err != nil {
-			return ctx, fmt.Errorf("error while getting package %s installation status: %w: %s", name, err, packageInstalledStatus)
+			return ctx, fmt.Errorf("error while getting package %s installation status: %w: %s", name, err, output)
 		}
 		for recursiveCount > 0 {
-			if packageInstalledStatus == "Reconciling" || packageInstalledStatus == "" {
-				log.Printf("package %s is getting installed: %s", name, packageInstalledStatus)
+			if output == "Reconciling" || output == "" {
+				log.Printf("package %s is getting installed: %s", name, output)
 				log.Printf("sleeping: 60 seconds")
 				time.Sleep(1 * time.Minute)
 				recursiveCount -= 1
-			} else if packageInstalledStatus == "Reconcile succeeded" {
-				log.Printf("package %s is installed: %s", name, packageInstalledStatus)
+			} else if output == "Reconcile succeeded" {
+				log.Printf("package %s is installed: %s", name, output)
 				return ctx, nil
-			} else if packageInstalledStatus == "Reconcile Failed" {
-				return ctx, fmt.Errorf("package %s installation failed: %s", name, packageInstalledStatus)
+			} else if output == "Reconcile Failed" {
+				return ctx, fmt.Errorf("package %s installation failed: %s", name, output)
 			} else {
-				return ctx, fmt.Errorf("package %s installation unknown: %s", name, packageInstalledStatus)
+				return ctx, fmt.Errorf("package %s installation unknown: %s", name, output)
 			}
 		}
-
-		return ctx, fmt.Errorf(`package %s is not getting in "Reconcile succeeded" state after %d iterations (%s)`, name, recursiveCount, packageInstalledStatus)
+		return ctx, fmt.Errorf(`package %s is not getting in "Reconcile succeeded" state after %d iterations (%s)`, name, recursiveCount, output)
 	}
 }
