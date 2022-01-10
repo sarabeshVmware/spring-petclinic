@@ -111,3 +111,19 @@ func GetKsvcStatus(name string, namespace string) string {
 	log.Printf("ksvc image status : %s", ksvc.READY)
 	return ksvc.READY
 }
+
+func ValidateImageScans() {
+
+}
+
+func ValidateSourceScans() {
+
+}
+
+func ValidatePipeline() {
+
+}
+
+func ValidatePipelineRuns() {
+
+}

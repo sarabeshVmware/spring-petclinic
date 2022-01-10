@@ -3,60 +3,10 @@ package kubectl_lib
 import (
 	"fmt"
 	"log"
+	linux_util "pkg/utils/linux_util"
 	"reflect"
 	"strings"
-	"unicode"
 )
-
-type span struct {
-	start int
-	end   int
-}
-
-func FieldIndices(s string) []span {
-	f := unicode.IsSpace
-	spans := make([]span, 0, 32)
-	start := -1 // valid span start if >= 0
-	for end, rune := range s {
-		if f(rune) {
-			if start >= 0 {
-				spans = append(spans, span{start, end})
-				start = ^start
-			}
-		} else {
-			if start < 0 {
-				start = end
-			}
-		}
-	}
-	// Last field might end at EOF.
-	if start >= 0 {
-		spans = append(spans, span{start, len(s)})
-	}
-	for index := range spans {
-		if index == 0 {
-			continue
-		}
-		spans[index-1].end = spans[index].start
-	}
-	return spans
-}
-
-func GetFields(s string, spans []span) []string {
-	// Create strings from field indices.
-	if len(s) < spans[len(spans)-1].end { // if last few column values are empty - padding string with spaces to the right
-		b := fmt.Sprintf("%s%d%s", "%-", spans[len(spans)-1].end, "v")
-		s = fmt.Sprintf(b, s)
-	}
-	if len(s) > spans[len(spans)-1].end { // if column values exceed column header length
-		spans[len(spans)-1].end = len(s)
-	}
-	a := make([]string, len(spans))
-	for i, span := range spans {
-		a[i] = strings.TrimSpace(s[span.start:span.end])
-	}
-	return a
-}
 
 type GetPodintentOutput struct {
 	NAME, READY, REASON, AGE string
@@ -73,7 +23,7 @@ func GetPodintent(name string, namespace string) []GetPodintentOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return podIntents
 	}
@@ -84,10 +34,10 @@ func GetPodintent(name string, namespace string) []GetPodintentOutput {
 		return podIntents
 	}
 
-	ss := FieldIndices(temp[0])
-	headers := GetFields(temp[0], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
 	for _, element := range temp[1:] {
-		words := GetFields(element, ss)
+		words := linux_util.GetFields(element, ss)
 		var podIntent GetPodintentOutput
 		for index, value := range words {
 			reflect.ValueOf(&podIntent).Elem().FieldByName(headers[index]).SetString(value)
@@ -113,7 +63,7 @@ func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return workloads
 	}
@@ -124,10 +74,10 @@ func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {
 		return workloads
 	}
 
-	ss := FieldIndices(temp[0])
-	headers := GetFields(temp[0], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
 	for _, element := range temp[1:] {
-		words := GetFields(element, ss)
+		words := linux_util.GetFields(element, ss)
 		var wl GetWorkloadOutput
 		for index, value := range words {
 			reflect.ValueOf(&wl).Elem().FieldByName(headers[index]).SetString(value)
@@ -154,7 +104,7 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return imagerepos
 	}
@@ -165,10 +115,10 @@ func GetImageRepositories(name string, namespace string) []GetImageRepositoriesO
 		return imagerepos
 	}
 
-	ss := FieldIndices(temp[0])
-	headers := GetFields(temp[0], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
 	for _, element := range temp[1:] {
-		words := GetFields(element, ss)
+		words := linux_util.GetFields(element, ss)
 		var imagerepo GetImageRepositoriesOutput
 		for index, value := range words {
 			reflect.ValueOf(&imagerepo).Elem().FieldByName(headers[index]).SetString(value)
@@ -195,7 +145,7 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return builds
 	}
@@ -206,10 +156,10 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 		return builds
 	}
 
-	ss := FieldIndices(temp[0])
-	headers := GetFields(temp[0], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
 	for _, element := range temp[1:] {
-		words := GetFields(element, ss)
+		words := linux_util.GetFields(element, ss)
 		var build GetBuildsOutput
 		for index, value := range words {
 			reflect.ValueOf(&build).Elem().FieldByName(headers[index]).SetString(value)
@@ -233,7 +183,7 @@ func GetLatestImage(namespace string) GetLatestImageOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return latestImage
 	}
@@ -244,8 +194,8 @@ func GetLatestImage(namespace string) GetLatestImageOutput {
 		return latestImage
 	}
 
-	ss := FieldIndices(temp[0])
-	headers, words := GetFields(temp[0], ss), GetFields(temp[1], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
 
 	for index, value := range words {
 		reflect.ValueOf(&latestImage).Elem().FieldByName(headers[index]).SetString(value)
@@ -269,7 +219,7 @@ func GetKsvc(name string, namespace string) GetKsvcOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return ksvc
 	}
@@ -280,8 +230,8 @@ func GetKsvc(name string, namespace string) GetKsvcOutput {
 		return ksvc
 	}
 
-	ss := FieldIndices(temp[0])
-	headers, words := GetFields(temp[0], ss), GetFields(temp[1], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
 
 	for index, value := range words {
 		reflect.ValueOf(&ksvc).Elem().FieldByName(headers[index]).SetString(value)
@@ -305,7 +255,7 @@ func GetSourceScan(name string, namespace string) GetSourceScanOutput {
 	} else {
 		cmd += " -A"
 	}
-	response, err := executeCmd(cmd)
+	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return sourceScan
 	}
@@ -316,8 +266,116 @@ func GetSourceScan(name string, namespace string) GetSourceScanOutput {
 		return sourceScan
 	}
 
-	ss := FieldIndices(temp[0])
-	headers, words := GetFields(temp[0], ss), GetFields(temp[1], ss)
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
+
+	for index, value := range words {
+		reflect.ValueOf(&sourceScan).Elem().FieldByName(headers[index]).SetString(value)
+	}
+	fmt.Printf("sourceScan: %+v\n", sourceScan)
+	return sourceScan
+}
+
+type GetPipelineOutput struct {
+	NAME, AGE string
+}
+
+func GetPipeline(name string, namespace string) GetPipelineOutput {
+	var pipeline GetPipelineOutput
+	cmd := "kubectl get pipeline"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return pipeline
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return pipeline
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
+
+	for index, value := range words {
+		reflect.ValueOf(&pipeline).Elem().FieldByName(headers[index]).SetString(value)
+	}
+	fmt.Printf("pipeline: %+v\n", pipeline)
+	return pipeline
+}
+
+type GetPipelineRunsOutput struct {
+	NAME, SUCCEEDED, REASON, STARTTIME, COMPLETIONTIME string
+}
+
+func GetPipelineRuns(name string, namespace string) GetPipelineRunsOutput {
+	var pipeline GetPipelineRunsOutput
+	cmd := "kubectl get prs"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return pipeline
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return pipeline
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
+
+	for index, value := range words {
+		reflect.ValueOf(&pipeline).Elem().FieldByName(headers[index]).SetString(value)
+	}
+	fmt.Printf("pipeline: %+v\n", pipeline)
+	return pipeline
+}
+
+type GetImageScanOutput struct {
+	NAMESPACE, NAME, PHASE, SCANNEDIMAGE, AGE, CRITICAL, HIGH, MEDIUM, LOW, UNKNOWN, CVETOTAL string
+}
+
+func GetImageScan(name string, namespace string) GetImageScanOutput {
+	var sourceScan GetImageScanOutput
+	cmd := "kubectl get imagescan"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return sourceScan
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return sourceScan
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
 
 	for index, value := range words {
 		reflect.ValueOf(&sourceScan).Elem().FieldByName(headers[index]).SetString(value)
