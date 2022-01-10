@@ -129,11 +129,9 @@
 - description: 'Image Policy Webhook: The Image Policy Webhook allows platform operators to define a policy that will use cosign to verify signatures of container images'
   name: image-policy-webhook
   namespace: tap-install
-  package: image-policy-webhook.signing.run.tanzu.vmware.com
+  package: image-policy-webhook.signing.apps.tanzu.vmware.com
   values_file: ./values/scst-sign.yaml
-  version: 1.0.0-beta.3
-  package_dependencies:
-    - scst-store.tanzu.vmware.com
+  version: 1.0.0
 - description: 'Supply Chain Security Tools for VMware Tanzu - Scan: Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains.'
   name: scan-controller
   namespace: tap-install
