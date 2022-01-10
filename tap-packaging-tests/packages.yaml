@@ -3,13 +3,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.5.0
+  version: 0.5.0-build.5
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.5.0
+  version: 0.5.0-build.5
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
@@ -87,7 +87,7 @@
   namespace: tap-install
   package: tap-gui.tanzu.vmware.com
   values_file: ./values/tap-gui.yaml
-  version: 1.0.0
+  version: 1.0.1
 - description: 'Tanzu App Platform Out of The Box Supply Chain Basic: Out of The Box Supply Chain Basic.'
   name: ootb-supply-chain-basic
   namespace: tap-install
@@ -129,11 +129,9 @@
 - description: 'Image Policy Webhook: The Image Policy Webhook allows platform operators to define a policy that will use cosign to verify signatures of container images'
   name: image-policy-webhook
   namespace: tap-install
-  package: image-policy-webhook.signing.run.tanzu.vmware.com
+  package: image-policy-webhook.signing.apps.tanzu.vmware.com
   values_file: ./values/scst-sign.yaml
-  version: 1.0.0-beta.3
-  package_dependencies:
-    - scst-store.tanzu.vmware.com
+  version: 1.0.0
 - description: 'Supply Chain Security Tools for VMware Tanzu - Scan: Scan for vulnerabilities and enforce policies directly within Kubernetes native Supply Chains.'
   name: scan-controller
   namespace: tap-install

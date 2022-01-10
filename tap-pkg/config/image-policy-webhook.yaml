@@ -19,8 +19,7 @@ spec:
   packageRef:
     refName: image-policy-webhook.signing.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 1.0.0-beta.4
-      prereleases: {}
+      constraints: 1.0.0
   values:
   - secretRef:
       name: image-policy-webhook-values
