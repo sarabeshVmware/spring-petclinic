@@ -1,19 +1,19 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.0.5.0
+  name: tap.tanzu.vmware.com.0.5.0-build.5
 spec:
   refName: tap.tanzu.vmware.com
-  version: 0.5.0
+  version: 0.5.0-build.5
   releaseNotes: |
-    Beta release 0.5.0 of Tanzu Application Platform.
+    Beta release 0.5.0-build.5 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2021-12-20T00:00:00Z"
+  releasedAt: "2021-12-23T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:271397a2a0366b30184449b68d9b2d9a3d01104bab1eda79f24678f2ed19575a
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:7518399197905d26e074fa5aa837d5cfb68318bd9577079b4945d83907abbc27
       template:
       - ytt:
           paths:
