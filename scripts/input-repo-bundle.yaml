@@ -1,0 +1,7 @@
+OciRegistry : "dev.registry.tanzu.vmware.com"
+OciRegistryUsername : "tanzunet_username"
+OciRegistryPassword : "tanzunet_password"
+channel : "beta4"
+tag : "exec-test"
+channelToPush : "tanzu-advanced-edition/msrinivasssa/trialrepo"
+
