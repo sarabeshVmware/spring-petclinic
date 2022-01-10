@@ -15,7 +15,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.5.0-build.1
+          image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
       template:
       - ytt:
           paths:
