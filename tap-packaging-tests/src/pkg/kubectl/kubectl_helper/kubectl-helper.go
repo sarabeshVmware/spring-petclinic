@@ -162,9 +162,9 @@ func ValidateTrainingPortalStatus(name string, namespace string) bool {
 	return tp.STATUS == "Running"
 }
 
-func ValidateLearningCenter() bool {
+func ValidateLearningCenter(name string, namespace string) bool {
 	log.Println("Validating 'Learning Center'")
-	img := kubectl_lib.GetIngress("learningcenter-portal", "learning-center-guided-ui")
+	img := kubectl_lib.GetIngress(name, namespace)
 	cmd1 := fmt.Sprintf("echo '%s %s' >> /etc/hosts", img.ADDRESS, img.HOSTS)
 	linux_util.ExecuteCmd(cmd1)
 	cmd2 := fmt.Sprintf("curl -i %s", img.HOSTS)

@@ -9,6 +9,7 @@ func main() {
 
 	// Examples of kubectl linux cmd ouput parsing
 	kubectl_helper.GetLatestImageStatus("tap-install")
+	kubectl_helper.ValidateLearningCenter("learningcenter-portal", "learning-center-guided-ui")
 
 	// Examples of kubectl json output parsing
 	kubectl_helper.ValidateAppLiveViewLabels("tanzu-java-web-app-git", "tap-install")
