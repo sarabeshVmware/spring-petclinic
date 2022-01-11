@@ -156,9 +156,9 @@ func ValidateServiceBindings(name string, namespace string) bool {
 	return false
 }
 
-func ValidateTrainingPortalStatus(name string, namespace string) bool {
+func ValidateTrainingPortalStatus(name string) bool {
 	log.Println("Validating training portals")
-	tp := kubectl_lib.GetTrainingPortals(name, namespace)
+	tp := kubectl_lib.GetTrainingPortals(name)
 	return tp.STATUS == "Running"
 }
 

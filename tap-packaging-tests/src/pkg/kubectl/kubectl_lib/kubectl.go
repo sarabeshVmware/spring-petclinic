@@ -424,16 +424,11 @@ type GetTrainingPortalsOutput struct {
 	NAME, URL, ADMINUSERNAME, ADMINPASSWORD, STATUS string
 }
 
-func GetTrainingPortals(name string, namespace string) GetTrainingPortalsOutput {
+func GetTrainingPortals(name string) GetTrainingPortalsOutput {
 	var tps GetTrainingPortalsOutput
 	cmd := "kubectl get trainingportals"
 	if name != "" {
 		cmd += fmt.Sprintf(" %s", name)
-	}
-	if namespace != "" {
-		cmd += fmt.Sprintf(" -n %s", namespace)
-	} else {
-		cmd += " -A"
 	}
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
