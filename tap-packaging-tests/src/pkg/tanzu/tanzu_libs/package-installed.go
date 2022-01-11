@@ -20,7 +20,7 @@ import (
 )
 
 type ListInstalledPackagesOutput struct {
-	NAME, PACKAGE_NAME, PACKAGE_VERSION, STATUS string
+	NAME, PACKAGE_NAME, PACKAGE_VERSION, STATUS, NAMESPACE string
 }
 
 func ListInstalledPackages(namespace string) []ListInstalledPackagesOutput {
@@ -53,6 +53,9 @@ func ListInstalledPackages(namespace string) []ListInstalledPackagesOutput {
 		var installedPackage ListInstalledPackagesOutput
 		for index, value := range words {
 			reflect.ValueOf(&installedPackage).Elem().FieldByName(headers[index]).SetString(value)
+			if namespace != "" {
+				installedPackage.NAMESPACE = namespace
+			}
 		}
 		installedPackages = append(installedPackages, installedPackage)
 	}
