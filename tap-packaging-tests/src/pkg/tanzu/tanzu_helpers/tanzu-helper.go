@@ -30,3 +30,12 @@ func IsScanningInstalled(namespace string) bool {
 	}
 	return scanningInstalled
 }
+
+func ValidateInstalledPackageStatus(name string, namespace string, status string) bool {
+	log.Println("Executing: ValidateInstalledPackageStatus")
+	if status == "" {
+		status = "Reconcile succeeded" //Default validation status
+	}
+	pkg := tanzu_libs.GetInstalledPackages(name, namespace)
+	return pkg[0].Status == status
+}

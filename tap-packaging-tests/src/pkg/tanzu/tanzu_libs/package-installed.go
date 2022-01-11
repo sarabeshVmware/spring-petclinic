@@ -72,7 +72,7 @@ type GetInstalledPackagesOutput []struct {
 	UsefulErrorMessage string `json:"useful-error-message"`
 }
 
-func GetInstalledPackages(name string, namespace string) *GetInstalledPackagesOutput {
+func GetInstalledPackages(name string, namespace string) GetInstalledPackagesOutput {
 
 	cmd := fmt.Sprintf("tanzu package installed get %s", name)
 	if namespace != "" {
@@ -87,7 +87,7 @@ func GetInstalledPackages(name string, namespace string) *GetInstalledPackagesOu
 		log.Println("something bad happened")
 	}
 	in := []byte(res1)
-	var raw *GetInstalledPackagesOutput
+	var raw GetInstalledPackagesOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
