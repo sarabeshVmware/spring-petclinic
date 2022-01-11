@@ -1,5 +1,20 @@
 package tanzu_libs
 
+// Usage:
+//   tanzu accelerator [command]
+
+// Aliases:
+//   accelerator, acc
+
+// Available Commands:
+//   create        Create a new accelerator
+//   delete        Delete an accelerator
+//   generate      Generate project from accelerator
+//   get           Get accelerator info
+//   list          List accelerators
+//   push          Push local path to source image
+//   update        Update an accelerator
+
 import (
 	"fmt"
 	"log"
@@ -8,12 +23,12 @@ import (
 	"strings"
 )
 
-type GetAllInstalledPackagesOutput struct {
+type TestOutput struct {
 	NAME, PACKAGE_NAME, PACKAGE_VERSION, STATUS string
 }
 
-func ListInstalledPackages(namespace string) []GetAllInstalledPackagesOutput {
-	installedPackages := []GetAllInstalledPackagesOutput{}
+func Test(namespace string) []TestOutput {
+	installedPackages := []TestOutput{}
 	cmd := "tanzu package installed list"
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
@@ -39,7 +54,7 @@ func ListInstalledPackages(namespace string) []GetAllInstalledPackagesOutput {
 
 	for _, element := range temp[2:] {
 		words := linux_util.GetFields(element, indexSpans)
-		var installedPackage GetAllInstalledPackagesOutput
+		var installedPackage TestOutput
 		for index, value := range words {
 			reflect.ValueOf(&installedPackage).Elem().FieldByName(headers[index]).SetString(value)
 		}
