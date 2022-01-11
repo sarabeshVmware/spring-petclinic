@@ -15,7 +15,7 @@ func main() {
 	kubectl_helper.ValidateSpringBootConventions("tanzu-java-web-app-git", "tap-install")
 	kubectl_helper.ValidateDeveloperConventions("tanzu-java-web-app-git", "tap-install")
 	kubectl_helper.GetImageRepositoryStatus("spring-petclinic-delivery", "tap-install")
-	kubectl_helper.GetBuildStatus("spring-petclinic-build-1", "tap-instal")
+	kubectl_helper.GetBuildStatus("spring-petclinic-build-1", "tap-install")
 	kubectl_helper.GetLatestImageStatus("tap-install")
 	kubectl_helper.GetKsvcStatus("spring-petclinic", "tap-install")
 	kubectl_helper.ValidateImageScans("spring-petclinic", "tap-install")
