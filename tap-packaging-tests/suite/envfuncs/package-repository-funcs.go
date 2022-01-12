@@ -27,7 +27,7 @@ func AddPackageRepository(name string, image string, namespace string) env.Func 
 	}
 }
 
-func DeletePackageRepository(name string, image string, namespace string) env.Func {
+func DeletePackageRepository(name string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("deleting package repository %s", name)
 		cmd, output, err := exec.TanzuDeletePackageRepository(name, namespace)

@@ -26,7 +26,7 @@ func CreateSecret(name string, registry string, username string, password string
 	}
 }
 
-func DeleteSecret(name string, registry string, username string, password string, namespace string, export bool) env.Func {
+func DeleteSecret(name string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("deleting secret %s", name)
 		cmd, output, err := exec.TanzuDeleteSecret(name, namespace)
