@@ -1,0 +1,47 @@
+---
+namespaces:
+  - tap-install
+  - my-apps
+outerloop:
+  catalog_info_yaml: https://github.com/dapdelivery/tap-catalog/blob/master/catalog-info.yaml
+  mysql:
+    name: mysql-db
+    namespace: my-apps
+    yaml_file: mysql-service.yaml
+  namespace: my-apps
+  scan_policy:
+    namespace: my-apps
+    yaml_file: scan-policy.yaml
+  spring_petclinic:
+    name: spring-petclinic-tests-pipeline
+    imagerepository_name: spring-petclinic-delivery
+    namespace: my-apps
+    yaml_file: spring-petclinic-tests-pipeline.yaml
+  workload:
+    namespace: my-apps
+    yaml_file: workload.yaml
+package_repository:
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.5.0-build.5
+  name: tanzu-tap-repository
+  namespace: tap-install
+tanzunet_creds_secret:
+  export: true
+  name: tanzunet-registry-creds
+  namespace: tap-install
+  password: <TANZUNET-PASSWORD>
+  registry: registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
+image_secret:
+  export: false
+  name: image-secret
+  namespace: my-apps
+  password: <REPOSITORY-PASSWORD>
+  registry: <REPOSITORY>
+  username: <REPOSITORY-USERNAME>
+tap:
+  name: tap
+  namespace: tap-install
+  package_name: tap.tanzu.vmware.com
+  poll_timeout: 45m
+  values_schema_file: tap-values.yaml
+  version: 0.5.0-build.5

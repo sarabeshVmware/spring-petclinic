@@ -1,0 +1,38 @@
+buildservice:
+    kp_default_repository: dev.registry.tanzu.vmware.com/tanzu-advanced-edition/tbs
+    kp_default_repository_password: <REPOSITORY-PASSWORD>
+    kp_default_repository_username: <REPOSITORY-USERNAME>
+    tanzunet_password: <TANZUNET-PASSWORD>
+    tanzunet_username: <TANZUNET-USERNAME>
+ceip_policy_disclosed: true
+contour:
+    envoy:
+        service:
+            type: LoadBalancer
+grype:
+    namespace: my-apps
+    targetImagePullSecret: image-secret
+learningcenter:
+    ingressDomain: educates.tanzu.vmwware.com
+ootb_supply_chain_basic:
+    gitops:
+        ssh_secret: ""
+    registry:
+        repository: tanzu-advanced-edition/divyanshum/apps-1
+        server: dev.registry.tanzu.vmware.com
+ootb_supply_chain_testing:
+    gitops:
+        ssh_secret: ""
+    registry:
+        repository: tanzu-advanced-edition/divyanshum/apps-1
+        server: dev.registry.tanzu.vmware.com
+ootb_supply_chain_testing_scanning:
+    gitops:
+        ssh_secret: ""
+    registry:
+        repository: tanzu-advanced-edition/divyanshum/apps-1
+        server: dev.registry.tanzu.vmware.com
+profile: full
+supply_chain: basic
+tap_gui:
+    service_type: LoadBalancer
