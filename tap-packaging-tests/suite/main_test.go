@@ -2,77 +2,157 @@ package suite
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"testing"
-	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/envfuncs"
-	e2e "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/pkg"
-	tap "gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/pkg"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 )
 
 var testenv env.Environment
 
-type config struct {
-	Namespaces        []string `yaml:"namespaces"`
+var config = struct {
+	Namespaces []string `yaml:"namespaces"`
+	Outerloop  struct {
+		CatalogInfoYaml string `yaml:"catalog_info_yaml"`
+		Mysql           struct {
+			Name      string `yaml:"name"`
+			Namespace string `yaml:"namespace"`
+			YamlFile  string `yaml:"yaml_file"`
+		} `yaml:"mysql"`
+		Namespace  string `yaml:"namespace"`
+		ScanPolicy struct {
+			Namespace string `yaml:"namespace"`
+			YamlFile  string `yaml:"yaml_file"`
+		} `yaml:"scan_policy"`
+		SpringPetclinic struct {
+			ImageRepositoryName string `yaml:"imagerepository_name"`
+			Name                string `yaml:"name"`
+			Namespace           string `yaml:"namespace"`
+			YamlFile            string `yaml:"yaml_file"`
+		} `yaml:"spring_petclinic"`
+		Workload struct {
+			Namespace string `yaml:"namespace"`
+			YamlFile  string `yaml:"yaml_file"`
+		} `yaml:"workload"`
+	} `yaml:"outerloop"`
 	PackageRepository struct {
 		Image     string `yaml:"image"`
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
 	} `yaml:"package_repository"`
-	TapFull struct {
-		Name        string `yaml:"name"`
-		Namespace   string `yaml:"namespace"`
-		PackageName string `yaml:"package_name"`
-		ValuesFile  string `yaml:"values_file"`
-		Version     string `yaml:"version"`
-		PollTimeout string `yaml:"poll_timeout"`
-	} `yaml:"tap-full"`
-	TapLight struct {
-		Name        string `yaml:"name"`
-		Namespace   string `yaml:"namespace"`
-		PackageName string `yaml:"package_name"`
-		ValuesFile  string `yaml:"values_file"`
-		Version     string `yaml:"version"`
-		PollTimeout string `yaml:"poll_timeout"`
-	} `yaml:"tap-light"`
-	Secret1 struct {
+	TanzunetCredsSecret struct {
 		Export    bool   `yaml:"export"`
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
-		Password  string `yaml:"password"`
-	} `yaml:"secret-1"`
-	Secret2 struct {
+	} `yaml:"tanzunet_creds_secret"`
+	ImageSecret struct {
 		Export    bool   `yaml:"export"`
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
-		Password  string `yaml:"password"`
-	} `yaml:"secret-2"`
-}
+	} `yaml:"image_secret"`
+	Tap struct {
+		Name             string `yaml:"name"`
+		Namespace        string `yaml:"namespace"`
+		PackageName      string `yaml:"package_name"`
+		PollTimeout      string `yaml:"poll_timeout"`
+		ValuesSchemaFile string `yaml:"values_schema_file"`
+		Version          string `yaml:"version"`
+	} `yaml:"tap"`
+}{}
 
-func setLogger() {
-	os.MkdirAll(filepath.Join(e2e.GetFileDir(), "logs"), 0755)
-	logFilePath := filepath.Join("logs", fmt.Sprintf("log_%s.log", time.Now().Format(time.RFC3339Nano)))
-	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	tap.CheckError(err)
-	mw := io.MultiWriter(os.Stdout, logFile)
-	log.SetOutput(mw)
-
-	log.SetFlags(log.LstdFlags | log.Llongfile)
-}
+var tapValuesSchema = struct {
+	Buildservice struct {
+		KpDefaultRepository         string `yaml:"kp_default_repository"`
+		KpDefaultRepositoryPassword string `yaml:"kp_default_repository_password"`
+		KpDefaultRepositoryUsername string `yaml:"kp_default_repository_username"`
+		TanzunetPassword            string `yaml:"tanzunet_password"`
+		TanzunetUsername            string `yaml:"tanzunet_username"`
+	} `yaml:"buildservice"`
+	CeipPolicyDisclosed bool `yaml:"ceip_policy_disclosed"`
+	Cnrs                struct {
+		DomainName interface{} `yaml:"domain_name,omitempty"`
+	} `yaml:"cnrs,omitempty"`
+	Contour struct {
+		Envoy struct {
+			Service struct {
+				Type string `yaml:"type,omitempty"`
+			} `yaml:"service,omitempty"`
+		} `yaml:"envoy,omitempty"`
+	} `yaml:"contour,omitempty"`
+	Grype struct {
+		Namespace             string `yaml:"namespace"`
+		TargetImagePullSecret string `yaml:"targetImagePullSecret"`
+	} `yaml:"grype"`
+	Learningcenter struct {
+		IngressDomain string `yaml:"ingressDomain"`
+	} `yaml:"learningcenter"`
+	OotbSupplyChainBasic struct {
+		Gitops struct {
+			SSHSecret string `yaml:"ssh_secret"`
+		} `yaml:"gitops"`
+		Registry struct {
+			Repository string `yaml:"repository"`
+			Server     string `yaml:"server"`
+		} `yaml:"registry"`
+	} `yaml:"ootb_supply_chain_basic"`
+	OotbSupplyChainTesting struct {
+		Gitops struct {
+			SSHSecret string `yaml:"ssh_secret"`
+		} `yaml:"gitops"`
+		Registry struct {
+			Repository string `yaml:"repository"`
+			Server     string `yaml:"server"`
+		} `yaml:"registry"`
+	} `yaml:"ootb_supply_chain_testing"`
+	OotbSupplyChainTestingScanning struct {
+		Gitops struct {
+			SSHSecret string `yaml:"ssh_secret"`
+		} `yaml:"gitops"`
+		Registry struct {
+			Repository string `yaml:"repository"`
+			Server     string `yaml:"server"`
+		} `yaml:"registry"`
+	} `yaml:"ootb_supply_chain_testing_scanning"`
+	Profile     string `yaml:"profile"`
+	SupplyChain string `yaml:"supply_chain"`
+	TapGui      struct {
+		AppConfig struct {
+			App struct {
+				BaseURL string `yaml:"baseUrl,omitempty"`
+				Title   string `yaml:"title,omitempty"`
+			} `yaml:"app,omitempty"`
+			Backend struct {
+				BaseURL string `yaml:"baseUrl,omitempty"`
+				Cors    struct {
+					Origin string `yaml:"origin,omitempty"`
+				} `yaml:"cors,omitempty"`
+			} `yaml:"backend,omitempty"`
+			Catalog struct {
+				Locations []struct {
+					Target string `yaml:"target,omitempty"`
+					Type   string `yaml:"type,omitempty"`
+				} `yaml:"locations,omitempty"`
+			} `yaml:"catalog,omitempty"`
+		} `yaml:"app_config,omitempty"`
+		ServiceType string `yaml:"service_type,omitempty"`
+	} `yaml:"tap_gui,omitempty"`
+}{}
 
 func TestMain(m *testing.M) {
-	setLogger()
-	tap.CheckPrerequisites() // TODO: create function in this package
+	logFile, err := SetLogger(filepath.Join(GetFileDir(), "logs"))
+	if err != nil {
+		log.Fatal(fmt.Errorf("error while setting log file %s: %w", logFile, err))
+	}
 
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -80,32 +160,49 @@ func TestMain(m *testing.M) {
 	}
 	testenv = env.NewWithKubeConfig(filepath.Join(home, ".kube", "config"))
 
-	configBytes, err := os.ReadFile(filepath.Join(e2e.GetFileDir(), "suite-config.yaml"))
+	configBytes, err := os.ReadFile(filepath.Join(GetFileDir(), "suite-config.yaml"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while reading config file: %w", err))
 	}
-
-	config := config{}
 	err = yaml.Unmarshal(configBytes, &config)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while unmarshalling config file: %w", err))
 	}
 
+	config.Tap.ValuesSchemaFile = filepath.Join(GetFileDir(), config.Tap.ValuesSchemaFile)
+
+	outerloopResourcesDir := "outerloop-resources"
+	config.Outerloop.Mysql.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.Mysql.YamlFile)
+	config.Outerloop.ScanPolicy.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.ScanPolicy.YamlFile)
+	config.Outerloop.SpringPetclinic.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.SpringPetclinic.YamlFile)
+	config.Outerloop.Workload.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.Workload.YamlFile)
+
+	tapValuesSchemaBytes, err := os.ReadFile(config.Tap.ValuesSchemaFile)
+	if err != nil {
+		log.Fatal(fmt.Errorf("error while reading tap values schema file: %w", err))
+	}
+	err = yaml.Unmarshal(tapValuesSchemaBytes, &tapValuesSchema)
+	if err != nil {
+		log.Fatal(fmt.Errorf("error while unmarshalling tap values schema file: %w", err))
+	}
+
 	testenv.Setup(
+		envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
+		envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
 		envfuncs.CreateNamespaces(config.Namespaces),
-		envfuncs.CreateSecret(config.Secret1.Name, config.Secret1.Registry, config.Secret1.Username, config.Secret1.Password, config.Secret1.Namespace, config.Secret1.Export),
-		envfuncs.CreateSecret(config.Secret2.Name, config.Secret2.Registry, config.Secret2.Username, config.Secret2.Password, config.Secret2.Namespace, config.Secret2.Export),
+		envfuncs.CreateSecret(config.TanzunetCredsSecret.Name, config.TanzunetCredsSecret.Registry, config.TanzunetCredsSecret.Username, config.TanzunetCredsSecret.Password, config.TanzunetCredsSecret.Namespace, config.TanzunetCredsSecret.Export),
+		envfuncs.CreateSecret(config.ImageSecret.Name, config.ImageSecret.Registry, config.ImageSecret.Username, config.ImageSecret.Password, config.ImageSecret.Namespace, config.ImageSecret.Export),
 		envfuncs.AddPackageRepository(config.PackageRepository.Name, config.PackageRepository.Image, config.PackageRepository.Namespace),
 		envfuncs.CheckIfPackageRepositoryReconciled(config.PackageRepository.Name, config.PackageRepository.Namespace, 10),
-		envfuncs.InstallPackage(config.TapFull.Name, config.TapFull.PackageName, config.TapFull.Version, config.TapFull.Namespace, filepath.Join(e2e.GetFileDir(), "values", config.TapFull.ValuesFile), config.TapFull.PollTimeout),
-		envfuncs.CheckIfPackageInstalled(config.TapFull.Name, config.TapFull.Namespace, 10),
+		envfuncs.InstallPackage(config.Tap.Name, config.Tap.PackageName, config.Tap.Version, config.Tap.Namespace, config.Tap.ValuesSchemaFile, config.Tap.PollTimeout),
+		envfuncs.CheckIfPackageInstalled(config.Tap.Name, config.Tap.Namespace, 10),
 	)
 
 	testenv.Finish(
-		envfuncs.UninstallPackage(config.TapFull.Name, config.TapFull.Namespace),
-		envfuncs.DeletePackageRepository(config.PackageRepository.Name, config.PackageRepository.Image, config.PackageRepository.Namespace),
-		envfuncs.DeleteSecret(config.Secret2.Name, config.Secret2.Registry, config.Secret2.Username, config.Secret2.Password, config.Secret2.Namespace, config.Secret2.Export),
-		envfuncs.DeleteSecret(config.Secret1.Name, config.Secret1.Registry, config.Secret1.Username, config.Secret1.Password, config.Secret1.Namespace, config.Secret1.Export),
+		envfuncs.UninstallPackage(config.Tap.Name, config.Tap.Namespace),
+		envfuncs.DeletePackageRepository(config.PackageRepository.Name, config.PackageRepository.Namespace),
+		envfuncs.DeleteSecret(config.ImageSecret.Name, config.ImageSecret.Namespace),
+		envfuncs.DeleteSecret(config.TanzunetCredsSecret.Name, config.TanzunetCredsSecret.Namespace),
 		envfuncs.DeleteNamespaces(config.Namespaces),
 	)
 
