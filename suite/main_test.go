@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/envfuncs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 )
