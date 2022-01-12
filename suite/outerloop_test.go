@@ -7,8 +7,8 @@ import (
 
 	"testing"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/client"
-	"gitlab.eng.vmware.com/tap/tap-packages/tap-packaging-tests/suite/exec"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
