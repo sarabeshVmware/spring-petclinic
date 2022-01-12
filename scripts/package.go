@@ -93,14 +93,19 @@ func main() {
 }
 
 func ValidateImage(Image string) {
+	log.Println("Validating Image" , Image)
 	InValidImage := strings.Contains(Image, "pivotal.io")
-	DevImage := strings.Contains(Image, "dev")
+	DevImage := strings.Contains(Image, "dev.registry.tanzu.vmware.com")
+	ShaImage := strings.Contains(Image, "@sha256:")
 	if InValidImage || !DevImage {
 		log.Fatalln("Please provide image reference which points to dev.registry.tanzu.vmware.com")
-	} else {
-		log.Println("Image reference in package CR is validated successfully")
 	}
+	if !ShaImage{
+		log.Fatalln("Please provide bundle image in digested form instead of tag")
+	}
+	log.Println("Image reference in package CR is validated successfully")
 }
+
 
 func ValidateTemplateSection(packageFile PackageCR) {
 	isKbldPresent, isPathPresentInKbldPath := false, false
