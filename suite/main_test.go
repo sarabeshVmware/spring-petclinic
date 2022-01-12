@@ -160,7 +160,9 @@ func TestMain(m *testing.M) {
 	}
 	testenv = env.NewWithKubeConfig(filepath.Join(home, ".kube", "config"))
 
-	configBytes, err := os.ReadFile(filepath.Join(GetFileDir(), "suite-config.yaml"))
+	suiteResourcesDir, outerloopResourcesDir := "suite-resources", "outerloop-resources"
+
+	configBytes, err := os.ReadFile(filepath.Join(GetFileDir(), suiteResourcesDir, "suite-config.yaml"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while reading config file: %w", err))
 	}
@@ -169,9 +171,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(fmt.Errorf("error while unmarshalling config file: %w", err))
 	}
 
-	config.Tap.ValuesSchemaFile = filepath.Join(GetFileDir(), config.Tap.ValuesSchemaFile)
-
-	outerloopResourcesDir := "outerloop-resources"
+	config.Tap.ValuesSchemaFile = filepath.Join(GetFileDir(), suiteResourcesDir, config.Tap.ValuesSchemaFile)
 	config.Outerloop.Mysql.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.Mysql.YamlFile)
 	config.Outerloop.ScanPolicy.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.ScanPolicy.YamlFile)
 	config.Outerloop.SpringPetclinic.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.SpringPetclinic.YamlFile)
