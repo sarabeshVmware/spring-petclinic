@@ -8,22 +8,6 @@ import (
 	"fmt"
 )
 
-type packageInstalledOutput struct {
-	Name           string `json:"name"`
-	PackageName    string `json:"package-name"`
-	PackageVersion string `json:"package-version"`
-	Status         string `json:"status"`
-}
-
-type packageRepositoryOutput []struct {
-	Name       string `json:"name"`
-	Reason     string `json:"reason"`
-	Repository string `json:"repository"`
-	Status     string `json:"status"`
-	Tag        string `json:"tag"`
-	Version    string `json:"version"`
-}
-
 func TanzuInstallPackage(name string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) (string, string, error) {
 	cmd := fmt.Sprintf("tanzu package install %s -p %s -v %s -n %s", name, packageName, version, namespace)
 	if valuesFile != "" {
@@ -54,15 +38,17 @@ func TanzuGetPackageInstalledStatus(name string, namespace string) (string, stri
 	if err != nil {
 		return cmd, "", err
 	}
-	packageInstall := []packageInstalledOutput{}
-	err = json.Unmarshal([]byte(output), &packageInstall)
+	packageInstalled := []struct {
+		Status string `json:"status"`
+	}{}
+	err = json.Unmarshal([]byte(output), &packageInstalled)
 	if err != nil {
 		return cmd, "", err
 	}
-	if len(packageInstall) <= 0 {
+	if len(packageInstalled) <= 0 {
 		return cmd, "", fmt.Errorf("list empty for package installed status for package %s", name)
 	}
-	return cmd, packageInstall[0].Status, nil
+	return cmd, packageInstalled[0].Status, nil
 }
 
 func TanzuAddPackageRepository(name string, image string, namespace string) (string, string, error) {
@@ -83,7 +69,9 @@ func TanzuGetPackageRepositoryStatus(name string, namespace string) (string, str
 	if err != nil {
 		return cmd, "", err
 	}
-	packageRepository := packageRepositoryOutput{}
+	packageRepository := []struct {
+		Status string `json:"status"`
+	}{}
 	err = json.Unmarshal([]byte(output), &packageRepository)
 	if err != nil {
 		return cmd, "", err
@@ -105,6 +93,12 @@ func TanzuCreateSecret(name string, registry string, username string, password s
 
 func TanzuDeleteSecret(name string, namespace string) (string, string, error) {
 	cmd := fmt.Sprintf("tanzu secret registry delete %s -n %s -y", name, namespace)
+	output, err := RunCommand(cmd)
+	return cmd, output, err
+}
+
+func TanzuDeployWorkload(workloadFile string, namespace string) (string, string, error) {
+	cmd := fmt.Sprintf("tanzu apps workload apply -f %s -n %s -y", workloadFile, namespace)
 	output, err := RunCommand(cmd)
 	return cmd, output, err
 }
