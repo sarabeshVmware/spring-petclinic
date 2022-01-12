@@ -35,9 +35,9 @@ image_secret:
   export: false
   name: image-secret
   namespace: my-apps
-  password: <TANZUNET-PASSWORD>
-  registry: dev.registry.tanzu.vmware.com
-  username: <TANZUNET-USERNAME>
+  password: <REPOSITORY-PASSWORD>
+  registry: <REPOSITORY>
+  username: <REPOSITORY-USERNAME>
 tap:
   name: tap
   namespace: tap-install
