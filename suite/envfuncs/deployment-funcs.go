@@ -16,7 +16,7 @@ import (
 
 func CheckAndDeploy(name string, files []string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		isDeployed, err := client.CheckDeploymentExists("kapp-controller", cfg.Client().RESTConfig())
+		isDeployed, err := client.CheckDeploymentExists(name, cfg.Client().RESTConfig())
 		if err != nil {
 			return ctx, fmt.Errorf("error while checking for deployment %s: %w", name, err)
 		}
