@@ -3,13 +3,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 1.0.0-rc.1
+  version: 1.0.0
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 1.0.0-rc.1
+  version: 1.0.0
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
