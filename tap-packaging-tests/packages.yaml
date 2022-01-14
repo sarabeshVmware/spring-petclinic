@@ -3,13 +3,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 0.5.0-build.5
+  version: 1.0.0
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 0.5.0-build.5
+  version: 1.0.0
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
@@ -41,7 +41,7 @@
   name: cartographer
   namespace: tap-install
   package: cartographer.tanzu.vmware.com
-  version: 0.1.0-rc.1
+  version: 0.1.0
 - description: 'Cloud Native Runtimes: Cloud Native Runtimes is a serverless runtime based on Knative'
   name: cloud-native-runtimes
   namespace: tap-install
@@ -93,7 +93,7 @@
   namespace: tap-install
   package: ootb-supply-chain-basic.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.5.0-build.1
+  version: 0.5.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -102,7 +102,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing-scanning.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.5.0-build.1
+  version: 0.5.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -111,7 +111,7 @@
   namespace: tap-install
   package: ootb-supply-chain-testing.tanzu.vmware.com
   values_file: ./values/ootb-supply-chain.yaml
-  version: 0.5.0-build.1
+  version: 0.5.1
   package_dependencies:
     - cartographer.tanzu.vmware.com
     - ootb-templates.tanzu.vmware.com
@@ -119,7 +119,7 @@
   name: ootb-templates
   namespace: tap-install
   package: ootb-templates.tanzu.vmware.com
-  version: 0.5.0-build.1
+  version: 0.5.1
 - description: 'Tanzu Supply Chain Security Tools - Store: The Metadata Store enables saving and querying image, package, and vulnerability data.'
   name: metadata-store
   namespace: tap-install

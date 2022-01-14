@@ -1,0 +1,24 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: spring-petclinic-tests-pipeline
+spec:
+  params:
+    - name: source-url
+    - name: source-revision
+  tasks:
+    - name: test
+      params:
+        - name: source-url
+          value: https://github.com/dapdelivery/spring-petclinic.git
+        - name: source-revision
+          value: e7c879e
+      taskSpec:
+        params:
+          - name: source-url
+          - name: source-revision
+        steps:
+          - name: test
+            image: gradle
+            script: |-
+              cd `mktemp -d`

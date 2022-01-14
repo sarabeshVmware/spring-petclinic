@@ -1,0 +1,89 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: api-portal.tanzu.vmware.com.1.0.9
+spec:
+  refName: api-portal.tanzu.vmware.com
+  version: 1.0.9
+  releasedAt: "2022-01-03T00:00:00Z"
+  releaseNotes: |
+    Resolved the CVE issues; recommend upgrade from the previous versions
+  valuesSchema:
+    openAPIv3:
+      title: api-portal.tanzu.vmware.com values schema
+      examples: []
+      properties:
+        apiPortalServer:
+          type: object
+          description: API portal server configurations
+          properties:
+            replicaCount:
+              type: integer
+              description: Number of replicas
+              default: 1
+            title:
+              type: string
+              description: Title of the API portal instance
+              default: API portal
+            description:
+              type: string
+              description: Description of the API portal instance
+              default: API portal for <namespace> namespace
+            sourceUrls:
+              type: string
+              description: OpenAPI urls to load
+              default: https://petstore.swagger.io/v2/swagger.json,https://petstore3.swagger.io/api/v3/openapi.json
+            sourceUrlsCacheTtlSec:
+              type: string
+              description: Time after which they will be refreshed (in seconds)
+              default: "300"
+            sourceUrlsTimeoutSec:
+              type: string
+              description: Timeout for remote OpenAPI retrieval (in seconds)
+              default: "10"
+            requestMemory:
+              type: string
+              description: Requests describes the minimum amount of memory resources required.
+              default: 512Mi
+            requestCpu:
+              type: string
+              description: Requests describes the minimum amount of cpu resources required.
+              default: 100m
+            limitMemory:
+              type: string
+              description: Limits describes the maximum amount of memory resources allowed.
+              default: 1024Mi
+            limitCpu:
+              type: string
+              description: Limits describes the maximum amount of cpu resources allowed.
+              default: 500m
+            namespace:
+              type: string
+              description: The namespace to deploy API portal to
+              default: api-portal
+            sso:
+              type: object
+              description: SSO Configuration
+              properties:
+                secret:
+                  type: string
+                  description: Secret name to search in the namespace which contains "scope", "issuer-uri", "client-id" and "client-secret"
+                  default: sso-credentials
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.9
+      template:
+      - ytt:
+          paths:
+          - config/
+          - values.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
