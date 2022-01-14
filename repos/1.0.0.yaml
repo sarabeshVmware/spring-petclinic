@@ -35,7 +35,7 @@ packages:
       - 1.0.0
   - name: developer-conventions
     versions:
-      - 0.5.0
+      - 0.5.0-build.1
   - name: insight-metadata-store
     versions:
       - 1.0.1
