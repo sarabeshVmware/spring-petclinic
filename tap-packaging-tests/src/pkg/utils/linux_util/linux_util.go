@@ -28,7 +28,7 @@ func ExecuteCmd(command string) (string, error) {
 	} else {
 		log.Printf("Output: \n%s", string(stdoutStderr))
 	}
-	return stripAnsiEscapeSequence(string(stdoutStderr)), err
+	return string(stdoutStderr), err
 }
 
 type span struct {
