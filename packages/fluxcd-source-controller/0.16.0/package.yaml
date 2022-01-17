@@ -1,3 +1,4 @@
+---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
@@ -5,7 +6,7 @@ metadata:
 spec:
   refName: fluxcd.source.controller.tanzu.vmware.com
   version: 0.16.0
-  releasedAt: "2021-10-08T10:30:14Z"
+  releasedAt: 2021-10-28T00:00:00Z
   valuesSchema:
     openAPIv3:
       properties: {}
@@ -13,7 +14,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:7a40f7e9eb16f9633d909d85979ab26714389e866c3fa37882e5c71ef99285c0
+          image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
       template:
       - ytt:
           inline:
@@ -41,10 +42,10 @@ spec:
                       imagePullSecrets:
                       - name: canonical-registry-secret
           paths:
-          - config/
+            - "config/"
       - kbld:
           paths:
-          - '-'
-          - .imgpkg/images.yml
+          - "-"
+          - ".imgpkg/images.yml"
       deploy:
       - kapp: {}
