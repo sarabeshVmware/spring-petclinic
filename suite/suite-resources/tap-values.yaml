@@ -1,3 +1,6 @@
+accelerator:
+    server:
+        service_type: ClusterIP
 buildservice:
     kp_default_repository: dev.registry.tanzu.vmware.com/tanzu-advanced-edition/tbs
     kp_default_repository_password: <REPOSITORY-PASSWORD>
