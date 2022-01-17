@@ -56,7 +56,7 @@ packages:
       - 1.0.1
   - name: tap
     versions:
-      - 1.0.0
+      - 1.0.1-build.1
   - name: learning-center-workshops
     versions:
       - 0.1.0
