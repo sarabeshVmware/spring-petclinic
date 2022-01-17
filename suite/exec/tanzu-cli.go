@@ -103,12 +103,6 @@ func TanzuDeployWorkload(workloadFile string, namespace string) (string, string,
 	return cmd, output, err
 }
 
-func TanzuCreateWorkload(workloadFile string, namespace string) (string, string, error) {
-	cmd := fmt.Sprintf("tanzu apps workload apply -f %s -n %s -y", workloadFile, namespace)
-	output, err := RunCommand(cmd)
-	return cmd, output, err
-}
-
 func TanzuGenerateAccelerator(acceleratorName string, projectName string, repositoryPrefix string, serverIP string, namespace string) (string, string, error){
 	cmd:= fmt.Sprintf(`tanzu accelerator generate %s --options '{"projectName":"%s", "repositoryPrefix":"%s", "includeKubernetes": true}' --server-url http://%s`, acceleratorName, projectName, repositoryPrefix, serverIP)
 	output, err := RunCommandInBashMode(cmd)
