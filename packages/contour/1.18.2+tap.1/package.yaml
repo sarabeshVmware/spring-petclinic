@@ -13,7 +13,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg:v1.18.2_vmware.1-tkg.1-20211114
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
       template:
       - ytt:
           inline:
