@@ -11,8 +11,7 @@ import (
 
 func stripAnsiEscapeSequence(s string) string {
 	// Following matches most of the ANSI escape codes, beyond just colors, including the extended VT100 codes, archaic/proprietary printer codes, etc.
-	// https://stackoverflow.com/questions/25245716/remove-all-ansi-colors-styles-from-strings/29497680
-	const ansi = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
+	const ansi = "[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]"
 	var re = regexp.MustCompile(ansi)
 	return re.ReplaceAllString(s, "")
 }

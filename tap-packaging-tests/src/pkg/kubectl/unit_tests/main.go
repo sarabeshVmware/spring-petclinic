@@ -1,8 +1,8 @@
 package main
 
 import (
-	kubectl_helper "pkg/kubectl/kubectl_helper"
-	kubectl_lib "pkg/kubectl/kubectl_lib"
+	kubectl_helper "pkg/kubectl/kubectl_helpers"
+	kubectl_lib "pkg/kubectl/kubectl_libs"
 )
 
 func main() {
@@ -29,8 +29,8 @@ func main() {
 	/// Testing kubectl helper methods
 	kubectl_lib.GetPodintent("tanzu-java-web-app-git", "tap-install")
 	kubectl_lib.GetWorkload("tanzu-java-web-app-git", "tap-install")
-	kubectl_lib.GetImageRepositories("tanzu-java-web-app-git", "tap-install")
-	kubectl_lib.GetBuilds("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetImageRepositories("tanzu-java-web-app-git-delivery", "tap-install")
+	kubectl_lib.GetBuilds("tanzu-java-web-app-git-build-1", "tap-install")
 	kubectl_lib.GetLatestImage("tap-install")
 	kubectl_lib.GetKsvc("tanzu-java-web-app-git", "tap-install")
 	kubectl_lib.GetSourceScan("tanzu-java-web-app-git", "tap-install")

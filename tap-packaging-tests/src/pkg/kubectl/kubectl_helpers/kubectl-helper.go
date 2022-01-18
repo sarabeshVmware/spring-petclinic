@@ -1,9 +1,9 @@
-package kubectl_helper
+package kubectl_helpers
 
 import (
 	"fmt"
 	"log"
-	kubectl_lib "pkg/kubectl/kubectl_lib"
+	kubectl_lib "pkg/kubectl/kubectl_libs"
 	"pkg/utils/linux_util"
 	"strings"
 )
@@ -26,7 +26,7 @@ func ValidateAppLiveViewConventions(name string, namespace string) bool {
 	validateConventions := [3]string{"appliveview-sample/app-live-view-connector", "appliveview-sample/app-live-view-appflavours", "appliveview-sample/app-live-view-systemproperties"}
 	log.Println("Validating 'App Live View' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
@@ -54,7 +54,7 @@ func ValidateSpringBootConventions(name string, namespace string) bool {
 	validateConventions := [4]string{"spring-boot-convention/spring-boot", "spring-boot-convention/spring-boot-graceful-shutdown", "spring-boot-convention/spring-boot-web", "spring-boot-convention/spring-boot-actuator"}
 	log.Println("Validating 'Spring Boot' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
@@ -69,7 +69,7 @@ func ValidateDeveloperConventions(name string, namespace string) bool {
 	validateConventions := [2]string{"developer-conventions/live-update-convention", "developer-conventions/add-source-image-label"}
 	log.Println("Validating 'Developer' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
