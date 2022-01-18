@@ -1,8 +1,8 @@
 package main
 
 import (
-	kubectl_helper "pkg/kubectl/kubectl_helpers"
-	kubectl_lib "pkg/kubectl/kubectl_libs"
+	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 )
 
 func main() {

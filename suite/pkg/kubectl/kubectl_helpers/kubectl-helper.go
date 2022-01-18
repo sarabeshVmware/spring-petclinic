@@ -1,9 +1,12 @@
-package kubectl_helper
+package kubectl_helpers
 
 import (
+	"fmt"
 	"log"
-	kubectl_lib "pkg/kubectl/kubectl_lib"
 	"strings"
+
+	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
+	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
 func ValidateAppLiveViewLabels(name string, namespace string) bool {
@@ -24,7 +27,7 @@ func ValidateAppLiveViewConventions(name string, namespace string) bool {
 	validateConventions := [3]string{"appliveview-sample/app-live-view-connector", "appliveview-sample/app-live-view-appflavours", "appliveview-sample/app-live-view-systemproperties"}
 	log.Println("Validating 'App Live View' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
@@ -52,7 +55,7 @@ func ValidateSpringBootConventions(name string, namespace string) bool {
 	validateConventions := [4]string{"spring-boot-convention/spring-boot", "spring-boot-convention/spring-boot-graceful-shutdown", "spring-boot-convention/spring-boot-web", "spring-boot-convention/spring-boot-actuator"}
 	log.Println("Validating 'Spring Boot' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
@@ -67,7 +70,7 @@ func ValidateDeveloperConventions(name string, namespace string) bool {
 	validateConventions := [2]string{"developer-conventions/live-update-convention", "developer-conventions/add-source-image-label"}
 	log.Println("Validating 'Developer' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
+	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
 	for _, value := range validateConventions {
 		if !(strings.Contains(raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions, value)) {
 			log.Println("Validation failed")
@@ -105,9 +108,70 @@ func GetLatestImageStatus(namespace string) string {
 	return image.READY
 }
 
-func GetKsvcImageStatus(name string, namespace string) string {
+func GetKsvcStatus(name string, namespace string) string {
 	log.Println("Get ksvc image status...")
-	ksvIimage := kubectl_lib.GetKsvcImage(name, namespace)
-	log.Printf("ksvc image status : %s", ksvIimage.READY)
-	return ksvIimage.READY
+	ksvc := kubectl_lib.GetKsvc(name, namespace)
+	log.Printf("ksvc image status : %s", ksvc.READY)
+	return ksvc.READY
+}
+
+func ValidateImageScans(name string, namespace string) bool {
+	log.Println("Validating image scans")
+	imageScan := kubectl_lib.GetImageScan(name, namespace)
+	if imageScan.PHASE == "Completed" && imageScan.CRITICAL == "" && imageScan.HIGH == "" && imageScan.MEDIUM == "" && imageScan.LOW == "" && imageScan.UNKNOWN == "" && imageScan.CVETOTAL == "" {
+		return true
+	}
+	return false
+}
+
+func ValidateSourceScans(name string, namespace string) bool {
+	log.Println("Validating source scans")
+	srcScan := kubectl_lib.GetSourceScan(name, namespace)
+	if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
+		return true
+	}
+	return false
+}
+
+func ValidatePipelineExists(name string, namespace string) bool {
+	log.Println("Validating pipeline exists")
+	pipeline := kubectl_lib.GetPipeline(name, namespace)
+	return (kubectl_lib.GetPipelineOutput{}) != pipeline
+}
+
+func ValidatePipelineRuns(name string, namespace string) bool {
+	log.Println("Validating pipeline runs")
+	prs := kubectl_lib.GetPipelineRuns(name, namespace)
+	if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" {
+		return true
+	}
+	return false
+}
+
+func ValidateServiceBindings(name string, namespace string) bool {
+	log.Println("Validating service bindings")
+	svcBindings := kubectl_lib.GetServiceBindings(name, namespace)
+	if svcBindings.READY == "True" && svcBindings.REASON == "Ready" {
+		return true
+	}
+	return false
+}
+
+func ValidateTrainingPortalStatus(name string) bool {
+	log.Println("Validating training portals")
+	tp := kubectl_lib.GetTrainingPortals(name)
+	return tp.STATUS == "Running"
+}
+
+func ValidateLearningCenter(name string, namespace string) bool {
+	log.Println("Validating 'Learning Center'")
+	img := kubectl_lib.GetIngress(name, namespace)
+	cmd1 := fmt.Sprintf("echo '%s %s' >> /etc/hosts", img.ADDRESS, img.HOSTS)
+	linux_util.ExecuteCmd(cmd1)
+	cmd2 := fmt.Sprintf("curl -i %s", img.HOSTS)
+	res, err := linux_util.ExecuteCmd(cmd2)
+	if err != nil {
+		log.Println("error")
+	}
+	return strings.Contains(res, "HTTP/1.1 302 Found")
 }

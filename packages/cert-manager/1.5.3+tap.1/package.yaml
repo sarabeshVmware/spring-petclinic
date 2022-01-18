@@ -13,7 +13,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/cert-manager-pkg:v1.5.3_vmware.2-tkg.1-20211114
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/cert-manager-pkg@sha256:e4b2967b7b0779dc363ca0411fa098e251ba4c1fcd97cf1b976ea71b23aee2c4
       template:
       - ytt:
           inline:
