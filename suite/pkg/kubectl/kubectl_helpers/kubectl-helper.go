@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -176,4 +177,31 @@ func ValidateLearningCenter(name string, namespace string) bool {
 		log.Println("error")
 	}
 	return strings.Contains(res, "HTTP/1.1 302 Found")
+}
+
+func VerifyBuildStatus(namespace string) {
+	count := 60
+	for count <= 60 {
+		if count == 0 {
+			log.Fatalf("Builds are not generated after 5 mins")
+			break
+		}
+		builds := kubectl_lib.GetBuilds("", namespace)
+		if len(builds) < 1 {
+			log.Println("Builds are not generated yet")
+		} else {
+			status := builds[len(builds)-1].SUCCEEDED
+			build_name := builds[len(builds)-1].NAME
+			if status == "Unknown" {
+				log.Printf("Build %s status is Unknown", build_name)
+
+			} else if status == "True" {
+				log.Printf("Build %s status is verified successfully. Status is %s", build_name, status)
+				break
+			}
+		}
+		log.Printf("Waiting for 10s for builds getting generated ...")
+		time.Sleep(10 * time.Second)
+		count -= 1
+	}
 }
