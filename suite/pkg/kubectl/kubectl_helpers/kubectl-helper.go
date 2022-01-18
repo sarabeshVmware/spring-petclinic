@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -81,24 +82,26 @@ func ValidateDeveloperConventions(name string, namespace string) bool {
 	return true
 }
 
-func GetImageRepositoryStatus(name string, namespace string) string {
+func GetLatestImageRepositoryStatus(name string, namespace string) string {
 	log.Println("Get imagerepository status...")
 	imagerepos := kubectl_lib.GetImageRepositories(name, namespace)
-	if len(imagerepos) > 1 {
-		log.Println("Multiple images found. Returning status of first image.")
+	if len(imagerepos) < 1 {
+		log.Println("No images found")
+		return "None"
 	}
-	log.Printf("imagerepository status : %s", imagerepos[0].READY)
-	return imagerepos[0].READY
+	log.Printf("imagerepository status : %s", imagerepos[len(imagerepos)-1].READY)
+	return imagerepos[len(imagerepos)-1].READY
 }
 
-func GetBuildStatus(name string, namespace string) string {
+func GetLatestBuildStatus(name string, namespace string) string {
 	log.Println("Get build status...")
 	builds := kubectl_lib.GetBuilds(name, namespace)
-	if len(builds) > 1 {
-		log.Println("Multiple builds found. Returning status of first build.")
+	if len(builds) < 1 {
+		log.Println("No builds found")
+		return "None"
 	}
-	log.Printf("build status : %s", builds[0].SUCCEEDED)
-	return builds[0].SUCCEEDED
+	log.Printf("build status : %s", builds[len(builds)-1].SUCCEEDED)
+	return builds[len(builds)-1].SUCCEEDED
 }
 
 func GetLatestImageStatus(namespace string) string {
@@ -174,4 +177,31 @@ func ValidateLearningCenter(name string, namespace string) bool {
 		log.Println("error")
 	}
 	return strings.Contains(res, "HTTP/1.1 302 Found")
+}
+
+func VerifyBuildStatus(namespace string) {
+	count := 60
+	for count <= 60 {
+		if count == 0 {
+			log.Fatalf("Builds are not generated after 5 mins")
+			break
+		}
+		builds := kubectl_lib.GetBuilds("", namespace)
+		if len(builds) < 1 {
+			log.Println("Builds are not generated yet")
+		} else {
+			status := builds[len(builds)-1].SUCCEEDED
+			build_name := builds[len(builds)-1].NAME
+			if status == "Unknown" {
+				log.Printf("Build %s status is Unknown", build_name)
+
+			} else if status == "True" {
+				log.Printf("Build %s status is verified successfully. Status is %s", build_name, status)
+				break
+			}
+		}
+		log.Printf("Waiting for 10s for builds getting generated ...")
+		time.Sleep(10 * time.Second)
+		count -= 1
+	}
 }
