@@ -6,7 +6,7 @@ import (
 	"log"
 	"time"
 
-	linux_util "gitlab.eng.vmware.com/tap/tap-packages/pkg/utils/linux_util"
+	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
 type GetRunnablesJsonOutput struct {
