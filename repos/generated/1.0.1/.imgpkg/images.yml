@@ -70,8 +70,8 @@ images:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:12c36c6050f469daea4194e22b90621dc2f27fdcfc925bc9f014d67d78304112
   image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:12c36c6050f469daea4194e22b90621dc2f27fdcfc925bc9f014d67d78304112
 - annotations:
-    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
-  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-package@sha256:742cbb9e918d5142930e3ee3728b2886639d9cf5c93e70813fb4c1f2404d709a
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-package@sha256:742cbb9e918d5142930e3ee3728b2886639d9cf5c93e70813fb4c1f2404d709a
 - annotations:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-build.5@sha256:f0a39fdff4e8a41d12ab9139c71550a5819ad1d375c64963b895d21f4ca69b78
   image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:f0a39fdff4e8a41d12ab9139c71550a5819ad1d375c64963b895d21f4ca69b78
@@ -82,8 +82,8 @@ images:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
   image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
 - annotations:
-    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:cb7dc5cbd90c5919249c0742b1e6cb787b3c1435eeb8558938d94272bb090b1f
-  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:cb7dc5cbd90c5919249c0742b1e6cb787b3c1435eeb8558938d94272bb090b1f
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:edb32051469080a6fe787e7e18a5a7b0148966572ed1d4af3042a358a532c055
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:edb32051469080a6fe787e7e18a5a7b0148966572ed1d4af3042a358a532c055
 - annotations:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:dc610ba492e687a3a6bbde3c3d50482853e04187ac9621aa6b8c35c7b6046a47
   image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:dc610ba492e687a3a6bbde3c3d50482853e04187ac9621aa6b8c35c7b6046a47
