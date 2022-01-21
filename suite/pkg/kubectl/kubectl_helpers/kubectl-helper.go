@@ -268,7 +268,7 @@ func VerifyImageRepositoryStatus(name string, namespace string) bool {
 			log.Fatalf("Image repositories are not generated after 5 mins")
 			return false
 		}
-		img := kubectl_lib.GetImageRepositories("", namespace)
+		img := kubectl_lib.GetImageRepositories(name, namespace)
 		if len(img) < 1 {
 			log.Println("Image repository is not generated yet")
 		} else {

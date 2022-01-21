@@ -150,8 +150,8 @@ func TestInnerloopBasic(t *testing.T) {
 				t.Error(fmt.Errorf("error while tilting-up : %w", err))
 				t.FailNow()
 			}
-			t.Logf("sleeping for 2 minutes")
-			time.Sleep(2 * time.Minute)
+			t.Logf("sleeping for 1 minute")
+			time.Sleep(1 * time.Minute)
 			return context.WithValue(ctx, tiltprocCmdKey, proc)
 		}).
 		Feature()
@@ -162,7 +162,7 @@ func TestInnerloopBasic(t *testing.T) {
 			imagerepository := [2]string{config.Innerloop.Workload.Name + "-delivery", config.Innerloop.Workload.Name}
 			for _, imageRepo := range imagerepository {
 				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, config.Innerloop.Workload.Namespace)
-				t.Logf("ImageRepository %s status is : %s", imageRepo, status)
+				t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 				if !status {
 					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
 					t.Fail()
@@ -266,7 +266,7 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
 			status := kubectl_helper.VerifyKsvcStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
-			t.Logf("ksvc status is : %s", status)
+			t.Logf("ksvc status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("ksvc %s is not ready.", config.Innerloop.Workload.Name))
 				t.Fail()
