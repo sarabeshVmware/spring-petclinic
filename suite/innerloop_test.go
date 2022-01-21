@@ -13,6 +13,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 	"testing"
 	"time"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/stepfuncs"
 )
 
 const tiltApp = "tanzu-java-web-app"
@@ -304,15 +305,19 @@ func TestInnerloopBasic(t *testing.T) {
 		Feature()
 
 	f14 := features.New("verify-app-response").
-		Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify app %s response", tiltApp)
-			result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
-			t.Logf("App response is : %s", result)
-			if result != "Greetings from Spring Boot + Tanzu!" {
-				t.Error(fmt.Errorf("App response not valid"))
-				t.FailNow()
-			}
-			return ctx
+		// Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		// 	t.Logf("verify app %s response", tiltApp)
+		// 	result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
+		// 	t.Logf("App response is : %s", result)
+		// 	if result != "Greetings from Spring Boot + Tanzu!" {
+		// 		t.Error(fmt.Errorf("App response not valid"))
+		// 		t.FailNow()
+		// 	}
+		// 	return ctx
+		// }).
+		// Feature()
+		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL, "Greetings from Spring Boot + Tanzu!")
 		}).
 		Feature()
 
@@ -334,18 +339,21 @@ func TestInnerloopBasic(t *testing.T) {
 		Feature()
 
 	f16 := features.New("verify-app-response-after-replace-string").
-		Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify app %s response", tiltApp)
-			result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
-			t.Logf("App response is : %s", result)
-			if result != "Greetings from Spring Boot + TAP!" {
-				t.Error(fmt.Errorf("App response not valid"))
-				t.FailNow()
-			}
-			return ctx
+		// Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		// 	t.Logf("verify app %s response", tiltApp)
+		// 	result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
+		// 	t.Logf("App response is : %s", result)
+		// 	if result != "Greetings from Spring Boot + TAP!" {
+		// 		t.Error(fmt.Errorf("App response not valid"))
+		// 		t.FailNow()
+		// 	}
+		// 	return ctx
+		// }).
+		// Feature()
+		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!")
 		}).
 		Feature()
-
 	cleanup := features.New("cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("kill tilt process")
