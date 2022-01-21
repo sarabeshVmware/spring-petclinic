@@ -87,11 +87,11 @@ func TestOuterloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	f8 := features.New("verify-imagerepository-status").
-		Assess("verify-imagerepository-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			return stepfuncs.VerifyImagerepositoryReady(ctx, t, cfg, config.Outerloop.SpringPetclinic.ImagerepositoryName, config.Outerloop.Workload.Namespace)
-		}).
-		Feature()
+	// f8 := features.New("verify-imagerepository-status").
+	// 	Assess("verify-imagerepository-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 		return stepfuncs.VerifyImagerepositoryReady(ctx, t, cfg, config.Outerloop.SpringPetclinic.ImagerepositoryName, config.Outerloop.Workload.Namespace)
+	// 	}).
+	// 	Feature()
 
 	f9 := features.New("verify-gitrepo-status").
 		Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -147,5 +147,5 @@ func TestOuterloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	testenv.Test(t, f1, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15)
+	testenv.Test(t, f1, f4, f5, f6, f7, f9, f10, f11, f12, f13, f14, f15)
 }
