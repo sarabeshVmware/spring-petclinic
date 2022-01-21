@@ -205,3 +205,56 @@ func VerifyBuildStatus(namespace string) {
 		count -= 1
 	}
 }
+
+func VerifyKsvcStatus(name string, namespace string) {
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Fatalf("Builds are not generated after 5 mins")
+			break
+		}
+		ksvc := kubectl_lib.GetKsvc(name, namespace)
+		if len(ksvc) < 1 {
+			log.Println("Knative services are not generated yet")
+		} else {
+			status := ksvc[0].READY
+			ksvc_name := ksvc[0].NAME
+			if status == "True" {
+				log.Printf("Knative %s status is verified successfully. Status is %s", ksvc_name, status)
+				break
+			} else {
+				log.Printf("Knative %s status is verified successfully. Status is %s", ksvc_name, status)
+			}
+		}
+		log.Printf("Waiting for 30s for ksvc getting generated ...")
+		time.Sleep(30 * time.Second)
+		count -= 1
+	}
+}
+
+func VerifyImageRepositoryStatus(name string, namespace string) {
+	count := 20
+	for count <= 20 {
+		if count == 0 {
+			log.Fatalf("Builds are not generated after 5 mins")
+			break
+		}
+		img := kubectl_lib.GetImageRepositories("", namespace)
+		if len(img) < 1 {
+			log.Println("Image repository is not generated yet")
+		} else {
+			status := img[0].READY
+			img_name := img[0].NAME
+			if status == "Unknown" {
+				log.Printf("Image repository %s status is Unknown", img_name)
+
+			} else if status == "True" {
+				log.Printf("Image repository %s status is verified successfully. Status is %s", img_name, status)
+				break
+			}
+		}
+		log.Printf("Waiting for 30s for image repository getting generated ...")
+		time.Sleep(30 * time.Second)
+		count -= 1
+	}
+}
