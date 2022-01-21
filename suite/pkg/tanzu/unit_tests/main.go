@@ -1,8 +1,9 @@
 package main
 
 import (
-	tanzu_helper "pkg/tanzu/tanzu_helpers"
-	tanzu_lib "pkg/tanzu/tanzu_libs"
+	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+
+	tanzu_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
 )
 
 func main() {

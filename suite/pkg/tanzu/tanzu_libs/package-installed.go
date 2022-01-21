@@ -14,9 +14,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	linux_util "pkg/utils/linux_util"
 	"reflect"
 	"strings"
+
+	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
 type ListInstalledPackagesOutput struct {

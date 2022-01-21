@@ -1,8 +1,9 @@
-package tanzu_helper
+package tanzu_helpers
 
 import (
 	"log"
-	"pkg/tanzu/tanzu_libs"
+
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 )
 
 func IsGrypeInstalled(namespace string) bool {

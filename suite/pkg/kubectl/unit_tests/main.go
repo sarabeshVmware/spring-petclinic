@@ -1,8 +1,8 @@
 package main
 
 import (
-	kubectl_helper "pkg/kubectl/kubectl_helper"
-	kubectl_lib "pkg/kubectl/kubectl_lib"
+	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 )
 
 func main() {
@@ -14,8 +14,10 @@ func main() {
 	kubectl_helper.ValidateSpringBootLabels("tanzu-java-web-app-git", "tap-install")
 	kubectl_helper.ValidateSpringBootConventions("tanzu-java-web-app-git", "tap-install")
 	kubectl_helper.ValidateDeveloperConventions("tanzu-java-web-app-git", "tap-install")
-	kubectl_helper.GetImageRepositoryStatus("spring-petclinic-delivery", "tap-install")
-	kubectl_helper.GetBuildStatus("spring-petclinic-build-1", "tap-install")
+	kubectl_helper.GetLatestImageRepositoryStatus("spring-petclinic-delivery", "tap-install")
+	kubectl_helper.GetLatestBuildStatus("spring-petclinic-build-1", "tap-install")
+	kubectl_helper.GetLatestImageRepositoryStatus("", "tap-install")
+	kubectl_helper.GetLatestBuildStatus("", "tap-install")
 	kubectl_helper.GetLatestImageStatus("tap-install")
 	kubectl_helper.GetKsvcStatus("spring-petclinic", "tap-install")
 	kubectl_helper.ValidateImageScans("spring-petclinic", "tap-install")
@@ -29,8 +31,8 @@ func main() {
 	/// Testing kubectl helper methods
 	kubectl_lib.GetPodintent("tanzu-java-web-app-git", "tap-install")
 	kubectl_lib.GetWorkload("tanzu-java-web-app-git", "tap-install")
-	kubectl_lib.GetImageRepositories("tanzu-java-web-app-git", "tap-install")
-	kubectl_lib.GetBuilds("tanzu-java-web-app-git", "tap-install")
+	kubectl_lib.GetImageRepositories("tanzu-java-web-app-git-delivery", "tap-install")
+	kubectl_lib.GetBuilds("tanzu-java-web-app-git-build-1", "tap-install")
 	kubectl_lib.GetLatestImage("tap-install")
 	kubectl_lib.GetKsvc("tanzu-java-web-app-git", "tap-install")
 	kubectl_lib.GetSourceScan("tanzu-java-web-app-git", "tap-install")
