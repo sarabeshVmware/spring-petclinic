@@ -87,8 +87,8 @@ type GetKsvcOutput struct {
 	NAME, URL, LATESTCREATED, LATESTREADY, READY, REASON string
 }
 
-func GetKsvc(name string, namespace string) GetKsvcOutput {
-	var ksvc GetKsvcOutput
+func GetKsvc(name string, namespace string) []GetKsvcOutput {
+	ksvcs := []GetKsvcOutput{}
 	cmd := "kubectl get ksvc"
 	if name != "" {
 		cmd += fmt.Sprintf(" %s", name)
@@ -100,23 +100,28 @@ func GetKsvc(name string, namespace string) GetKsvcOutput {
 	}
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		return ksvc
+		return ksvcs
 	}
 
 	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
 	if len(temp) <= 1 {
 		log.Printf("Output : %s", temp[0])
-		return ksvc
+		return ksvcs
 	}
 
 	ss := linux_util.FieldIndices(temp[0])
-	headers, words := linux_util.GetFields(temp[0], ss), linux_util.GetFields(temp[1], ss)
-
-	for index, value := range words {
-		reflect.ValueOf(&ksvc).Elem().FieldByName(headers[index]).SetString(value)
+	headers := linux_util.GetFields(temp[0], ss)
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var ksvc GetKsvcOutput
+		for index, value := range words {
+			reflect.ValueOf(&ksvc).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		ksvcs = append(ksvcs, ksvc)
 	}
-	fmt.Printf("ksvc: %+v\n", ksvc)
-	return ksvc
+
+	fmt.Printf("ksvc: %+v\n", ksvcs)
+	return ksvcs
 }
 
 type GetIngressOutput struct {
