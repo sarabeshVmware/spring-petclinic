@@ -120,9 +120,6 @@ func GetKsvc(name string, namespace string) []GetKsvcOutput {
 		ksvcs = append(ksvcs, ksvc)
 	}
 
-	// for index, value := range words {
-	// 	reflect.ValueOf(&ksvc).Elem().FieldByName(headers[index]).SetString(value)
-	// }
 	fmt.Printf("ksvc: %+v\n", ksvcs)
 	return ksvcs
 }
