@@ -206,12 +206,12 @@ func VerifyBuildStatus(namespace string) {
 	}
 }
 
-func VerifyKsvcStatus(name string, namespace string) {
+func VerifyKsvcStatus(name string, namespace string) bool {
 	count := 10
 	for count <= 10 {
 		if count == 0 {
-			log.Fatalf("Builds are not generated after 5 mins")
-			break
+			log.Fatalf("Ksvc are not generated after 5 mins")
+			return false
 		}
 		ksvc := kubectl_lib.GetKsvc(name, namespace)
 		if len(ksvc) < 1 {
@@ -221,23 +221,24 @@ func VerifyKsvcStatus(name string, namespace string) {
 			ksvc_name := ksvc[0].NAME
 			if status == "True" {
 				log.Printf("Knative %s status is verified successfully. Status is %s", ksvc_name, status)
-				break
+				return true
 			} else {
-				log.Printf("Knative %s status is verified successfully. Status is %s", ksvc_name, status)
+				log.Printf("Knative %s status is not verified successfully. Status is %s", ksvc_name, status)
 			}
 		}
 		log.Printf("Waiting for 30s for ksvc getting generated ...")
 		time.Sleep(30 * time.Second)
 		count -= 1
 	}
+	return false
 }
 
-func VerifyImageRepositoryStatus(name string, namespace string) {
+func VerifyImageRepositoryStatus(name string, namespace string) bool {
 	count := 20
 	for count <= 20 {
 		if count == 0 {
-			log.Fatalf("Builds are not generated after 5 mins")
-			break
+			log.Fatalf("Image repositories are not generated after 5 mins")
+			return false
 		}
 		img := kubectl_lib.GetImageRepositories("", namespace)
 		if len(img) < 1 {
@@ -245,11 +246,11 @@ func VerifyImageRepositoryStatus(name string, namespace string) {
 		} else {
 			status := img[0].READY
 			img_name := img[0].NAME
-			if status == "Unknown" {
-				log.Printf("Image repository %s status is Unknown", img_name)
-
-			} else if status == "True" {
+			if status == "True" {
 				log.Printf("Image repository %s status is verified successfully. Status is %s", img_name, status)
+				return true
+			} else {
+				log.Printf("Image repository %s status is not verified successfully. Status is %s", img_name, status)
 				break
 			}
 		}
@@ -257,4 +258,5 @@ func VerifyImageRepositoryStatus(name string, namespace string) {
 		time.Sleep(30 * time.Second)
 		count -= 1
 	}
+	return false
 }
