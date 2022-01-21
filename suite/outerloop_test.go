@@ -2,6 +2,7 @@ package suite
 
 import (
 	"context"
+	"path/filepath"
 	"fmt"
 
 	"testing"
@@ -147,5 +148,59 @@ func TestOuterloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	testenv.Test(t, f1, f4, f5, f6, f7, f9, f10, f11, f12, f13, f14, f15)
+	ingressEnvoyExternalIpKey := "ingressEnvoyExternalIp"
+
+	f16 := features.New("get-ingress-envoy-externalip-port").
+		Assess("get-externalip", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			ctx, serviceExternalIp := stepfuncs.GetServiceExternalIp(ctx, t, cfg, "envoy", "tanzu-system-ingress")
+			return context.WithValue(ctx, ingressEnvoyExternalIpKey, serviceExternalIp)
+		}).
+		Feature()
+
+	f17 := features.New("verify-application-running").
+		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(ingressEnvoyExternalIpKey).(string), config.Outerloop.Project.Application, config.Outerloop.Project.OriginalString)
+		}).
+		Feature()
+
+	f20 := features.New("git-update").
+		Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), config.Outerloop.Project.Repository)
+		}).
+		Assess("modify-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.UpdateFileReplaceString(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name, config.Outerloop.Project.File), config.Outerloop.Project.OriginalString, config.Outerloop.Project.NewString)
+		}).
+		Assess("git-add", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitAdd(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name), []string{config.Outerloop.Project.File})
+		}).
+		Assess("git-commit", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitCommit(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name), "change to webpage")
+		}).
+		Assess("git-push", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitPush(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name), false)
+		}).
+		Feature()
+
+	f21 := features.New("verify-application-running").
+		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(ingressEnvoyExternalIpKey).(string), config.Outerloop.Project.Application, config.Outerloop.Project.NewString)
+		}).
+		Feature()
+
+	f22 := features.New("git-reset").
+		Assess("git-reset", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitResetFromHead(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name), 1)
+		}).
+		Assess("git-push-force", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.GitPush(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name), true)
+		}).
+		Feature()
+
+	f23 := features.New("clean-remove-project-dir").
+		Assess("remove-dir", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			return stepfuncs.RemoveDirectory(ctx, t, cfg, filepath.Join(GetFileDir(), config.Outerloop.Project.Name))
+		}).
+		Feature()
+
+	testenv.Test(t, f1, f4, f5, f6, f7, f9, f10, f11, f12, f13, f14, f15, f16, f17, f20, f21, f22, f23)
 }
