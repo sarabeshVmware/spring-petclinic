@@ -9,7 +9,6 @@ import (
 	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"os"
 	exec2 "os/exec"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -18,8 +17,6 @@ import (
 	"testing"
 	"time"
 )
-
-var tiltCmd string
 
 const tiltApp = "tanzu-java-web-app"
 const tiltFile = tiltApp + "/Tiltfile"
@@ -128,7 +125,7 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			//tiltFile := ctx.Value(acceleratorNameKey).(string) + "/Tiltfile"
 			newLine := "allow_k8s_contexts(k8s_context())"
-			t.Logf("Appending Line %s in tilt file at %s", newLine, tiltFile)
+			t.Logf("Appending Line %s in tilt file %s", newLine, tiltFile)
 			file, err := os.OpenFile(tiltFile, os.O_APPEND|os.O_WRONLY, 0644)
 			if err != nil {
 				t.Error(fmt.Errorf("error while opening tilt file: %w", err))
@@ -148,18 +145,16 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("tilting-up", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			os.Setenv("NAMESPACE", config.Innerloop.Workload.Namespace)
 			//tiltFile := ctx.Value(acceleratorNameKey).(string) + "/Tiltfile"
-			tiltCmd = fmt.Sprintf("tilt up --file %s --port 11223", tiltFile)
+			tiltCmd := fmt.Sprintf("tilt up --file %s --port 11223", tiltFile)
 			t.Logf("Running tilt command %s", tiltCmd)
 			proc, err := exec.RunCommandWithOutWait(tiltCmd)
-			t.Logf("err: %s", err)
 			t.Logf("command executed: %s", tiltCmd)
 			if err != nil {
 				t.Error(fmt.Errorf("error while tilting-up : %w", err))
 				t.FailNow()
 			}
-			t.Logf("sleeping for 2 minute")
+			t.Logf("sleeping for 2 minutes")
 			time.Sleep(2 * time.Minute)
-
 			return context.WithValue(ctx, tiltprocCmdKey, proc)
 		}).
 		Feature()
@@ -172,7 +167,7 @@ func TestInnerloopBasic(t *testing.T) {
 				status := kubectl_helper.GetLatestImageRepositoryStatus(imageRepo, config.Innerloop.Workload.Namespace)
 				t.Logf("ImageRepository %s status is : %s", imageRepo, status)
 				if status != "True" {
-					t.Error(fmt.Errorf("ImageRepository is not ready."))
+					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
 					t.Fail()
 				}
 			}
@@ -213,7 +208,7 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.GetPodIntentStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("podintent status is : %s", status)
 			if status != "True" {
-				t.Error(fmt.Errorf("podintent is not ready."))
+				t.Error(fmt.Errorf("podintent %s is not ready.", config.Innerloop.Workload.Name))
 				t.Fail()
 			}
 			return ctx
@@ -223,7 +218,7 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.ValidateAppLiveViewLabels(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("app live view lables status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("App live view lables are not added to podintent"))
+				t.Error(fmt.Errorf("App live view lables are not added to the podintent"))
 				t.FailNow()
 			}
 			return ctx
@@ -233,7 +228,7 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.ValidateSpringBootLabels(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("spring-boot-conventions lables status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("Spring boot conventions lables are not added to podintent"))
+				t.Error(fmt.Errorf("Spring boot conventions lables are not added to the podintent"))
 				t.FailNow()
 			}
 			return ctx
@@ -243,7 +238,7 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.ValidateAppLiveViewConventions(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("app live view annotations status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("App live view annotations are not added to podintent"))
+				t.Error(fmt.Errorf("App live view annotations are not added to the podintent"))
 				t.FailNow()
 			}
 			return ctx
@@ -253,17 +248,17 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.ValidateDeveloperConventions(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("devloper-conventions annotations status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("devloper-conventions annotations are not added to podintent"))
+				t.Error(fmt.Errorf("devloper-conventions annotations are not added to the podintent"))
 				t.FailNow()
 			}
 			return ctx
 		}).
 		Assess("verify-pod-intent-spring-boot-conventions-annotations", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify if spring-boot-conventions annotations are added to podintent")
+			t.Logf("verify if spring-boot-conventions annotations are added to  the podintent")
 			status := kubectl_helper.ValidateSpringBootConventions(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("spring-boot-conventions annotations status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("spring-boot-conventions annotations are not added to podintent"))
+				t.Error(fmt.Errorf("spring-boot-conventions annotations are not added to the podintent"))
 				t.FailNow()
 			}
 			return ctx
@@ -276,7 +271,7 @@ func TestInnerloopBasic(t *testing.T) {
 			status := kubectl_helper.GetKsvcStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("ksvc status is : %s", status)
 			if status != "True" {
-				t.Error(fmt.Errorf("ksvc is not ready."))
+				t.Error(fmt.Errorf("ksvc %s is not ready.", config.Innerloop.Workload.Name))
 				t.Fail()
 			}
 			return ctx
@@ -287,9 +282,9 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("verify-workload-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify workload status")
 			status := kubectl_helper.GetWorkloadStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
-			t.Logf("workload status is : %s", status)
+			t.Logf("workload %s status is : %s", config.Innerloop.Workload.Name, status)
 			if status != "True" {
-				t.Error(fmt.Errorf("workload is not ready."))
+				t.Error(fmt.Errorf("workload %s is not ready.", config.Innerloop.Workload.Name))
 				t.Fail()
 			}
 			return ctx
@@ -300,21 +295,21 @@ func TestInnerloopBasic(t *testing.T) {
 	f13 := features.New("get-envoy-server-externalip").
 		Assess("get-externalip", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, envoyNamespace := "envoy", "tanzu-system-ingress"
-			t.Logf("getting external ip for %s (namespace %s)", service, envoyNamespace)
+			t.Logf("getting external ip for %s service (namespace %s)", service, envoyNamespace)
 			serviceExternalIp, err := client.GetServiceExternalIP(service, envoyNamespace, cfg.Client().RESTConfig())
 			if err != nil {
-				t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, envoyNamespace, err))
+				t.Error(fmt.Errorf("error while getting external ip for %s service (namespace %s): %w", service, envoyNamespace, err))
 				t.FailNow()
 			}
-			t.Logf("external ip for %s (namespace %s): %s", "server", envoyNamespace, serviceExternalIp)
+			t.Logf("external ip for %s service (namespace %s): %s", service, envoyNamespace, serviceExternalIp)
 			return context.WithValue(ctx, envoyServerExternalIpKey, serviceExternalIp)
 		}).
 		Feature()
 
 	f14 := features.New("verify-app-response").
 		Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify app response")
-			result := GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), "tanzu-java-web-app.tap-install.example.com")
+			t.Logf("verify app %s response", tiltApp)
+			result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
 			t.Logf("App response is : %s", result)
 			if result != "Greetings from Spring Boot + Tanzu!" {
 				t.Error(fmt.Errorf("App response not valid"))
@@ -331,6 +326,7 @@ func TestInnerloopBasic(t *testing.T) {
 			filePath := "tanzu-java-web-app/src/main/java/com/example/springboot/HelloController.java"
 			t.Logf("Replace from string %s to string %s in file %s", oldString, newString, filePath)
 			err := exec.ReplaceStringInFile(filePath, oldString, newString)
+			t.Logf("Compiling and building app %s", tiltApp)
 			compile()
 			if err != nil {
 				t.Error(fmt.Errorf("error while replacing string in file %s : %w", filePath, err))
@@ -342,8 +338,8 @@ func TestInnerloopBasic(t *testing.T) {
 
 	f16 := features.New("verify-app-response-after-replace-string").
 		Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify app response")
-			result := GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), "tanzu-java-web-app.tap-install.example.com")
+			t.Logf("verify app %s response", tiltApp)
+			result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), config.Innerloop.Workload.URL)
 			t.Logf("App response is : %s", result)
 			if result != "Greetings from Spring Boot + TAP!" {
 				t.Error(fmt.Errorf("App response not valid"))
@@ -357,12 +353,6 @@ func TestInnerloopBasic(t *testing.T) {
 	cleanup := features.New("cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("kill tilt process")
-			// if ctx.Value(tiltCmdKey).(string) != "" {
-			// 	err := exec.KillCommandProcess(ctx.Value(tiltCmdKey).(string))
-			// 	if err != nil {
-			// 		t.Error(fmt.Errorf("Fail to kill the tilt process"))
-			// 	}
-			// }
 			err := (ctx.Value(tiltprocCmdKey).(*os.Process)).Kill()
 			if err != nil {
 				t.Error(fmt.Errorf("Fail to kill the tilt process"))
@@ -372,68 +362,19 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("Deleting workload")
-			//tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
-			tanzu_lib.DeleteWorkload("tanzu-java-web-app", "tap-install")
+			tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			return ctx
 		}).
-		Feature()
-	//testenv.Test(t, test1, cleanup)
-	testenv.Test(t, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, cleanup)
+		Feature(
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, cleanup)
 }
 
-func GetAppResponse(envoyExternalIP string, url string) string {
-	// resp, err := http.Get(url)
-	// if err != nil {
-	// 	fmt.Println(fmt.Errorf("Failed to get app response: %d", err))
-	// 	return ""
-	// }
-	// defer resp.Body.Close()
-	// body, _ := io.ReadAll(resp.Body)
-	// return string(body)
-	time.Sleep(time.Minute)
-	if !strings.HasPrefix(envoyExternalIP, "http://") {
-		envoyExternalIP = "http://" + envoyExternalIP
-	}
-	req, err := http.NewRequest("GET", envoyExternalIP, nil)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	req.Host = url
-
-	var retries int = 10
-	for retries > 0 {
-		resp, err := http.DefaultClient.Do(req)
-		log.Println(resp.StatusCode)
-		if err == nil {
-			log.Println("Status code is :", resp.StatusCode)
-			break
-		} else {
-			log.Println("err:%w", err)
-			retries -= 1
-			log.Printf("Retry after 30 seconds")
-			time.Sleep(30 * time.Second)
-		}
-	}
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Bad HTTP Response: %s", resp.Status)
-	}
-	defer resp.Body.Close()
-	resultStringBytes, _ := ioutil.ReadAll(resp.Body)
-	resultString := string(resultStringBytes)
-	return resultString
-}
 
 func compile() {
 	app := "./mvnw"
 	arg0 := "compile"
 	cmd := exec2.Command(app, arg0)
-	dir, _ := os.Getwd()
-	fmt.Println(dir, "wd")
-	cmd.Dir = "tanzu-java-web-app"
+	cmd.Dir = tiltApp
 	stdout, err := cmd.Output()
 
 	if err != nil {
