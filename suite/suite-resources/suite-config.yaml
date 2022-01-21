@@ -44,9 +44,9 @@ image_secret:
   export: false
   name: image-secret
   namespace: my-apps
-  password: <REPOSITORY-PASSWORD>
-  registry: <REPOSITORY>
-  username: <REPOSITORY-USERNAME>
+  password: <REGISTRY-PASSWORD>
+  registry: <REGISTRY>
+  username: <REGISTRY-USERNAME>
 tap:
   name: tap
   namespace: tap-install
