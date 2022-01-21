@@ -346,22 +346,22 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	// cleanup := features.New("cleanup").
-	// 	Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 		t.Logf("kill tilt process")
-	// 		err := (ctx.Value(tiltprocCmdKey).(*os.Process)).Kill()
-	// 		if err != nil {
-	// 			t.Error(fmt.Errorf("Fail to kill the tilt process"))
-	// 			t.FailNow()
-	// 		}
-	// 		return ctx
-	// 	}).
-	// 	Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 		t.Logf("Deleting workload")
-	// 		tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
-	// 		return ctx
-	// 	}).
-	// 	Feature()
+	cleanup := features.New("cleanup").
+		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("kill tilt process")
+			err := (ctx.Value(tiltprocCmdKey).(*os.Process)).Kill()
+			if err != nil {
+				t.Error(fmt.Errorf("Fail to kill the tilt process"))
+				t.FailNow()
+			}
+			return ctx
+		}).
+		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("Deleting workload")
+			tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
+			return ctx
+		}).
+		Feature()
 	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16)
 }
 
