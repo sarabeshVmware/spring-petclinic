@@ -6,7 +6,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	//tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"os"
 	exec2 "os/exec"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
