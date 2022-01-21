@@ -114,8 +114,8 @@ func GetLatestImageStatus(namespace string) string {
 func GetKsvcStatus(name string, namespace string) string {
 	log.Println("Get ksvc image status...")
 	ksvc := kubectl_lib.GetKsvc(name, namespace)
-	log.Printf("ksvc image status : %s", ksvc.READY)
-	return ksvc.READY
+	log.Printf("ksvc image status : %s", ksvc[0].READY)
+	return ksvc[0].READY
 }
 
 func ValidateImageScans(name string, namespace string) bool {
