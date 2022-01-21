@@ -23,6 +23,7 @@ outerloop:
 innerloop:
   workload:
     namespace: tap-install
+    name: tanzu-java-web-app
 package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.5.0-build.5
   name: tanzu-tap-repository
