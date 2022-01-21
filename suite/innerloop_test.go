@@ -362,7 +362,7 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16)
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, cleanup)
 }
 
 func compile() {
