@@ -234,8 +234,8 @@ func VerifyKsvcStatus(name string, namespace string) bool {
 }
 
 func VerifyImageRepositoryStatus(name string, namespace string) bool {
-	count := 20
-	for count <= 20 {
+	count := 10
+	for count <= 10 {
 		if count == 0 {
 			log.Fatalf("Image repositories are not generated after 5 mins")
 			return false
@@ -251,6 +251,7 @@ func VerifyImageRepositoryStatus(name string, namespace string) bool {
 				return true
 			} else {
 				log.Printf("Image repository %s status is not verified successfully. Status is %s", img_name, status)
+
 			}
 		}
 		log.Printf("Waiting for 30s for image repository getting generated ...")
