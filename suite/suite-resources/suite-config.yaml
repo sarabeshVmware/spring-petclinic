@@ -29,8 +29,9 @@ innerloop:
   workload:
     namespace: tap-install
     name: tanzu-java-web-app
+    url: "tanzu-java-web-app.tap-install.example.com"
 package_repository:
-  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.5.0-build.5
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.2
   name: tanzu-tap-repository
   namespace: tap-install
 tanzunet_creds_secret:
@@ -53,4 +54,4 @@ tap:
   package_name: tap.tanzu.vmware.com
   poll_timeout: 45m
   values_schema_file: tap-values.yaml
-  version: 0.5.0-build.5
+  version: 1.0.1-build.2

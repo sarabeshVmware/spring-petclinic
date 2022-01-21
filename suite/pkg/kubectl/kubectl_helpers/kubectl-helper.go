@@ -207,7 +207,7 @@ func VerifyBuildStatus(namespace string) bool{
 	return false
 }
 func GetPodIntentStatus(name string, namespace string) string {
-	log.Println("Get build status...")
+	log.Println("Get podintents status...")
 	podintents := kubectl_lib.GetPodintent(name, namespace)
 	if len(podintents) > 0 {
 		log.Println("Found podintents")

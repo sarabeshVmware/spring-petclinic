@@ -6,14 +6,11 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
-	"io/ioutil"
-	"log"
+	//tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"os"
 	exec2 "os/exec"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
-	"strings"
 	"testing"
 	"time"
 )
@@ -26,7 +23,7 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("update-schema", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			tapValuesSchema.Profile = "light"
 			tapValuesSchema.SupplyChain = "basic"
-	        tapValuesSchema.Accelerator.Server.ServiceType = "LoadBalancer"
+			tapValuesSchema.Accelerator.Server.ServiceType = "LoadBalancer"
 			t.Logf("updating tap values schema %s", config.Tap.ValuesSchemaFile)
 			err := WriteYAMLFile(config.Tap.ValuesSchemaFile, tapValuesSchema)
 			if err != nil {
@@ -158,15 +155,15 @@ func TestInnerloopBasic(t *testing.T) {
 			return context.WithValue(ctx, tiltprocCmdKey, proc)
 		}).
 		Feature()
-		
+
 	f7 := features.New("verify-image-repositories").
 		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify image-repositories status")
 			imagerepository := [2]string{config.Innerloop.Workload.Name + "-delivery", config.Innerloop.Workload.Name}
 			for _, imageRepo := range imagerepository {
-				status := kubectl_helper.GetLatestImageRepositoryStatus(imageRepo, config.Innerloop.Workload.Namespace)
+				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, config.Innerloop.Workload.Namespace)
 				t.Logf("ImageRepository %s status is : %s", imageRepo, status)
-				if status != "True" {
+				if !status {
 					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
 					t.Fail()
 				}
@@ -268,9 +265,9 @@ func TestInnerloopBasic(t *testing.T) {
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
-			status := kubectl_helper.GetKsvcStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
+			status := kubectl_helper.VerifyKsvcStatus(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
 			t.Logf("ksvc status is : %s", status)
-			if status != "True" {
+			if !status {
 				t.Error(fmt.Errorf("ksvc %s is not ready.", config.Innerloop.Workload.Name))
 				t.Fail()
 			}
@@ -349,26 +346,24 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	
-	cleanup := features.New("cleanup").
-		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("kill tilt process")
-			err := (ctx.Value(tiltprocCmdKey).(*os.Process)).Kill()
-			if err != nil {
-				t.Error(fmt.Errorf("Fail to kill the tilt process"))
-				t.FailNow()
-			}
-			return ctx
-		}).
-		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("Deleting workload")
-			tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
-			return ctx
-		}).
-		Feature(
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, cleanup)
+	// cleanup := features.New("cleanup").
+	// 	Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 		t.Logf("kill tilt process")
+	// 		err := (ctx.Value(tiltprocCmdKey).(*os.Process)).Kill()
+	// 		if err != nil {
+	// 			t.Error(fmt.Errorf("Fail to kill the tilt process"))
+	// 			t.FailNow()
+	// 		}
+	// 		return ctx
+	// 	}).
+	// 	Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 		t.Logf("Deleting workload")
+	// 		tanzu_lib.DeleteWorkload(config.Innerloop.Workload.Name, config.Innerloop.Workload.Namespace)
+	// 		return ctx
+	// 	}).
+	// 	Feature()
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16)
 }
-
 
 func compile() {
 	app := "./mvnw"
@@ -376,7 +371,6 @@ func compile() {
 	cmd := exec2.Command(app, arg0)
 	cmd.Dir = tiltApp
 	stdout, err := cmd.Output()
-
 	if err != nil {
 		fmt.Println(err.Error())
 		return
