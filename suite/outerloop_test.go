@@ -182,7 +182,7 @@ func TestOuterloopBasic(t *testing.T) {
 		Feature()
 
 	f21 := features.New("verify-application-running").
-		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("check-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(ingressEnvoyExternalIpKey).(string), config.Outerloop.Project.Application, config.Outerloop.Project.NewString)
 		}).
 		Feature()
