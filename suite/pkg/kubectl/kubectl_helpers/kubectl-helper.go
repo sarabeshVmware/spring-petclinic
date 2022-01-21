@@ -179,12 +179,12 @@ func ValidateLearningCenter(name string, namespace string) bool {
 	return strings.Contains(res, "HTTP/1.1 302 Found")
 }
 
-func VerifyBuildStatus(namespace string) {
+func VerifyBuildStatus(namespace string) bool{
 	count := 60
 	for count <= 60 {
 		if count == 0 {
 			log.Fatalf("Builds are not generated after 5 mins")
-			break
+			return false
 		}
 		builds := kubectl_lib.GetBuilds("", namespace)
 		if len(builds) < 1 {
@@ -197,13 +197,41 @@ func VerifyBuildStatus(namespace string) {
 
 			} else if status == "True" {
 				log.Printf("Build %s status is verified successfully. Status is %s", build_name, status)
-				break
+				return true
 			}
 		}
 		log.Printf("Waiting for 10s for builds getting generated ...")
 		time.Sleep(10 * time.Second)
 		count -= 1
+	} 
+	return false
+}
+func GetPodIntentStatus(name string, namespace string) string {
+	log.Println("Get build status...")
+	podintents := kubectl_lib.GetPodintent(name, namespace)
+	if len(podintents) > 0 {
+		log.Println("Found podintents")
+		log.Printf("podintents status : %s", podintents[0].READY)
+		return podintents[0].READY
+	} else {
+		log.Printf("podintent not found")
+		return "None"
 	}
+	
+}
+
+func GetWorkloadStatus(name string, namespace string) string {
+	log.Println("Get workload status...")
+	workloads := kubectl_lib.GetWorkload(name, namespace)
+	if len(workloads) > 0 {
+		log.Println("Found workloads")
+		log.Printf("workloads status : %s", workloads[0].READY)
+		return workloads[0].READY
+	} else {
+		log.Printf("workload not found")
+		return "None"
+	}
+	
 }
 
 func VerifyKsvcStatus(name string, namespace string) bool {

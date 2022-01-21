@@ -52,6 +52,11 @@ var config = struct {
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"workload"`
 	} `yaml:"outerloop"`
+	Innerloop struct {
+		Workload struct {
+			Namespace string `yaml:"namespace"`
+		} `yaml:"workload"`
+	} `yaml:"innerloop"`
 	PackageRepository struct {
 		Image     string `yaml:"image"`
 		Name      string `yaml:"name"`
@@ -76,6 +81,11 @@ var config = struct {
 }{}
 
 var tapValuesSchema = struct {
+	Accelerator struct {
+		Server struct {
+			ServiceType string `yaml:"service_type"`
+		} `yaml:"server"`
+	}  `yaml:"accelerator"`
 	Buildservice struct {
 		KpDefaultRepository         string `yaml:"kp_default_repository"`
 		KpDefaultRepositoryPassword string `yaml:"kp_default_repository_password"`
