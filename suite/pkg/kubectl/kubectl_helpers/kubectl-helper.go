@@ -251,7 +251,6 @@ func VerifyImageRepositoryStatus(name string, namespace string) bool {
 				return true
 			} else {
 				log.Printf("Image repository %s status is not verified successfully. Status is %s", img_name, status)
-				break
 			}
 		}
 		log.Printf("Waiting for 30s for image repository getting generated ...")
