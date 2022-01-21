@@ -13,9 +13,14 @@ outerloop:
     namespace: my-apps
     yaml_file: scan-policy.yaml
   spring_petclinic:
-    name: spring-petclinic-tests-pipeline
+    build_name_prefix: spring-petclinic
+    gitrepository_name: spring-petclinic
     imagerepository_name: spring-petclinic-delivery
+    ksvc_name: spring-petclinic
+    name: spring-petclinic-tests-pipeline
     namespace: my-apps
+    podintent_name: spring-petclinic
+    taskrun_name_prefix: spring-petclinic-config-writer
     yaml_file: spring-petclinic-tests-pipeline.yaml
   workload:
     namespace: my-apps

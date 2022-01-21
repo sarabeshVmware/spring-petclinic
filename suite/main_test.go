@@ -15,6 +15,14 @@ import (
 var testenv env.Environment
 
 var config = struct {
+	ImageSecret struct {
+		Export    bool   `yaml:"export"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
+		Registry  string `yaml:"registry"`
+		Username  string `yaml:"username"`
+	} `yaml:"image_secret"`
 	Namespaces []string `yaml:"namespaces"`
 	Outerloop  struct {
 		CatalogInfoYaml string `yaml:"catalog_info_yaml"`
@@ -29,9 +37,14 @@ var config = struct {
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"scan_policy"`
 		SpringPetclinic struct {
-			ImageRepositoryName string `yaml:"imagerepository_name"`
+			BuildNamePrefix     string `yaml:"build_name_prefix"`
+			GitrepositoryName   string `yaml:"gitrepository_name"`
+			ImagerepositoryName string `yaml:"imagerepository_name"`
+			KsvcName            string `yaml:"ksvc_name"`
 			Name                string `yaml:"name"`
 			Namespace           string `yaml:"namespace"`
+			PodintentName       string `yaml:"podintent_name"`
+			TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
 			YamlFile            string `yaml:"yaml_file"`
 		} `yaml:"spring_petclinic"`
 		Workload struct {
@@ -57,14 +70,6 @@ var config = struct {
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
 	} `yaml:"tanzunet_creds_secret"`
-	ImageSecret struct {
-		Export    bool   `yaml:"export"`
-		Name      string `yaml:"name"`
-		Namespace string `yaml:"namespace"`
-		Password  string `yaml:"password"`
-		Registry  string `yaml:"registry"`
-		Username  string `yaml:"username"`
-	} `yaml:"image_secret"`
 	Tap struct {
 		Name             string `yaml:"name"`
 		Namespace        string `yaml:"namespace"`
