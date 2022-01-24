@@ -9,6 +9,13 @@ outerloop:
     namespace: my-apps
     yaml_file: mysql-service.yaml
   namespace: my-apps
+  project:
+    repository: https://github.com/dapdelivery/spring-petclinic.git
+    name: spring-petclinic
+    file: src/main/resources/templates/fragments/layout.html
+    original_string: "PetClinic :: a Spring Framework demonstration"
+    new_string: "Spring PetClinic :: a Spring Framework demonstration"
+    application: spring-petclinic.my-apps.example.com
   scan_policy:
     namespace: my-apps
     yaml_file: scan-policy.yaml

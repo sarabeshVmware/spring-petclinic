@@ -31,7 +31,15 @@ var config = struct {
 			Namespace string `yaml:"namespace"`
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"mysql"`
-		Namespace  string `yaml:"namespace"`
+		Namespace string `yaml:"namespace"`
+		Project   struct {
+			Application    string `yaml:"application"`
+			Name           string `yaml:"name"`
+			Repository     string `yaml:"repository"`
+			File           string `yaml:"file"`
+			OriginalString string `yaml:"original_string"`
+			NewString      string `yaml:"new_string"`
+		} `yaml:"project"`
 		ScanPolicy struct {
 			Namespace string `yaml:"namespace"`
 			YamlFile  string `yaml:"yaml_file"`
