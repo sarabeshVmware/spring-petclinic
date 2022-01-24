@@ -3,13 +3,13 @@
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-full.yaml
-  version: 1.0.0
+  version: 1.0.1-build.3
 - description: 'Tanzu Application Platform: Package to install a set of TAP components to get you started based on your use case.'
   name: tap-dev-light
   namespace: tap-install
   package: tap.tanzu.vmware.com
   values_file: ./values/tap-profile-dev-light.yaml
-  version: 1.0.0
+  version: 1.0.1-build.3
 - description: 'Application Accelerator for VMware Tanzu: Used to create new projects and configurations.'
   name: app-accelerator
   namespace: tap-install
@@ -20,12 +20,12 @@
   name: api-portal
   namespace: tap-install
   package: api-portal.tanzu.vmware.com
-  version: 1.0.8
+  version: 1.0.9
 - description: 'Application Live View for VMware Tanzu: App for monitoring and troubleshooting running apps'
   name: app-live-view
   namespace: tap-install
   package: run.appliveview.tanzu.vmware.com
-  version: 1.0.1
+  version: 1.0.2-build.1
 - description: 'Application Live View Conventions for VMware Tanzu: Application Live View convention server'
   name: app-live-view-conventions
   namespace: tap-install
@@ -52,12 +52,12 @@
   name: convention-controller
   namespace: tap-install
   package: controller.conventions.apps.tanzu.vmware.com
-  version: 0.5.0
+  version: 0.6.0
 - description: 'Tanzu Source Controller: Tanzu Source Controller enables workload create/update from source code.'
   name: source-controller
   namespace: tap-install
   package: controller.source.apps.tanzu.vmware.com
-  version: 0.2.0
+  version: 0.3.0
 - description: 'Tanzu App Platform Developer Conventions: Developer Conventions'
   name: developer-conventions
   namespace: tap-install
