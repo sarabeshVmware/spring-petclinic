@@ -9,14 +9,12 @@ packages:
   - name: convention-controller
     versions:
       - 0.5.0
-      - 0.6.0
   - name: service-binding
     versions:
       - 0.6.0
   - name: source-controller
     versions:
       - 0.2.0
-      - 0.3.0
   - name: services-toolkit
     versions:
       - 0.5.0
