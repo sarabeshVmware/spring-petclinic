@@ -20,6 +20,7 @@ packages:
       - 0.5.0
   - name: app-live-view
     versions:
+      - 1.0.1
       - 1.0.2-build.1
   - name: app-live-view-conventions
     versions:
@@ -38,12 +39,14 @@ packages:
       - 0.5.0-build.1
   - name: insight-metadata-store
     versions:
+      - 1.0.1
       - 1.0.2
   - name: image-policy-webhook
     versions:
       - 1.0.0
   - name: api-portal
     versions:
+      - 1.0.8
       - 1.0.9
   - name: cloud-native-runtimes
     versions:
@@ -56,7 +59,8 @@ packages:
       - 1.0.1
   - name: tap
     versions:
-      - 1.0.1-build.2
+      - 1.0.0
+      - 1.0.1-build.3
   - name: learning-center-workshops
     versions:
       - 0.1.0
