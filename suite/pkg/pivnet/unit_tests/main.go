@@ -1,20 +1,59 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
+	"path/filepath"
+
+	"gopkg.in/yaml.v3"
+
 	pivnet_helpers "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_helpers"
 	pivnet_libs "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_libs"
 )
 
+type ConfigData struct {
+	Host           string   `yaml:"host"`
+	APIToken       string   `yaml:"api-token"`
+	ProductSlug    string   `yaml:"product-slug"`
+	ReleaseVersion string   `yaml:"release-version"`
+	EulaSlug       string   `yaml:"eula-slug"`
+	ReleaseType    string   `yaml:"release-type"`
+	ArtifactPath   string   `yaml:"artifact-path"`
+	Digest         string   `yaml:"digest"`
+	UserGroups     []string `yaml:"user-groups"`
+}
+
+func create_release() {
+
+	var config ConfigData
+
+	filename, _ := filepath.Abs("./pkg/pivnet/unit_tests/config.yaml")
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		panic(err)
+	}
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	pivnet_libs.Login(config.Host, config.APIToken)
+	pivnet_libs.CreateRelease(config.ProductSlug, config.ReleaseVersion, config.ReleaseType, config.EulaSlug)
+	artifact_det := pivnet_libs.CreateArtifactReference(config.ReleaseVersion, config.ProductSlug, config.ArtifactPath, config.Digest)
+	pivnet_libs.GetArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
+	pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
+	pivnet_libs.AddArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
+	pivnet_libs.UpdateRelease(config.ProductSlug, config.ReleaseVersion, "selected-user-groups")
+	userGroupList := pivnet_libs.ListUserGroups()
+	fmt.Println(userGroupList)
+	for _, value := range config.UserGroups {
+		fmt.Println(value)
+		pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, "437")
+	}
+
+}
+
 func main() {
 
-	pivnet_libs.Login("host", "token")
-	pivnet_libs.CreateRelease("tanzu-application-platform", "1.0.1-build.test", "vmware-prerelease-eula", "Beta Release")
-	pivnet_libs.CreateArtifactReference("1.0.1-build.test", "tanzu-application-platform", "tap-packages:1.0.1-build.ci.24-01-2022-09-06-31", "sha256:66424580e6d86d77eea90ccf7aab7659bbc1880732fdadc062f14e64178b3845")
-	pivnet_libs.GetArtifactReference("tanzu-application-platform", "27548")
-	pivnet_helpers.WaitTillArtifactReferenceIsReady("tanzu-application-platform", "27548")
-	pivnet_libs.AddArtifactReference("tanzu-application-platform", "1.0.1-build.test1", "27548")
-	pivnet_libs.UpdateRelease("tanzu-application-platform ", "1.0.1-build.test")
-	pivnet_libs.ListUserGroups()
-	pivnet_libs.AddUserGroup("tanzu-application-platform", "1.0.1-build.test", "437")
-
+	create_release()
 }

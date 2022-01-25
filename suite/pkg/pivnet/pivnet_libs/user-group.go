@@ -40,7 +40,7 @@ func ListUserGroups() *ListUserGroupsOutput {
 }
 
 func AddUserGroup(productSlug string, releaseVersion string, userGroupId string) {
-	cmd := fmt.Sprintf("./pivnet-cli add-user-group --product-slug=%s--release-version %s--user-group-id=%s --format json", productSlug, releaseVersion, userGroupId)
+	cmd := fmt.Sprintf("./pivnet-cli add-user-group --product-slug=%s --release-version %s --user-group-id=%s --format json", productSlug, releaseVersion, userGroupId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil || response != "" {
 		log.Println("something bad happened")

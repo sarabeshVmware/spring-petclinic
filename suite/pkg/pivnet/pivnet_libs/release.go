@@ -35,14 +35,9 @@ type CreateReleaseOutput struct {
 	SoftwareFilesUpdatedAt time.Time `json:"software_files_updated_at"`
 }
 
-func CreateRelease(productSlug string, releaseVersion string, eulaSlug string, releaseType string) *CreateReleaseOutput {
+func CreateRelease(productSlug string, releaseVersion string, releaseType string, eulaSlug string) *CreateReleaseOutput {
 	var raw *CreateReleaseOutput
-	// productSlug = "tanzu-application-platform"
-	// releaseVersion = "1.0.1-build.test"
-	// eulaSlug = "vmware-prerelease-eula"
-	// releaseType = "Beta Release"
-	cmd := fmt.Sprintf("./pivnet-cli create-release --product-slug %s --release-version %s --eula-slug %s --release-type %s --format json", productSlug, releaseVersion, eulaSlug, releaseType)
-
+	cmd := fmt.Sprintf("./pivnet-cli create-release --product-slug %s --release-version %s --release-type %s --eula-slug %s --format json", productSlug, releaseVersion, eulaSlug, releaseType)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return raw
@@ -81,10 +76,10 @@ type UpdateReleaseOutput struct {
 	SoftwareFilesUpdatedAt time.Time `json:"software_files_updated_at"`
 }
 
-func UpdateRelease(productSlug string, releaseVersion string) *UpdateReleaseOutput {
+func UpdateRelease(productSlug string, releaseVersion string, availability string) *UpdateReleaseOutput {
 	// productSlug = "tanzu-application-platform"
 	// releaseVersion = "1.0.1-build.test"
-	cmd := fmt.Sprintf("./pivnet-cli update-release --availability=selected-user-groups  --product-slug=%s --release-version %s --format json", productSlug, releaseVersion)
+	cmd := fmt.Sprintf("./pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
 
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
