@@ -92,7 +92,6 @@ var config = struct {
 		Bundle    string `yaml:"bundle"`
 		Registry  string `yaml:"registry"`
 		FileDir  string `yaml:"filedir"`
-		OS string `yaml:"os"`
 	} `yaml:"tanzu-cluster-essentials"`
 }{}
 
