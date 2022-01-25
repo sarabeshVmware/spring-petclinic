@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"strings"
 	"time"
-
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"

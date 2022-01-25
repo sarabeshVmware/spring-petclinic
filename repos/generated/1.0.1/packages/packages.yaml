@@ -285,6 +285,39 @@ spec:
       - kapp: {}
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.conventions.apps.tanzu.vmware.com.0.6.0
+spec:
+  refName: controller.conventions.apps.tanzu.vmware.com
+  version: 0.6.0
+  releasedAt: 2022-01-20T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties:
+        ca_cert_data:
+          type: string
+          description: "Optional: PEM Encoded certificate data for image registries with private CA."
+          default: ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:5f17c74e8c11e47d305cbad62f056c9f883fe569cbe6116f3503691f26be5e93
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/namespace.yaml
+          - config/convention-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
   name: service-bindings.labs.vmware.com
@@ -369,6 +402,38 @@ spec:
       - kapp: {}
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.source.apps.tanzu.vmware.com.0.3.0
+spec:
+  refName: controller.source.apps.tanzu.vmware.com
+  version: 0.3.0
+  releasedAt: 2022-01-20T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties:
+        ca_cert_data:
+          type: string
+          description: "Optional: PEM Encoded certificate data for image registries with private CA."
+          default: ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:324e712bff454cdbf73ebb7ae0fed051077e8e9730d0b9365d1457f106b2f68d
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/source-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
   name: services-toolkit.tanzu.vmware.com
@@ -429,6 +494,37 @@ spec:
   longDescription: "Application Live View is a lightweight insights and troubleshooting tool that helps Application Developers and Application Operators to look inside of running applications"
   shortDescription: "App for monitoring and troubleshooting running apps"
   supportDescription: "https://tanzu.vmware.com/support"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: run.appliveview.tanzu.vmware.com.1.0.1
+spec:
+  refName: run.appliveview.tanzu.vmware.com
+  version: 1.0.1
+  releaseNotes: |
+        Release 1.0.1 of the App Live View package
+  releasedAt: 2021-12-14T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      title: run.appliveview.tanzu.vmware.com values schema
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:bdb2f92316f3e286e7cb6d4d158f3c83cbfdb68a3a3c8f3e45fa85933e23226b
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
@@ -888,6 +984,205 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
+  name: metadata-store.apps.tanzu.vmware.com.1.0.1
+spec:
+  refName: metadata-store.apps.tanzu.vmware.com
+  version: 1.0.1
+  releaseNotes: "https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/0.4/tap-0-4/GUID-scst-store-overview.html"
+  releasedAt: 2021-12-16T15:27:01Z
+  valuesSchema:
+    openAPIv3:
+      title: metadata-store.apps.tanzu.vmware.com values schema
+      examples:
+      - db_host: metadata-store-db
+        db_user: metadata-store-user
+        db_password: password0123456
+        db_name: metadata-store
+        db_port: "5432"
+        db_sslmode: verify-full
+        db_ca_certificate: ""
+        db_max_open_conns: 10
+        db_max_idle_conns: 100
+        db_conn_max_lifetime: 60
+        deploy_internal_db: "true"
+        app_service_type: LoadBalancer
+        api_port: 9443
+        api_host: localhost
+        auth_proxy_port: 8443
+        auth_proxy_host: 0.0.0.0
+        use_cert_manager: "true"
+        database_request_storage: 10Gi
+        pg_req_memory: 1Gi
+        pg_limit_memory: 4Gi
+        app_req_memory: 128Mi
+        app_req_cpu: 100m
+        app_limit_memory: 512Mi
+        app_limit_cpu: 250m
+        app_replicas: 1
+        db_replicas: 1
+        add_default_rw_service_account: "true"
+      properties:
+        db_host:
+          type: string
+          description: The address to the postgres database host that the metadata-store app uses to connect. The default is set to metadata-store-db which is the postgres service name. Changing this does not change the postgres service name
+          default: metadata-store-db
+          examples:
+          - metadata-store-db
+          - some-dns-name.example.com
+          - 192.168.0.1
+        db_user:
+          type: string
+          description: The database user to create and use for updating and querying. The metadata postgres section create this user. The metadata api server uses this username to connect to the database.
+          default: metadata-store-user
+        db_password:
+          type: string
+          description: The database user password. If no value is provided, a 32 character value will be generated.
+          default: ""
+        db_name:
+          type: string
+          description: The name of the database to use.
+          default: metadata-store
+        db_port:
+          type: string
+          description: The database port to use. This is the port to use when connecting to the database pod.
+          default: "5432"
+        db_sslmode:
+          type: string
+          description: Determines the security connection between API server and Postgres database. This can be set to 'verify-ca' or 'verify-full'
+          default: verify-full
+          examples:
+          - verify-ca
+          - verify-full
+        db_ca_certificate:
+          type: string
+          description: This should only be set in the case when 'deploy_internal_db' is 'false'. Set this to the trusted CA Certificate that signed the Postgres DB TLS Certificate
+          default: ""
+        db_max_open_conns:
+          type: integer
+          description: Sets the maximum number of open database connections from the Metadata Store to the database.
+          default: 10
+        db_max_idle_conns:
+          type: integer
+          description: Sets the maximum number of database connections from the Metadata Store in the idle connection pool.
+          default: 100
+        db_conn_max_lifetime:
+          type: integer
+          description: Sets the maximum amount of time a database connection may be reused in seconds.
+          default: 60
+        deploy_internal_db:
+          type: string
+          description: If set to 'true', a postgres deployment will be created. If set to 'false', db_host and db_port should point to an accessible postgres instance. Postgres connections require TLS, so the corresponding db_ca_certification must be provided
+          default: "true"
+        app_service_type:
+          type: string
+          description: The type of service to use for the metadata app service. This can be set to 'Nodeport' or 'LoadBalancer'.
+          default: LoadBalancer
+          examples:
+          - NodePort
+          - LoadBalancer
+        api_port:
+          type: integer
+          description: The internal port for the metadata app api endpoint. This will be used by the kube-rbac-proxy sidecar.
+          default: 9443
+        api_host:
+          type: string
+          description: The internal hostname for the metadata api endpoint. This will be used by the kube-rbac-proxy sidecar.
+          default: localhost
+        auth_proxy_port:
+          type: integer
+          description: The external port address of the of the kube-rbac-proxy sidecar
+          default: 8443
+        auth_proxy_host:
+          type: string
+          description: The binding ip address of the kube-rbac-proxy sidecar
+          default: 0.0.0.0
+        use_cert_manager:
+          type: string
+          description: Cert manager is required to be installed to use this flag. When true, this creates certificates object to be signed by cert manager for the API server and Postgres database. If false, the certificate object have to be provided by the user.
+          default: "true"
+        storage_class_name:
+          type: string
+          description: The storage class name of the persistent volume used by Postgres database for storing data. The default value will use the default class name defined on the cluster.
+          default: ""
+        database_request_storage:
+          type: string
+          description: The storage requested of the persistent volume used by Postgres database for storing data.
+          default: 10Gi
+        pg_req_memory:
+          type: string
+          description: Memory request for postgres container in metadata-store-db deployment
+          default: 1Gi
+        pg_limit_memory:
+          type: string
+          description: Memory limit for postgres container in metadata-store-db deployment
+          default: 4Gi
+        app_req_memory:
+          type: string
+          description: Memory request for metadata-store-app container
+          default: 128Mi
+        app_req_cpu:
+          type: string
+          description: CPU request for metadata-store-app container
+          default: 100m
+        app_limit_memory:
+          type: string
+          description: Memory limit for metadata-store-app container
+          default: 512Mi
+        app_limit_cpu:
+          type: string
+          description: CPU limit for metadata-store-app container
+          default: 250m
+        app_replicas:
+          type: integer
+          description: The number of replicas for the metadata-store-app
+          default: 1
+        db_replicas:
+          type: integer
+          description: The number of replicas for the metadata-store-db
+          default: 1
+        priority_class_name:
+          type: string
+          description: If specified, this value is the name of the desired PriorityClass for the metadata-store-db deployment
+          default: ""
+        add_default_rw_service_account:
+          type: string
+          description: Adds a read-write service account which can be used to obtain access token to use metadata-store CLI
+          default: "true"
+        ns_for_export_app_cert:
+          type: string
+          description: The namespace where the "Supply Chain Security Tools for VMware Tanzu - Scan" component is installed in. Certain certificates will be exported to that namespace so that scan reports can be posted to the Metadata Store.
+          default: scan-link-system
+        log_level:
+          type: string
+          description: Sets the log level. This can be set to "minimum", "less", "default", "more", "debug" or "trace". "minimum" currently does not output logs. "less" outputs log configuration options only. "default" and "more" outputs API endpoint access information. "debug" and "trade" outputs extended API endpoint access information(such as body payload) and other debug information.
+          default: default
+          examples:
+          - minimum
+          - less
+          - default
+          - more
+          - debug
+          - trace
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - deployment/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
   name: metadata-store.apps.tanzu.vmware.com.1.0.2
 spec:
   refName: metadata-store.apps.tanzu.vmware.com
@@ -1194,6 +1489,96 @@ spec:
   maintainers:
   - name: VMware
   supportDescription: https://tanzu.vmware.com/support
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: api-portal.tanzu.vmware.com.1.0.8
+spec:
+  refName: api-portal.tanzu.vmware.com
+  version: 1.0.8
+  releasedAt: "2021-12-16T00:00:00Z"
+  releaseNotes: |
+    Resolved the CVE issues; recommend upgrade from the previous versions
+  valuesSchema:
+    openAPIv3:
+      title: api-portal.tanzu.vmware.com values schema
+      examples: []
+      properties:
+        apiPortalServer:
+          type: object
+          description: API portal server configurations
+          properties:
+            replicaCount:
+              type: integer
+              description: Number of replicas
+              default: 1
+            title:
+              type: string
+              description: Title of the API portal instance
+              default: API portal
+            description:
+              type: string
+              description: Description of the API portal instance
+              default: API portal for <namespace> namespace
+            sourceUrls:
+              type: string
+              description: OpenAPI urls to load
+              default: https://petstore.swagger.io/v2/swagger.json,https://petstore3.swagger.io/api/v3/openapi.json
+            sourceUrlsCacheTtlSec:
+              type: string
+              description: Time after which they will be refreshed (in seconds)
+              default: "300"
+            sourceUrlsTimeoutSec:
+              type: string
+              description: Timeout for remote OpenAPI retrieval (in seconds)
+              default: "10"
+            requestMemory:
+              type: string
+              description: Requests describes the minimum amount of memory resources required.
+              default: 512Mi
+            requestCpu:
+              type: string
+              description: Requests describes the minimum amount of cpu resources required.
+              default: 100m
+            limitMemory:
+              type: string
+              description: Limits describes the maximum amount of memory resources allowed.
+              default: 1024Mi
+            limitCpu:
+              type: string
+              description: Limits describes the maximum amount of cpu resources allowed.
+              default: 500m
+            namespace:
+              type: string
+              description: The namespace to deploy API portal to
+              default: api-portal
+            sso:
+              type: object
+              description: SSO Configuration
+              properties:
+                secret:
+                  type: string
+                  description: Secret name to search in the namespace which contains "scope", "issuer-uri", "client-id" and "client-secret"
+                  default: sso-credentials
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.8
+      template:
+      - ytt:
+          paths:
+          - config/
+          - values.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
 ---
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
@@ -2952,19 +3337,173 @@ spec:
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.1.0.1-build.2
+  name: tap.tanzu.vmware.com.1.0.0 
 spec:
   refName: tap.tanzu.vmware.com
-  version: 1.0.1-build.2
+  version: 1.0.0 
   releaseNotes: |
-    Beta release 1.0.1-build.2 of Tanzu Application Platform.
+    Beta release 1.0.0  of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2022-01-17T00:00:00Z"
+  releasedAt: "2022-01-11T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:edb32051469080a6fe787e7e18a5a7b0148966572ed1d4af3042a358a532c055
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:0e82786cabb59287893827fff05b9cffa496623838406c0660b77f896d65774b
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: "Profile to install. Valid values: full, light"
+        supply_chain: 
+          type: string
+          default: basic
+          description: "Supply chain to install. Valid values: basic, testing, testing_scanning"
+        excluded_packages:
+          type: array
+          items:
+            type: string
+          default: []
+          description: "List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])"
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "API Portal configuration"
+        accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Accelerator configuration"
+        appliveview:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "App Live View configuration"
+        cnrs:
+          type: object
+          additionalProperties: true
+          description: "Cloud Native Runtimes configuration"
+          properties: 
+            ingress:
+              type: object
+              properties:
+                reuse_crds:
+                  type: boolean
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Set to \"true\" if you want CNR to re-use the cluster's existing Contour CRDs."
+                  default: true
+                external:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+                      default: tanzu-system-ingress
+                internal:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+                      default: tanzu-system-ingress 
+        ootb_supply_chain_basic:
+          type: object
+          additionalProperties: true
+          properties: {}           
+          description: "OOTB Supply Chain Basic configuration"
+        ootb_supply_chain_testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing configuration"
+        ootb_supply_chain_testing_scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing Scanning configuration"
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Image Policy Webhook configuration"
+        buildservice:
+          type: object
+          description: "Build Service configuration"
+          properties:
+            kp_default_repository:
+              type: string
+              description: docker repository (required)
+              examples:
+              - registry.io/build-service
+            kp_default_repository_username:
+              type: string
+              description: registry username (required)
+              examples:
+              - janedoe@vmware.com
+            kp_default_repository_password:
+              type: string
+              description: registry password (required)
+              examples:
+              - password
+            tanzunet_username:
+              type: string
+              description: tanzunet registry username (required for dependency updater feature)
+              examples:
+              - janedoe@vmware.com
+            tanzunet_password:
+              type: string
+              description: tanzunet registry password (required for dependency updater feature)
+              examples:
+              - password
+            ca_cert_data:
+              type: string
+              description: tbs registry ca certificate (used for self signed registry)
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "TAP GUI configuration"
+        learningcenter:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Learning Center configuration"
+        scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Scan controller configuration"
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.1.0.1-build.3
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 1.0.1-build.3
+  releaseNotes: |
+    Release 1.0.1-build.3 of Tanzu Application Platform.
+    This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2022-01-24T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:b01a64c9428326026dbf56cc812d34b0d20c56c196dd3e0e6a93c4d8e7ce8eb2
       template:
       - ytt:
           paths:
