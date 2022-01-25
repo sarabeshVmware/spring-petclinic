@@ -1,11 +1,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: cartographer.carto.run.0.2.1
+  name: cartographer.tanzu.vmware.com.0.2.1
   annotations:
     kapp.k14s.io/change-group: carto.run/meta
 spec:
-  refName: cartographer.carto.run
+  refName: cartographer.tanzu.vmware.com
   version: 0.2.1
   releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/v0.2.1
   releasedAt: "2022-01-24T16:10:07Z"
