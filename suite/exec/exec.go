@@ -33,11 +33,3 @@ func RunCommandWithOutWait(command string) (*os.Process,error) {
 	return proc, err
 }
 
-// func KillCommandProcess(command string) error  {
-	
-// 	commandName := strings.Split(command, " ")[0]
-// 	arguments := strings.Split(command, " ")[1:]
-// 	var cmd *exec.Cmd = exec.Command(commandName, arguments...)
-// 	err := cmd.Process.Kill()
-// 	return err
-// }

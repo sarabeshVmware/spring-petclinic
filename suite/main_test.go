@@ -63,6 +63,8 @@ var config = struct {
 	Innerloop struct {
 		Workload struct {
 			Namespace string `yaml:"namespace"`
+			Name string `yaml:"name"`
+			URL string `yaml:"url"`
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
