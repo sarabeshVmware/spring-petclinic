@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: controller.conventions.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.6.0
+      constraints: 0.5.0
 
 #@ end
 #@ end

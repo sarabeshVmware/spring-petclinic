@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: controller.source.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0
+      constraints: 0.2.0
 
 #@ end
 #@ end
