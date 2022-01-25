@@ -37,12 +37,12 @@ type CreateReleaseOutput struct {
 
 func CreateRelease(productSlug string, releaseVersion string, releaseType string, eulaSlug string) *CreateReleaseOutput {
 	var raw *CreateReleaseOutput
-	cmd := fmt.Sprintf("./pivnet-cli create-release --product-slug %s --release-version %s --release-type %s --eula-slug %s --format json", productSlug, releaseVersion, eulaSlug, releaseType)
+	cmd := fmt.Sprintf("pivnet-cli create-release --product-slug %s --release-version %s --release-type '%s' --eula-slug %s --format json", productSlug, releaseVersion, releaseType, eulaSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return raw
 	}
-	res := strings.Split(response, "{")
+	res := strings.Split(response, "\n")
 	in := []byte(res[1])
 
 	if err := json.Unmarshal(in, &raw); err != nil {
@@ -79,7 +79,7 @@ type UpdateReleaseOutput struct {
 func UpdateRelease(productSlug string, releaseVersion string, availability string) *UpdateReleaseOutput {
 	// productSlug = "tanzu-application-platform"
 	// releaseVersion = "1.0.1-build.test"
-	cmd := fmt.Sprintf("./pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
+	cmd := fmt.Sprintf("pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
 
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {

@@ -40,8 +40,7 @@ func create_release() {
 	pivnet_libs.Login(config.Host, config.APIToken)
 	pivnet_libs.CreateRelease(config.ProductSlug, config.ReleaseVersion, config.ReleaseType, config.EulaSlug)
 	artifact_det := pivnet_libs.CreateArtifactReference(config.ReleaseVersion, config.ProductSlug, config.ArtifactPath, config.Digest)
-	pivnet_libs.GetArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
-	pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
+	pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID)
 	pivnet_libs.AddArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
 	pivnet_libs.UpdateRelease(config.ProductSlug, config.ReleaseVersion, "selected-user-groups")
 	userGroupList := pivnet_libs.ListUserGroups()
@@ -54,6 +53,5 @@ func create_release() {
 }
 
 func main() {
-
 	create_release()
 }

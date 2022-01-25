@@ -9,7 +9,7 @@ import (
 )
 
 func Login(host string, apiToken string) bool {
-	cmd := fmt.Sprintf("./pivnet-cli login --host %s --api-token %s", host, apiToken)
+	cmd := fmt.Sprintf("pivnet-cli login --host %s --api-token %s", host, apiToken)
 
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
