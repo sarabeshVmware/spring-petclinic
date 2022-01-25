@@ -36,6 +36,7 @@ type CreateReleaseOutput struct {
 }
 
 func CreateRelease(productSlug string, releaseVersion string, eulaSlug string, releaseType string) *CreateReleaseOutput {
+	var raw *CreateReleaseOutput
 	// productSlug = "tanzu-application-platform"
 	// releaseVersion = "1.0.1-build.test"
 	// eulaSlug = "vmware-prerelease-eula"
@@ -44,11 +45,11 @@ func CreateRelease(productSlug string, releaseVersion string, eulaSlug string, r
 
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	res := strings.Split(response, "{")
 	in := []byte(res[1])
-	var raw *CreateReleaseOutput
+
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}

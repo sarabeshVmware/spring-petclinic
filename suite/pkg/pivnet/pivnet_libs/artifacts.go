@@ -57,3 +57,25 @@ func GetArtifactReference(productSlug string, artifactReferenceId string) *GetAr
 	}
 	return raw
 }
+
+type AddArtifactReferenceOutput struct {
+	ID                int    `json:"id"`
+	ArtifactPath      string `json:"artifact_path"`
+	Digest            string `json:"digest"`
+	Name              string `json:"name"`
+	ReplicationStatus string `json:"replication_status"`
+}
+
+func AddArtifactReference(productSlug string, releaseVersion string, artifactReferenceId string) *AddArtifactReferenceOutput {
+	cmd := fmt.Sprintf("./pivnet-cli add-artifact-reference --product-slug=%s --release-version %s --artifact-reference-id=%s --format json", productSlug, releaseVersion, artifactReferenceId)
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Println("something bad happened")
+	}
+	in := []byte(response)
+	var raw *AddArtifactReferenceOutput
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
+}

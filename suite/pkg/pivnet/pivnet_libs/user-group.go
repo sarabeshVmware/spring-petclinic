@@ -18,17 +18,6 @@ import (
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
-func AddUserGroup(productSlug string, releaseVersion string, userGroupId string) {
-	productSlug = "tanzu-application-platform"
-	releaseVersion = "tap-packages:1.0.1-build.ci.24-01-2022-09-06-31"
-	userGroupId = "6"
-	cmd := fmt.Sprintf("./pivnet-cli add-user-group --product-slug=%s--release-version %s--user-group-id=%s --format json", productSlug, releaseVersion, userGroupId)
-	response, err := linux_util.ExecuteCmd(cmd)
-	if err != nil || response != "" {
-		log.Println("something bad happened")
-	}
-}
-
 type ListUserGroupsOutput []struct {
 	ID          int    `json:"id"`
 	Name        string `json:"name"`
@@ -48,4 +37,12 @@ func ListUserGroups() *ListUserGroupsOutput {
 		panic(err)
 	}
 	return raw
+}
+
+func AddUserGroup(productSlug string, releaseVersion string, userGroupId string) {
+	cmd := fmt.Sprintf("./pivnet-cli add-user-group --product-slug=%s--release-version %s--user-group-id=%s --format json", productSlug, releaseVersion, userGroupId)
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil || response != "" {
+		log.Println("something bad happened")
+	}
 }
