@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"testing"
 
@@ -112,4 +113,86 @@ func DeployWorkload(ctx context.Context, t *testing.T, cfg *envconf.Config, file
 	}
 	t.Logf("workload %s deployed in namespace %s: %s", file, namespace, output)
 	return ctx
+}
+
+func GitClone(ctx context.Context, t *testing.T, cfg *envconf.Config, path string, repo string) context.Context {
+	t.Logf("cloning repository %s at %s", repo, path)
+	cmd, output, err := exec.GitClone(path, repo)
+	t.Logf("command executed: %s", cmd)
+	if err != nil {
+		t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err, output))
+		t.FailNow()
+	}
+	t.Logf("repository %s cloned at %s: %s", repo, path, output)
+	return ctx
+}
+
+func GitAdd(ctx context.Context, t *testing.T, cfg *envconf.Config, path string, files []string) context.Context {
+	t.Logf("adding files %s for repository at %s", files, path)
+	cmd, output, err := exec.GitAdd(path, files)
+	t.Logf("command executed: %s", cmd)
+	if err != nil {
+		t.Error(fmt.Errorf("error while adding files %s for repository at %s: %w: %s", files, path, err, output))
+		t.FailNow()
+	}
+	t.Logf("files %s added for repository at %s: %s", files, path, output)
+	return ctx
+}
+
+func GitCommit(ctx context.Context, t *testing.T, cfg *envconf.Config, path string, message string) context.Context {
+	t.Logf("committing files for repository at %s (message %s)", path, message)
+	cmd, output, err := exec.GitCommit(path, message)
+	t.Logf("command executed: %s", cmd)
+	if err != nil {
+		t.Error(fmt.Errorf("error while committing files for repository at %s: %w: %s", path, err, output))
+		t.FailNow()
+	}
+	t.Logf("committed files for repository at %s (message %s): %s", path, message, output)
+	return ctx
+}
+
+func GitPush(ctx context.Context, t *testing.T, cfg *envconf.Config, path string, force bool) context.Context {
+	t.Logf("pushing commits for repository at %s", path)
+	cmd, output, err := exec.GitPush(path, force)
+	t.Logf("command executed: %s", cmd)
+	if err != nil {
+		t.Error(fmt.Errorf("error while pushing commits for repository at %s: %w: %s", path, err, output))
+		t.FailNow()
+	}
+	t.Logf("pushed commits for repository at %s: %s", path, output)
+	return ctx
+}
+
+func GitResetFromHead(ctx context.Context, t *testing.T, cfg *envconf.Config, path string, count int) context.Context {
+	t.Logf("resetting commits at HEAD~%d for repository at %s", count, path)
+	cmd, output, err := exec.GitResetFromHead(path, count)
+	t.Logf("command executed: %s", cmd)
+	if err != nil {
+		t.Error(fmt.Errorf("error while resetting commits at HEAD~%d for repository at %s: %w: %s", count, path, err, output))
+		t.FailNow()
+	}
+	t.Logf("resetted commits at HEAD~%d for repository at %s: %s", count, path, output)
+	return ctx
+}
+
+func RemoveDirectory(ctx context.Context, t *testing.T, cfg *envconf.Config, dir string) context.Context {
+	t.Logf("removing directory %s", dir)
+	err := os.RemoveAll(dir)
+	if err != nil {
+		t.Error(fmt.Errorf("error while removing directory %s: %w", dir, err))
+		t.FailNow()
+	}
+	t.Logf("directory %s removed", dir)
+	return ctx
+}
+
+func UpdateFileReplaceString(ctx context.Context, t *testing.T, cfg *envconf.Config, file string, originalString string, newString string) context.Context {
+	t.Logf("updating file %s", file)
+	inputBytes, err := os.ReadFile(file)
+	if err != nil {
+		t.Error(fmt.Errorf("error while updating file %s: %w", file, err))
+		t.FailNow()
+	}
+	input := strings.ReplaceAll(string(inputBytes), originalString, newString)
+	return WriteFile(ctx, t, cfg, file, input)
 }
