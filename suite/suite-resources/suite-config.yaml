@@ -9,19 +9,36 @@ outerloop:
     namespace: my-apps
     yaml_file: mysql-service.yaml
   namespace: my-apps
+  project:
+    repository: https://github.com/dapdelivery/spring-petclinic.git
+    name: spring-petclinic
+    file: src/main/resources/templates/fragments/layout.html
+    original_string: "PetClinic :: a Spring Framework demonstration"
+    new_string: "Spring PetClinic :: a Spring Framework demonstration"
+    application: spring-petclinic.my-apps.example.com
   scan_policy:
     namespace: my-apps
     yaml_file: scan-policy.yaml
   spring_petclinic:
-    name: spring-petclinic-tests-pipeline
+    build_name_prefix: spring-petclinic
+    gitrepository_name: spring-petclinic
     imagerepository_name: spring-petclinic-delivery
+    ksvc_name: spring-petclinic
+    name: spring-petclinic-tests-pipeline
     namespace: my-apps
+    podintent_name: spring-petclinic
+    taskrun_name_prefix: spring-petclinic-config-writer
     yaml_file: spring-petclinic-tests-pipeline.yaml
   workload:
     namespace: my-apps
     yaml_file: workload.yaml
+innerloop:
+  workload:
+    namespace: tap-install
+    name: tanzu-java-web-app
+    url: "tanzu-java-web-app.tap-install.example.com"
 package_repository:
-  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:0.5.0-build.5
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.2
   name: tanzu-tap-repository
   namespace: tap-install
 tanzunet_creds_secret:
@@ -35,13 +52,13 @@ image_secret:
   export: false
   name: image-secret
   namespace: my-apps
-  password: <REPOSITORY-PASSWORD>
-  registry: <REPOSITORY>
-  username: <REPOSITORY-USERNAME>
+  password: <REGISTRY-PASSWORD>
+  registry: <REGISTRY>
+  username: <REGISTRY-USERNAME>
 tap:
   name: tap
   namespace: tap-install
   package_name: tap.tanzu.vmware.com
   poll_timeout: 45m
   values_schema_file: tap-values.yaml
-  version: 0.5.0-build.5
+  version: 1.0.1-build.2

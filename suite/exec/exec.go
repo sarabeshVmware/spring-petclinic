@@ -4,6 +4,7 @@
 package exec
 
 import (
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -21,3 +22,14 @@ func RunCommandInBashMode(command string) (string, error) {
 	stdoutStderr, err := cmd.CombinedOutput()
 	return string(stdoutStderr), err
 }
+
+func RunCommandWithOutWait(command string) (*os.Process,error) {
+	var proc *os.Process
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	cmd := exec.Command(commandName, arguments...)
+	err := cmd.Start()
+	proc = cmd.Process
+	return proc, err
+}
+

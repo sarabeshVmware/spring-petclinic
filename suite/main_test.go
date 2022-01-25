@@ -15,6 +15,14 @@ import (
 var testenv env.Environment
 
 var config = struct {
+	ImageSecret struct {
+		Export    bool   `yaml:"export"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
+		Registry  string `yaml:"registry"`
+		Username  string `yaml:"username"`
+	} `yaml:"image_secret"`
 	Namespaces []string `yaml:"namespaces"`
 	Outerloop  struct {
 		CatalogInfoYaml string `yaml:"catalog_info_yaml"`
@@ -23,15 +31,28 @@ var config = struct {
 			Namespace string `yaml:"namespace"`
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"mysql"`
-		Namespace  string `yaml:"namespace"`
+		Namespace string `yaml:"namespace"`
+		Project   struct {
+			Application    string `yaml:"application"`
+			Name           string `yaml:"name"`
+			Repository     string `yaml:"repository"`
+			File           string `yaml:"file"`
+			OriginalString string `yaml:"original_string"`
+			NewString      string `yaml:"new_string"`
+		} `yaml:"project"`
 		ScanPolicy struct {
 			Namespace string `yaml:"namespace"`
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"scan_policy"`
 		SpringPetclinic struct {
-			ImageRepositoryName string `yaml:"imagerepository_name"`
+			BuildNamePrefix     string `yaml:"build_name_prefix"`
+			GitrepositoryName   string `yaml:"gitrepository_name"`
+			ImagerepositoryName string `yaml:"imagerepository_name"`
+			KsvcName            string `yaml:"ksvc_name"`
 			Name                string `yaml:"name"`
 			Namespace           string `yaml:"namespace"`
+			PodintentName       string `yaml:"podintent_name"`
+			TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
 			YamlFile            string `yaml:"yaml_file"`
 		} `yaml:"spring_petclinic"`
 		Workload struct {
@@ -39,6 +60,13 @@ var config = struct {
 			YamlFile  string `yaml:"yaml_file"`
 		} `yaml:"workload"`
 	} `yaml:"outerloop"`
+	Innerloop struct {
+		Workload struct {
+			Namespace string `yaml:"namespace"`
+			Name string `yaml:"name"`
+			URL string `yaml:"url"`
+		} `yaml:"workload"`
+	} `yaml:"innerloop"`
 	PackageRepository struct {
 		Image     string `yaml:"image"`
 		Name      string `yaml:"name"`
@@ -52,14 +80,6 @@ var config = struct {
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
 	} `yaml:"tanzunet_creds_secret"`
-	ImageSecret struct {
-		Export    bool   `yaml:"export"`
-		Name      string `yaml:"name"`
-		Namespace string `yaml:"namespace"`
-		Password  string `yaml:"password"`
-		Registry  string `yaml:"registry"`
-		Username  string `yaml:"username"`
-	} `yaml:"image_secret"`
 	Tap struct {
 		Name             string `yaml:"name"`
 		Namespace        string `yaml:"namespace"`
@@ -71,6 +91,11 @@ var config = struct {
 }{}
 
 var tapValuesSchema = struct {
+	Accelerator struct {
+		Server struct {
+			ServiceType string `yaml:"service_type"`
+		} `yaml:"server"`
+	}  `yaml:"accelerator"`
 	Buildservice struct {
 		KpDefaultRepository         string `yaml:"kp_default_repository"`
 		KpDefaultRepositoryPassword string `yaml:"kp_default_repository_password"`

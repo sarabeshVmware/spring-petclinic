@@ -1,7 +1,10 @@
+accelerator:
+    server:
+        service_type: ClusterIP
 buildservice:
-    kp_default_repository: dev.registry.tanzu.vmware.com/tanzu-advanced-edition/tbs
-    kp_default_repository_password: <REPOSITORY-PASSWORD>
-    kp_default_repository_username: <REPOSITORY-USERNAME>
+    kp_default_repository: <KP-DEFAULT-REPOSITORY>
+    kp_default_repository_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
+    kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
     tanzunet_password: <TANZUNET-PASSWORD>
     tanzunet_username: <TANZUNET-USERNAME>
 ceip_policy_disclosed: true
@@ -18,20 +21,20 @@ ootb_supply_chain_basic:
     gitops:
         ssh_secret: ""
     registry:
-        repository: tanzu-advanced-edition/divyanshum/apps-1
-        server: dev.registry.tanzu.vmware.com
+        repository: <REPOSITORY>
+        server: <SERVER>
 ootb_supply_chain_testing:
     gitops:
         ssh_secret: ""
     registry:
-        repository: tanzu-advanced-edition/divyanshum/apps-1
-        server: dev.registry.tanzu.vmware.com
+        repository: <REPOSITORY>
+        server: <SERVER>
 ootb_supply_chain_testing_scanning:
     gitops:
         ssh_secret: ""
     registry:
-        repository: tanzu-advanced-edition/divyanshum/apps-1
-        server: dev.registry.tanzu.vmware.com
+        repository: <REPOSITORY>
+        server: <SERVER>
 profile: full
 supply_chain: basic
 tap_gui:
