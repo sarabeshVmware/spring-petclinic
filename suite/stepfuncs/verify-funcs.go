@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"strings"
 	"time"
-	"net/http"
-	"io/ioutil"
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
