@@ -6,7 +6,7 @@ metadata:
     kapp.k14s.io/change-group: carto.run/meta
 spec:
   refName: cartographer.carto.run
-  version: v0.2.1
+  version: 0.2.1
   releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/v0.2.1
   releasedAt: "2022-01-24T16:10:07Z"
   valuesSchema:
