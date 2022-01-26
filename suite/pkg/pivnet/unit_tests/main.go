@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -43,12 +42,17 @@ func create_release() {
 	pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID)
 	pivnet_libs.AddArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
 	pivnet_libs.UpdateRelease(config.ProductSlug, config.ReleaseVersion, "selected-user-groups")
-	userGroupList := pivnet_libs.ListUserGroups()
-	fmt.Println(userGroupList)
-	for _, value := range config.UserGroups {
-		fmt.Println(value)
-		pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, "437")
+	userGroupList := pivnet_libs.ListUserGroups(config.ProductSlug)
+	for _, user := range userGroupList {
+		for _, u := range config.UserGroups {
+			if user.Name == u {
+				pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, user.ID)
+				break
+			}
+		}
+
 	}
+	//	pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, "437")
 
 }
 

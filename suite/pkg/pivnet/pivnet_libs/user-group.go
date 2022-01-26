@@ -24,23 +24,23 @@ type ListUserGroupsOutput []struct {
 	Description string `json:"description"`
 }
 
-func ListUserGroups() *ListUserGroupsOutput {
+func ListUserGroups(productSlug string) ListUserGroupsOutput {
 
-	cmd := "pivnet-cli user-groups --format json"
+	cmd := fmt.Sprintf("pivnet-cli user-groups --product-slug= %s --format json", productSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		log.Println("something bad happened")
 	}
 	in := []byte(response)
-	var raw *ListUserGroupsOutput
+	var raw ListUserGroupsOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
 	return raw
 }
 
-func AddUserGroup(productSlug string, releaseVersion string, userGroupId string) {
-	cmd := fmt.Sprintf("pivnet-cli add-user-group --product-slug=%s --release-version %s --user-group-id=%s --format json", productSlug, releaseVersion, userGroupId)
+func AddUserGroup(productSlug string, releaseVersion string, userGroupId int) {
+	cmd := fmt.Sprintf("pivnet-cli add-user-group --product-slug=%s --release-version %s --user-group-id=%d --format json", productSlug, releaseVersion, userGroupId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil || response != "" {
 		log.Println("something bad happened")

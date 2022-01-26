@@ -85,8 +85,8 @@ func UpdateRelease(productSlug string, releaseVersion string, availability strin
 	if err != nil {
 		log.Println("something bad happened")
 	}
-	res := strings.Split(response, "{")
-	in := []byte(res[1])
+
+	in := []byte(response)
 	var raw *UpdateReleaseOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
