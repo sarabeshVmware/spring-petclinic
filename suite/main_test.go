@@ -8,60 +8,18 @@ import (
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 )
 
 var testenv env.Environment
 
-var config = struct {
-	ImageSecret struct {
-		Export    bool   `yaml:"export"`
-		Name      string `yaml:"name"`
-		Namespace string `yaml:"namespace"`
-		Password  string `yaml:"password"`
-		Registry  string `yaml:"registry"`
-		Username  string `yaml:"username"`
-	} `yaml:"image_secret"`
-	Namespaces []string `yaml:"namespaces"`
-	Outerloop  struct {
-		CatalogInfoYaml string `yaml:"catalog_info_yaml"`
-		Mysql           struct {
+var suiteConfig = struct {
+	CreateNamespaces []string `yaml:"create_namespaces"`
+	Innerloop        struct {
+		Workload struct {
 			Name      string `yaml:"name"`
-			Namespace string `yaml:"namespace"`
-			YamlFile  string `yaml:"yaml_file"`
-		} `yaml:"mysql"`
-		Namespace string `yaml:"namespace"`
-		Project   struct {
-			Application    string `yaml:"application"`
-			Name           string `yaml:"name"`
-			Repository     string `yaml:"repository"`
-			File           string `yaml:"file"`
-			OriginalString string `yaml:"original_string"`
-			NewString      string `yaml:"new_string"`
-		} `yaml:"project"`
-		ScanPolicy struct {
-			Namespace string `yaml:"namespace"`
-			YamlFile  string `yaml:"yaml_file"`
-		} `yaml:"scan_policy"`
-		SpringPetclinic struct {
-			BuildNamePrefix     string `yaml:"build_name_prefix"`
-			GitrepositoryName   string `yaml:"gitrepository_name"`
-			ImagerepositoryName string `yaml:"imagerepository_name"`
-			KsvcName            string `yaml:"ksvc_name"`
-			Name                string `yaml:"name"`
-			Namespace           string `yaml:"namespace"`
-			PodintentName       string `yaml:"podintent_name"`
-			TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
-			YamlFile            string `yaml:"yaml_file"`
-		} `yaml:"spring_petclinic"`
-		Workload struct {
-			Namespace string `yaml:"namespace"`
-			YamlFile  string `yaml:"yaml_file"`
-		} `yaml:"workload"`
-	} `yaml:"outerloop"`
-	Innerloop struct {
-		Workload struct {
 			Namespace string `yaml:"namespace"`
 			Name string `yaml:"name"`
 			URL string `yaml:"url"`
@@ -72,14 +30,22 @@ var config = struct {
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
 	} `yaml:"package_repository"`
-	TanzunetCredsSecret struct {
+	TapRegistrySecret struct {
 		Export    bool   `yaml:"export"`
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
 		Password  string `yaml:"password"`
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
-	} `yaml:"tanzunet_creds_secret"`
+	} `yaml:"tap_registry_secret"`
+	RegistryCredentialsSecret struct {
+		Export    bool   `yaml:"export"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
+		Registry  string `yaml:"registry"`
+		Username  string `yaml:"username"`
+	} `yaml:"registry_credentials_secret"`
 	Tap struct {
 		Name             string `yaml:"name"`
 		Namespace        string `yaml:"namespace"`
@@ -100,7 +66,7 @@ var tapValuesSchema = struct {
 		Server struct {
 			ServiceType string `yaml:"service_type"`
 		} `yaml:"server"`
-	}  `yaml:"accelerator"`
+	} `yaml:"accelerator"`
 	Buildservice struct {
 		KpDefaultRepository         string `yaml:"kp_default_repository"`
 		KpDefaultRepositoryPassword string `yaml:"kp_default_repository_password"`
@@ -109,16 +75,13 @@ var tapValuesSchema = struct {
 		TanzunetUsername            string `yaml:"tanzunet_username"`
 	} `yaml:"buildservice"`
 	CeipPolicyDisclosed bool `yaml:"ceip_policy_disclosed"`
-	Cnrs                struct {
-		DomainName interface{} `yaml:"domain_name,omitempty"`
-	} `yaml:"cnrs,omitempty"`
-	Contour struct {
+	Contour             struct {
 		Envoy struct {
 			Service struct {
-				Type string `yaml:"type,omitempty"`
-			} `yaml:"service,omitempty"`
-		} `yaml:"envoy,omitempty"`
-	} `yaml:"contour,omitempty"`
+				Type string `yaml:"type"`
+			} `yaml:"service"`
+		} `yaml:"envoy"`
+	} `yaml:"contour"`
 	Grype struct {
 		Namespace             string `yaml:"namespace"`
 		TargetImagePullSecret string `yaml:"targetImagePullSecret"`
@@ -156,58 +119,42 @@ var tapValuesSchema = struct {
 	Profile     string `yaml:"profile"`
 	SupplyChain string `yaml:"supply_chain"`
 	TapGui      struct {
-		AppConfig struct {
-			App struct {
-				BaseURL string `yaml:"baseUrl,omitempty"`
-				Title   string `yaml:"title,omitempty"`
-			} `yaml:"app,omitempty"`
-			Backend struct {
-				BaseURL string `yaml:"baseUrl,omitempty"`
-				Cors    struct {
-					Origin string `yaml:"origin,omitempty"`
-				} `yaml:"cors,omitempty"`
-			} `yaml:"backend,omitempty"`
-			Catalog struct {
-				Locations []struct {
-					Target string `yaml:"target,omitempty"`
-					Type   string `yaml:"type,omitempty"`
-				} `yaml:"locations,omitempty"`
-			} `yaml:"catalog,omitempty"`
-		} `yaml:"app_config,omitempty"`
-		ServiceType string `yaml:"service_type,omitempty"`
-	} `yaml:"tap_gui,omitempty"`
+		ServiceType string `yaml:"service_type"`
+	} `yaml:"tap_gui"`
 }{}
 
+var resourcesDir = filepath.Join(utils.GetFileDir(), "resources")
+var suiteResourcesDir = filepath.Join(resourcesDir, "suite")
+
 func TestMain(m *testing.M) {
-	logFile, err := SetLogger(filepath.Join(GetFileDir(), "logs"))
+	// set logger
+	logFile, err := utils.SetLogger(filepath.Join(utils.GetFileDir(), "logs"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while setting log file %s: %w", logFile, err))
 	}
 
+	// get kubeconfig
 	home, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while getting user home directory: %w", err))
 	}
 	testenv = env.NewWithKubeConfig(filepath.Join(home, ".kube", "config"))
 
-	suiteResourcesDir, outerloopResourcesDir := "suite-resources", "outerloop-resources"
-
-	configBytes, err := os.ReadFile(filepath.Join(GetFileDir(), suiteResourcesDir, "suite-config.yaml"))
+	// read suite config
+	suiteConfigBytes, err := os.ReadFile(filepath.Join(suiteResourcesDir, "suite-config.yaml"))
 	if err != nil {
-		log.Fatal(fmt.Errorf("error while reading config file: %w", err))
+		log.Fatal(fmt.Errorf("error while reading suite config file: %w", err))
 	}
-	err = yaml.Unmarshal(configBytes, &config)
+	err = yaml.Unmarshal(suiteConfigBytes, &suiteConfig)
 	if err != nil {
-		log.Fatal(fmt.Errorf("error while unmarshalling config file: %w", err))
+		log.Fatal(fmt.Errorf("error while unmarshalling suite config file: %w", err))
 	}
 
-	config.Tap.ValuesSchemaFile = filepath.Join(GetFileDir(), suiteResourcesDir, config.Tap.ValuesSchemaFile)
-	config.Outerloop.Mysql.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.Mysql.YamlFile)
-	config.Outerloop.ScanPolicy.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.ScanPolicy.YamlFile)
-	config.Outerloop.SpringPetclinic.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.SpringPetclinic.YamlFile)
-	config.Outerloop.Workload.YamlFile = filepath.Join(GetFileDir(), outerloopResourcesDir, config.Outerloop.Workload.YamlFile)
+	// update suite config for full path for values schema
+	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 
-	tapValuesSchemaBytes, err := os.ReadFile(config.Tap.ValuesSchemaFile)
+	// read tap values schema
+	tapValuesSchemaBytes, err := os.ReadFile(suiteConfig.Tap.ValuesSchemaFile)
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while reading tap values schema file: %w", err))
 	}
@@ -216,29 +163,36 @@ func TestMain(m *testing.M) {
 		log.Fatal(fmt.Errorf("error while unmarshalling tap values schema file: %w", err))
 	}
 
+	// setup
+	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 	testenv.Setup(
-		envfuncs.InstallClusterEssentials(config.TanzuClusterEssentials.Bundle, 
-			config.TanzuClusterEssentials.Registry ,
-			config.TanzunetCredsSecret.Username, 
-			config.TanzunetCredsSecret.Password, 
-			config.TanzuClusterEssentials.FileName),
+		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle, 
+			suiteConfig.TanzuClusterEssentials.Registry ,
+			suiteConfig.TapRegistrySecret.Username, 
+			suiteConfig.TapRegistrySecret.Password, 
+			suiteConfig.TanzuClusterEssentials.FileName),
 		// envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
 		// envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
-		envfuncs.CreateNamespaces(config.Namespaces),
-		envfuncs.CreateSecret(config.TanzunetCredsSecret.Name, config.TanzunetCredsSecret.Registry, config.TanzunetCredsSecret.Username, config.TanzunetCredsSecret.Password, config.TanzunetCredsSecret.Namespace, config.TanzunetCredsSecret.Export),
-		envfuncs.CreateSecret(config.ImageSecret.Name, config.ImageSecret.Registry, config.ImageSecret.Username, config.ImageSecret.Password, config.ImageSecret.Namespace, config.ImageSecret.Export),
-		envfuncs.AddPackageRepository(config.PackageRepository.Name, config.PackageRepository.Image, config.PackageRepository.Namespace),
-		envfuncs.CheckIfPackageRepositoryReconciled(config.PackageRepository.Name, config.PackageRepository.Namespace, 10),
-		envfuncs.InstallPackage(config.Tap.Name, config.Tap.PackageName, config.Tap.Version, config.Tap.Namespace, config.Tap.ValuesSchemaFile, config.Tap.PollTimeout),
-		envfuncs.CheckIfPackageInstalled(config.Tap.Name, config.Tap.Namespace, 10),
+		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
+		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
+		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
+		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Namespace),
+		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10),
+		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
+		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10),
+		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[1]),
 	)
 
+	// finish
 	testenv.Finish(
-		envfuncs.UninstallPackage(config.Tap.Name, config.Tap.Namespace),
-		envfuncs.DeletePackageRepository(config.PackageRepository.Name, config.PackageRepository.Namespace),
-		envfuncs.DeleteSecret(config.ImageSecret.Name, config.ImageSecret.Namespace),
-		envfuncs.DeleteSecret(config.TanzunetCredsSecret.Name, config.TanzunetCredsSecret.Namespace),
-		envfuncs.DeleteNamespaces(config.Namespaces),
+		envfuncs.DeleteDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[1]),
+		envfuncs.DeleteDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+		envfuncs.UninstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
+		envfuncs.DeletePackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
+		envfuncs.DeleteSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Namespace),
+		envfuncs.DeleteSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
+		envfuncs.DeleteNamespaces(suiteConfig.CreateNamespaces),
 	)
 
 	os.Exit(testenv.Run(m))
