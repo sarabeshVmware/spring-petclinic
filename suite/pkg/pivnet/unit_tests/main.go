@@ -50,10 +50,7 @@ func create_release() {
 				break
 			}
 		}
-
 	}
-	//	pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, "437")
-
 }
 
 func main() {
