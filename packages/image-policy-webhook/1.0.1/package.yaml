@@ -1,0 +1,66 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: image-policy-webhook.signing.apps.tanzu.vmware.com.1.0.1
+spec:
+  refName: image-policy-webhook.signing.apps.tanzu.vmware.com
+  version: 1.0.1
+  releaseNotes: |
+    Supply Chain Security Tools - Sign v1.0.1
+    - CHANGE: kube-system namespace will be ignored
+    - CHANGE: Updated go version to 1.17.6
+    - CHANGE: Add viewer/editor role for cliusterimagepolicy
+    - CHANGE: Make MutatingWebhookConfiguration wait for the service to come up
+  releasedAt: 2022-01-24T17:00:00Z
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:632421df32df6c3eeee96d509edb1dd1179636322f18d315de68600237103390
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      title: image-policy-webhook.signing.apps.tanzu.vmware.com.1.0.1 values schema
+      examples:
+      - allow_unmatched_images: true
+      properties:
+        allow_unmatched_images:
+          type: boolean
+          description: |
+            Feature flag for enabling admission of images that do not match any patterns in the image policy configuration.
+            Set to true to allow images that do not match any patterns into the cluster with a warning.
+          default: false
+          examples:
+          - true
+        quota:
+          type: object
+          description: |
+            Contains configuration for ResourceQuotas.
+          properties:
+            pod_number:
+              type: string
+              description: |
+                The maximum number of Image Policy Webhook Pods allowed to be created with the priority class
+                system-cluster-critical. This value must be enclosed in quotes ("").
+                If this value is not specified then a default value of 5 is used.
+              default: "5"
+              examples:
+              - "10"
+        replicas:
+          type: integer
+          description: |
+            The number of replicas to be created for the Image Policy Webhook. This value must not be enclosed
+            in quotes.
+            If this value is not specified then a default value of 1 is used.
+          default: 1
+          examples:
+          - 6
