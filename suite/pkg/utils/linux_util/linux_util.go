@@ -19,6 +19,17 @@ func stripAnsiEscapeSequence(s string) string {
 func ExecuteCmd(command string) (string, error) {
 	commandName := strings.Split(command, " ")[0]
 	arguments := strings.Split(command, " ")[1:]
+	// If argument values have spaces in them and passed within single quotes
+	for i, value := range arguments {
+		if strings.Contains(value, "'") {
+			arguments[i] = value + " " + arguments[i+1]
+			arguments = append(arguments[:i+1], arguments[i+2:]...)
+		}
+	}
+	// Bypassing single quotes during execution
+	for i, value := range arguments {
+		arguments[i] = strings.Replace(value, "'", "", -1)
+	}
 	cmd := exec.Command(commandName, arguments...)
 	stdoutStderr, err := cmd.CombinedOutput()
 	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
@@ -26,7 +37,7 @@ func ExecuteCmd(command string) (string, error) {
 		log.Printf("ERROR : %s", err.Error())
 		log.Printf("OUTPUT : %s", stdoutStderr)
 	} else {
-		log.Printf("Output: \n%s", string(stdoutStderr))
+		log.Printf("Output: %s", string(stdoutStderr))
 	}
 	return string(stdoutStderr), err
 }
