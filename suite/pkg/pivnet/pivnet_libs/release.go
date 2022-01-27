@@ -36,6 +36,7 @@ type CreateReleaseOutput struct {
 }
 
 func CreateRelease(productSlug string, releaseVersion string, releaseType string, eulaSlug string) *CreateReleaseOutput {
+	fmt.Println("Executing CreateRelease")
 	var raw *CreateReleaseOutput
 	cmd := fmt.Sprintf("pivnet-cli create-release --product-slug %s --release-version %s --release-type '%s' --eula-slug %s --format json", productSlug, releaseVersion, releaseType, eulaSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -77,8 +78,7 @@ type UpdateReleaseOutput struct {
 }
 
 func UpdateRelease(productSlug string, releaseVersion string, availability string) *UpdateReleaseOutput {
-	// productSlug = "tanzu-application-platform"
-	// releaseVersion = "1.0.1-build.test"
+	fmt.Println("Executing UpdateRelease")
 	cmd := fmt.Sprintf("pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
 
 	response, err := linux_util.ExecuteCmd(cmd)

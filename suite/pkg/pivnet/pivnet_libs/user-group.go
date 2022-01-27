@@ -25,7 +25,7 @@ type ListUserGroupsOutput []struct {
 }
 
 func ListUserGroups(productSlug string) ListUserGroupsOutput {
-
+	fmt.Println("Executing ListUserGroups")
 	cmd := fmt.Sprintf("pivnet-cli user-groups --product-slug= %s --format json", productSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
@@ -40,6 +40,7 @@ func ListUserGroups(productSlug string) ListUserGroupsOutput {
 }
 
 func AddUserGroup(productSlug string, releaseVersion string, userGroupId int) {
+	fmt.Println("Executing AddUserGroup")
 	cmd := fmt.Sprintf("pivnet-cli add-user-group --product-slug=%s --release-version %s --user-group-id=%d --format json", productSlug, releaseVersion, userGroupId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil || response != "" {

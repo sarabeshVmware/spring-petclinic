@@ -9,13 +9,12 @@ import (
 )
 
 func Login(host string, apiToken string) bool {
+	fmt.Println("Executing Login")
 	cmd := fmt.Sprintf("pivnet-cli login --host %s --api-token %s", host, apiToken)
-
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return false
 	}
-
 	if !strings.Contains(response, "Logged-in successfully") {
 		log.Println("Login failed")
 		return false

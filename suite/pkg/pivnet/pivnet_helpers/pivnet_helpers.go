@@ -11,7 +11,7 @@ func WaitTillArtifactReferenceIsReady(productSlug string, artifactReferenceId in
 	count := 40
 	for count <= 40 {
 		if count == 0 {
-			log.Fatalf("Artifacts are not generated after 10 mins")
+			log.Fatalf("Artifacts are not generated after 20 mins")
 			return false
 		}
 		artifact_Details := pivnet_libs.GetArtifactReference(productSlug, artifactReferenceId)
