@@ -88,6 +88,11 @@ var config = struct {
 		ValuesSchemaFile string `yaml:"values_schema_file"`
 		Version          string `yaml:"version"`
 	} `yaml:"tap"`
+	TanzuClusterEssentials struct {
+		Bundle    string `yaml:"bundle"`
+		Registry  string `yaml:"registry"`
+		FileName  string `yaml:"filename"`
+	} `yaml:"tanzu-cluster-essentials"`
 }{}
 
 var tapValuesSchema = struct {
@@ -212,8 +217,13 @@ func TestMain(m *testing.M) {
 	}
 
 	testenv.Setup(
-		envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
-		envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
+		envfuncs.InstallClusterEssentials(config.TanzuClusterEssentials.Bundle, 
+			config.TanzuClusterEssentials.Registry ,
+			config.TanzunetCredsSecret.Username, 
+			config.TanzunetCredsSecret.Password, 
+			config.TanzuClusterEssentials.FileName),
+		// envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
+		// envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
 		envfuncs.CreateNamespaces(config.Namespaces),
 		envfuncs.CreateSecret(config.TanzunetCredsSecret.Name, config.TanzunetCredsSecret.Registry, config.TanzunetCredsSecret.Username, config.TanzunetCredsSecret.Password, config.TanzunetCredsSecret.Namespace, config.TanzunetCredsSecret.Export),
 		envfuncs.CreateSecret(config.ImageSecret.Name, config.ImageSecret.Registry, config.ImageSecret.Username, config.ImageSecret.Password, config.ImageSecret.Namespace, config.ImageSecret.Export),

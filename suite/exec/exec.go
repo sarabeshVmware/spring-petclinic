@@ -4,6 +4,7 @@
 package exec
 
 import (
+	
 	"os"
 	"os/exec"
 	"strings"
@@ -33,3 +34,12 @@ func RunCommandWithOutWait(command string) (*os.Process,error) {
 	return proc, err
 }
 
+func RunBashFile(filepath string, executefrom string) (string, error)  {
+	
+	cmd := exec.Command(filepath)
+	if executefrom != "" {
+		cmd.Dir = executefrom
+	}	
+	stdoutStderr, err := cmd.Output()
+	return string(stdoutStderr), err
+}
