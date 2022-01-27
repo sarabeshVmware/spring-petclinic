@@ -62,3 +62,7 @@ tap:
   poll_timeout: 45m
   values_schema_file: tap-values.yaml
   version: 1.0.1-build.2
+tanzu-cluster-essentials:
+  bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
+  registry: registry.tanzu.vmware.com
+  filename: install.sh
