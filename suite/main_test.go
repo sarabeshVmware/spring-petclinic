@@ -91,7 +91,7 @@ var config = struct {
 	TanzuClusterEssentials struct {
 		Bundle    string `yaml:"bundle"`
 		Registry  string `yaml:"registry"`
-		FileDir  string `yaml:"filedir"`
+		FileName  string `yaml:"filename"`
 	} `yaml:"tanzu-cluster-essentials"`
 }{}
 
@@ -221,7 +221,7 @@ func TestMain(m *testing.M) {
 			config.TanzuClusterEssentials.Registry ,
 			config.TanzunetCredsSecret.Username, 
 			config.TanzunetCredsSecret.Password, 
-			config.TanzuClusterEssentials.FileDir),
+			config.TanzuClusterEssentials.FileName),
 		// envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
 		// envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
 		envfuncs.CreateNamespaces(config.Namespaces),

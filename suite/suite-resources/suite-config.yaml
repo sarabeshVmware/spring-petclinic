@@ -65,5 +65,4 @@ tap:
 tanzu-cluster-essentials:
   bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
   registry: registry.tanzu.vmware.com
-  # filedir could be  tanzu-cluster-essentials/darwin or  tanzu-cluster-essentials/linux
-  filedir: tanzu-cluster-essentials/darwin
+  filename: install.sh

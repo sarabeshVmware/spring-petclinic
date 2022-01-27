@@ -36,7 +36,7 @@ func CheckAndDeploy(name string, files []string, namespace string) env.Func {
 	}
 }
 
-func InstallClusterEssentials(bundle string, registry string, username string, password string, filedir string) env.Func {
+func InstallClusterEssentials(bundle string, registry string, username string, password string, filename string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		kappControllerDeployed, err := client.CheckDeploymentExists("kapp-controller", cfg.Client().RESTConfig())
 		if err != nil {
@@ -60,10 +60,11 @@ func InstallClusterEssentials(bundle string, registry string, username string, p
 		log.Printf("INSTALL_REGISTRY_USERNAME env set to: %s" , os.Getenv("INSTALL_REGISTRY_USERNAME"))
 		os.Setenv("INSTALL_REGISTRY_PASSWORD", password)
 		log.Println("INSTALL_REGISTRY_PASSWORD env set.")
-		executefrom := filedir
+		//executefrom := filedir
 		wd, _ := os.Getwd()
-		file := path.Join(wd, filedir, "install.sh")
-		output, err := exec.RunBashFile(file, executefrom)
+		//file := path.Join(wd, filedir, "install.sh")
+		file := path.Join(wd, filename)
+		output, err := exec.RunBashFile(file, "")
 		log.Printf("File %s executed successfully", file)
 		if err != nil {
 			return ctx, fmt.Errorf("error while deploying cluster-essentials: %w: %s", err, output)
