@@ -45,6 +45,7 @@ packages:
   - name: image-policy-webhook
     versions:
       - 1.0.0
+      - 1.0.1
   - name: api-portal
     versions:
       - 1.0.8
@@ -58,10 +59,11 @@ packages:
   - name: tap-gui
     versions:
       - 1.0.1
+      - 1.0.2
   - name: tap
     versions:
       - 1.0.0
-      - 1.0.1-build.4
+      - 1.0.1-build.5
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -97,4 +99,5 @@ packages:
       - 0.5.1
   - name: tap-telemetry
     versions:
+      - 0.1.2
       - 0.1.3
