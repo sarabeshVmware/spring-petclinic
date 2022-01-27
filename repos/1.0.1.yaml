@@ -97,4 +97,4 @@ packages:
       - 0.5.1
   - name: tap-telemetry
     versions:
-      - 0.1.2
+      - 0.1.3
