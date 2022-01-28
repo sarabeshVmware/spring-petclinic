@@ -269,7 +269,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyKsvcStatus := features.New("verify-ksvc-status").
 		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if kubectl_helpers.GetKsvcStatus(outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace) != "True" {
+			if !kubectl_helpers.VerifyKsvcStatus(outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace) {
 				t.Error(fmt.Errorf("ksvc %s is not ready", outerloopConfig.SpringPetclinic.KsvcName))
 				t.FailNow()
 			}
