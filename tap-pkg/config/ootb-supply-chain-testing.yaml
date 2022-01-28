@@ -21,7 +21,6 @@ spec:
     refName: ootb-supply-chain-testing.tanzu.vmware.com
     versionSelection:
       constraints: 0.6.0
-      prereleases: {}
   values:
   - secretRef:
       name: ootb-supply-chain-testing-values

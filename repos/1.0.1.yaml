@@ -37,6 +37,7 @@ packages:
       - 1.0.0
   - name: developer-conventions
     versions:
+      - 0.5.0-build.1
       - 0.5.0
   - name: insight-metadata-store
     versions:
@@ -63,7 +64,7 @@ packages:
   - name: tap
     versions:
       - 1.0.0
-      - 1.0.1-build.5
+      - 1.0.1-build.6
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -73,18 +74,23 @@ packages:
   - name: cartographer
     versions:
       - 0.1.0
+      - 0.2.1
   - name: ootb-templates
     versions:
       - 0.5.1
+      - 0.6.0
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
+      - 0.6.0
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
+      - 0.6.0
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
+      - 0.6.0
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -97,6 +103,7 @@ packages:
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
+      - 0.6.0
   - name: tap-telemetry
     versions:
       - 0.1.2
