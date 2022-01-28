@@ -3,7 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.run]):
-#@ if profiles.is_pkg_enabled("image-policy-webhook.signing.run.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("image-policy-webhook.signing.apps.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
