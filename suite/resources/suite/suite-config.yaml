@@ -16,7 +16,7 @@ tap_registry_secret:
   name: tap-registry
   namespace: tap-install
   password: <TANZUNET-PASSWORD>
-  registry: registry.tanzu.vmware.com
+  registry: dev.registry.tanzu.vmware.com
   username: <TANZUNET-USERNAME>
 registry_credentials_secret:
   export: false
