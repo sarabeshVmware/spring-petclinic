@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: ootb-templates.tanzu.vmware.com
     versionSelection:
-      constraints: 0.5.1
+      constraints: 0.6.0
       prereleases: {}
 
 #@ end
