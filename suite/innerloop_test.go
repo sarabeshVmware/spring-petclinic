@@ -146,6 +146,7 @@ func TestInnerloopBasic(t *testing.T) {
 	tiltprocCmdKey := "tiltprocCmd"
 	f6 := features.New("create-workload-tilt-up").
 		Assess("tilting-up", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("Setting NAMESPACE environment variable to %s", suiteConfig.Innerloop.Workload.Namespace)
 			os.Setenv("NAMESPACE", suiteConfig.Innerloop.Workload.Namespace)
 			//tiltFile := ctx.Value(acceleratorNameKey).(string) + "/Tiltfile"
 			tiltCmd := fmt.Sprintf("tilt up --file %s --port 11223", tiltFile)
@@ -490,6 +491,19 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("Deleting workload")
 			tanzu_lib.DeleteWorkload(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
+			return ctx
+		}).
+		Assess("update-schema-back-to-default", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			tapValuesSchema.Profile = "full"
+			tapValuesSchema.SupplyChain = "basic"
+			tapValuesSchema.Accelerator.Server.ServiceType = "ClusterIP"
+			t.Logf("updating tap values schema %s", suiteConfig.Tap.ValuesSchemaFile)
+			err := utils.WriteYAMLFile(suiteConfig.Tap.ValuesSchemaFile, tapValuesSchema)
+			if err != nil {
+				t.Error(fmt.Errorf("error while updating tap values schema %s: %w", suiteConfig.Tap.ValuesSchemaFile, err))
+				t.FailNow()
+			}
+			t.Logf("tap values schema %s updated", suiteConfig.Tap.ValuesSchemaFile)
 			return ctx
 		}).
 		Feature()
