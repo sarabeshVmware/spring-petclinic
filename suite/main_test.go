@@ -21,8 +21,7 @@ var suiteConfig = struct {
 		Workload struct {
 			Name      string `yaml:"name"`
 			Namespace string `yaml:"namespace"`
-			Name string `yaml:"name"`
-			URL string `yaml:"url"`
+			URL       string `yaml:"url"`
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
@@ -55,9 +54,9 @@ var suiteConfig = struct {
 		Version          string `yaml:"version"`
 	} `yaml:"tap"`
 	TanzuClusterEssentials struct {
-		Bundle    string `yaml:"bundle"`
-		Registry  string `yaml:"registry"`
-		FileName  string `yaml:"filename"`
+		Bundle   string `yaml:"bundle"`
+		Registry string `yaml:"registry"`
+		Filename string `yaml:"filename"`
 	} `yaml:"tanzu-cluster-essentials"`
 }{}
 
@@ -166,11 +165,11 @@ func TestMain(m *testing.M) {
 	// setup
 	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 	testenv.Setup(
-		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle, 
-			suiteConfig.TanzuClusterEssentials.Registry ,
-			suiteConfig.TapRegistrySecret.Username, 
-			suiteConfig.TapRegistrySecret.Password, 
-			suiteConfig.TanzuClusterEssentials.FileName),
+		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle,
+			suiteConfig.TanzuClusterEssentials.Registry,
+			suiteConfig.TapRegistrySecret.Username,
+			suiteConfig.TapRegistrySecret.Password,
+			suiteConfig.TanzuClusterEssentials.Filename),
 		// envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
 		// envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
