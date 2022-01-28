@@ -42,3 +42,29 @@ func DeleteNamespaces(namespaces []string) env.Func {
 		return ctx, nil
 	}
 }
+
+func SetupDeveloperNamespace(file string, namespace string) env.Func {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
+		log.Printf("setting up developer namespace %s", namespace)
+		cmd, output, err := exec.KubectlApplyConfiguration(file, namespace)
+		log.Printf("command executed: %s", cmd)
+		if err != nil {
+			return ctx, fmt.Errorf("error while setting up developer namespace %s: %w: %s", namespace, err, output)
+		}
+		log.Printf("developer namespace %s created: %s", namespace, output)
+		return ctx, nil
+	}
+}
+
+func DeleteDeveloperNamespace(file string, namespace string) env.Func {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
+		log.Printf("deleting developer namespace %s", namespace)
+		cmd, output, err := exec.KubectlDeleteConfiguration(file, namespace)
+		log.Printf("command executed: %s", cmd)
+		if err != nil {
+			return ctx, fmt.Errorf("error while deleting developer namespace %s: %w: %s", namespace, err, output)
+		}
+		log.Printf("developer namespace %s deleted: %s", namespace, output)
+		return ctx, nil
+	}
+}

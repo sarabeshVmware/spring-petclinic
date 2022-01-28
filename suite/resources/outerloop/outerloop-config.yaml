@@ -1,0 +1,32 @@
+---
+catalog_info_yaml: https://github.com/dapdelivery/tap-catalog/blob/master/catalog-info.yaml
+# clusterrolebinding:
+#   name: apps-admin
+#   clusterrole: cluster-admin
+#   serviceAccount: my-apps:default
+mysql:
+  name: mysql-db
+  yaml_file: mysql-service.yaml
+namespace: my-apps
+project:
+  application: spring-petclinic.my-apps.example.com
+  webpage_relative_path: vets.html
+  file: src/main/resources/templates/vets/vetList.html
+  name: spring-petclinic-original
+  new_string: "Veterinarians at VMWare!!!"
+  original_string: "Veterinarians at VMWare"
+  repository: https://github.com/dapdelivery/spring-petclinic-original.git
+scan_policy:
+  yaml_file: scan-policy.yaml
+spring_petclinic:
+  build_name_prefix: spring-petclinic
+  gitrepository_name: spring-petclinic
+  imagerepository_name: spring-petclinic-delivery
+  ksvc_name: spring-petclinic
+  name: spring-petclinic-tests-pipeline
+  podintent_name: spring-petclinic
+  taskrun_name_prefix: spring-petclinic-config-writer
+  yaml_file: spring-petclinic-tests-pipeline.yaml
+workload:
+  name: spring-petclinic
+  yaml_file: workload.yaml

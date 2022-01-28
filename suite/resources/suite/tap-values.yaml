@@ -14,7 +14,7 @@ contour:
             type: LoadBalancer
 grype:
     namespace: my-apps
-    targetImagePullSecret: image-secret
+    targetImagePullSecret: registry-credentials
 learningcenter:
     ingressDomain: educates.tanzu.vmwware.com
 ootb_supply_chain_basic:

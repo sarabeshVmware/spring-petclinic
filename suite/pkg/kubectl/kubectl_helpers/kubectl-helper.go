@@ -179,11 +179,11 @@ func ValidateLearningCenter(name string, namespace string) bool {
 	return strings.Contains(res, "HTTP/1.1 302 Found")
 }
 
-func VerifyBuildStatus(namespace string) bool{
+func VerifyBuildStatus(namespace string) bool {
 	count := 60
 	for count <= 60 {
 		if count == 0 {
-			log.Fatalf("Builds are not generated after 5 mins")
+			log.Println("Builds are not generated after 5 mins")
 			return false
 		}
 		builds := kubectl_lib.GetBuilds("", namespace)
@@ -203,7 +203,7 @@ func VerifyBuildStatus(namespace string) bool{
 		log.Printf("Waiting for 10s for builds getting generated ...")
 		time.Sleep(10 * time.Second)
 		count -= 1
-	} 
+	}
 	return false
 }
 func GetPodIntentStatus(name string, namespace string) string {
@@ -217,7 +217,7 @@ func GetPodIntentStatus(name string, namespace string) string {
 		log.Printf("podintent not found")
 		return "None"
 	}
-	
+
 }
 
 func GetWorkloadStatus(name string, namespace string) string {
@@ -231,14 +231,14 @@ func GetWorkloadStatus(name string, namespace string) string {
 		log.Printf("workload not found")
 		return "None"
 	}
-	
+
 }
 
 func VerifyKsvcStatus(name string, namespace string) bool {
 	count := 10
 	for count <= 10 {
 		if count == 0 {
-			log.Fatalf("Ksvc are not generated after 5 mins")
+			log.Println("Ksvc are not generated after 5 mins")
 			return false
 		}
 		ksvc := kubectl_lib.GetKsvc(name, namespace)
@@ -265,7 +265,7 @@ func VerifyImageRepositoryStatus(name string, namespace string) bool {
 	count := 10
 	for count <= 10 {
 		if count == 0 {
-			log.Fatalf("Image repositories are not generated after 5 mins")
+			log.Println("Image repositories are not generated after 5 mins")
 			return false
 		}
 		img := kubectl_lib.GetImageRepositories(name, namespace)
@@ -284,6 +284,62 @@ func VerifyImageRepositoryStatus(name string, namespace string) bool {
 		}
 		log.Printf("Waiting for 30s for image repository getting generated ...")
 		time.Sleep(30 * time.Second)
+		count -= 1
+	}
+	return false
+}
+
+func VerifyGitRepoStatus(name string, namespace string) bool {
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("gitrepo is not generated after 5 mins")
+			return false
+		}
+		repo := kubectl_lib.GetGitrepo(name, namespace)
+		if len(repo) < 1 {
+			log.Println("gitrepo is not generated yet")
+		} else {
+			status := repo[0].READY
+			repoName := repo[0].NAME
+			if status == "True" {
+				log.Printf("gitrepo %s status is verified successfully, status is %s", repoName, status)
+				return true
+			} else {
+				log.Printf("gitrepo %s status is not verified successfully, status is %s", repoName, status)
+
+			}
+		}
+		log.Printf("waiting for 30s for Git repo getting generated ...")
+		time.Sleep(30 * time.Second)
+		count -= 1
+	}
+	return false
+}
+
+func VerifyTaskrunStatus(namespace string) bool {
+	count := 60
+	for count <= 60 {
+		if count == 0 {
+			log.Println("taskruns are not generated after 5 mins")
+			return false
+		}
+		taskruns := kubectl_lib.GetTaskruns("", namespace)
+		if len(taskruns) < 1 {
+			log.Println("taskruns are not generated yet")
+		} else {
+			status := taskruns[len(taskruns)-1].SUCCEEDED
+			taskrunName := taskruns[len(taskruns)-1].NAME
+			if status == "Unknown" {
+				log.Printf("taskrun %s status is Unknown", taskrunName)
+
+			} else if status == "True" {
+				log.Printf("taskrun %s status is verified successfully, status is %s", taskrunName, status)
+				return true
+			}
+		}
+		log.Printf("waiting for 10s for taskruns getting generated ...")
+		time.Sleep(10 * time.Second)
 		count -= 1
 	}
 	return false

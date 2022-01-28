@@ -1,0 +1,38 @@
+---
+create_namespaces:
+  - tap-install
+  - my-apps
+innerloop:
+  workload:
+    name: tanzu-java-web-app
+    namespace: tap-install
+    url: "tanzu-java-web-app.tap-install.example.com"
+package_repository:
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.0
+  name: tanzu-tap-repository
+  namespace: tap-install
+tap_registry_secret:
+  export: true
+  name: tap-registry
+  namespace: tap-install
+  password: <TANZUNET-PASSWORD>
+  registry: registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
+registry_credentials_secret:
+  export: false
+  name: registry-credentials
+  namespace: my-apps
+  password: <TANZUNET-PASSWORD>
+  registry: dev.registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
+tap:
+  name: tap
+  namespace: tap-install
+  package_name: tap.tanzu.vmware.com
+  poll_timeout: 30m
+  values_schema_file: tap-values.yaml
+  version: 1.0.0
+tanzu-cluster-essentials:
+  bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
+  registry: registry.tanzu.vmware.com
+  filename: install.sh
