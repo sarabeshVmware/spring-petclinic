@@ -35,6 +35,18 @@ func KubectlCreateClusterRoleBinding(name string, clusterRole string, serviceAcc
 	return cmd, output, err
 }
 
+func KubectlApplyConfiguration(file string, namespace string) (string, string, error) {
+	cmd := fmt.Sprintf("kubectl apply -n %s -f %s", namespace, file)
+	output, err := RunCommand(cmd)
+	return cmd, output, err
+}
+
+func KubectlDeleteConfiguration(file string, namespace string) (string, string, error) {
+	cmd := fmt.Sprintf("kubectl delete -n %s -f %s", namespace, file)
+	output, err := RunCommand(cmd)
+	return cmd, output, err
+}
+
 func matchStatusAndType(cmd string, name string, namespace string, conditionType string, conditionStatus string, checkPrefix bool) (bool, error) {
 	output, err := RunCommand(cmd)
 	if err != nil {
