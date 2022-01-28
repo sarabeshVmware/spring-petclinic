@@ -35,3 +35,18 @@ func DeleteWorkload(name string, namespace string) {
 	}
 
 }
+
+func DeleteAllWorkload(namespace string) {
+
+	cmd := "tanzu apps workload delete --all -y"
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}	
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil && strings.Contains(res, "Deleted workloads"){
+		log.Println("Error while deleting the workloads. Error %w, Output %s", err, res)
+	}
+
+}

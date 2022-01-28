@@ -1,12 +1,12 @@
 ---
 create_namespaces:
-  - tap-install
   - my-apps
+  - tap-install
 innerloop:
   workload:
     name: tanzu-java-web-app
-    namespace: tap-install
-    url: "tanzu-java-web-app.tap-install.example.com"
+    namespace: my-apps
+    url: "tanzu-java-web-app.my-apps.example.com"
 package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.0
   name: tanzu-tap-repository
