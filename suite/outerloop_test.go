@@ -1,3 +1,5 @@
+//go:build outerloop
+
 package suite
 
 import (
