@@ -1,3 +1,5 @@
+//go:build innerloop
+
 package suite
 
 import (
