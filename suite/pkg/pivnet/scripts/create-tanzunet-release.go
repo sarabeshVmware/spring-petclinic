@@ -26,7 +26,7 @@ type ConfigData struct {
 func main() {
 	var config ConfigData
 
-	filename, _ := filepath.Abs("./pkg/pivnet/unit_tests/config.yaml")
+	filename, _ := filepath.Abs("./pkg/pivnet/scripts/config.yaml")
 	yamlFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		panic(err)
