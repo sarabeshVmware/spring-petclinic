@@ -425,7 +425,7 @@ func TestOuterloopBasic(t *testing.T) {
 				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err3, output3))
 				t.FailNow()
 			}
-			t.Logf("configured remote url at %s (message %s): %s", path, message, output3)
+			t.Logf("configured remote url : %s", output3)
 			return ctx
 
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
