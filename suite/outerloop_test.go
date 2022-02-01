@@ -410,22 +410,22 @@ func TestOuterloopBasic(t *testing.T) {
 			t.Logf("git configured : %s", output)
 
 			t.Logf("cloning repository %s at %s", repo, path)
-			cmd, output, err := exec.GitClone(path, repo)
-			t.Logf("command executed: %s", cmd)
-			if err != nil {
-				t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err, output))
+			cmd2, output2, err2 := exec.GitClone(path, repo)
+			t.Logf("command executed: %s", cmd2)
+			if err2 != nil {
+				t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err2, output2))
 				t.FailNow()
 			}
-			t.Logf("repository %s cloned at %s: %s", repo, path, output)
+			t.Logf("repository %s cloned at %s: %s", repo, path, output2)
 
 			t.Logf("setting git remote url")
-			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
-			t.Logf("command executed: %s", cmd)
-			if err != nil {
-				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
+			cmd3, output3, err3 := exec.GitSetUrl(path, accesstoken, repo)
+			t.Logf("command executed: %s", cmd3)
+			if err3 != nil {
+				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err3, output3))
 				t.FailNow()
 			}
-			t.Logf("configured remote url at %s (message %s): %s", path, message, output)
+			t.Logf("configured remote url at %s (message %s): %s", path, message, output3)
 			return ctx
 
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
