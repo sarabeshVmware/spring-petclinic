@@ -395,11 +395,8 @@ func TestOuterloopBasic(t *testing.T) {
 		Feature()
 
 	gitUpdate := features.New("git-update").
-		Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
-			username, email := outerloopConfig.Project.Username, outerloopConfig.Project.Email
-			accesstoken := outerloopConfig.Project.AccessToken
-
+		Assess("git-config", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			path, username, email := utils.GetFileDir(), outerloopConfig.Project.Username, outerloopConfig.Project.Email
 			t.Logf("updating git config")
 			cmd, output, err := exec.GitConfig(path, username, email)
 			t.Logf("command executed: %s", cmd)
@@ -408,24 +405,34 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("git configured : %s", output)
+			return ctx
+		}).
+		Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
 
 			t.Logf("cloning repository %s at %s", repo, path)
-			cmd2, output2, err2 := exec.GitClone(path, repo)
-			t.Logf("command executed: %s", cmd2)
-			if err2 != nil {
-				t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err2, output2))
+			cmd, output, err := exec.GitClone(path, repo)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err, output))
 				t.FailNow()
 			}
-			t.Logf("repository %s cloned at %s: %s", repo, path, output2)
+			t.Logf("repository %s cloned at %s: %s", repo, path, output)
 
+			return ctx
+
+			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
+		}).
+		Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
 			t.Logf("setting git remote url")
-			cmd3, output3, err3 := exec.GitSetUrl(path, accesstoken, repo)
-			t.Logf("command executed: %s", cmd3)
-			if err3 != nil {
-				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err3, output3))
+			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
 				t.FailNow()
 			}
-			t.Logf("configured remote url : %s", output3)
+			t.Logf("configured remote url : %s", output)
 			return ctx
 
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
