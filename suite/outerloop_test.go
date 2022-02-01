@@ -47,6 +47,9 @@ var outerloopConfig = struct {
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		OriginalString      string `yaml:"original_string"`
 		Repository          string `yaml:"repository"`
+		Username            string `yaml:"username"`
+		Email               string `yaml:"email"`
+		AccessToken         string `yaml:"access_token"`
 	} `yaml:"project"`
 	ScanPolicy struct {
 		YamlFile string `yaml:"yaml_file"`
@@ -394,6 +397,18 @@ func TestOuterloopBasic(t *testing.T) {
 	gitUpdate := features.New("git-update").
 		Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
+			username, email := outerloopConfig.Project.Username, outerloopConfig.Project.Email
+			accesstoken := outerloopConfig.Project.AccessToken
+
+			t.Logf("updating git config")
+			cmd, output, err := exec.GitConfig(path, username, email)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring git : %w: %s", err, output))
+				t.FailNow()
+			}
+			t.Logf("git configured : %s", output)
+			return ctx
 
 			t.Logf("cloning repository %s at %s", repo, path)
 			cmd, output, err := exec.GitClone(path, repo)
@@ -403,6 +418,16 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("repository %s cloned at %s: %s", repo, path, output)
+			return ctx
+
+			t.Logf("setting git remote url")
+			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
+				t.FailNow()
+			}
+			t.Logf("configured remote url at %s (message %s): %s", path, message, output)
 			return ctx
 
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)

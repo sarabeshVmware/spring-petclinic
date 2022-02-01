@@ -16,6 +16,9 @@ project:
   new_string: "Veterinarians at VMWare!!!"
   original_string: "Veterinarians at VMWare"
   repository: https://github.com/dapdelivery/spring-petclinic-original.git
+  username: dapdelivery
+  email: svc.dapdelivery@gmail.com
+  access_token: <ACCESS_TOKEN>
 scan_policy:
   yaml_file: scan-policy.yaml
 spring_petclinic:
