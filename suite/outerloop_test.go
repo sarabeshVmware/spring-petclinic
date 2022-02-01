@@ -408,7 +408,6 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("git configured : %s", output)
-			return ctx
 
 			t.Logf("cloning repository %s at %s", repo, path)
 			cmd, output, err := exec.GitClone(path, repo)
@@ -418,7 +417,6 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("repository %s cloned at %s: %s", repo, path, output)
-			return ctx
 
 			t.Logf("setting git remote url")
 			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
