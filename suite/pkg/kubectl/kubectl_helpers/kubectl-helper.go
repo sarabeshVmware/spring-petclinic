@@ -180,10 +180,10 @@ func ValidateLearningCenter(name string, namespace string) bool {
 }
 
 func VerifyBuildStatus(namespace string) bool {
-	count := 60
-	for count <= 60 {
+	count := 20
+	for count <= 20 {
 		if count == 0 {
-			log.Println("Builds are not generated after 5 mins")
+			log.Println("Builds are not generated after 10 mins")
 			return false
 		}
 		builds := kubectl_lib.GetBuilds("", namespace)
@@ -200,8 +200,8 @@ func VerifyBuildStatus(namespace string) bool {
 				return true
 			}
 		}
-		log.Printf("Waiting for 10s for builds getting generated ...")
-		time.Sleep(10 * time.Second)
+		log.Printf("Waiting for 30s for builds getting generated ...")
+		time.Sleep(30 * time.Second)
 		count -= 1
 	}
 	return false
@@ -318,10 +318,10 @@ func VerifyGitRepoStatus(name string, namespace string) bool {
 }
 
 func VerifyTaskrunStatus(namespace string) bool {
-	count := 60
-	for count <= 60 {
+	count := 20
+	for count <= 20 {
 		if count == 0 {
-			log.Println("taskruns are not generated after 5 mins")
+			log.Println("taskruns are not generated after 10 mins")
 			return false
 		}
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
@@ -338,8 +338,8 @@ func VerifyTaskrunStatus(namespace string) bool {
 				return true
 			}
 		}
-		log.Printf("waiting for 10s for taskruns getting generated ...")
-		time.Sleep(10 * time.Second)
+		log.Printf("waiting for 30s for taskruns getting generated ...")
+		time.Sleep(30 * time.Second)
 		count -= 1
 	}
 	return false
