@@ -361,7 +361,9 @@ func TestInnerloopBasic(t *testing.T) {
 				}
 				if resp.StatusCode != http.StatusOK {
 					t.Error(fmt.Errorf("bad HTTP Response: %s", resp.Status))
-					t.FailNow()
+					t.Logf("sleeping for 30 seconds")
+                                        time.Sleep(30 * time.Second)
+                                        continue
 				}
 				defer resp.Body.Close()
 				resultStringBytes, _ := ioutil.ReadAll(resp.Body)
