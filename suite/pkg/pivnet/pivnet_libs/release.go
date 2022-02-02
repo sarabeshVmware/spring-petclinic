@@ -3,7 +3,6 @@ package pivnet_libs
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -79,15 +78,14 @@ type UpdateReleaseOutput struct {
 
 func UpdateRelease(productSlug string, releaseVersion string, availability string) *UpdateReleaseOutput {
 	fmt.Println("Executing UpdateRelease")
+	var raw *UpdateReleaseOutput
 	cmd := fmt.Sprintf("pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
-
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 
 	in := []byte(response)
-	var raw *UpdateReleaseOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
@@ -122,13 +120,13 @@ type ListReleasesOutput []struct {
 
 func ListReleases(productSlug string, limit int) ListReleasesOutput {
 	fmt.Println("Executing ListReleases")
+	var raw ListReleasesOutput
 	cmd := fmt.Sprintf("pivnet-cli releases --product-slug %s --limit %d --format json", productSlug, limit)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(response)
-	var raw ListReleasesOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}

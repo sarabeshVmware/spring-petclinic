@@ -18,13 +18,14 @@ type CreateArtifactReferenceOutput struct {
 
 func CreateArtifactReference(name string, productSlug string, artifactPath string, digest string) *CreateArtifactReferenceOutput {
 	log.Println("Executing CreateArtifactReference")
+	var raw *CreateArtifactReferenceOutput
 	cmd := fmt.Sprintf("pivnet-cli create-artifact-reference --name %s --product-slug=%s --artifact-path=%s --digest=%s --format json", name, productSlug, artifactPath, digest)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(response)
-	var raw *CreateArtifactReferenceOutput
+
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
@@ -41,24 +42,55 @@ type GetArtifactReferenceOutput struct {
 
 func GetArtifactReference(productSlug string, artifactReferenceId int) *GetArtifactReferenceOutput {
 	log.Println("Executing GetArtifactReference")
+	var raw *GetArtifactReferenceOutput
 	cmd := fmt.Sprintf("pivnet-cli artifact-reference --product-slug=%s --artifact-reference-id %d --format json", productSlug, artifactReferenceId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(response)
-	var raw *GetArtifactReferenceOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
 	return raw
 }
 
-func AddArtifactReference(productSlug string, releaseVersion string, artifactReferenceId int) {
+func AddArtifactReference(productSlug string, releaseVersion string, artifactReferenceId int) bool {
 	log.Println("Executing AddArtifactReference")
 	cmd := fmt.Sprintf("pivnet-cli add-artifact-reference --product-slug=%s --release-version %s --artifact-reference-id=%d --format json", productSlug, releaseVersion, artifactReferenceId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil && response != "" {
-		log.Println("something bad happened")
+		return false
 	}
+	return true
+}
+
+type ListArtifactReferencesOutput []struct {
+	ID              int      `json:"id"`
+	ArtifactPath    string   `json:"artifact_path"`
+	Digest          string   `json:"digest"`
+	Name            string   `json:"name"`
+	ReleaseVersions []string `json:"release_versions"`
+}
+
+func ListArtifactReferences(productSlug string, releaseVersion string, digest string) ListArtifactReferencesOutput {
+	fmt.Println("Executing ListArtifactReferences")
+	var raw ListArtifactReferencesOutput
+	cmd := fmt.Sprintf("pivnet-cli artifact-references --product-slug=%s", productSlug)
+	if releaseVersion != "" {
+		cmd += fmt.Sprintf(" --release-version %s", releaseVersion)
+	}
+	if digest != "" {
+		cmd += fmt.Sprintf(" --digest %s", digest)
+	}
+	cmd += " --format json"
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(response)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
 }
