@@ -3,7 +3,10 @@
 
 package exec
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func GitClone(path string, repo string) (string, string, error) {
 	cmd := fmt.Sprintf("cd %s; git clone %s", path, repo)
@@ -37,6 +40,19 @@ func GitPush(path string, force bool) (string, string, error) {
 
 func GitResetFromHead(path string, count int) (string, string, error) {
 	cmd := fmt.Sprintf("cd %s; git reset --hard HEAD~%d", path, count)
+	output, err := RunCommandInBashMode(cmd)
+	return cmd, output, err
+}
+
+func GitConfig(path string, username string, email string) (string, string, error) {
+	cmd := fmt.Sprintf("cd %s; git config --global user.name %s; git config --global user.email %s", path, username, email)
+	output, err := RunCommandInBashMode(cmd)
+	return cmd, output, err
+}
+
+func GitSetUrl(path string, access_token string, repository string) (string, string, error) {
+	url := strings.Split(repository, "//")[1]
+	cmd := fmt.Sprintf("cd %s; git remote set-url origin https://%s@%s", path, access_token, url)
 	output, err := RunCommandInBashMode(cmd)
 	return cmd, output, err
 }
