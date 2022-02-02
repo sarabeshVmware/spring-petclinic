@@ -5,7 +5,6 @@ package suite
 import (
 	"context"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -22,69 +21,17 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 
 	// "gitlab.eng.vmware.com/tap/tap-packages/suite/stepfuncs"
-	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-var outerloopConfig = struct {
-	CatalogInfoYaml    string `yaml:"catalog_info_yaml"`
-	Clusterrolebinding struct {
-		Name           string `yaml:"name"`
-		Clusterrole    string `yaml:"clusterrole"`
-		ServiceAccount string `yaml:"serviceAccount"`
-	} `yaml:"clusterrolebinding"`
-	Mysql struct {
-		Name     string `yaml:"name"`
-		YamlFile string `yaml:"yaml_file"`
-	} `yaml:"mysql"`
-	Namespace string `yaml:"namespace"`
-	Project   struct {
-		Application         string `yaml:"application"`
-		File                string `yaml:"file"`
-		Name                string `yaml:"name"`
-		NewString           string `yaml:"new_string"`
-		WebpageRelativePath string `yaml:"webpage_relative_path"`
-		OriginalString      string `yaml:"original_string"`
-		Repository          string `yaml:"repository"`
-	} `yaml:"project"`
-	ScanPolicy struct {
-		YamlFile string `yaml:"yaml_file"`
-	} `yaml:"scan_policy"`
-	SpringPetclinic struct {
-		BuildNamePrefix     string `yaml:"build_name_prefix"`
-		GitrepositoryName   string `yaml:"gitrepository_name"`
-		ImagerepositoryName string `yaml:"imagerepository_name"`
-		KsvcName            string `yaml:"ksvc_name"`
-		Name                string `yaml:"name"`
-		PodintentName       string `yaml:"podintent_name"`
-		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
-		YamlFile            string `yaml:"yaml_file"`
-	} `yaml:"spring_petclinic"`
-	Workload struct {
-		Name     string `yaml:"name"`
-		YamlFile string `yaml:"yaml_file"`
-	} `yaml:"workload"`
-}{}
-
-var outerloopResourcesDir = filepath.Join(resourcesDir, "outerloop")
-
 func TestOuterloopBasic(t *testing.T) {
-	// read outerloop config file
-	outerloopConfigBytes, err := os.ReadFile(filepath.Join(outerloopResourcesDir, "outerloop-config.yaml"))
+	// read outerloop config
+	outerloopConfig, err := getOuterloopConfig()
 	if err != nil {
-		log.Fatal(fmt.Errorf("error while reading outerloop config file: %w", err))
+		t.Error(fmt.Errorf("error while getting outerloop config: %w", err))
+		t.FailNow()
 	}
-	err = yaml.Unmarshal(outerloopConfigBytes, &outerloopConfig)
-	if err != nil {
-		log.Fatal(fmt.Errorf("error while unmarshalling outerloop config file: %w", err))
-	}
-
-	// update outerloop config for full file paths
-	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
-	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
-	outerloopConfig.SpringPetclinic.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinic.YamlFile)
-	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 
 	// features
 
@@ -392,6 +339,18 @@ func TestOuterloopBasic(t *testing.T) {
 		Feature()
 
 	gitUpdate := features.New("git-update").
+		Assess("git-config", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			path, username, email := utils.GetFileDir(), outerloopConfig.Project.Username, outerloopConfig.Project.Email
+			t.Logf("updating git config")
+			cmd, output, err := exec.GitConfig(path, username, email)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring git : %w: %s", err, output))
+				t.FailNow()
+			}
+			t.Logf("git configured : %s", output)
+			return ctx
+		}).
 		Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
 
@@ -403,6 +362,20 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("repository %s cloned at %s: %s", repo, path, output)
+			return ctx
+
+			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
+		}).
+		Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
+			t.Logf("setting git remote url")
+			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
+				t.FailNow()
+			}
+			t.Logf("configured remote url : %s", output)
 			return ctx
 
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
