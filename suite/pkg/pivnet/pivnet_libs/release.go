@@ -93,3 +93,44 @@ func UpdateRelease(productSlug string, releaseVersion string, availability strin
 	}
 	return raw
 }
+
+type ListReleasesOutput []struct {
+	ID           int    `json:"id"`
+	Availability string `json:"availability"`
+	Eula         struct {
+		Slug  string `json:"slug"`
+		ID    int    `json:"id"`
+		Name  string `json:"name"`
+		Links struct {
+		} `json:"_links"`
+	} `json:"eula"`
+	ReleaseDate string `json:"release_date"`
+	ReleaseType string `json:"release_type"`
+	Version     string `json:"version"`
+	Links       struct {
+		ProductFiles struct {
+			Href string `json:"href"`
+		} `json:"product_files"`
+		EulaAcceptance struct {
+			Href string `json:"href"`
+		} `json:"eula_acceptance"`
+	} `json:"_links"`
+	UpdatedAt              time.Time `json:"updated_at"`
+	SoftwareFilesUpdatedAt time.Time `json:"software_files_updated_at"`
+	UserGroupsUpdatedAt    time.Time `json:"user_groups_updated_at"`
+}
+
+func ListReleases(productSlug string, limit int) ListReleasesOutput {
+	fmt.Println("Executing ListReleases")
+	cmd := fmt.Sprintf("pivnet-cli releases --product-slug %s --limit %d --format json", productSlug, limit)
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Println("something bad happened")
+	}
+	in := []byte(response)
+	var raw ListReleasesOutput
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
+}
