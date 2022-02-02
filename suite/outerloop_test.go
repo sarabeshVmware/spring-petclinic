@@ -305,6 +305,18 @@ var verifyApplicationRunningOriginal = features.New("verify-application-running"
 	Feature()
 
 var gitUpdate = features.New("git-update").
+	Assess("git-config", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		path, username, email := utils.GetFileDir(), outerloopConfig.Project.Username, outerloopConfig.Project.Email
+		t.Logf("updating git config")
+		cmd, output, err := exec.GitConfig(path, username, email)
+		t.Logf("command executed: %s", cmd)
+		if err != nil {
+			t.Error(fmt.Errorf("error while configuring git : %w: %s", err, output))
+			t.FailNow()
+		}
+		t.Logf("git configured : %s", output)
+		return ctx
+	}).
 	Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
 
@@ -316,6 +328,20 @@ var gitUpdate = features.New("git-update").
 			t.FailNow()
 		}
 		t.Logf("repository %s cloned at %s: %s", repo, path, output)
+		return ctx
+
+		// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
+	}).
+	Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
+		t.Logf("setting git remote url")
+		cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
+		t.Logf("command executed: %s", cmd)
+		if err != nil {
+			t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
+			t.FailNow()
+		}
+		t.Logf("configured remote url : %s", output)
 		return ctx
 
 		// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
