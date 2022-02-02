@@ -15,6 +15,18 @@ import (
 	pivnet_libs "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_libs"
 )
 
+type ConfigData struct {
+	Host           string   `yaml:"host"`
+	APIToken       string   `yaml:"api-token"`
+	ProductSlug    string   `yaml:"product-slug"`
+	ReleaseVersion string   `yaml:"release-version"`
+	EulaSlug       string   `yaml:"eula-slug"`
+	ReleaseType    string   `yaml:"release-type"`
+	ArtifactPath   string   `yaml:"artifact-path"`
+	Digest         string   `yaml:"digest"`
+	UserGroups     []string `yaml:"user-groups"`
+}
+
 func main() {
 	versionPrefix := os.Args[1]
 	var config ConfigData
@@ -38,7 +50,7 @@ func main() {
 		lstInd := strings.LastIndex(version, ".")
 		verNo, _ := strconv.Atoi(version[lstInd+1:])
 		newVerNo := strconv.Itoa(verNo + 1)
-		newVersion = version[:lstInd] + newVerNo
+		newVersion = version[:lstInd] + "." + newVerNo
 	}
-	log.Printf("New version: %s", newVersion)
+	log.Printf("New version:\n%s", newVersion)
 }
