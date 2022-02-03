@@ -2,6 +2,7 @@ package pivnet_helpers
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	pivnet_libs "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_libs"
@@ -24,4 +25,17 @@ func WaitTillArtifactReferenceIsReady(productSlug string, artifactReferenceId in
 		count -= 1
 	}
 	return false
+}
+
+func GetLatestRelease(productSlug string, versionPrefix string) string {
+	releases := pivnet_libs.ListReleases(productSlug, 10)
+	latestRel := ""
+	for _, rel := range releases {
+		if strings.HasPrefix(rel.Version, versionPrefix) {
+			latestRel = rel.Version
+			log.Printf("Latest release: %s", rel.Version)
+			break
+		}
+	}
+	return latestRel
 }
