@@ -13,6 +13,7 @@ package pivnet_libs
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -24,7 +25,7 @@ type ListUserGroupsOutput []struct {
 }
 
 func ListUserGroups(productSlug string) ListUserGroupsOutput {
-	fmt.Println("Executing ListUserGroups")
+	log.Println("Executing ListUserGroups")
 	var raw ListUserGroupsOutput
 	cmd := fmt.Sprintf("pivnet-cli user-groups --product-slug= %s --format json", productSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -39,7 +40,7 @@ func ListUserGroups(productSlug string) ListUserGroupsOutput {
 }
 
 func AddUserGroup(productSlug string, releaseVersion string, userGroupId int) bool {
-	fmt.Println("Executing AddUserGroup")
+	log.Println("Executing AddUserGroup")
 	cmd := fmt.Sprintf("pivnet-cli add-user-group --product-slug=%s --release-version %s --user-group-id=%d --format json", productSlug, releaseVersion, userGroupId)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil || response != "" {

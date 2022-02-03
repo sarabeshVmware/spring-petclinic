@@ -74,7 +74,7 @@ type ListArtifactReferencesOutput []struct {
 }
 
 func ListArtifactReferences(productSlug string, releaseVersion string, digest string) ListArtifactReferencesOutput {
-	fmt.Println("Executing ListArtifactReferences")
+	log.Println("Executing ListArtifactReferences")
 	var raw ListArtifactReferencesOutput
 	cmd := fmt.Sprintf("pivnet-cli artifact-references --product-slug=%s", productSlug)
 	if releaseVersion != "" {

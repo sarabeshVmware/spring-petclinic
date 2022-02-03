@@ -3,6 +3,7 @@ package pivnet_libs
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -22,7 +23,7 @@ type ListProductFilesOutput []struct {
 }
 
 func ListProductFiles(productSlug string, releaseVersion string) ListProductFilesOutput {
-	fmt.Println("Executing ListProductFiles")
+	log.Println("Executing ListProductFiles")
 	var raw ListProductFilesOutput
 	cmd := fmt.Sprintf("pivnet-cli product-files --product-slug %s --release-version %s --format json", productSlug, releaseVersion)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -37,7 +38,7 @@ func ListProductFiles(productSlug string, releaseVersion string) ListProductFile
 }
 
 func AddProductFile(productFileId int, productSlug string, releaseVersion string) bool {
-	fmt.Println("Executing AddProductFile")
+	log.Println("Executing AddProductFile")
 	cmd := fmt.Sprintf("pivnet-cli add-product-file --product-file-id %d --product-slug %s  --release-version %s", productFileId, productSlug, releaseVersion)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil && response != "" {

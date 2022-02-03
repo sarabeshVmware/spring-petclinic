@@ -3,6 +3,7 @@ package pivnet_libs
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -28,7 +29,7 @@ type ListFileGroupsOutput []struct {
 }
 
 func ListFileGroups(productSlug string, releaseVersion string) ListFileGroupsOutput {
-	fmt.Println("Executing ListFileGroups")
+	log.Println("Executing ListFileGroups")
 	var raw ListFileGroupsOutput
 	cmd := fmt.Sprintf("pivnet-cli file-groups --product-slug %s --release-version %s --format json", productSlug, releaseVersion)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -43,7 +44,7 @@ func ListFileGroups(productSlug string, releaseVersion string) ListFileGroupsOut
 }
 
 func AddFileGroup(fileGroupId int, productSlug string, releaseVersion string) bool {
-	fmt.Println("Executing AddFileGroup")
+	log.Println("Executing AddFileGroup")
 	cmd := fmt.Sprintf("pivnet-cli add-file-group --file-group-id %d --product-slug %s  --release-version %s", fileGroupId, productSlug, releaseVersion)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil && response != "" {
