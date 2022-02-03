@@ -8,7 +8,7 @@ require (
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
 	k8s.io/client-go v0.23.1
-	sigs.k8s.io/e2e-framework v0.0.4
+	sigs.k8s.io/e2e-framework v0.0.5
 )
 
 require (
