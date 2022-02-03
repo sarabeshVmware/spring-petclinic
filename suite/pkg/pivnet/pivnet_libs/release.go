@@ -3,6 +3,7 @@ package pivnet_libs
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -35,7 +36,7 @@ type CreateReleaseOutput struct {
 }
 
 func CreateRelease(productSlug string, releaseVersion string, releaseType string, eulaSlug string) *CreateReleaseOutput {
-	fmt.Println("Executing CreateRelease")
+	log.Println("Executing CreateRelease")
 	var raw *CreateReleaseOutput
 	cmd := fmt.Sprintf("pivnet-cli create-release --product-slug %s --release-version %s --release-type '%s' --eula-slug %s --format json", productSlug, releaseVersion, releaseType, eulaSlug)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -77,7 +78,7 @@ type UpdateReleaseOutput struct {
 }
 
 func UpdateRelease(productSlug string, releaseVersion string, availability string) *UpdateReleaseOutput {
-	fmt.Println("Executing UpdateRelease")
+	log.Println("Executing UpdateRelease")
 	var raw *UpdateReleaseOutput
 	cmd := fmt.Sprintf("pivnet-cli update-release --product-slug=%s --release-version %s  --availability=%s --format json", productSlug, releaseVersion, availability)
 	response, err := linux_util.ExecuteCmd(cmd)
@@ -119,7 +120,7 @@ type ListReleasesOutput []struct {
 }
 
 func ListReleases(productSlug string, limit int) ListReleasesOutput {
-	fmt.Println("Executing ListReleases")
+	log.Println("Executing ListReleases")
 	var raw ListReleasesOutput
 	cmd := fmt.Sprintf("pivnet-cli releases --product-slug %s --limit %d --format json", productSlug, limit)
 	response, err := linux_util.ExecuteCmd(cmd)

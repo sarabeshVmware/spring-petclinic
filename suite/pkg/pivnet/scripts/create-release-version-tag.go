@@ -40,8 +40,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Logging into tanzunet")
-	pivnet_libs.Login(config.Host, config.APIToken)
+	log.Println("Logging into tanzunet")
+	if !pivnet_libs.Login(config.Host, config.APIToken) {
+		log.Fatalln("Unable to login to tanzunet to fetch current release version")
+	}
 	version := pivnet_helpers.GetLatestRelease(config.ProductSlug, versionPrefix)
 	if version == "" {
 		log.Println("No release with give version prefix found. Creating the very first build version string.")

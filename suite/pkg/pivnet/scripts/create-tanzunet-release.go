@@ -1,10 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 
@@ -36,49 +37,99 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Logging into tanzunet")
-	pivnet_libs.Login(config.Host, config.APIToken)
+	log.Println("Logging into tanzunet")
+	if !pivnet_libs.Login(config.Host, config.APIToken) {
+		log.Fatalln("Unable to login to tanzunet to fetch current release version")
+	}
 
 	createRelease := true
 	artifacts := pivnet_libs.ListArtifactReferences(config.ProductSlug, "", config.Digest)
 	if len(artifacts) != 0 {
-		fmt.Println("Artifacts with given sha already exists.")
+		log.Println("Artifacts with given sha already exists.")
 		for _, artf := range artifacts {
 			if len(artf.ReleaseVersions) != 0 {
-				fmt.Println("Artifacts with the given sha is already added to atleast 1 release. Skipping release creation.")
+				log.Println("Artifacts with the given sha is already added to atleast 1 release. Skipping release creation.")
 				createRelease = false
 				break
 			}
 		}
 	}
 	if createRelease {
-		fmt.Println("Create release in tanzunet")
+		log.Println("Create release in tanzunet")
 		rel_det := pivnet_libs.CreateRelease(config.ProductSlug, config.ReleaseVersion, config.ReleaseType, config.EulaSlug)
-		fmt.Printf("Release created, id: %d, version: %s\n", rel_det.ID, rel_det.Version)
-		fmt.Println("Add artifact reference in tanzunet")
+		log.Printf("Release created, id: %d, version: %s\n", rel_det.ID, rel_det.Version)
+
+		log.Println("Add artifact reference in tanzunet")
 		artifact_det := pivnet_libs.CreateArtifactReference("tap-package-repo-bundle", config.ProductSlug, config.ArtifactPath, config.Digest)
-		fmt.Printf("Artifact created, id: %d, name: %s\n", artifact_det.ID, artifact_det.Name)
-		fmt.Println("Waiting till artifacts addition is complete")
+		log.Printf("Artifact created, id: %d, name: %s\n", artifact_det.ID, artifact_det.Name)
+
+		log.Println("Waiting till artifacts addition is complete")
 		pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID)
 		pivnet_libs.ListArtifactReferences(config.ProductSlug, "", config.Digest)
-		fmt.Println("Add artifact reference to release")
+
+		log.Println("Add artifact reference to release")
 		res := pivnet_libs.AddArtifactReference(config.ProductSlug, config.ReleaseVersion, artifact_det.ID)
 		if !res {
 			log.Fatal("Exiting as artifact not added to release")
 		}
-		pivnet_libs.ListArtifactReferences(config.ProductSlug, "", config.Digest)
-		fmt.Println("Updating release availability")
+
+		// add files and filegroups from previous release
+		lstInd := strings.LastIndex(config.ReleaseVersion, ".")
+		verNo, _ := strconv.Atoi(config.ReleaseVersion[lstInd+1:])
+		if verNo == 1 {
+			log.Println("Creating the first build in the release, no prior release found to copy product files and file groups from.")
+		} else {
+			preVerNo := strconv.Itoa(verNo - 1)
+			previousVersion := config.ReleaseVersion[:lstInd] + "." + preVerNo
+
+			log.Printf("Fetching 'File Groups' from release: %s", previousVersion)
+			filegroups := pivnet_libs.ListFileGroups(config.ProductSlug, previousVersion)
+			for _, fg := range filegroups {
+				log.Printf("Adding File Group '%s' to the release '%s'", fg.Name, config.ReleaseVersion)
+				fgadded := pivnet_libs.AddFileGroup(fg.ID, config.ProductSlug, config.ReleaseVersion)
+				if !fgadded {
+					log.Printf("Unable to add file group '%s' to release", fg.Name)
+				}
+			}
+
+			log.Printf("Fetching 'Product Files' from release: %s", previousVersion)
+			prodfiles := pivnet_libs.ListProductFiles(config.ProductSlug, previousVersion)
+			fileGroupsRel := pivnet_libs.ListFileGroups(config.ProductSlug, config.ReleaseVersion)
+			for _, pf := range prodfiles {
+				// skip file if it already got added as part of file group
+				added := false
+				for _, fg := range fileGroupsRel {
+					for _, file := range fg.ProductFiles {
+						if file.ID == pf.ID {
+							added = true
+							log.Printf("Skipping Product File '%s' as it is already added as part of file group.", pf.Name)
+						}
+					}
+				}
+				if !added {
+					log.Printf("Adding Product File '%s' to the release '%s'", pf.Name, config.ReleaseVersion)
+					pfadded := pivnet_libs.AddProductFile(pf.ID, config.ProductSlug, config.ReleaseVersion)
+					if !pfadded {
+						log.Printf("Unable to add product file '%s' to release", pf.Name)
+					}
+				}
+			}
+
+		}
+
+		log.Println("Updating release availability")
 		updatedRel := pivnet_libs.UpdateRelease(config.ProductSlug, config.ReleaseVersion, "selected-user-groups")
-		fmt.Printf("Release availability updated to '%s'", updatedRel.Availability)
-		fmt.Println("Get all user groups")
+		log.Printf("Release availability updated to '%s'", updatedRel.Availability)
+
+		log.Println("Get all user groups")
 		userGroupList := pivnet_libs.ListUserGroups(config.ProductSlug)
 		for _, user := range userGroupList {
 			for _, u := range config.UserGroups {
 				if user.Name == u {
-					fmt.Println("Add user group to release")
+					log.Println("Add user group to release")
 					userAdded := pivnet_libs.AddUserGroup(config.ProductSlug, config.ReleaseVersion, user.ID)
 					if !userAdded {
-						log.Println("Unable to assign user group to release: %s", u)
+						log.Println("Unable to assign user group '%s' to release", u)
 					}
 					break
 				}

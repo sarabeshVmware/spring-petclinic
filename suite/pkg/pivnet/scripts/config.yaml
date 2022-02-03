@@ -2,9 +2,9 @@ host: https://network.tanzu.vmware.com
 api-token: <API-TOKEN>
 product-slug: tanzu-application-platform 
 release-version: <RELEASE-VERSION>
-eula-slug: vmware-prerelease-eula
-release-type: Beta Release
+eula-slug: vmware_eula
+release-type: Developer Release
 artifact-path: <ARTIFACT-PATH>
 digest: <DIGEST>
-user-groups: ['VMware Internal Early Access', 'TAP Internal Early Access ', 'DAP internal users', 'TAP-test-usergroup']
+user-groups: ['VMware Internal Early Access', 'TAP Internal Early Access ', 'DAP internal users']
   
