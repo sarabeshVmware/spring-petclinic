@@ -30,7 +30,7 @@ type ListFileGroupsOutput []struct {
 func ListFileGroups(productSlug string, releaseVersion string) ListFileGroupsOutput {
 	fmt.Println("Executing ListFileGroups")
 	var raw ListFileGroupsOutput
-	cmd := fmt.Sprintf("pivnet-cli file-groups --product-slug %s --limit %s --format json", productSlug, releaseVersion)
+	cmd := fmt.Sprintf("pivnet-cli file-groups --product-slug %s --release-version %s --format json", productSlug, releaseVersion)
 	response, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return raw

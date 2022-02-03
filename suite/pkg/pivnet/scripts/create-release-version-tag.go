@@ -40,7 +40,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Logging into tanzunet")
+	log.Println("Logging into tanzunet")
 	if !pivnet_libs.Login(config.Host, config.APIToken) {
 		log.Fatalln("Unable to login to tanzunet to fetch current release version")
 	}
