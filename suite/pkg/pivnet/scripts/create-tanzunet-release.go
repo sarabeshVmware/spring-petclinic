@@ -49,7 +49,7 @@ func main() {
 		for _, artf := range artifacts {
 			if len(artf.ReleaseVersions) != 0 {
 				log.Println("Artifacts with the given sha is already added to atleast 1 release. Skipping release creation.")
-				// createRelease = false
+				createRelease = false
 				break
 			}
 		}
@@ -82,7 +82,7 @@ func main() {
 			preVerNo := strconv.Itoa(verNo - 1)
 			previousVersion := config.ReleaseVersion[:lstInd] + "." + preVerNo
 
-			log.Println("Fetching 'File Groups' from release: %s", previousVersion)
+			log.Printf("Fetching 'File Groups' from release: %s", previousVersion)
 			filegroups := pivnet_libs.ListFileGroups(config.ProductSlug, previousVersion)
 			for _, fg := range filegroups {
 				log.Printf("Adding File Group '%s' to the release '%s'", fg.Name, config.ReleaseVersion)
@@ -92,7 +92,7 @@ func main() {
 				}
 			}
 
-			log.Println("Fetching 'Product Files' from release: %s", previousVersion)
+			log.Printf("Fetching 'Product Files' from release: %s", previousVersion)
 			prodfiles := pivnet_libs.ListProductFiles(config.ProductSlug, previousVersion)
 			fileGroupsRel := pivnet_libs.ListFileGroups(config.ProductSlug, config.ReleaseVersion)
 			for _, pf := range prodfiles {
@@ -107,10 +107,10 @@ func main() {
 					}
 				}
 				if !added {
-					log.Println("Adding Product File '%s' to the release '%s'", pf.Name, config.ReleaseVersion)
+					log.Printf("Adding Product File '%s' to the release '%s'", pf.Name, config.ReleaseVersion)
 					pfadded := pivnet_libs.AddProductFile(pf.ID, config.ProductSlug, config.ReleaseVersion)
 					if !pfadded {
-						log.Println("Unable to add product file '%s' to release", pf.Name)
+						log.Printf("Unable to add product file '%s' to release", pf.Name)
 					}
 				}
 			}
