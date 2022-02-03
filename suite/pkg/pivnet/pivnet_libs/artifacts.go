@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -57,12 +58,22 @@ func GetArtifactReference(productSlug string, artifactReferenceId int) *GetArtif
 
 func AddArtifactReference(productSlug string, releaseVersion string, artifactReferenceId int) bool {
 	log.Println("Executing AddArtifactReference")
-	cmd := fmt.Sprintf("pivnet-cli add-artifact-reference --product-slug=%s --release-version %s --artifact-reference-id=%d --format json", productSlug, releaseVersion, artifactReferenceId)
-	response, err := linux_util.ExecuteCmd(cmd)
-	if err != nil && response != "" {
-		return false
+	count := 5
+	for count <= 5 {
+		if count == 0 {
+			log.Println("Unable to add artifacts after 5 attempts")
+			return false
+		}
+		cmd := fmt.Sprintf("pivnet-cli add-artifact-reference --product-slug=%s --release-version %s --artifact-reference-id=%d --format json", productSlug, releaseVersion, artifactReferenceId)
+		response, err := linux_util.ExecuteCmd(cmd)
+		if err == nil && response == "" {
+			return true
+		}
+		log.Printf("Waiting for 30s to retry")
+		time.Sleep(30 * time.Second)
+		count -= 1
 	}
-	return true
+	return false
 }
 
 type ListArtifactReferencesOutput []struct {
