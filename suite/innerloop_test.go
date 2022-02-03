@@ -361,7 +361,9 @@ func TestInnerloopBasic(t *testing.T) {
 				}
 				if resp.StatusCode != http.StatusOK {
 					t.Error(fmt.Errorf("bad HTTP Response: %s", resp.Status))
-					t.FailNow()
+					t.Logf("sleeping for 30 seconds")
+                                        time.Sleep(30 * time.Second)
+                                        continue
 				}
 				defer resp.Body.Close()
 				resultStringBytes, _ := ioutil.ReadAll(resp.Body)
@@ -417,7 +419,7 @@ func TestInnerloopBasic(t *testing.T) {
 		// 	return ctx
 		// }).
 		// Feature()
-		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("check-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			url, host, validationString := ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!"
 
 			t.Logf("checking application %s for result: %s", host, validationString)
@@ -454,7 +456,9 @@ func TestInnerloopBasic(t *testing.T) {
 				}
 				if resp.StatusCode != http.StatusOK {
 					t.Error(fmt.Errorf("bad HTTP Response: %s", resp.Status))
-					t.FailNow()
+					t.Logf("sleeping for 30 seconds")
+                                        time.Sleep(30 * time.Second)
+					continue
 				}
 				defer resp.Body.Close()
 				resultStringBytes, _ := ioutil.ReadAll(resp.Body)

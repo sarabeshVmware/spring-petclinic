@@ -262,10 +262,10 @@ func VerifyKsvcStatus(name string, namespace string) bool {
 }
 
 func VerifyImageRepositoryStatus(name string, namespace string) bool {
-	count := 10
-	for count <= 10 {
+	count := 20
+	for count <= 20 {
 		if count == 0 {
-			log.Println("Image repositories are not generated after 5 mins")
+			log.Println("Image repositories are not generated after 10 mins")
 			return false
 		}
 		img := kubectl_lib.GetImageRepositories(name, namespace)
