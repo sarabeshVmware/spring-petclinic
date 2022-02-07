@@ -8,7 +8,7 @@ innerloop:
     namespace: my-apps
     url: "tanzu-java-web-app.my-apps.example.com"
 package_repository:
-  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.0
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
   name: tanzu-tap-repository
   namespace: tap-install
 tap_registry_secret:
@@ -31,7 +31,7 @@ tap:
   package_name: tap.tanzu.vmware.com
   poll_timeout: 30m
   values_schema_file: tap-values.yaml
-  version: 1.0.0
+  version: 1.0.1-build.7
 tanzu-cluster-essentials:
   bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
   registry: registry.tanzu.vmware.com

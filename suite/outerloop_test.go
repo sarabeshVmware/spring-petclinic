@@ -64,7 +64,11 @@ type outerloopConfiguration struct {
 	Workload struct {
 		Name     string `yaml:"name"`
 		YamlFile string `yaml:"yaml_file"`
+		TestYamlFile string `yaml:"test_yaml_file"`
 	} `yaml:"workload"`
+	Pipeline struct {
+		YamlFile string `yaml:"yaml_file"`
+	} `yaml:"pipeline"`
 }
 
 var outerloopResourcesDir = filepath.Join(resourcesDir, "outerloop")
@@ -87,6 +91,8 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
 	outerloopConfig.SpringPetclinic.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinic.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
+	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
+	outerloopConfig.Pipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Pipeline.YamlFile)
 
 	return outerloopConfig, nil
 }
@@ -95,16 +101,32 @@ var outerloopConfig, _ = getOuterloopConfig()
 
 var deployMysqlService = features.New("deploy-mysql-service-app-via-yaml-configurations").
 	Assess("deploy-mysql-service", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		name, files, namespace := outerloopConfig.Mysql.Name, []string{outerloopConfig.Mysql.YamlFile}, outerloopConfig.Namespace
+		name, file, namespace := outerloopConfig.Mysql.Name, outerloopConfig.Mysql.YamlFile, outerloopConfig.Namespace
 
 		t.Logf("deploying mysql service %s in namespace %s", name, namespace)
-		cmd, output, err := exec.KappDeployAppInNamespace(name, files, namespace)
+		cmd, output, err := exec.KubectlApplyConfiguration(file, namespace)
 		t.Logf("command executed: %s", cmd)
 		if err != nil {
 			t.Error(fmt.Errorf("error while deploying mysql service %s in namespace %s: %w: %s", name, namespace, err, output))
 			t.FailNow()
 		}
 		t.Logf("mysql service %s deployed in namespace %s: %s", name, namespace, output)
+		return ctx
+	}).
+	Feature()
+
+var deployPipeline = features.New("deploy-pipeline-app-via-yaml-configurations").
+	Assess("deploy-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		file, namespace := outerloopConfig.Pipeline.YamlFile, outerloopConfig.Namespace
+
+		t.Logf("deploying pipeline %s in namespace %s", file, namespace)
+		cmd, output, err := exec.KubectlApplyConfiguration(file, namespace)
+		t.Logf("command executed: %s", cmd)
+		if err != nil {
+			t.Error(fmt.Errorf("error while deploying pipeline %s in namespace %s: %w: %s", file, namespace, err, output))
+			t.FailNow()
+		}
+		t.Logf("pipeline %s deployed in namespace %s: %s", file, namespace, output)
 		return ctx
 	}).
 	Feature()
@@ -125,6 +147,21 @@ var deployWorkload = features.New("deploy-workload").
 	}).
 	Feature()
 
+	var deployWorkloadWithTest = features.New("deploy-workload-with-test").
+	Assess("deploy-workload-test", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		name, file, namespace := outerloopConfig.Workload.Name, outerloopConfig.Workload.TestYamlFile, outerloopConfig.Namespace
+
+		t.Logf("deploying workload %s in namespace %s", name, namespace)
+		cmd, output, err := exec.TanzuDeployWorkload(file, namespace)
+		t.Logf("command executed: %s", cmd)
+		if err != nil {
+			t.Error(fmt.Errorf("error while deploying workload %s using %s in namespace %s: %w: %s", name, file, namespace, err, output))
+			t.FailNow()
+		}
+		t.Logf("workload %s deployed in namespace %s: %s", name, namespace, output)
+		return ctx
+	}).
+	Feature()
 var verifyGitrepoStatus = features.New("verify-gitrepo-status").
 	Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		if !kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
@@ -542,6 +579,19 @@ var deleteWorkload = features.New("delete-workload").
 
 		t.Logf("deleting workload %s from namespace %s", file, namespace)
 		tanzu_lib.DeleteWorkload(name, namespace)
+		return ctx
+	}).
+	Feature()
+
+var verifyImageskpac = features.New("verify-images.kpac-status").
+	Assess("verify-images.kpac-true", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Logf("verify latest image status")
+		status := kubectl_helpers.GetLatestImageStatus(suiteConfig.Innerloop.Workload.Namespace)
+		t.Logf("Image status is: %s", status)
+		if status != "True" {
+			t.Error(fmt.Errorf("Image is not built/ready."))
+			t.Fail()
+		}
 		return ctx
 	}).
 	Feature()

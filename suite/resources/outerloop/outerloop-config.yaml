@@ -33,3 +33,4 @@ spring_petclinic:
 workload:
   name: spring-petclinic
   yaml_file: workload.yaml
+  test_yaml_file: workload-test.yaml
