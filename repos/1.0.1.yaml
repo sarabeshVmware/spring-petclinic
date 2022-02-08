@@ -97,6 +97,7 @@ packages:
       - 0.3.0
   - name: fluxcd-source-controller
     versions:
+      - 0.16.0
       - 0.16.1
   - name: tekton-pipelines
     versions:
