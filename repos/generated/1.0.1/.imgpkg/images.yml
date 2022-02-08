@@ -47,6 +47,9 @@ images:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
   image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
 - annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
+  image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
+- annotations:
     kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:ce5d0e06708660a8bd3d238753b770097b3076f6443423436ebc69a198e21151
   image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:ce5d0e06708660a8bd3d238753b770097b3076f6443423436ebc69a198e21151
 - annotations:
