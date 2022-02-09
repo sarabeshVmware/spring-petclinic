@@ -2,14 +2,13 @@
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]):
 #@ if profiles.is_pkg_enabled("tekton.tanzu.vmware.com"):
-
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
   name: tekton-pipelines
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
