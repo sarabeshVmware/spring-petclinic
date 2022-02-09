@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.workspace]):
 #@ if profiles.is_pkg_enabled("developer-conventions.tanzu.vmware.com"):
 
 ---

@@ -3,11 +3,12 @@ load("@ytt:assert", "assert")
 load("@ytt:struct", "struct")
 
 _full_profile = "full"
-_light_profile = "light"
-_build_profile = "build" # currently disabled
-_run_profile = "run" # currently disabled
+_workspace_profile = "workspace"
+_build_profile = "build"
+_run_profile = "run"
+_tbd_profile = "tbd"
 
-_all_profiles = [_full_profile, _light_profile]
+_all_profiles = [_full_profile, _workspace_profile, _build_profile, _run_profile, _tbd_profile]
 
 if not data.values.profile in _all_profiles:
   assert.fail("Expected profile to be one of: {}".format(_all_profiles))
@@ -57,9 +58,10 @@ end
 
 profiles = struct.make(
 	full=_full_profile,
-	light=_light_profile,
+	workspace=_workspace_profile,
 	build=_build_profile,
 	run=_run_profile,
+  tbd=_tbd_profile,
 
 	is_any_enabled=_is_any_enabled,
 	is_enabled=_is_enabled,

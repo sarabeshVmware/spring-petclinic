@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build, profiles.run]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.workspace, profiles.build, profiles.run]):
 #@ if profiles.is_pkg_enabled("controller.source.apps.tanzu.vmware.com"):
 
 ---

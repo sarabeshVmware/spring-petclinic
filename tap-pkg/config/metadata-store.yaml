@@ -2,7 +2,7 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.tbd]):
 #@ if profiles.is_pkg_enabled("metadata-store.apps.tanzu.vmware.com"):
 
 ---

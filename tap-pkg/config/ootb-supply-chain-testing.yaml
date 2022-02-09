@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]) and data.values.supply_chain == "testing":
+#@ if profiles.is_any_enabled([profiles.full, profiles.workspace, profiles.build]) and data.values.supply_chain == "testing":
 #@ if profiles.is_pkg_enabled("ootb-supply-chain-testing.tanzu.vmware.com"):
 
 ---

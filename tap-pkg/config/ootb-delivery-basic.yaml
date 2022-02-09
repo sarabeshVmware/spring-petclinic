@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.workspace, profiles.run]):
 #@ if profiles.is_pkg_enabled("ootb-delivery-basic.tanzu.vmware.com"):
 
 ---
