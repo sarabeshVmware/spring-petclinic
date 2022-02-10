@@ -82,32 +82,33 @@ packages:
   - name: ootb-templates
     versions:
       - 0.5.1
-      - 0.6.0
+      - 0.6.1
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
-      - 0.6.0
+      - 0.6.1
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
-      - 0.6.0
+      - 0.6.1
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
-      - 0.6.0
+      - 0.6.1
   - name: spring-boot-conventions
     versions:
       - 0.3.0
   - name: fluxcd-source-controller
     versions:
       - 0.16.0
+      - 0.16.1
   - name: tekton-pipelines
     versions:
       - 0.30.0
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
-      - 0.6.0
+      - 0.6.1
   - name: tap-telemetry
     versions:
       - 0.1.2
