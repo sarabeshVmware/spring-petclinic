@@ -18,7 +18,7 @@ func KubectlCreateNamespace(namespace string) (string, string, error) {
 }
 
 func KubectlDeleteNamespace(namespace string) (string, string, error) {
-	cmd := fmt.Sprintf("kubectl delete ns %s", namespace)
+	cmd := fmt.Sprintf("kubectl get namespace %s -o json | tr -d '\n' | sed 's/\"finalizers\": [[^]]+]/\"finalizers\": []/' | kubectl replace --raw /api/v1/namespaces/%s/finalize -f -; kubectl delete ns %s", namespace, namespace, namespace)
 	output, err := RunCommand(cmd)
 	return cmd, output, err
 }
