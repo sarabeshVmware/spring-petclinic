@@ -8,7 +8,7 @@ spec:
   releaseNotes: |
     Release 1.0.2-build.1 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2022-02-07T00:00:00Z"
+  releasedAt: "2022-02-10T00:00:00Z"
   template:
     spec:
       fetch:
