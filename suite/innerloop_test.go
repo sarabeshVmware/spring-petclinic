@@ -81,13 +81,25 @@ func TestInnerloopBasic(t *testing.T) {
 			acceleratorName := "tanzu-java-web-app"
 			repositoryPrefix := tapValuesSchema.OotbSupplyChainBasic.Registry.Server + "/" + tapValuesSchema.OotbSupplyChainBasic.Registry.Repository
 			t.Logf("generating accelerator project %s (namespace %s)", acceleratorProject, suiteConfig.Tap.Namespace)
-			cmd, output, err := exec.TanzuGenerateAccelerator(acceleratorName, acceleratorProject, repositoryPrefix, ctx.Value(accServerExternalIpKey).(string), suiteConfig.Tap.Namespace)
-			t.Logf("command executed: %s", cmd)
-			if err != nil {
-				t.Error(fmt.Errorf("error while generating accelerator project %s in namespace %s: %w: %s", acceleratorProject, suiteConfig.Tap.Namespace, err, output))
-				t.FailNow()
+
+			count := 4
+			for count <= 4 {
+				if count == 0 {
+					t.Error("accelerator project not generated after 4 mins")
+					t.FailNow()
+				}
+				cmd, output, err := exec.TanzuGenerateAccelerator(acceleratorName, acceleratorProject, repositoryPrefix, ctx.Value(accServerExternalIpKey).(string), suiteConfig.Tap.Namespace)
+				t.Logf("command executed: %s", cmd)
+				if err != nil {
+					t.Logf("error while generating accelerator project %s in namespace %s: %s", acceleratorProject, suiteConfig.Tap.Namespace, output)
+					t.Logf("waiting for 30s for accelerator project getting generated ...")
+					time.Sleep(30 * time.Second)
+					count -= 1
+				} else {
+					t.Logf("Accelerator project %s generated in namespace %s: %s", acceleratorProject, suiteConfig.Tap.Namespace, output)
+					break
+				}
 			}
-			t.Logf("Accelerator project %s generated in namespace %s: %s", acceleratorProject, suiteConfig.Tap.Namespace, output)
 			return context.WithValue(ctx, acceleratorNameKey, acceleratorName)
 		}).
 		Feature()

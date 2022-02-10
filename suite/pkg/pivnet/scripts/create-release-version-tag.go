@@ -47,7 +47,7 @@ func main() {
 	version := pivnet_helpers.GetLatestRelease(config.ProductSlug, versionPrefix)
 	if version == "" {
 		log.Println("No release with give version prefix found. Creating the very first build version string.")
-		newVersion = fmt.Sprintf("%s-build.1", versionPrefix)
+		newVersion = fmt.Sprintf("%s.1", versionPrefix)
 	} else {
 		lstInd := strings.LastIndex(version, ".")
 		verNo, _ := strconv.Atoi(version[lstInd+1:])

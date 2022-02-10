@@ -129,9 +129,20 @@ func ValidateImageScans(name string, namespace string) bool {
 
 func ValidateSourceScans(name string, namespace string) bool {
 	log.Println("Validating source scans")
-	srcScan := kubectl_lib.GetSourceScan(name, namespace)
-	if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
-		return true
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Source scan not completed after 5 mins")
+			return false
+		}
+		srcScan := kubectl_lib.GetSourceScan(name, namespace)
+		if (srcScan == kubectl_lib.GetSourceScanOutput{}) {
+			log.Println("Source scan is not started yet")
+		} else if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
+			return true
+		} else {
+			continue
+		}
 	}
 	return false
 }

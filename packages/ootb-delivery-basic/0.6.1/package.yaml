@@ -1,0 +1,37 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-delivery-basic.tanzu.vmware.com.0.6.1
+spec:
+  refName: ootb-delivery-basic.tanzu.vmware.com
+  version: 0.6.1
+  releasedAt: "2022-01-28T17:09:45Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-delivery-basic
+      properties:
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Deliverable is submitted to utilize for providing registry credentials to ImageRepository and permissions for kapp-controller to deploy the application.
+          default: default
+          examples:
+          - default
+        git_implementation:
+          type: string
+          description: Determines which git client library to use. Valid options are go-git or libgit2.
+          default: go-git
+          examples:
+          - go-git
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:bf56764c935e1dfff1c026770b540187400934764863faf7ea81dd6e6bfd1eca
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld: {}
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m

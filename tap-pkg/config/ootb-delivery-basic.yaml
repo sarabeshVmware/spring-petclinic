@@ -20,7 +20,7 @@ spec:
   packageRef:
     refName: ootb-delivery-basic.tanzu.vmware.com
     versionSelection:
-      constraints: 0.6.0
+      constraints: 0.6.1
   values:
   - secretRef:
       name: ootb-delivery-basic-values
