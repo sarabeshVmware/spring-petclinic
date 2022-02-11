@@ -15,7 +15,7 @@ import (
 )
 
 func TestOuterloopTestingSC(t *testing.T) {
-	updateTap := features.New("update-tap-full-supplychainbasic").
+	updateTap := features.New("update-tap-full-supplychaintesting").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
@@ -67,7 +67,6 @@ func TestOuterloopTestingSC(t *testing.T) {
 		deployMysqldbService,
 		deploySpringpetclinicPipeline,
 		verifyPipelineStatus,
-		deployScanPolicy,
 		deployWorkloadWithTest,
 		verifyGitrepoStatus,
 		verifyPipelineRunStatus,
