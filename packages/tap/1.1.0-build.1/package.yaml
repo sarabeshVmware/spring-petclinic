@@ -8,12 +8,12 @@ spec:
   releaseNotes: |
     Release 1.1.0-build.1 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
-  releasedAt: "2022-02-10T00:00:00Z"
+  releasedAt: "2022-02-11T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:32cc335a4bc3f4bb7f932e2283a09a14e52ec3925e1b299f307be0c36f021056
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:acdafcd2aee015eaa886b99a4d6f7c004f41248c992a16622297b97c1e82b7a2
       template:
       - ytt:
           paths:

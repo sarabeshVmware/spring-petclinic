@@ -41,6 +41,7 @@ packages:
   - name: insight-metadata-store
     versions:
       - 1.0.1
+      - 1.1.0-build.0
   - name: image-policy-webhook
     versions:
       - 1.0.0
