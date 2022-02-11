@@ -3,6 +3,7 @@ package linux_util
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -39,6 +40,72 @@ func ExecuteCmd(command string) (string, error) {
 	} else {
 		log.Printf("Output: %s", string(stdoutStderr))
 	}
+	return string(stdoutStderr), err
+}
+
+func ExecuteCmdNoLog(command string) (string, error) {
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	// If argument values have spaces in them and passed within single quotes
+	for i, value := range arguments {
+		if strings.Contains(value, "'") {
+			arguments[i] = value + " " + arguments[i+1]
+			arguments = append(arguments[:i+1], arguments[i+2:]...)
+		}
+	}
+	// Bypassing single quotes during execution
+	for i, value := range arguments {
+		arguments[i] = strings.Replace(value, "'", "", -1)
+	}
+	cmd := exec.Command(commandName, arguments...)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("error: %s", err.Error())
+		log.Printf("output: %s", stdoutStderr)
+	} else {
+		log.Printf("output: %s", string(stdoutStderr))
+	}
+
+	return string(stdoutStderr), err
+}
+
+func ExecuteCmdInBashMode(command string) (string, error) {
+	cmd := exec.Command("bash", "-c", command)
+	stdoutStderr, err := cmd.CombinedOutput()
+	log.Printf("command executed: %s", command)
+	if err != nil {
+		log.Printf("error: %s", err.Error())
+		log.Printf("output: %s", stdoutStderr)
+	} else {
+		log.Printf("output: %s", string(stdoutStderr))
+	}
+
+	return string(stdoutStderr), err
+}
+
+func RunCommandWithOutWait(command string) (*os.Process, error) {
+	var proc *os.Process
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	cmd := exec.Command(commandName, arguments...)
+	err := cmd.Start()
+	proc = cmd.Process
+	return proc, err
+}
+
+func RunBashFile(filepath string, executefrom string) (string, error) {
+	cmd := exec.Command(filepath)
+	if executefrom != "" {
+		cmd.Dir = executefrom
+	}
+	stdoutStderr, err := cmd.Output()
+	if err != nil {
+		log.Printf("error: %s", err.Error())
+		log.Printf("output: %s", stdoutStderr)
+	} else {
+		log.Printf("output: %s", string(stdoutStderr))
+	}
+
 	return string(stdoutStderr), err
 }
 
