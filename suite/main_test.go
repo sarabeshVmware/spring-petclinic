@@ -2,7 +2,6 @@ package suite
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -123,22 +122,6 @@ type tapValuesSchemaStruct struct {
 	} `yaml:"tap_gui"`
 }
 
-func setLogger(directory string) (string, error) {
-	err := os.MkdirAll(directory, 0755)
-	if err != nil {
-		return "", err
-	}
-	logFilePath := filepath.Join("logs", fmt.Sprintf("log_%s.log", time.Now().Format(time.RFC3339Nano)))
-	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if err != nil {
-		return logFilePath, err
-	}
-	log.SetOutput(io.MultiWriter(os.Stdout, logFile))
-	// TODO: fix
-	// log.SetFlags(log.LstdFlags | log.Llongfile)
-	return logFilePath, err
-}
-
 func getTapValuesSchema() (tapValuesSchemaStruct, error) {
 	log.Printf("getting tap values schema")
 
@@ -172,7 +155,7 @@ var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "suite")
 
 func TestMain(m *testing.M) {
 	// set logger
-	logFile, err := setLogger(filepath.Join(utils.GetFileDir(), "logs"))
+	logFile, err := utils.SetLogger(filepath.Join(utils.GetFileDir(), "logs"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while setting log file %s: %w", logFile, err))
 	}
