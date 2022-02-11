@@ -19,6 +19,17 @@ spec:
     refName: controller.conventions.apps.tanzu.vmware.com
     versionSelection:
       constraints: 0.6.1
+  values:
+  - secretRef:
+      name: conventions-controller-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: conventions-controller-values
+  namespace: tap-install
+stringData:
+  values.yaml: #@ yaml.encode(data.values.convention_controller)
 
 #@ end
 #@ end

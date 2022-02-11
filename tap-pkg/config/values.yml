@@ -71,6 +71,12 @@ learningcenter: {}
 #@schema/type any=True
 contour: {}
 
+#@schema/type any=True
+convention_controller: {}
+
+#@schema/type any=True
+source_controller: {}
+
 package_overlays:
 - name: ""
   secrets:
