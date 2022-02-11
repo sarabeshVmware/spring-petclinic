@@ -2,6 +2,7 @@ package suite
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -60,7 +61,7 @@ var suiteConfig = struct {
 	} `yaml:"tanzu-cluster-essentials"`
 }{}
 
-var tapValuesSchema = struct {
+type tapValuesSchemaStruct struct {
 	Accelerator struct {
 		Server struct {
 			ServiceType string `yaml:"service_type"`
@@ -120,14 +121,58 @@ var tapValuesSchema = struct {
 	TapGui      struct {
 		ServiceType string `yaml:"service_type"`
 	} `yaml:"tap_gui"`
-}{}
+}
 
-var resourcesDir = filepath.Join(utils.GetFileDir(), "resources")
-var suiteResourcesDir = filepath.Join(resourcesDir, "suite")
+func setLogger(directory string) (string, error) {
+	err := os.MkdirAll(directory, 0755)
+	if err != nil {
+		return "", err
+	}
+	logFilePath := filepath.Join("logs", fmt.Sprintf("log_%s.log", time.Now().Format(time.RFC3339Nano)))
+	logFile, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		return logFilePath, err
+	}
+	log.SetOutput(io.MultiWriter(os.Stdout, logFile))
+	// TODO: fix
+	// log.SetFlags(log.LstdFlags | log.Llongfile)
+	return logFilePath, err
+}
+
+func getTapValuesSchema() (tapValuesSchemaStruct, error) {
+	log.Printf("getting tap values schema")
+
+	tapValuesSchema := tapValuesSchemaStruct{}
+	file := suiteConfig.Tap.ValuesSchemaFile
+
+	// read file
+	tapValuesSchemaBytes, err := os.ReadFile(file)
+	if err != nil {
+		log.Printf("error while reading tap values schema file %s", file)
+		log.Printf("error: %s", err)
+		return tapValuesSchema, err
+	} else {
+		log.Printf("read tap values schema file %s", file)
+	}
+
+	// unmarshal
+	err = yaml.Unmarshal(tapValuesSchemaBytes, &tapValuesSchema)
+	if err != nil {
+		log.Printf("error while unmarshalling tap values schema file %s", file)
+		log.Printf("error: %s", err)
+		return tapValuesSchema, err
+	} else {
+		log.Printf("unmarshalled file %s", file)
+	}
+
+	return tapValuesSchema, nil
+}
+
+var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "suite")
 
 func TestMain(m *testing.M) {
 	// set logger
-	logFile, err := utils.SetLogger(filepath.Join(utils.GetFileDir(), "logs"))
+	logFile, err := setLogger(filepath.Join(utils.GetFileDir(), "logs"))
 	if err != nil {
 		log.Fatal(fmt.Errorf("error while setting log file %s: %w", logFile, err))
 	}
@@ -152,33 +197,23 @@ func TestMain(m *testing.M) {
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 
-	// read tap values schema
-	tapValuesSchemaBytes, err := os.ReadFile(suiteConfig.Tap.ValuesSchemaFile)
-	if err != nil {
-		log.Fatal(fmt.Errorf("error while reading tap values schema file: %w", err))
-	}
-	err = yaml.Unmarshal(tapValuesSchemaBytes, &tapValuesSchema)
-	if err != nil {
-		log.Fatal(fmt.Errorf("error while unmarshalling tap values schema file: %w", err))
-	}
+	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 
 	// setup
-	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 	testenv.Setup(
 		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle,
 			suiteConfig.TanzuClusterEssentials.Registry,
 			suiteConfig.TapRegistrySecret.Username,
 			suiteConfig.TapRegistrySecret.Password,
 			suiteConfig.TanzuClusterEssentials.Filename),
-		// envfuncs.CheckAndDeploy("kapp-controller", []string{"https://github.com/vmware-tanzu/carvel-kapp-controller/releases/latest/download/release.yml"}, "default"),           // temporary, to be replaced by cluster essentials script
-		// envfuncs.CheckAndDeploy("secretgen-controller", []string{"https://github.com/vmware-tanzu/carvel-secretgen-controller/releases/download/v0.5.0/release.yml"}, "default"), // temporary, to be replaced by cluster essentials script
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Namespace),
-		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10),
+		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10, 60),
 		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
-		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10),
+		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
+		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
 	)
 
