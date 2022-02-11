@@ -1,4 +1,4 @@
-//go:build innerloop
+//go:build all || innerloop_basic
 
 package suite
 
@@ -18,6 +18,7 @@ import (
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+
 	// "gitlab.eng.vmware.com/tap/tap-packages/suite/stepfuncs"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -27,6 +28,11 @@ const tiltApp = "tanzu-java-web-app"
 const tiltFile = tiltApp + "/Tiltfile"
 
 func TestInnerloopBasic(t *testing.T) {
+	tapValuesSchema, err := getTapValuesSchema()
+	if err != nil {
+		t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
+	}
+
 	f1 := features.New("update-tap-light-supplychainbasic").
 		Assess("update-schema", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			tapValuesSchema.Profile = "light"
