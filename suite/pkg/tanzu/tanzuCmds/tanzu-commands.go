@@ -130,7 +130,7 @@ func TanzuGetPackageInstalledStatus(name string, namespace string) (string, erro
 	return packageInstalled[0].Status, nil
 }
 
-func TanzuAddPackageRepository(name string, image string, namespace string) error{
+func TanzuAddPackageRepository(name string, image string, namespace string) error {
 	log.Printf("adding package repository %s (%s) in namespace %s", name, image, namespace)
 
 	// execute cmd

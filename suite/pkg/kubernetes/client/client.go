@@ -41,7 +41,7 @@ func CheckDeploymentExists(name string, c *rest.Config) (bool, error) {
 			return true, nil
 		}
 	}
-	
+
 	log.Printf("%s deployment not found", name)
 	return false, nil
 }
