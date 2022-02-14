@@ -23,7 +23,7 @@ go run create-package-repo.go main <tag for tap repo>
 
 Note: While adding/modifying package CRs, If the product is released to User groups only in Tanzunet, Please add **DAP Internal Users** and **VMware Internal Early Access group** to the product early group on TanzuNet so that TAP team can validate it.
 
-**For Component teams - Creating TAP Repo Bundle with local changes**
+**For Component teams - Creating TAP Repo Bundle with local changes, kindly check [TAP Requirements Doc](https://docs.google.com/document/d/1Af66UbjEABF8GGYGbN-bGHRuakGsf-oAdQ4JvuR5HUY/edit#heading=h.jgnkc0jhnafj)**
 
 1. Create a package CR for the newer version. 
 

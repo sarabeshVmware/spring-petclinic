@@ -1,4 +1,4 @@
-//go:build outerloop
+//go:build all || outerloop || outerloop_basic
 
 package suite
 
@@ -37,6 +37,10 @@ func TestOuterloopBasic(t *testing.T) {
 
 	updateTap := features.New("update-tap-full-supplychainbasic").
 		Assess("update-schema", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			tapValuesSchema, err := getTapValuesSchema()
+			if err != nil {
+				t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
+			}
 			tapValuesSchema.Profile = "full"
 			tapValuesSchema.SupplyChain = "basic"
 			if err := utils.WriteYAMLFile(suiteConfig.Tap.ValuesSchemaFile, tapValuesSchema); err != nil {
@@ -369,19 +373,19 @@ func TestOuterloopBasic(t *testing.T) {
 			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
 		}).
 		Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-            repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
-            t.Logf("setting git remote url")
-            cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
-            t.Logf("command executed: %s", cmd)
-            if err != nil {
-                t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
-                t.FailNow()
-            }
-            t.Logf("configured remote url : %s", output)
-            return ctx
+			repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
+			t.Logf("setting git remote url")
+			cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
+			t.Logf("command executed: %s", cmd)
+			if err != nil {
+				t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
+				t.FailNow()
+			}
+			t.Logf("configured remote url : %s", output)
+			return ctx
 
-            // return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
-        }).
+			// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
+		}).
 		Assess("modify-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			file, originalString, newString := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name, outerloopConfig.Project.File), outerloopConfig.Project.OriginalString, outerloopConfig.Project.NewString
 

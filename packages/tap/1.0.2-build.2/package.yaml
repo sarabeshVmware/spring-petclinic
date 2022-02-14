@@ -1,19 +1,19 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: tap.tanzu.vmware.com.1.1.0-build.1
+  name: tap.tanzu.vmware.com.1.0.2-build.2
 spec:
   refName: tap.tanzu.vmware.com
-  version: 1.1.0-build.1
+  version: 1.0.2-build.2
   releaseNotes: |
-    Release 1.1.0-build.1 of Tanzu Application Platform.
+    Release 1.0.2-build.2 of Tanzu Application Platform.
     This package allows to select which set of packages to install via profile data value.
   releasedAt: "2022-02-14T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:ee7ee4da5ac4c79c28e4e668fef742faaf406274f3e049dc9388ecd85a403613
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:0af00d894eafac13c78fa32f7e15ea6ff6abaa729f8f58d8fc5882c771a522b9
       template:
       - ytt:
           paths:
@@ -151,13 +151,3 @@ spec:
           additionalProperties: true
           properties: {}
           description: "Scan controller configuration"
-        convention_controller:
-          type: object
-          additionalProperties: true
-          properties: {}
-          description: "Convention Controller configuration"
-        source_controller:
-          type: object
-          additionalProperties: true
-          properties: {}
-          description: "Source Controller configuration"

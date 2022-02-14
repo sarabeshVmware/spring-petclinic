@@ -1,4 +1,4 @@
-//go:build all || outerloop || outerloop_testing_scanning
+//go:build all || outerloop || outerloop_testing
 
 package suite
 
@@ -14,10 +14,8 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func TestOuterloopTestScan(t *testing.T) {
-	t.Log("****************TestOuterloopTestScan execution started****************")
-
-	updateTap := features.New("update-tap-full-supplychainbasic").
+func TestOuterloopTestingSC(t *testing.T) {
+	updateTap := features.New("update-tap-full-supplychaintesting").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
@@ -28,7 +26,7 @@ func TestOuterloopTestScan(t *testing.T) {
 				t.FailNow()
 			}
 			tapValuesSchema.Profile = "full"
-			tapValuesSchema.SupplyChain = "testing_scanning"
+			tapValuesSchema.SupplyChain = "testing"
 
 			// create temporary file
 			t.Log("creating tempfile for tap values schema")
@@ -63,24 +61,20 @@ func TestOuterloopTestScan(t *testing.T) {
 		}).
 		Feature()
 
+	// test
 	testenv.Test(t,
 		updateTap,
-		verifyGrypePackageInstalled,
-		verifyScanningPackageInstalled,
-		deployScanPolicy,
 		deployMysqldbService,
 		deploySpringpetclinicPipeline,
 		verifyPipelineStatus,
 		deployWorkloadWithTest,
 		verifyGitrepoStatus,
 		verifyPipelineRunStatus,
-		verifySourceScanStatus,
 		verifyImageskpac,
 		verifyBuildStatus,
-		verifyImageScanStatus,
 		verifyPodintents,
-		verifyTaskrunStatus,
 		verifyKsvcStatus,
+		verifyTaskrunStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,

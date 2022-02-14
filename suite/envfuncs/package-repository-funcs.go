@@ -9,61 +9,64 @@ import (
 	"log"
 	"time"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
 func AddPackageRepository(name string, image string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		log.Printf("adding package repository %s", name)
-		cmd, output, err := exec.TanzuAddPackageRepository(name, image, namespace)
-		log.Printf("command executed: %s", cmd)
+		log.Printf("adding package repository %s (%s) in namespace %s", name, image, namespace)
+
+		// add repo
+		err := tanzuCmds.TanzuAddPackageRepository(name, image, namespace)
 		if err != nil {
-			return ctx, fmt.Errorf("error while adding package repository %s: %w: %s", name, err, output)
+			return ctx, fmt.Errorf("error while adding package repository %s (%s) in namespace %s", name, image, namespace)
 		}
-		log.Printf("package repository %s added: %s", name, output)
+
 		return ctx, nil
 	}
 }
 
 func DeletePackageRepository(name string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		log.Printf("deleting package repository %s", name)
-		cmd, output, err := exec.TanzuDeletePackageRepository(name, namespace)
-		log.Printf("command executed: %s", cmd)
+		log.Printf("deleting package repository %s in namespace %s", name, namespace)
+
+		// delete repo
+		err := tanzuCmds.TanzuDeletePackageRepository(name, namespace)
 		if err != nil {
-			return ctx, fmt.Errorf("error while deleting package repository %s: %w: %s", name, err, output)
+			return ctx, fmt.Errorf("error while deleting package repository %s in namespace %s", name, namespace)
 		}
-		log.Printf("package repository %s deleted: %s", name, output)
+
 		return ctx, nil
 	}
 }
 
-func CheckIfPackageRepositoryReconciled(name string, namespace string, recursiveCount int) env.Func {
+func CheckIfPackageRepositoryReconciled(name string, namespace string, recursiveCount int, secondsGap int) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("checking package repository %s status", name)
-		log.Printf("getting package repository %s status", name)
-		cmd, output, err := exec.TanzuGetPackageRepositoryStatus(name, namespace)
-		log.Printf("command executed: %s", cmd)
-		if err != nil {
-			return ctx, fmt.Errorf("error while getting package repository %s status: %w: %s", name, err, output)
-		}
-		for recursiveCount > 0 {
-			if output == "Reconciling" || output == "" {
-				log.Printf("package repository %s is getting reconciled: %s", name, output)
-				log.Printf("sleeping: 60 seconds")
-				time.Sleep(1 * time.Minute)
-				recursiveCount -= 1
-			} else if output == "Reconcile succeeded" {
-				log.Printf("package repository %s reconcilation succeeded: %s", name, output)
+
+		for ; recursiveCount >= 0; recursiveCount-- {
+			// get status
+			packageRepositoryStatus, err := tanzuCmds.TanzuGetPackageRepositoryStatus(name, namespace)
+			if err != nil {
+				return ctx, fmt.Errorf("error while getting package repository %s in namespace %s status", name, namespace)
+			}
+
+			// check
+			if packageRepositoryStatus == "Reconciling" || packageRepositoryStatus == "" {
+				log.Printf("package repository %s is getting reconciled", name)
+				log.Printf("sleeping for %d seconds", secondsGap)
+				time.Sleep(time.Duration(secondsGap) * time.Second)
+			} else if packageRepositoryStatus == "Reconcile succeeded" {
+				log.Printf("package repository %s reconcilation succeeded", name)
 				return ctx, nil
-			} else if output == "Reconcile Failed" {
-				return ctx, fmt.Errorf("package repository %s reconcilation failed: %s", name, output)
+			} else if packageRepositoryStatus == "Reconcile Failed" {
+				return ctx, fmt.Errorf("package repository %s reconcilation failed", name)
 			} else {
-				return ctx, fmt.Errorf("package repository %s reconcilation unknown: %s", name, output)
+				return ctx, fmt.Errorf("package repository %s reconcilation unknown", name)
 			}
 		}
-		return ctx, fmt.Errorf(`package repository %s is not getting in "Reconcile succeeded" state after %d iterations: %s`, name, recursiveCount, output)
+		return ctx, fmt.Errorf(`package repository %s is not getting in "Reconcile succeeded" state`, name)
 	}
 }

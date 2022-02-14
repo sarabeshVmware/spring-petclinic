@@ -1,22 +1,23 @@
-//go:build outerloop
+//go:build all || outerloop || outerloop_testing || outerloop_testing_scanning
 
 package suite
 
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
-	"time"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -25,24 +26,21 @@ import (
 )
 
 type outerloopConfiguration struct {
-	CatalogInfoYaml    string `yaml:"catalog_info_yaml"`
-	Clusterrolebinding struct {
-		Name           string `yaml:"name"`
-		Clusterrole    string `yaml:"clusterrole"`
-		ServiceAccount string `yaml:"serviceAccount"`
-	} `yaml:"clusterrolebinding"`
-	Mysql struct {
+	CatalogInfoYaml string `yaml:"catalog_info_yaml"`
+	Mysql           struct {
 		Name     string `yaml:"name"`
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"mysql"`
 	Namespace string `yaml:"namespace"`
 	Project   struct {
 		Application         string `yaml:"application"`
+		Host                string `yaml:"host"`
+		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
 		Name                string `yaml:"name"`
 		NewString           string `yaml:"new_string"`
-		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		OriginalString      string `yaml:"original_string"`
+		CommitMessage       string `yaml:"commit_message"`
 		Repository          string `yaml:"repository"`
 		Username            string `yaml:"username"`
 		Email               string `yaml:"email"`
@@ -61,537 +59,649 @@ type outerloopConfiguration struct {
 		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
 		YamlFile            string `yaml:"yaml_file"`
 	} `yaml:"spring_petclinic"`
+	SpringPetclinicPipeline struct {
+		YamlFile string `yaml:"yaml_file"`
+	} `yaml:"spring_petclinic_pipeline"`
 	Workload struct {
-		Name     string `yaml:"name"`
-		YamlFile string `yaml:"yaml_file"`
-		TestYamlFile string `yaml:"test_yaml_file"`
+		Name                string `yaml:"name"`
+		YamlFile            string `yaml:"yaml_file"`
+		TestYamlFile        string `yaml:"test_yaml_file"`
+		BuildNamePrefix     string `yaml:"build_name_prefix"`
+		GitrepositoryName   string `yaml:"gitrepository_name"`
+		ImagerepositoryName string `yaml:"imagerepository_name"`
+		KsvcName            string `yaml:"ksvc_name"`
+		PodintentName       string `yaml:"podintent_name"`
+		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
 	} `yaml:"workload"`
-	Pipeline struct {
-		YamlFile string `yaml:"yaml_file"`
-	} `yaml:"pipeline"`
 }
 
-var outerloopResourcesDir = filepath.Join(resourcesDir, "outerloop")
+var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "outerloop")
 
 func getOuterloopConfig() (outerloopConfiguration, error) {
+	log.Printf("getting outerloop config")
+
 	outerloopConfig := outerloopConfiguration{}
+	file := filepath.Join(outerloopResourcesDir, "outerloop-config.yaml")
 
 	// read file
-	outerloopConfigBytes, err := os.ReadFile(filepath.Join(outerloopResourcesDir, "outerloop-config.yaml"))
+	outerloopConfigBytes, err := os.ReadFile(file)
 	if err != nil {
-		return outerloopConfig, fmt.Errorf("error while reading outerloop config file: %w", err)
+		log.Printf("error while reading outerloop config file %s", file)
+		log.Printf("error: %s", err)
+		return outerloopConfig, err
+	} else {
+		log.Printf("read outerloop config file %s", file)
 	}
+
+	// unmarshall
 	err = yaml.Unmarshal(outerloopConfigBytes, &outerloopConfig)
 	if err != nil {
-		return outerloopConfig, fmt.Errorf("error while unmarshalling outerloop config file: %w", err)
+		log.Printf("error while unmarshalling outerloop config file %s", file)
+		log.Printf("error: %s", err)
+		return outerloopConfig, err
+	} else {
+		log.Printf("unmarshalled file %s", file)
 	}
 
 	// update outerloop config for full file paths
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
-	outerloopConfig.SpringPetclinic.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinic.YamlFile)
+	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
-	outerloopConfig.Pipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Pipeline.YamlFile)
 
 	return outerloopConfig, nil
 }
 
 var outerloopConfig, _ = getOuterloopConfig()
 
-var deployMysqlService = features.New("deploy-mysql-service-app-via-yaml-configurations").
-	Assess("deploy-mysql-service", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		name, file, namespace := outerloopConfig.Mysql.Name, outerloopConfig.Mysql.YamlFile, outerloopConfig.Namespace
+var deployMysqldbService = features.New("deploy-mysqldb-service-via-yaml").
+	Assess("deploy-mysqldb-service", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying mysqldb service")
 
-		t.Logf("deploying mysql service %s in namespace %s", name, namespace)
-		cmd, output, err := exec.KubectlApplyConfiguration(file, namespace)
-		t.Logf("command executed: %s", cmd)
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.Mysql.YamlFile, outerloopConfig.Namespace)
 		if err != nil {
-			t.Error(fmt.Errorf("error while deploying mysql service %s in namespace %s: %w: %s", name, namespace, err, output))
+			t.Error("error while deploying mysqldb service")
 			t.FailNow()
+		} else {
+			t.Log("deployed mysqldb service")
 		}
-		t.Logf("mysql service %s deployed in namespace %s: %s", name, namespace, output)
+
 		return ctx
 	}).
 	Feature()
 
-var deployPipeline = features.New("deploy-pipeline-app-via-yaml-configurations").
-	Assess("deploy-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		file, namespace := outerloopConfig.Pipeline.YamlFile, outerloopConfig.Namespace
+var deploySpringpetclinicPipeline = features.New("deploy-pipeline-app-via-yaml-configurations").
+	Assess("deploy-springpetclinic-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying springpetclinic-pipeline")
 
-		t.Logf("deploying pipeline %s in namespace %s", file, namespace)
-		cmd, output, err := exec.KubectlApplyConfiguration(file, namespace)
-		t.Logf("command executed: %s", cmd)
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.SpringPetclinicPipeline.YamlFile, outerloopConfig.Namespace)
 		if err != nil {
-			t.Error(fmt.Errorf("error while deploying pipeline %s in namespace %s: %w: %s", file, namespace, err, output))
+			t.Error("error while deploying springpetclinic-pipeline")
 			t.FailNow()
+		} else {
+			t.Log("deployed springpetclinic-pipeline")
 		}
-		t.Logf("pipeline %s deployed in namespace %s: %s", file, namespace, output)
+
+		return ctx
+	}).
+	Feature()
+
+var deployScanPolicy = features.New("deploy-scan-policy-via-yaml").
+	Assess("deploy-scanpolicy", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying scanpolicy")
+
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.ScanPolicy.YamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deploying scanpolicy")
+			t.FailNow()
+		} else {
+			t.Log("deployed scanpolicy")
+		}
+
 		return ctx
 	}).
 	Feature()
 
 var deployWorkload = features.New("deploy-workload").
 	Assess("deploy-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		name, file, namespace := outerloopConfig.Workload.Name, outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace
+		t.Log("deploying workload")
 
-		t.Logf("deploying workload %s in namespace %s", name, namespace)
-		cmd, output, err := exec.TanzuDeployWorkload(file, namespace)
-		t.Logf("command executed: %s", cmd)
+		// deploy workload
+		err := tanzuCmds.TanzuDeployWorkload(outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace)
 		if err != nil {
-			t.Error(fmt.Errorf("error while deploying workload %s using %s in namespace %s: %w: %s", name, file, namespace, err, output))
+			t.Error("error while deploying workload")
 			t.FailNow()
+		} else {
+			t.Log("deployed workload")
 		}
-		t.Logf("workload %s deployed in namespace %s: %s", name, namespace, output)
+
 		return ctx
 	}).
 	Feature()
 
-	var deployWorkloadWithTest = features.New("deploy-workload-with-test").
+var deployWorkloadWithTest = features.New("deploy-workload-with-test").
 	Assess("deploy-workload-test", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		name, file, namespace := outerloopConfig.Workload.Name, outerloopConfig.Workload.TestYamlFile, outerloopConfig.Namespace
+		t.Log("deploying workload")
 
-		t.Logf("deploying workload %s in namespace %s", name, namespace)
-		cmd, output, err := exec.TanzuDeployWorkload(file, namespace)
-		t.Logf("command executed: %s", cmd)
+		// deploy workload
+		err := tanzuCmds.TanzuDeployWorkload(outerloopConfig.Workload.TestYamlFile, outerloopConfig.Namespace)
 		if err != nil {
-			t.Error(fmt.Errorf("error while deploying workload %s using %s in namespace %s: %w: %s", name, file, namespace, err, output))
+			t.Error("error while deploying workload")
 			t.FailNow()
+		} else {
+			t.Log("deployed workload")
 		}
-		t.Logf("workload %s deployed in namespace %s: %s", name, namespace, output)
-		return ctx
-	}).
-	Feature()
-var verifyGitrepoStatus = features.New("verify-gitrepo-status").
-	Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("gitrepo %s is not ready.", outerloopConfig.SpringPetclinic.GitrepositoryName))
-			t.FailNow()
-		}
+
 		return ctx
 	}).
 	Feature()
 
-var verifyBuildStatus = features.New("verify-build-status").
-	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("build is not in succeeded status for namespace %s", outerloopConfig.Namespace))
-			t.FailNow()
-		}
-		return ctx
+var verifyGrypePackageInstalled = features.New("check-grype-package-installed").
+	Assess("check-grype", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("checking grype is installed")
 
-	}).
-	Feature()
+		// check
+		grypeInstalled := tanzu_helpers.IsGrypeInstalled(suiteConfig.Tap.Namespace)
+		if !grypeInstalled {
+			t.Error("grype is not installed")
+			t.FailNow()
+		} else {
+			t.Log("grype is installed")
+		}
 
-var verifyPodintents = features.New("verify-pod-intents-annotations-labels").
-	Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if kubectl_helpers.GetPodIntentStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) != "True" {
-			t.Error(fmt.Errorf("podintent %s is not ready.", outerloopConfig.SpringPetclinic.PodintentName))
-			t.FailNow()
-		}
-		return ctx
-	}).
-	Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.ValidateAppLiveViewLabels(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("app live view lables are not added to the podintent"))
-			t.FailNow()
-		}
-		return ctx
-	}).
-	Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.ValidateSpringBootLabels(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("spring boot conventions lables are not added to the podintent"))
-			t.FailNow()
-		}
-		return ctx
-	}).
-	Assess("verify-podintent-alv-annotations", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.ValidateAppLiveViewConventions(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("app live view annotations are not added to the podintent"))
-			t.FailNow()
-		}
-		return ctx
-	}).
-	Assess("verify-podintent-springbootconventions-annotations", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.ValidateSpringBootConventions(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("spring-boot-conventions annotations are not added to the podintent"))
-			t.FailNow()
-		}
 		return ctx
 	}).
 	Feature()
 
-var verifyKsvcStatus = features.New("verify-ksvc-status").
-	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if kubectl_helpers.GetKsvcStatus(outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace) != "True" {
-			t.Error(fmt.Errorf("ksvc %s is not ready", outerloopConfig.SpringPetclinic.KsvcName))
+var verifyScanningPackageInstalled = features.New("check-scanning-package-installed").
+	Assess("check-scanning", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("checking scanning is installed")
+
+		// check
+		scanningInstalled := tanzu_helpers.IsScanningInstalled(suiteConfig.Tap.Namespace)
+		if !scanningInstalled {
+			t.Error("scanning is not installed")
 			t.FailNow()
+		} else {
+			t.Log("scanning is installed")
 		}
-		return ctx
 
-		// return stepfuncs.VerifyKsvcReady(ctx, t, cfg, outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace)
-	}).
-	Feature()
-
-var verifyTaskrunStatus = features.New("verify-taskrun-status").
-	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if !kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace) {
-			t.Error(fmt.Errorf("taskrun is not in succeeded status for namespace %s", outerloopConfig.Namespace))
-			t.FailNow()
-		}
-		return ctx
-
-		// return stepfuncs.VerifyTaskrunSucceeded(ctx, t, cfg, outerloopConfig.SpringPetclinic.TaskrunNamePrefix, outerloopConfig.Namespace)
-	}).
-	Feature()
-
-var verifyWorkloadStatus = features.New("verify-workload-status").
-	Assess("verify-workload-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		if kubectl_helpers.GetWorkloadStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace) != "True" {
-			t.Error(fmt.Errorf("workload %s is not ready", outerloopConfig.Workload.Name))
-			t.Fail()
-		}
 		return ctx
 	}).
 	Feature()
 
-var ingressEnvoyExternalIpKey = "ingressEnvoyExternalIp"
+var verifyPipelineStatus = features.New("verify-pipeline-status").
+	Assess("verify-pipeline-installed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying pipeline status")
 
-var getEnvoyExternalIP = features.New("get-ingress-envoy-externalip-port").
-	Assess("get-externalip", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		service, namespace := "envoy", "tanzu-system-ingress"
-
-		t.Logf("getting external ip for %s (namespace %s)", service, namespace)
-		serviceExternalIp, err := client.GetServiceExternalIP(service, namespace, cfg.Client().RESTConfig())
-		if err != nil {
-			t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, namespace, err))
+		// check
+		pipelineInstalled := kubectl_helpers.ValidatePipelineExists("", outerloopConfig.Namespace)
+		if !pipelineInstalled {
+			t.Error("pipeline not installed")
 			t.FailNow()
+		} else {
+			t.Log("pipeline installed")
 		}
-		t.Logf("external ip for %s (namespace %s): %s", "server", namespace, serviceExternalIp)
-		return context.WithValue(ctx, ingressEnvoyExternalIpKey, serviceExternalIp)
 
-		// ctx, serviceExternalIp := stepfuncs.GetServiceExternalIp(ctx, t, cfg, "envoy", "tanzu-system-ingress")
-		// return context.WithValue(ctx, ingressEnvoyExternalIpKey, serviceExternalIp)
+		return ctx
 	}).
 	Feature()
 
-var verifyApplicationRunningOriginal = features.New("verify-application-running").
-	Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		url, host, webpageRelativePath, validationString := ctx.Value(ingressEnvoyExternalIpKey).(string), outerloopConfig.Project.Application, outerloopConfig.Project.WebpageRelativePath, outerloopConfig.Project.OriginalString
+var verifySourceScanStatus = features.New("verify-source-scan-status").
+	Assess("verify-source-scan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying source scan status")
 
-		t.Logf("checking application %s for result: %s", host, validationString)
-		validated := false
-		iter := 10
-		for i := 1; i <= iter; i++ {
-			url := fmt.Sprintf("%s/%s", url, webpageRelativePath)
-			if !strings.HasPrefix(url, "http://") {
-				url = "http://" + url
-			}
-			req, err := http.NewRequest("GET", url, nil)
-			if err != nil {
-				t.Error(fmt.Errorf("error while giving http request: %w", err))
-				t.FailNow()
-			}
-			req.Host = host
-
-			var retries int = 10
-			for retries > 0 {
-				resp, err := http.DefaultClient.Do(req)
-				if err != nil {
-					retries -= 1
-					t.Logf("didn't get response")
-					t.Logf("sleeping for 30 seconds")
-					time.Sleep(30 * time.Second)
-				} else {
-					t.Logf("status code is: %d", resp.StatusCode)
-					break
-				}
-			}
-			resp, err := http.DefaultClient.Do(req)
-			if err != nil {
-				t.Error(fmt.Errorf("error while giving http response: %w", err))
-				t.FailNow()
-			}
-			if resp.StatusCode != http.StatusOK {
-				t.Logf("bad HTTP Response: %s", resp.Status)
-				t.Logf("sleeping for 30 seconds")
-				time.Sleep(30 * time.Second)
-				continue
-			}
-			defer resp.Body.Close()
-			resultStringBytes, _ := ioutil.ReadAll(resp.Body)
-			resultString := string(resultStringBytes)
-			t.Logf(resultString)
-			if strings.Contains(resultString, validationString) {
-				t.Logf("application %s validated, got result: %s", host, validationString)
-				validated = true
-				break
-			} else {
-				t.Logf("getting string %s", resultString)
-				t.Logf("sleeping for 1 minute")
-				time.Sleep(1 * time.Minute)
-			}
-		}
-
-		if !validated {
-			t.Errorf(`application %s not validated %d iterations`, host, iter)
+		// check
+		sourceScanCompleted := kubectl_helpers.ValidateSourceScans("", outerloopConfig.Namespace)
+		if !sourceScanCompleted {
+			t.Error("source scan completed")
 			t.FailNow()
+		} else {
+			t.Log("source scan not completed")
 		}
-		return ctx
 
-		// return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(ingressEnvoyExternalIpKey).(string), outerloopConfig.Project.Application, outerloopConfig.Project.OriginalString)
+		return ctx
 	}).
 	Feature()
 
-var gitUpdate = features.New("git-update").
-	Assess("git-config", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, username, email := utils.GetFileDir(), outerloopConfig.Project.Username, outerloopConfig.Project.Email
-		t.Logf("updating git config")
-		cmd, output, err := exec.GitConfig(path, username, email)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while configuring git : %w: %s", err, output))
+var verifyImageScanStatus = features.New("verify-imagescan-status").
+	Assess("verify-imagescan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying image scan status")
+
+		// check
+		imageScanCompleted := kubectl_helpers.ValidateImageScans("", outerloopConfig.Namespace)
+		if !imageScanCompleted {
+			t.Error("image scan completed")
 			t.FailNow()
+		} else {
+			t.Log("image scan not completed")
 		}
-		t.Logf("git configured : %s", output)
+
 		return ctx
-	}).
-	Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		repo, path := outerloopConfig.Project.Repository, utils.GetFileDir()
-
-		t.Logf("cloning repository %s at %s", repo, path)
-		cmd, output, err := exec.GitClone(path, repo)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while cloning repository %s at %s: %w: %s", repo, path, err, output))
-			t.FailNow()
-		}
-		t.Logf("repository %s cloned at %s: %s", repo, path, output)
-		return ctx
-
-		// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
-	}).
-	Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		repo, path, accesstoken := outerloopConfig.Project.Repository, filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken
-		t.Logf("setting git remote url")
-		cmd, output, err := exec.GitSetUrl(path, accesstoken, repo)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while configuring remote url %s: %w: %s", path, err, output))
-			t.FailNow()
-		}
-		t.Logf("configured remote url : %s", output)
-		return ctx
-
-		// return stepfuncs.GitClone(ctx, t, cfg, GetFileDir(), outerloopConfig.Project.Repository)
-	}).
-	Assess("modify-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		file, originalString, newString := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name, outerloopConfig.Project.File), outerloopConfig.Project.OriginalString, outerloopConfig.Project.NewString
-
-		t.Logf("updating file %s", file)
-		inputBytes, err := os.ReadFile(file)
-		if err != nil {
-			t.Error(fmt.Errorf("error while updating file %s: %w", file, err))
-			t.FailNow()
-		}
-		input := strings.ReplaceAll(string(inputBytes), originalString, newString)
-
-		err = os.WriteFile(file, []byte(input), 0677)
-		if err != nil {
-			t.Error(fmt.Errorf("error while writing file %s: %w", file, err))
-			t.FailNow()
-		}
-		t.Logf("file %s written", file)
-		return ctx
-
-		// return stepfuncs.UpdateFileReplaceString(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name, outerloopConfig.Project.File), outerloopConfig.Project.OriginalString, outerloopConfig.Project.NewString)
-	}).
-	Assess("git-add", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, files := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), []string{outerloopConfig.Project.File}
-
-		t.Logf("adding files %s for repository at %s", files, path)
-		cmd, output, err := exec.GitAdd(path, files)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while adding files %s for repository at %s: %w: %s", files, path, err, output))
-			t.FailNow()
-		}
-		t.Logf("files %s added for repository at %s: %s", files, path, output)
-		return ctx
-
-		// return stepfuncs.GitAdd(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name), []string{outerloopConfig.Project.File})
-	}).
-	Assess("git-commit", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, message := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), "changes to webpage"
-
-		t.Logf("committing files for repository at %s (message %s)", path, message)
-		cmd, output, err := exec.GitCommit(path, message)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while committing files for repository at %s: %w: %s", path, err, output))
-			t.FailNow()
-		}
-		t.Logf("committed files for repository at %s (message %s): %s", path, message, output)
-		return ctx
-
-		// return stepfuncs.GitCommit(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name), "change to webpage")
-	}).
-
-	// NOTE: DON'T DO t.FailNow() AS WE WANT TO REVERT CHANGES TO REPO REGARDLESS OF THE STATE OF THE TEST. USE t.Fail() INSTEAD.
-	Assess("git-push", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, force := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), false
-
-		t.Logf("pushing commits for repository at %s", path)
-		cmd, output, err := exec.GitPush(path, force)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while pushing commits for repository at %s: %w: %s", path, err, output))
-			t.Fail()
-		}
-		t.Logf("pushed commits for repository at %s: %s", path, output)
-		return ctx
-
-		// return stepfuncs.GitPush(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name), false)
 	}).
 	Feature()
 
-var verifyApplicationRunningNew = features.New("verify-application-running").
-	// NOTE: DON'T DO t.FailNow() AS WE WANT TO REVERT CHANGES TO REPO REGARDLESS OF THE STATE OF THE TEST. USE t.Fail() INSTEAD.
-	Assess("check-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		url, host, webpageRelativePath, validationString := ctx.Value(ingressEnvoyExternalIpKey).(string), outerloopConfig.Project.Application, outerloopConfig.Project.WebpageRelativePath, outerloopConfig.Project.NewString
+var verifyPipelineRunStatus = features.New("verify-pipeline-runs-status").
+	Assess("verify-pipeline-runs-succeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying pipeline runs status")
 
-		t.Logf("checking application %s for result: %s", host, validationString)
-		validated := false
-		iter := 10
-		for i := 1; i <= iter; i++ {
-			url := fmt.Sprintf("%s/%s", url, webpageRelativePath)
-			if !strings.HasPrefix(url, "http://") {
-				url = "http://" + url
-			}
-			req, err := http.NewRequest("GET", url, nil)
-			if err != nil {
-				t.Error(fmt.Errorf("error while giving http request: %w", err))
-				t.FailNow()
-			}
-			req.Host = host
-
-			var retries int = 10
-			for retries > 0 {
-				resp, err := http.DefaultClient.Do(req)
-				if err != nil {
-					retries -= 1
-					t.Logf("didn't get response")
-					t.Logf("sleeping for 30 seconds")
-					time.Sleep(30 * time.Second)
-				} else {
-					t.Logf("status code is: %d", resp.StatusCode)
-					break
-				}
-			}
-			resp, err := http.DefaultClient.Do(req)
-			if err != nil {
-				t.Error(fmt.Errorf("error while giving http response: %w", err))
-				t.FailNow()
-			}
-			if resp.StatusCode != http.StatusOK {
-				t.Logf("bad HTTP Response: %s", resp.Status)
-				t.Logf("sleeping for 30 seconds")
-				time.Sleep(30 * time.Second)
-				continue
-			}
-			defer resp.Body.Close()
-			resultStringBytes, _ := ioutil.ReadAll(resp.Body)
-			resultString := string(resultStringBytes)
-			t.Logf(resultString)
-			if strings.Contains(resultString, validationString) {
-				t.Logf("application %s validated, got result: %s", host, validationString)
-				validated = true
-				break
-			} else {
-				t.Logf("getting string %s", resultString)
-				t.Logf("sleeping for 1 minute")
-				time.Sleep(1 * time.Minute)
-			}
-		}
-
-		if !validated {
-			t.Errorf(`application %s not validated %d iterations`, host, iter)
+		// check
+		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace)
+		if !pipelineRunSucceeded {
+			t.Error("pipeline runs not succeeded")
 			t.FailNow()
+		} else {
+			t.Log("pipeline runs succeeded")
 		}
-		return ctx
 
-		// return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(ingressEnvoyExternalIpKey).(string), outerloopConfig.Project.Application, outerloopConfig.Project.NewString)
-	}).
-	Feature()
-var gitReset = features.New("git-reset").
-	Assess("git-reset", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, count := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), 1
-
-		t.Logf("resetting commits at HEAD~%d for repository at %s", count, path)
-		cmd, output, err := exec.GitResetFromHead(path, count)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while resetting commits at HEAD~%d for repository at %s: %w: %s", count, path, err, output))
-			t.FailNow()
-		}
-		t.Logf("resetted commits at HEAD~%d for repository at %s: %s", count, path, output)
-		return ctx
-
-		// return stepfuncs.GitResetFromHead(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name), 1)
-	}).
-	Assess("git-push-force", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		path, force := filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), true
-
-		t.Logf("pushing commits for repository at %s", path)
-		cmd, output, err := exec.GitPush(path, force)
-		t.Logf("command executed: %s", cmd)
-		if err != nil {
-			t.Error(fmt.Errorf("error while pushing commits for repository at %s: %w: %s", path, err, output))
-			t.FailNow()
-		}
-		t.Logf("pushed commits for repository at %s: %s", path, output)
-		return ctx
-
-		// return stepfuncs.GitPush(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name), true)
-	}).
-	Feature()
-
-var cleanRemoveProjectDir = features.New("clean-remove-project-dir").
-	Assess("remove-dir", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		dir := outerloopConfig.Project.Name
-
-		t.Logf("removing directory %s", dir)
-		err := os.RemoveAll(dir)
-		if err != nil {
-			t.Error(fmt.Errorf("error while removing directory %s: %w", dir, err))
-			t.FailNow()
-		}
-		t.Logf("directory %s removed", dir)
-		return ctx
-
-		// return stepfuncs.RemoveDirectory(ctx, t, cfg, filepath.Join(GetFileDir(), outerloopConfig.Project.Name))
-	}).
-	Feature()
-
-var deleteWorkload = features.New("delete-workload").
-	Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		name, file, namespace := outerloopConfig.Workload.Name, outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace
-
-		t.Logf("deleting workload %s from namespace %s", file, namespace)
-		tanzu_lib.DeleteWorkload(name, namespace)
 		return ctx
 	}).
 	Feature()
 
 var verifyImageskpac = features.New("verify-images.kpac-status").
 	Assess("verify-images.kpac-true", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Logf("verify latest image status")
+		t.Logf("verifying latest image status")
+
+		// check
 		status := kubectl_helpers.GetLatestImageStatus(suiteConfig.Innerloop.Workload.Namespace)
 		t.Logf("Image status is: %s", status)
 		if status != "True" {
-			t.Error(fmt.Errorf("Image is not built/ready."))
-			t.Fail()
+			t.Error("image status is not true")
+			t.FailNow()
+		} else {
+			t.Log("image status is true")
 		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyGitrepoStatus = features.New("verify-gitrepo-status").
+	Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying gitrepo ready status")
+
+		// check
+		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if !gitrepoReady {
+			t.Error("gitrepo not ready")
+			t.FailNow()
+		} else {
+			t.Log("gitrepo ready")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildStatus = features.New("verify-build-status").
+	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying build succeeded status")
+
+		// check
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace)
+		if !buildSucceeded {
+			t.Error("build not succeeded")
+			t.FailNow()
+		} else {
+			t.Log("build succeeded")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyPodintents = features.New("verify-podintents-labels-conventions").
+	Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying podintent ready status")
+
+		// check
+		podintentStatus := kubectl_helpers.GetPodIntentStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if podintentStatus != "True" {
+			t.Error("podintent not ready")
+			t.FailNow()
+		} else {
+			t.Log("podintent ready")
+		}
+
+		return ctx
+	}).
+	Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying appliveview labels present in podintent")
+
+		// check
+		alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if !alvLabelsPresent {
+			t.Error("appliveview lables absent in podintent")
+			t.FailNow()
+		} else {
+			t.Log("appliveview labels present in podintent")
+		}
+
+		return ctx
+	}).
+	Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying springbootconventions labels present in podintent")
+
+		// check
+		springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if !springbootconventionsLabelsPresent {
+			t.Error("springbootconventions lables absent in podintent")
+			t.FailNow()
+		} else {
+			t.Log("springbootconventions labels present in podintent")
+		}
+
+		return ctx
+	}).
+	Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying appliveview conventions present in podintent")
+
+		// check
+		appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if !appliveviewConventionsPresent {
+			t.Error("appliveview conventions absent in podintent")
+			t.FailNow()
+		} else {
+			t.Log("appliveview conventions present in podintent")
+		}
+
+		return ctx
+	}).
+	Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying springbootconventions conventions present in podintent")
+
+		// check
+		springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		if !springbootconventionsConventionsPresent {
+			t.Error("springbootconventions conventions absent in podintent")
+			t.FailNow()
+		} else {
+			t.Log("springbootconventions conventions present in podintent")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyKsvcStatus = features.New("verify-ksvc-status").
+	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying ksvc ready status")
+
+		// check
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace)
+		if !ksvcReady {
+			t.Error("ksvc not ready")
+			t.FailNow()
+		} else {
+			t.Log("ksvc ready")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyTaskrunStatus = features.New("verify-taskrun-status").
+	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying taskrun succeeded status")
+
+		// check
+		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace)
+		if !taskrunSucceeded {
+			t.Error("taskrun not succeeded")
+			t.FailNow()
+		} else {
+			t.Log("taskrun succeeded")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyWorkloadStatus = features.New("verify-workload-status").
+	Assess("verify-workload-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying workload ready status")
+
+		// check
+		workloadStatus := kubectl_helpers.GetWorkloadStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
+		if workloadStatus != "True" {
+			t.Error("workload not ready")
+			t.FailNow()
+		} else {
+			t.Log("workload ready")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyWebpageOriginal = features.New("verify-webpage-original").
+	Assess("get-externalip-and-check-webpage-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("getting external ip and checking for original string")
+
+		// get external IP
+		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		if err != nil {
+			t.Error("error while getting external IP")
+			t.FailNow()
+		} else {
+			t.Log("external IP retrieved")
+		}
+
+		// set url
+		url := fmt.Sprintf("%s/%s", externalIP, outerloopConfig.Project.WebpageRelativePath)
+		if !strings.HasPrefix(url, "http://") {
+			url = "http://" + url
+		}
+
+		webpageContainsString, _ := misc.VerifyWebpageContainsString(outerloopConfig.Project.Host, url, outerloopConfig.Project.OriginalString, 10, 10, 30)
+		if !webpageContainsString {
+			t.Error("webpage does not contains string")
+			t.FailNow()
+		} else {
+			t.Log("webpage contains string")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var gitUpdate = features.New("git-update").
+	Assess("git-config", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("setting git config")
+
+		// set git config
+		err := git.GitConfig(outerloopConfig.Project.Username, outerloopConfig.Project.Email)
+		if err != nil {
+			t.Error("error while setting git config")
+			t.FailNow()
+		} else {
+			t.Log("set git config")
+		}
+
+		return ctx
+	}).
+	Assess("git-clone", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("cloning git repo")
+
+		// clone
+		err := git.GitClone(utils.GetFileDir(), outerloopConfig.Project.Repository)
+		if err != nil {
+			t.Error("error while cloning git repo")
+			t.FailNow()
+		} else {
+			t.Log("cloned git repo")
+		}
+
+		return ctx
+	}).
+	Assess("git-seturl", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("setting git remote url")
+
+		// set remote url
+		err := git.GitSetRemoteUrl(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.AccessToken, outerloopConfig.Project.Repository)
+		if err != nil {
+			t.Error("error while setting git remote url")
+			t.FailNow()
+		} else {
+			t.Log("set git remote url")
+		}
+
+		return ctx
+	}).
+	Assess("replace-string-in-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("replacing string in file")
+
+		// replace string
+		err := utils.ReplaceStringInFile(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name, outerloopConfig.Project.File), outerloopConfig.Project.OriginalString, outerloopConfig.Project.NewString)
+		if err != nil {
+			t.Error("error while replacing string in file")
+			t.FailNow()
+		} else {
+			t.Log("replaced string in file")
+		}
+
+		return ctx
+	}).
+	Assess("git-add", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("adding files to git index")
+
+		// add files
+		err := git.GitAdd(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), []string{outerloopConfig.Project.File})
+		if err != nil {
+			t.Error("error while adding files to git index")
+			t.FailNow()
+		} else {
+			t.Log("added files to git index")
+		}
+
+		return ctx
+	}).
+	Assess("git-commit", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("git committing index")
+
+		// commit
+		err := git.GitCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.CommitMessage)
+		if err != nil {
+			t.Error("error while committing git index")
+			t.FailNow()
+		} else {
+			t.Log("committed git index")
+		}
+
+		return ctx
+	}).
+	Assess("git-push", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("pushing changes to repo")
+
+		// push
+		err := git.GitPush(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), false)
+		if err != nil {
+			t.Error("error while pushing changes to repo")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("pushed changes to repo")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyWebpageNew = features.New("verify-webpage-new").
+	Assess("get-externalip-and-check-webpage-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("getting external ip and checking for new string")
+
+		// get external IP
+		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		if err != nil {
+			t.Error("error while getting external IP")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("external IP retrieved")
+		}
+
+		// set url
+		url := fmt.Sprintf("%s/%s", externalIP, outerloopConfig.Project.WebpageRelativePath)
+		if !strings.HasPrefix(url, "http://") {
+			url = "http://" + url
+		}
+
+		webpageContainsString, _ := misc.VerifyWebpageContainsString(outerloopConfig.Project.Host, url, outerloopConfig.Project.NewString, 10, 10, 30)
+		if !webpageContainsString {
+			t.Error("webpage does not contains string")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("webpage contains string")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var gitReset = features.New("git-reset").
+	Assess("git-reset", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("resetting git repo")
+
+		// reset
+		err := git.GitResetFromHead(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), 1)
+		if err != nil {
+			t.Error("error while resetting git repo")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("resetted git repo")
+		}
+
+		return ctx
+	}).
+	Assess("git-push-force", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("force pushing changes to repo")
+
+		// force push
+		err := git.GitPush(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), true)
+		if err != nil {
+			t.Error("error while force pushing changes to repo")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("force pushed changes to repo")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var removeProjectDir = features.New("remove-project-dir").
+	Assess("remove-dir", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("removing project directory")
+
+		// remove
+		err := utils.RemoveDirectory(outerloopConfig.Project.Name)
+		if err != nil {
+			t.Error("error while removing directory")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("removed directory")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deleteWorkload = features.New("delete-workload").
+	Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deleting workload")
+
+		// deploy workload
+		err := tanzuCmds.TanzuDeleteWorkload(outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deleting workload")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("deleted workload")
+		}
+
 		return ctx
 	}).
 	Feature()
