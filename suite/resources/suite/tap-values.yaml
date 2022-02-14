@@ -40,6 +40,6 @@ supply_chain: basic
 tap_gui:
     service_type: LoadBalancer
 convention_controller: 
-  ca-cert-data:
+    ca-cert-data:
 source_controller:
-  ca-cert-data:
+    ca-cert-data:
