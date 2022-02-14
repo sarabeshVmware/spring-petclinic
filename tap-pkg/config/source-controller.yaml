@@ -1,3 +1,5 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build, profiles.run]):
