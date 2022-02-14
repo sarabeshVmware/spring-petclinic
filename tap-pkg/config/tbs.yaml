@@ -3,7 +3,7 @@
 #@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.workspace, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ def user_values():
@@ -15,7 +15,7 @@
 #@ def default_values():
 ---
 descriptor_name: tap-1.0.0-lite
-#@ if/end profiles.is_any_enabled([profiles.workspace]):
+#@ if/end profiles.is_any_enabled([profiles.iterate]):
 disable_smart_warmer: true
 #@ end
 

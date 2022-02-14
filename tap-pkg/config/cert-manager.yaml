@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.workspace, profiles.build, profiles.run, profiles.tbd]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.iterate, profiles.build, profiles.run, profiles.view]):
 #@ if profiles.is_pkg_enabled("cert-manager.tanzu.vmware.com"):
 
 ---
