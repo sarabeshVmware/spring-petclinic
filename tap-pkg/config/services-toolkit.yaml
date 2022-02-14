@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.iterate, profiles.run]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("services-toolkit.tanzu.vmware.com"):
 
 ---

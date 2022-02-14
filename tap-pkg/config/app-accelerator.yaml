@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.view]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.view]):
 #@ if profiles.is_pkg_enabled("accelerator.apps.tanzu.vmware.com"):
 
 ---
