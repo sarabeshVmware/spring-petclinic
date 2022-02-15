@@ -1,4 +1,4 @@
-//go:build all || innerloop_basic
+//go:build all || innerloop || innerloop_basic
 
 package suite
 
