@@ -1,27 +1,25 @@
 ---
 catalog_info_yaml: https://github.com/dapdelivery/tap-catalog/blob/master/catalog-info.yaml
-# clusterrolebinding:
-#   name: apps-admin
-#   clusterrole: cluster-admin
-#   serviceAccount: my-apps:default
 mysql:
-  name: mysql-db
+  name: mysql-db # TODO: to be removed in cleanup
   yaml_file: mysql-service.yaml
 namespace: my-apps
 project:
-  application: spring-petclinic.my-apps.example.com
+  application: spring-petclinic.my-apps.example.com # TODO: to be removed in cleanup
+  host: spring-petclinic.my-apps.example.com
   webpage_relative_path: vets.html
   file: src/main/resources/templates/vets/vetList.html
   name: spring-petclinic-original
   new_string: "Veterinarians at VMWare!!!"
   original_string: "Veterinarians at VMWare"
+  commit_message: "update vets.html: new header"
   repository: https://github.com/dapdelivery/spring-petclinic-original.git
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
   access_token: <ACCESS_TOKEN>
 scan_policy:
   yaml_file: scan-policy.yaml
-spring_petclinic:
+spring_petclinic: # TODO remove section in cleanup
   build_name_prefix: spring-petclinic
   gitrepository_name: spring-petclinic
   imagerepository_name: spring-petclinic-delivery
@@ -30,9 +28,15 @@ spring_petclinic:
   podintent_name: spring-petclinic
   taskrun_name_prefix: spring-petclinic-config-writer
   yaml_file: spring-petclinic-tests-pipeline.yaml
+spring_petclinic_pipeline:
+  yaml_file: spring-petclinic-tests-pipeline.yaml
 workload:
   name: spring-petclinic
   yaml_file: workload.yaml
   test_yaml_file: workload-test.yaml
-pipeline:
-  yaml_file: spring-petclinic-tests-pipeline.yaml
+  build_name_prefix: spring-petclinic
+  gitrepository_name: spring-petclinic
+  imagerepository_name: spring-petclinic-delivery
+  ksvc_name: spring-petclinic
+  podintent_name: spring-petclinic
+  taskrun_name_prefix: spring-petclinic-config-writer
