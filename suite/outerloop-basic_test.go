@@ -127,7 +127,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyGitrepoStatus := features.New("verify-gitrepo-status").
 		Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if !kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) {
+			if !kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
 				t.Error(fmt.Errorf("gitrepo %s is not ready.", outerloopConfig.SpringPetclinic.GitrepositoryName))
 				t.FailNow()
 			}
@@ -139,7 +139,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyBuildStatus := features.New("verify-build-status").
 		Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if !kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace) {
+			if !kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace, 15, 60) {
 				t.Error(fmt.Errorf("build is not in succeeded status for namespace %s", outerloopConfig.Namespace))
 				t.FailNow()
 			}
@@ -151,7 +151,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyPodintents := features.New("verify-pod-intents-annotations-labels").
 		Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if kubectl_helpers.GetPodIntentStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace) != "True" {
+			if !kubectl_helpers.VerifyPodIntentStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
 				t.Error(fmt.Errorf("podintent %s is not ready.", outerloopConfig.SpringPetclinic.PodintentName))
 				t.FailNow()
 			}
@@ -222,7 +222,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyKsvcStatus := features.New("verify-ksvc-status").
 		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if !kubectl_helpers.VerifyKsvcStatus(outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace) {
+			if !kubectl_helpers.VerifyKsvcStatus(outerloopConfig.SpringPetclinic.KsvcName, outerloopConfig.Namespace, 5, 30) {
 				t.Error(fmt.Errorf("ksvc %s is not ready", outerloopConfig.SpringPetclinic.KsvcName))
 				t.FailNow()
 			}

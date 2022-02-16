@@ -40,3 +40,6 @@ workload:
   ksvc_name: spring-petclinic
   podintent_name: spring-petclinic
   taskrun_name_prefix: spring-petclinic-config-writer
+  imagescan_name: spring-petclinic
+  sourcescan_name: spring-petclinic
+  pipeline_name: developer-defined-tekton-pipeline

@@ -114,7 +114,7 @@ type span struct {
 	end   int
 }
 
-func FieldIndices(s string) []span {
+func indices(s string) []span {
 	s = stripAnsiEscapeSequence(s)
 	f := unicode.IsSpace
 	spans := make([]span, 0, 32)
@@ -135,6 +135,11 @@ func FieldIndices(s string) []span {
 	if start >= 0 {
 		spans = append(spans, span{start, len(s)})
 	}
+	return spans
+}
+
+func FieldIndices(s string) []span {
+	spans := indices(s)
 	for index := range spans {
 		if index == 0 {
 			continue
@@ -142,6 +147,35 @@ func FieldIndices(s string) []span {
 		spans[index-1].end = spans[index].start
 	}
 	return spans
+}
+
+func FieldIndicesWithSingleSpace(s string) []span {
+	spans := indices(s)
+	mergedspans := make([]span, 0, 32)
+	skip := false
+	for index := range spans {
+		if skip {
+			skip = false
+			continue
+		}
+		if index == len(spans)-1 {
+			mergedspans = append(mergedspans, span{spans[index].start, spans[index].end})
+			continue
+		}
+		if spans[index].end+1 == spans[index+1].start {
+			mergedspans = append(mergedspans, span{spans[index].start, spans[index+1].end})
+			skip = true
+		} else {
+			mergedspans = append(mergedspans, span{spans[index].start, spans[index].end})
+		}
+	}
+	for index := range mergedspans {
+		if index == 0 {
+			continue
+		}
+		mergedspans[index-1].end = mergedspans[index].start
+	}
+	return mergedspans
 }
 
 func GetFields(s string, spans []span) []string {

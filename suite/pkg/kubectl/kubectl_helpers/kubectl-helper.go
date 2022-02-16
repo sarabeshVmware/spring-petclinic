@@ -411,3 +411,58 @@ func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds 
 	}
 	return result
 }
+
+func VerifyPodIntentStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating podintent status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		podintentStatus := GetPodIntentStatus(name, namespace)
+		if podintentStatus == "True" {
+			log.Printf("podintent %s status is %s", name, podintentStatus)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Podintent is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func LogFailedResourcesDetails(namespace string) {
+	pkgiList := kubectl_lib.GetPkgi("", namespace)
+	for _, value := range pkgiList {
+		if value.DESCRIPTION != "Reconcile succeeded" {
+			log.Printf("Describe pkgi %s", value.NAME)
+			kubectl_lib.DescribePkgi(value.NAME, namespace)
+		}
+	}
+
+}
+
+func ValidateTAPInstallation(pkgName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating TAP installation status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		pkg := kubectl_lib.GetPkgi(pkgName, namespace)
+		if len(pkg) < 1 {
+			log.Println("tap reconcile is not successed yet")
+		} else if pkg[len(pkg)-1].DESCRIPTION == "Reconcile succeeded" {
+			log.Printf("package %s status is verified successfully, status is %s", pkg[len(pkg)-1].NAME, pkg[len(pkg)-1].DESCRIPTION)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("TAP install did not reconcile after %d mins", timeoutInMins)
+	}
+	return result
+}

@@ -9,6 +9,7 @@ import (
 	"log"
 	"time"
 
+	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -21,7 +22,13 @@ func InstallPackage(name string, packageName string, version string, namespace s
 		// install package
 		err := tanzuCmds.TanzuInstallPackage(name, packageName, version, namespace, valuesFile, pollTimeout)
 		if err != nil {
-			return ctx, fmt.Errorf("error while installing package %s (%s)", name, packageName)
+			pass := kubectl_helper.ValidateTAPInstallation(name, namespace, 10, 60)
+			if !pass {
+				kubectl_helper.LogFailedResourcesDetails(namespace)
+				return ctx, fmt.Errorf("error while installing package %s (%s)", name, packageName)
+			} else {
+				return ctx, nil
+			}
 		}
 
 		return ctx, nil

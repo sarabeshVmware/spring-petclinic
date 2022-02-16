@@ -188,7 +188,7 @@ func TestInnerloopBasic(t *testing.T) {
 			t.Logf("verify image-repositories status")
 			imagerepository := [2]string{suiteConfig.Innerloop.Workload.Name + "-delivery", suiteConfig.Innerloop.Workload.Name}
 			for _, imageRepo := range imagerepository {
-				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace)
+				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
 				t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 				if !status {
 					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
@@ -203,7 +203,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f8 := features.New("verify-builds").
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
-			status := kubectl_helper.VerifyBuildStatus(suiteConfig.Innerloop.Workload.Namespace)
+			status := kubectl_helper.VerifyBuildStatus(suiteConfig.Innerloop.Workload.Namespace, 15, 60)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("Build is not ready."))
@@ -229,9 +229,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f10 := features.New("verify-pod-intents-annotations-labels").
 		Assess("verify-pod-intent-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify podintent status")
-			status := kubectl_helper.GetPodIntentStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
-			t.Logf("podintent status is : %s", status)
-			if status != "True" {
+			if !kubectl_helper.VerifyPodIntentStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30) {
 				t.Error(fmt.Errorf("podintent %s is not ready.", suiteConfig.Innerloop.Workload.Name))
 				t.Fail()
 			}
@@ -292,7 +290,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
-			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
+			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
 			t.Logf("ksvc status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("ksvc %s is not ready.", suiteConfig.Innerloop.Workload.Name))
