@@ -188,7 +188,7 @@ func TestInnerloopBasic(t *testing.T) {
 			t.Logf("verify image-repositories status")
 			imagerepository := [2]string{suiteConfig.Innerloop.Workload.Name + "-delivery", suiteConfig.Innerloop.Workload.Name}
 			for _, imageRepo := range imagerepository {
-				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
+				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 60)
 				t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 				if !status {
 					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
