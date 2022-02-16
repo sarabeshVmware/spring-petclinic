@@ -384,7 +384,7 @@ func VerifyGitRepoStatus(name string, namespace string, timeoutInMins int, inter
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Image repository is not generated after %d mins", timeoutInMins)
+		log.Printf("Git repository is not generated after %d mins", timeoutInMins)
 	}
 	return result
 }
@@ -407,7 +407,7 @@ func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds 
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Image repository is not generated after %d mins", timeoutInMins)
+		log.Printf("task run is not generated after %d mins", timeoutInMins)
 	}
 	return result
 }
