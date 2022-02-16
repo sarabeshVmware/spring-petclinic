@@ -120,9 +120,20 @@ func GetKsvcStatus(name string, namespace string) string {
 
 func ValidateImageScans(name string, namespace string) bool {
 	log.Println("Validating image scans")
-	imageScan := kubectl_lib.GetImageScan(name, namespace)
-	if imageScan.PHASE == "Completed" && imageScan.CRITICAL == "" && imageScan.HIGH == "" && imageScan.MEDIUM == "" && imageScan.LOW == "" && imageScan.UNKNOWN == "" && imageScan.CVETOTAL == "" {
-		return true
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Image scan not completed after 5 mins")
+			return false
+		}
+		imageScan := kubectl_lib.GetImageScan(name, namespace)
+		if (imageScan == kubectl_lib.GetImageScanOutput{}) {
+			log.Println("Image scan is not started yet")
+		} else if imageScan.PHASE == "Completed" && imageScan.CRITICAL == "" && imageScan.HIGH == "" && imageScan.MEDIUM == "" && imageScan.LOW == "" && imageScan.UNKNOWN == "" && imageScan.CVETOTAL == "" {
+			return true
+		} else {
+			continue
+		}
 	}
 	return false
 }
@@ -149,32 +160,88 @@ func ValidateSourceScans(name string, namespace string) bool {
 
 func ValidatePipelineExists(name string, namespace string) bool {
 	log.Println("Validating pipeline exists")
-	pipeline := kubectl_lib.GetPipeline(name, namespace)
-	return (kubectl_lib.GetPipelineOutput{}) != pipeline
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Pipeline not created after 5 mins")
+			return false
+		}
+		pipeline := kubectl_lib.GetPipeline(name, namespace)
+		if (pipeline == kubectl_lib.GetPipelineOutput{}) {
+			log.Println("Pipeline not created yet")
+		} else if (kubectl_lib.GetPipelineOutput{}) != pipeline {
+			log.Println("Pipeline not created yet")
+			continue
+		} else {
+			return true
+		}
+	}
+	return false
+
 }
 
 func ValidatePipelineRuns(name string, namespace string) bool {
 	log.Println("Validating pipeline runs")
-	prs := kubectl_lib.GetPipelineRuns(name, namespace)
-	if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" {
-		return true
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Pipeline runs not created after 5 mins")
+			return false
+		}
+		prs := kubectl_lib.GetPipelineRuns(name, namespace)
+		if (prs == kubectl_lib.GetPipelineRunsOutput{}) {
+			log.Println("Pipeline runs not created yet")
+		} else if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" {
+			return true
+		} else {
+			log.Println("Pipeline runs not created yet")
+			continue
+		}
 	}
 	return false
 }
 
 func ValidateServiceBindings(name string, namespace string) bool {
 	log.Println("Validating service bindings")
-	svcBindings := kubectl_lib.GetServiceBindings(name, namespace)
-	if svcBindings.READY == "True" && svcBindings.REASON == "Ready" {
-		return true
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Service bindings not ready after 5 mins")
+			return false
+		}
+		svcBindings := kubectl_lib.GetServiceBindings(name, namespace)
+		if (svcBindings == kubectl_lib.GetServiceBindingsOutput{}) {
+			log.Println("Service bindings not ready yet")
+		} else if svcBindings.READY == "True" && svcBindings.REASON == "Ready" {
+			return true
+		} else {
+			log.Println("Service bindings not ready yet")
+			continue
+		}
 	}
 	return false
 }
 
 func ValidateTrainingPortalStatus(name string) bool {
 	log.Println("Validating training portals")
-	tp := kubectl_lib.GetTrainingPortals(name)
-	return tp.STATUS == "Running"
+	count := 10
+	for count <= 10 {
+		if count == 0 {
+			log.Println("Training portals not ready after 5 mins")
+			return false
+		}
+		tp := kubectl_lib.GetTrainingPortals(name)
+		if (tp == kubectl_lib.GetTrainingPortalsOutput{}) {
+			log.Println("Training portals not ready yet")
+		} else if tp.STATUS == "Running" {
+			return true
+		} else {
+			log.Println("Training portals not ready yet")
+			continue
+		}
+	}
+	return false
+
 }
 
 func ValidateLearningCenter(name string, namespace string) bool {
@@ -217,6 +284,7 @@ func VerifyBuildStatus(namespace string) bool {
 	}
 	return false
 }
+
 func GetPodIntentStatus(name string, namespace string) string {
 	log.Println("Get podintents status...")
 	podintents := kubectl_lib.GetPodintent(name, namespace)
