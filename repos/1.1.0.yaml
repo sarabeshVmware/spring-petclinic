@@ -17,6 +17,7 @@ packages:
     versions:
       - 0.2.0
       - 0.3.1
+      - 0.2.1
   - name: services-toolkit
     versions:
       - 0.5.0
@@ -33,9 +34,11 @@ packages:
   - name: scan-controller
     versions:
       - 1.0.0
+      - 1.0.1
   - name: grype-scanner
     versions:
       - 1.0.0
+      - 1.0.1
   - name: app-accelerator
     versions:
       - 1.0.0
@@ -109,6 +112,7 @@ packages:
   - name: tekton-pipelines
     versions:
       - 0.30.0
+      - 0.30.1 
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
