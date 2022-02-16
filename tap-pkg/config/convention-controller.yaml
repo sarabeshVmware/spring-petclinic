@@ -2,7 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("controller.conventions.apps.tanzu.vmware.com"):
 
 ---

@@ -3,7 +3,7 @@
 #@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.build]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ def user_values():
