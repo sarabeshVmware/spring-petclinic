@@ -294,7 +294,7 @@ var verifyPipelineRunStatus = features.New("verify-pipeline-runs-status").
 		t.Log("verifying pipeline runs status")
 
 		// check
-		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace)
+		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace, 5, 30)
 		if !pipelineRunSucceeded {
 			t.Error("pipeline runs not succeeded")
 			t.FailNow()
