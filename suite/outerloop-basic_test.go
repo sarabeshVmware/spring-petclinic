@@ -234,7 +234,7 @@ func TestOuterloopBasic(t *testing.T) {
 
 	verifyTaskrunStatus := features.New("verify-taskrun-status").
 		Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			if !kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace) {
+			if !kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace, 5, 30) {
 				t.Error(fmt.Errorf("taskrun is not in succeeded status for namespace %s", outerloopConfig.Namespace))
 				t.FailNow()
 			}

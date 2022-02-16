@@ -452,7 +452,7 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 		t.Log("verifying taskrun succeeded status")
 
 		// check
-		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace)
+		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
 			t.FailNow()
