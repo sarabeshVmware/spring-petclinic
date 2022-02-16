@@ -4,10 +4,12 @@ load("@ytt:struct", "struct")
 
 _full_profile = "full"
 _light_profile = "light"
-_build_profile = "build" # currently disabled
-_run_profile = "run" # currently disabled
+_iterate_profile = "iterate"
+_build_profile = "build"
+_run_profile = "run"
+_view_profile = "view"
 
-_all_profiles = [_full_profile, _light_profile]
+_all_profiles = [_full_profile, _light_profile, _iterate_profile, _build_profile, _run_profile, _view_profile]
 
 if not data.values.profile in _all_profiles:
   assert.fail("Expected profile to be one of: {}".format(_all_profiles))
@@ -57,9 +59,11 @@ end
 
 profiles = struct.make(
 	full=_full_profile,
-	light=_light_profile,
+  light=_light_profile,
+	iterate=_iterate_profile,
 	build=_build_profile,
 	run=_run_profile,
+  view=_view_profile,
 
 	is_any_enabled=_is_any_enabled,
 	is_enabled=_is_enabled,
