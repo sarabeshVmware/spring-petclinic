@@ -31,7 +31,7 @@ func ValidateAppLiveViewConventions(name string, namespace string) bool {
 	validateConventions := [3]string{"appliveview-sample/app-live-view-connector", "appliveview-sample/app-live-view-appflavours", "appliveview-sample/app-live-view-systemproperties"}
 	log.Println("Validating 'App Live View' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	if (raw == &kubectl_lib.GetPodintentJsonOutput{}) {
+	if raw == nil {
 		return false
 	}
 	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
@@ -48,7 +48,7 @@ func ValidateAppLiveViewConventions(name string, namespace string) bool {
 func ValidateSpringBootLabels(name string, namespace string) bool {
 	log.Println("Validating 'Spring Boot' labels")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	if (raw == &kubectl_lib.GetPodintentJsonOutput{}) {
+	if raw == nil {
 		return false
 	}
 	log.Printf("Status.Template.Metadata.Labels.ConventionsAppsTanzuVmwareComFramework  --> Expected : 'spring-boot', Observed: '%s'", raw.Status.Template.Metadata.Labels.ConventionsAppsTanzuVmwareComFramework)
@@ -65,7 +65,7 @@ func ValidateSpringBootConventions(name string, namespace string) bool {
 	validateConventions := [4]string{"spring-boot-convention/spring-boot", "spring-boot-convention/spring-boot-graceful-shutdown", "spring-boot-convention/spring-boot-web", "spring-boot-convention/spring-boot-actuator"}
 	log.Println("Validating 'Spring Boot' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	if (raw == &kubectl_lib.GetPodintentJsonOutput{}) {
+	if raw == nil {
 		return false
 	}
 	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
@@ -83,7 +83,7 @@ func ValidateDeveloperConventions(name string, namespace string) bool {
 	validateConventions := [2]string{"developer-conventions/live-update-convention", "developer-conventions/add-source-image-label"}
 	log.Println("Validating 'Developer' conventions")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	if (raw == &kubectl_lib.GetPodintentJsonOutput{}) {
+	if raw == nil {
 		return false
 	}
 	log.Printf("Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions: %s", raw.Status.Template.Metadata.Annotations.ConventionsAppsTanzuVmwareComAppliedConventions)
