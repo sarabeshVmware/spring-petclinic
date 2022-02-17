@@ -13,7 +13,7 @@ import (
 func ValidateAppLiveViewLabels(name string, namespace string) bool {
 	log.Println("Validating 'App Live View' labels")
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
-	if (raw == &kubectl_lib.GetPodintentJsonOutput{}) {
+	if raw == nil {
 		return false
 	}
 	log.Printf("Status.Template.Metadata.Labels.TanzuAppLiveView --> Expected : 'true', Observed: '%s'", raw.Status.Template.Metadata.Labels.TanzuAppLiveView)
