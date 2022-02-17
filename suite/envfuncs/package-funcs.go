@@ -22,6 +22,7 @@ func InstallPackage(name string, packageName string, version string, namespace s
 		// install package
 		err := tanzuCmds.TanzuInstallPackage(name, packageName, version, namespace, valuesFile, pollTimeout)
 		if err != nil {
+			// if error, check via kubectl, not tanzu-cli
 			pass := kubectl_helper.ValidateTAPInstallation(name, namespace, 10, 60)
 			if !pass {
 				kubectl_helper.LogFailedResourcesDetails(namespace)
