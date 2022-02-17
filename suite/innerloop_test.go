@@ -188,7 +188,7 @@ func TestInnerloopBasic(t *testing.T) {
 			t.Logf("verify image-repositories status")
 			imagerepository := [2]string{suiteConfig.Innerloop.Workload.Name + "-delivery", suiteConfig.Innerloop.Workload.Name}
 			for _, imageRepo := range imagerepository {
-				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 15, 60)
+				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
 				t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 				if !status {
 					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
@@ -203,7 +203,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f8 := features.New("verify-builds").
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
-			status := kubectl_helper.VerifyBuildStatus(suiteConfig.Innerloop.Workload.Namespace, 15, 60)
+			status := kubectl_helper.VerifyBuildStatus(suiteConfig.Innerloop.Workload.Namespace, 10, 30)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("Build is not ready."))
