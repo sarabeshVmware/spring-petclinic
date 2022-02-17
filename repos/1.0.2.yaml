@@ -12,6 +12,7 @@ packages:
   - name: service-binding
     versions:
       - 0.6.0
+      - 0.6.1
   - name: source-controller
     versions:
       - 0.2.0
@@ -70,8 +71,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2-build.1
-      - 1.0.2-build.2
+      - 1.0.2-build.3
   - name: learning-center-workshops
     versions:
       - 0.1.0
