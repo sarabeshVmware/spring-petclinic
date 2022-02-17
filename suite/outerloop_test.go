@@ -72,6 +72,9 @@ type outerloopConfiguration struct {
 		KsvcName            string `yaml:"ksvc_name"`
 		PodintentName       string `yaml:"podintent_name"`
 		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
+		ImageScanName       string `yaml:"imagescan_name`
+		SourceScanName      string `yaml:"sourcescan_name`
+		PipelineName        string `yaml:"pipeline_name`
 	} `yaml:"workload"`
 }
 
@@ -240,7 +243,7 @@ var verifyPipelineStatus = features.New("verify-pipeline-status").
 		t.Log("verifying pipeline status")
 
 		// check
-		pipelineInstalled := kubectl_helpers.ValidatePipelineExists("", outerloopConfig.Namespace)
+		pipelineInstalled := kubectl_helpers.ValidatePipelineExists(outerloopConfig.Workload.PipelineName, outerloopConfig.Namespace, 5, 30)
 		if !pipelineInstalled {
 			t.Error("pipeline not installed")
 			t.FailNow()
@@ -257,7 +260,7 @@ var verifySourceScanStatus = features.New("verify-source-scan-status").
 		t.Log("verifying source scan status")
 
 		// check
-		sourceScanCompleted := kubectl_helpers.ValidateSourceScans("", outerloopConfig.Namespace)
+		sourceScanCompleted := kubectl_helpers.ValidateSourceScans(outerloopConfig.Workload.SourceScanName, outerloopConfig.Namespace, 5, 30)
 		if !sourceScanCompleted {
 			t.Error("source scan completed")
 			t.FailNow()
@@ -274,7 +277,7 @@ var verifyImageScanStatus = features.New("verify-imagescan-status").
 		t.Log("verifying image scan status")
 
 		// check
-		imageScanCompleted := kubectl_helpers.ValidateImageScans("", outerloopConfig.Namespace)
+		imageScanCompleted := kubectl_helpers.ValidateImageScans(outerloopConfig.Workload.ImageScanName, outerloopConfig.Namespace, 5, 30)
 		if !imageScanCompleted {
 			t.Error("image scan completed")
 			t.FailNow()
@@ -291,7 +294,7 @@ var verifyPipelineRunStatus = features.New("verify-pipeline-runs-status").
 		t.Log("verifying pipeline runs status")
 
 		// check
-		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace)
+		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace, 5, 30)
 		if !pipelineRunSucceeded {
 			t.Error("pipeline runs not succeeded")
 			t.FailNow()
@@ -326,7 +329,7 @@ var verifyGitrepoStatus = features.New("verify-gitrepo-status").
 		t.Log("verifying gitrepo ready status")
 
 		// check
-		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace, 5, 30)
 		if !gitrepoReady {
 			t.Error("gitrepo not ready")
 			t.FailNow()
@@ -343,7 +346,7 @@ var verifyBuildStatus = features.New("verify-build-status").
 		t.Log("verifying build succeeded status")
 
 		// check
-		buildSucceeded := kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace)
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
 			t.FailNow()
@@ -360,8 +363,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying podintent ready status")
 
 		// check
-		podintentStatus := kubectl_helpers.GetPodIntentStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
-		if podintentStatus != "True" {
+		if !kubectl_helpers.VerifyPodIntentStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
 			t.Error("podintent not ready")
 			t.FailNow()
 		} else {
@@ -433,7 +435,7 @@ var verifyKsvcStatus = features.New("verify-ksvc-status").
 		t.Log("verifying ksvc ready status")
 
 		// check
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -450,7 +452,7 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 		t.Log("verifying taskrun succeeded status")
 
 		// check
-		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace)
+		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
 			t.FailNow()

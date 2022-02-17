@@ -3,7 +3,6 @@ package kubectl_libs
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"time"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -72,13 +71,13 @@ type GetRunnablesJsonOutput struct {
 }
 
 func GetRunnablesJson(name string, namespace string) *GetRunnablesJsonOutput {
+	var raw *GetRunnablesJsonOutput
 	cmd := fmt.Sprintf("kubectl get runnables %s -n %s -o json", name, namespace)
 	res1, err1 := linux_util.ExecuteCmd(cmd)
 	if err1 != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(res1)
-	var raw *GetRunnablesJsonOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}

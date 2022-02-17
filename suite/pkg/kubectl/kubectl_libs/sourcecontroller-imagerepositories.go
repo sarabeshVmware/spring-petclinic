@@ -103,13 +103,13 @@ type GetImageRepositoriesJsonOutput struct {
 }
 
 func GetImageRepositoriesJson(name string, namespace string) *GetImageRepositoriesJsonOutput {
+	var raw *GetImageRepositoriesJsonOutput
 	cmd := fmt.Sprintf("kubectl get imagerepositories %s -n %s -o json", name, namespace)
 	res1, err1 := linux_util.ExecuteCmd(cmd)
 	if err1 != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(res1)
-	var raw *GetImageRepositoriesJsonOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}

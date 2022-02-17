@@ -161,13 +161,14 @@ type GetPodintentJsonOutput struct {
 }
 
 func GetPodintentJson(name string, namespace string) *GetPodintentJsonOutput {
+	var raw *GetPodintentJsonOutput
 	cmd := fmt.Sprintf("kubectl get podintent %s -n %s -o json", name, namespace)
 	res1, err1 := linux_util.ExecuteCmd(cmd)
 	if err1 != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(res1)
-	var raw *GetPodintentJsonOutput
+
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}

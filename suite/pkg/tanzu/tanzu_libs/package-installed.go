@@ -74,7 +74,7 @@ type GetInstalledPackagesOutput []struct {
 }
 
 func GetInstalledPackages(name string, namespace string) GetInstalledPackagesOutput {
-
+	var raw GetInstalledPackagesOutput
 	cmd := fmt.Sprintf("tanzu package installed get %s", name)
 	if namespace != "" {
 		cmd += fmt.Sprintf(" -n %s", namespace)
@@ -85,10 +85,9 @@ func GetInstalledPackages(name string, namespace string) GetInstalledPackagesOut
 
 	res1, err1 := linux_util.ExecuteCmd(cmd)
 	if err1 != nil {
-		log.Println("something bad happened")
+		return raw
 	}
 	in := []byte(res1)
-	var raw GetInstalledPackagesOutput
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
