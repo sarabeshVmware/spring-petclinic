@@ -1,4 +1,4 @@
-//go:build all || outerloop || outerloop_testing || outerloop_testing_scanning
+//go:build all || outerloop || outerloop_basic || outerloop_testing || outerloop_testing_scanning
 
 package suite
 
