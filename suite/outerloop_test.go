@@ -21,7 +21,7 @@ import (
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
-
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 )
 
