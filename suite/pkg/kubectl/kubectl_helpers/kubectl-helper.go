@@ -141,7 +141,7 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		imageScan := kubectl_lib.GetImageScan(name, namespace)
 		if (imageScan == kubectl_lib.GetImageScanOutput{}) {
 			log.Println("Image scan is not started yet")
-		} else if imageScan.PHASE == "Completed" && imageScan.CRITICAL == "" && imageScan.HIGH == "" && imageScan.MEDIUM == "" && imageScan.LOW == "" && imageScan.UNKNOWN == "" && imageScan.CVETOTAL == "" {
+		} else if imageScan.PHASE == "Completed" && imageScan.CRITICAL == "0" && imageScan.HIGH == "0" && imageScan.UNKNOWN == "0" {
 			log.Println("Image scan complete successfully")
 			result = true
 			break
@@ -151,7 +151,7 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Image scan not completed successfully after %d mins", timeoutInMins)
+		log.Printf("Image scan failed/not completed after %d mins", timeoutInMins)
 	}
 	return result
 }
@@ -478,6 +478,29 @@ func ValidateTAPInstallation(pkgName string, namespace string, timeoutInMins int
 	}
 	if !result {
 		log.Printf("TAP install did not reconcile after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func ValidateLatestImageStatus(namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating image scans")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		status := GetLatestImageStatus(namespace)
+		if status == "True" {
+			log.Println("Latest image validated successfully")
+			result = true
+			break
+		} else {
+			log.Printf("Latest image status: %s", status)
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Latest image not successfull after %d mins", timeoutInMins)
 	}
 	return result
 }

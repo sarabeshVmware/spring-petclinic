@@ -18,11 +18,11 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gopkg.in/yaml.v3"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 )
 
 type outerloopConfiguration struct {
@@ -45,6 +45,7 @@ type outerloopConfiguration struct {
 		Username            string `yaml:"username"`
 		Email               string `yaml:"email"`
 		AccessToken         string `yaml:"access_token"`
+		Tag                 string `yaml:"tag"`
 	} `yaml:"project"`
 	ScanPolicy struct {
 		YamlFile string `yaml:"yaml_file"`
@@ -72,9 +73,9 @@ type outerloopConfiguration struct {
 		KsvcName            string `yaml:"ksvc_name"`
 		PodintentName       string `yaml:"podintent_name"`
 		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
-		ImageScanName       string `yaml:"imagescan_name`
-		SourceScanName      string `yaml:"sourcescan_name`
-		PipelineName        string `yaml:"pipeline_name`
+		ImageScanName       string `yaml:"imagescan_name"`
+		SourceScanName      string `yaml:"sourcescan_name"`
+		PipelineName        string `yaml:"pipeline_name"`
 	} `yaml:"workload"`
 }
 
@@ -113,7 +114,6 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
-
 	return outerloopConfig, nil
 }
 
@@ -265,7 +265,7 @@ var verifySourceScanStatus = features.New("verify-source-scan-status").
 			t.Error("source scan completed")
 			t.FailNow()
 		} else {
-			t.Log("source scan not completed")
+			t.Log("source scan completed successfully")
 		}
 
 		return ctx
@@ -282,7 +282,7 @@ var verifyImageScanStatus = features.New("verify-imagescan-status").
 			t.Error("image scan completed")
 			t.FailNow()
 		} else {
-			t.Log("image scan not completed")
+			t.Log("image scan completed successfully")
 		}
 
 		return ctx
@@ -311,9 +311,7 @@ var verifyImageskpac = features.New("verify-images.kpac-status").
 		t.Logf("verifying latest image status")
 
 		// check
-		status := kubectl_helpers.GetLatestImageStatus(suiteConfig.Innerloop.Workload.Namespace)
-		t.Logf("Image status is: %s", status)
-		if status != "True" {
+		if !kubectl_helpers.ValidateLatestImageStatus(suiteConfig.Innerloop.Workload.Namespace, 10, 30) {
 			t.Error("image status is not true")
 			t.FailNow()
 		} else {
@@ -611,6 +609,22 @@ var gitUpdate = features.New("git-update").
 
 		return ctx
 	}).
+	/*
+	Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("updating tag in repo")
+
+		// tag
+		err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
+		if err != nil {
+			t.Error("error while updating tag in repo")
+			t.Fail()
+		} else {
+			t.Log("updated tag in repo")
+		}
+
+		return ctx
+	}).
+	*/
 	Feature()
 
 var verifyWebpageNew = features.New("verify-webpage-new").
@@ -673,6 +687,22 @@ var gitReset = features.New("git-reset").
 
 		return ctx
 	}).
+	/*
+	Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("updating tag in repo")
+
+		// tag
+		err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
+		if err != nil {
+			t.Error("error while updating tag in repo")
+			t.Fail()
+		} else {
+			t.Log("updated tag in repo")
+		}
+
+		return ctx
+	}).
+	*/
 	Feature()
 
 var removeProjectDir = features.New("remove-project-dir").

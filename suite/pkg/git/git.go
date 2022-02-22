@@ -143,3 +143,20 @@ func GitSetRemoteUrl(path string, access_token string, repository string) error 
 
 	return err
 }
+
+func GitMoveTagToLatestCommit(path string, tag string) error {
+	log.Printf("moving tags to latest commit for repo at %s", path)
+
+	// execute cmd
+	cmd := fmt.Sprintf("cd %s; git tag -d %s; git tag %s; git push origin :%s; git push origin %s", path, tag, tag, tag, tag)
+	output, err := linux_util.ExecuteCmdInBashMode(cmd)
+	if err != nil {
+		log.Printf("error while adding tag for repo at %s", path)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("adding tags for repo at %s", path)
+		log.Printf("output: %s", output)
+	}
+	return err
+}

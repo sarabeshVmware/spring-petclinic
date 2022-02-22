@@ -48,7 +48,7 @@ func main() {
 		log.Println("Artifacts with given sha already exists.")
 		for _, artf := range artifacts {
 			if len(artf.ReleaseVersions) != 0 {
-				log.Println("Artifacts with the given sha is already added to atleast 1 release. Skipping release creation.")
+				log.Printf("Skipping release creation\n Artifacts with the given sha is already added to the following release(s) %v", artf.ReleaseVersions)
 				createRelease = false
 				break
 			}
