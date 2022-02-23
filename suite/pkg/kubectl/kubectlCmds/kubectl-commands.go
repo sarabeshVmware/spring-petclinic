@@ -32,7 +32,7 @@ func KubectlDeleteNamespace(namespace string) error {
 	log.Printf("deleting namespace %s", namespace)
 
 	// execute cmd
-	cmd := fmt.Sprintf("kubectl get namespace %s -o json | tr -d '\n' | sed 's/\"finalizers\": [[^]]+]/\"finalizers\": []/' | kubectl replace --raw /api/v1/namespaces/%s/finalize -f -; kubectl delete ns %s", namespace, namespace, namespace)
+	cmd := fmt.Sprintf("kubectl get namespace %[1]s -o json | tr -d '\n' | sed 's/\"finalizers\": [[^]]+]/\"finalizers\": []/' | kubectl replace --raw /api/v1/namespaces/%[1]s/finalize -f -; kubectl delete ns %[1]s", namespace)
 	output, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		log.Printf("error while deleting namespace %s", namespace)

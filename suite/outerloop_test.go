@@ -45,7 +45,6 @@ type outerloopConfiguration struct {
 		Username            string `yaml:"username"`
 		Email               string `yaml:"email"`
 		AccessToken         string `yaml:"access_token"`
-		Tag                 string `yaml:"tag"`
 	} `yaml:"project"`
 	ScanPolicy struct {
 		YamlFile string `yaml:"yaml_file"`
@@ -610,20 +609,20 @@ var gitUpdate = features.New("git-update").
 		return ctx
 	}).
 	/*
-	Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Log("updating tag in repo")
+		Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tag in repo")
 
-		// tag
-		err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
-		if err != nil {
-			t.Error("error while updating tag in repo")
-			t.Fail()
-		} else {
-			t.Log("updated tag in repo")
-		}
+			// tag
+			err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
+			if err != nil {
+				t.Error("error while updating tag in repo")
+				t.Fail()
+			} else {
+				t.Log("updated tag in repo")
+			}
 
-		return ctx
-	}).
+			return ctx
+		}).
 	*/
 	Feature()
 
@@ -688,20 +687,20 @@ var gitReset = features.New("git-reset").
 		return ctx
 	}).
 	/*
-	Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Log("updating tag in repo")
+		Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tag in repo")
 
-		// tag
-		err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
-		if err != nil {
-			t.Error("error while updating tag in repo")
-			t.Fail()
-		} else {
-			t.Log("updated tag in repo")
-		}
+			// tag
+			err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
+			if err != nil {
+				t.Error("error while updating tag in repo")
+				t.Fail()
+			} else {
+				t.Log("updated tag in repo")
+			}
 
-		return ctx
-	}).
+			return ctx
+		}).
 	*/
 	Feature()
 

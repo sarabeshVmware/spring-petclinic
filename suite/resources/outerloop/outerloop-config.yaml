@@ -17,7 +17,6 @@ project:
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
   access_token: <ACCESS_TOKEN>
-  tag: tap-1.0
 scan_policy:
   yaml_file: scan-policy.yaml
 spring_petclinic: # TODO remove section in cleanup
