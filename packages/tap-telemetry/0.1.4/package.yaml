@@ -14,7 +14,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:345b7143f30783e122a8526ccff14ed7b6ea2212a81585be7a9422f4e0005f0b
+          image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:64139ce3b28af09b8e3a5459ff07be55781802ba1a58b5f5968702981e702b0a
       template:
       - ytt:
           paths:
