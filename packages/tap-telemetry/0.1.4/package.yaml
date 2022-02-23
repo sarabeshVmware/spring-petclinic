@@ -1,0 +1,27 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap-telemetry.tanzu.vmware.com.0.1.4
+spec:
+  refName: tap-telemetry.tanzu.vmware.com
+  version: 0.1.4
+  releasedAt: "2021-11-30T00:00:00Z"
+  releaseNotes: Initial release of tap-telemetry.
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:345b7143f30783e122a8526ccff14ed7b6ea2212a81585be7a9422f4e0005f0b
+      template:
+      - ytt:
+          paths:
+          - config.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
