@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
@@ -15,7 +16,7 @@ import (
 )
 
 func TestOuterloopTestScan(t *testing.T) {
-	t.Log("****************TestOuterloopTestScan execution started****************")
+	t.Log("************** TestCase START: TestOuterloopTestScan **************")
 
 	updateTap := features.New("update-tap-full-supplychaintestscan").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -57,6 +58,8 @@ func TestOuterloopTestScan(t *testing.T) {
 				t.FailNow()
 			} else {
 				t.Log("updated tap")
+				t.Logf("sleeping for 1 minute")
+				time.Sleep(time.Minute)
 			}
 
 			return ctx
@@ -89,4 +92,5 @@ func TestOuterloopTestScan(t *testing.T) {
 		removeProjectDir,
 		deleteWorkload,
 	)
+	t.Log("************** TestCase END: TestOuterloopTestScan **************")
 }

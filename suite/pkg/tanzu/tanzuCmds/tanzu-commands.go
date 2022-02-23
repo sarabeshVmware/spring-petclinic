@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -110,7 +111,14 @@ func TanzuGetPackageInstalledStatus(name string, namespace string) (string, erro
 	}{}
 
 	// unmarshall
-	err = json.Unmarshal([]byte(output), &packageInstalled)
+	if strings.HasPrefix(output, "[") {
+		err = json.Unmarshal([]byte(output), &packageInstalled)
+	} else {
+
+		outputArray := strings.SplitN(output, "\n", 2)
+		strippedOutput := outputArray[1]
+		err = json.Unmarshal([]byte(strippedOutput), &packageInstalled)
+	}
 	if err != nil {
 		log.Printf("error while unmarshalling output %s", output)
 		log.Printf("error: %s", err)
@@ -187,7 +195,13 @@ func TanzuGetPackageRepositoryStatus(name string, namespace string) (string, err
 	}{}
 
 	// unmarshall
-	err = json.Unmarshal([]byte(output), &packageRepository)
+	if strings.HasPrefix(output, "[") {
+		err = json.Unmarshal([]byte(output), &packageRepository)
+	} else {
+		outputArray := strings.SplitN(output, "\n", 2)
+		strippedOutput := outputArray[1]
+		err = json.Unmarshal([]byte(strippedOutput), &packageRepository)
+	}
 	if err != nil {
 		log.Printf("error while unmarshalling output %s", output)
 		log.Printf("error: %s", err)

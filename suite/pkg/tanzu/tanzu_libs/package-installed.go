@@ -38,18 +38,28 @@ func ListInstalledPackages(namespace string) []ListInstalledPackagesOutput {
 	}
 
 	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
-	if len(temp) <= 2 {
+
+	header_index := 0
+
+	if strings.HasPrefix(temp[1], " ") {
+		header_index = 1
+	} else {
+		header_index = 2
+	}
+
+	if len(temp) <= header_index+1 {
 		log.Printf("Output : %s", temp[0])
 		return installedPackages
 	}
 
-	indexSpans := linux_util.FieldIndices(temp[1])
-	headers := linux_util.GetFields(temp[1], indexSpans)
+	indexSpans := linux_util.FieldIndices(temp[header_index])
+	headers := linux_util.GetFields(temp[header_index], indexSpans)
+
 	for index, ele := range headers {
 		headers[index] = strings.ReplaceAll(ele, "-", "_")
 	}
 
-	for _, element := range temp[2:] {
+	for _, element := range temp[header_index+1:] {
 		words := linux_util.GetFields(element, indexSpans)
 		var installedPackage ListInstalledPackagesOutput
 		for index, value := range words {
@@ -83,12 +93,21 @@ func GetInstalledPackages(name string, namespace string) GetInstalledPackagesOut
 	}
 	cmd += " -o json"
 
-	res1, err1 := linux_util.ExecuteCmd(cmd)
-	if err1 != nil {
+	output, err := linux_util.ExecuteCmd(cmd)
+
+	if err != nil {
 		return raw
 	}
-	in := []byte(res1)
-	if err := json.Unmarshal(in, &raw); err != nil {
+
+	if strings.HasPrefix(output, "[") {
+		err = json.Unmarshal([]byte(output), &raw)
+	} else {
+		outputArray := strings.SplitN(output, "\n", 2)
+		strippedOutput := outputArray[1]
+		err = json.Unmarshal([]byte(strippedOutput), &raw)
+	}
+
+	if err != nil {
 		panic(err)
 	}
 	return raw

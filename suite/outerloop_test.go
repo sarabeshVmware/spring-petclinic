@@ -690,14 +690,14 @@ var gitReset = features.New("git-reset").
 		Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tag in repo")
 
-			// tag
-			err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
-			if err != nil {
-				t.Error("error while updating tag in repo")
-				t.Fail()
-			} else {
-				t.Log("updated tag in repo")
-			}
+		// 	// tag
+		// 	err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
+		// 	if err != nil {
+		// 		t.Error("error while updating tag in repo")
+		// 		t.Fail()
+		// 	} else {
+		// 		t.Log("updated tag in repo")
+		// 	}
 
 			return ctx
 		}).
