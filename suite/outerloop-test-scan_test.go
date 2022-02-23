@@ -17,7 +17,7 @@ import (
 func TestOuterloopTestScan(t *testing.T) {
 	t.Log("****************TestOuterloopTestScan execution started****************")
 
-	updateTap := features.New("update-tap-full-supplychainbasic").
+	updateTap := features.New("update-tap-full-supplychaintestscan").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 

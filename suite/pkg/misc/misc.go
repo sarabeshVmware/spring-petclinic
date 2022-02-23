@@ -66,11 +66,11 @@ func VerifyWebpageContainsString(host string, url string, validationString strin
 					return false, err
 				} else {
 					log.Print("read response body")
-					log.Print(body)
 				}
 
 				// assign to body
 				body = string(resultBytes)
+				log.Print(body)
 				break
 			}
 		}

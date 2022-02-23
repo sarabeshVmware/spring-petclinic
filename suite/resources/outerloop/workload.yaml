@@ -10,7 +10,7 @@ metadata:
 spec:
   source:
     git:
-      url: https://github.com/dapdelivery/spring-petclinic-original.git
+      url: https://github.com/dapdelivery/spring-petclinic-demo.git
       ref:
         branch: main
   serviceClaims:
