@@ -20,7 +20,7 @@ spec:
   packageRef:
     refName: learningcenter.tanzu.vmware.com
     versionSelection:
-      constraints: 0.1.0
+      constraints: 0.1.1
   values:
   - secretRef:
       name: learningcenter-values

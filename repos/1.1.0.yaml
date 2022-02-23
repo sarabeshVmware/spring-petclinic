@@ -18,9 +18,11 @@ packages:
       - 0.2.0
       - 0.3.1
       - 0.2.1
+      - 0.3.2
   - name: services-toolkit
     versions:
       - 0.5.0
+      - 0.5.1-rc.1
   - name: app-live-view
     versions:
       - 1.0.1
@@ -43,6 +45,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
+      - 1.0.2
   - name: developer-conventions
     versions:
       - 0.5.0-build.1
@@ -74,14 +77,16 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2-build.2
-      - 1.1.0-build.2
+      - 1.0.2-build.5
+      - 1.1.0-build.3
   - name: learning-center-workshops
     versions:
       - 0.1.0
+      - 0.1.1
   - name: learning-center
     versions:
       - 0.1.0
+      - 0.1.1
   - name: cartographer
     versions:
       - 0.1.0
