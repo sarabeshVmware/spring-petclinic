@@ -22,6 +22,9 @@ accelerator: {}
 appliveview: {}
 
 #@schema/type any=True
+appliveview_connector: {}
+
+#@schema/type any=True
 cartographer: {}
 
 #@schema/type any=True

@@ -1,0 +1,57 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: backend.appliveview.tanzu.vmware.com.1.1.0-build.1
+spec:
+  refName: backend.appliveview.tanzu.vmware.com
+  version: 1.1.0-build.1
+  releaseNotes: |
+        Release 1.1.0-build.1 of the App Live View package
+  releasedAt: 2022-02-24T00:00:10Z
+  valuesSchema:
+    openAPIv3:
+      title: backend.appliveview.tanzu.vmware.com values schema
+      properties: 
+        ingressEnabled:
+          type: boolean
+          description: |
+            Flag for whether or not to create an HTTPProxy for ingress.
+          default: false
+        ingressDomain:
+          type: string
+          description: |
+            Domain to be used by the HTTPProxy ingress object. The "appliveview"
+            subdomain will be prepended to the value provided. For example:
+            "example.com" would become "appliveview.example.com".
+          default: tap.example.com
+        tls:
+          type: object
+          description: |
+            Object for specifying TLS certificate delegation.
+          properties:
+            namespace:
+              type: string
+              description: |
+                The targeted namespace for secret consumption by the HTTPProxy.
+            secretName:
+              type: string
+              description: |
+                The name of secret for consumption by the HTTPProxy.
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:0a28d4955627b3f44a1fa2b2baf01404e801ba3892f722ef6106b3b6e502a549
+
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
