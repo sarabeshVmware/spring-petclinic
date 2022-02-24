@@ -6,6 +6,7 @@ package exec
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 func TanzuInstallPackage(name string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) (string, string, error) {
@@ -41,7 +42,14 @@ func TanzuGetPackageInstalledStatus(name string, namespace string) (string, stri
 	packageInstalled := []struct {
 		Status string `json:"status"`
 	}{}
-	err = json.Unmarshal([]byte(output), &packageInstalled)
+	if strings.HasPrefix(output, "[") {
+		err = json.Unmarshal([]byte(output), &packageInstalled)
+	} else {
+
+		outputArray := strings.SplitN(output, "\n", 2)
+		strippedOutput := outputArray[1]
+		err = json.Unmarshal([]byte(strippedOutput), &packageInstalled)
+	}
 	if err != nil {
 		return cmd, "", err
 	}
@@ -72,7 +80,13 @@ func TanzuGetPackageRepositoryStatus(name string, namespace string) (string, str
 	packageRepository := []struct {
 		Status string `json:"status"`
 	}{}
-	err = json.Unmarshal([]byte(output), &packageRepository)
+	if strings.HasPrefix(output, "[") {
+		err = json.Unmarshal([]byte(output), &packageRepository)
+	} else {
+		outputArray := strings.SplitN(output, "\n", 2)
+		strippedOutput := outputArray[1]
+		err = json.Unmarshal([]byte(strippedOutput), &packageRepository)
+	}
 	if err != nil {
 		return cmd, "", err
 	}

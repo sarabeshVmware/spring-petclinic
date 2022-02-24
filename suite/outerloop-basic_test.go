@@ -26,6 +26,8 @@ import (
 )
 
 func TestOuterloopBasic(t *testing.T) {
+	t.Log("************** TestCase START: TestOuterloopBasic **************")
+
 	// read outerloop config
 	outerloopConfig, err := getOuterloopConfig()
 	if err != nil {
@@ -62,6 +64,8 @@ func TestOuterloopBasic(t *testing.T) {
 				t.FailNow()
 			}
 			t.Logf("package %s updated: %s", name, output)
+			t.Logf("sleeping for 1 minute")
+			time.Sleep(time.Minute)
 			return ctx
 
 			// return stepfuncs.UpdatePackage(ctx, t, cfg, true, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile)
@@ -613,4 +617,5 @@ func TestOuterloopBasic(t *testing.T) {
 		cleanRemoveProjectDir,
 		deleteWorkload,
 	)
+	t.Log("************** TestCase END: TestOuterloopBasic **************")
 }
