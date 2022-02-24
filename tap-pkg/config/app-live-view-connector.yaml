@@ -1,0 +1,34 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
+#@ if profiles.is_pkg_enabled("connector.appliveview.tanzu.vmware.com"):
+
+---
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: appliveview-connector
+  namespace: tap-install
+  annotations:
+    kapp.k14s.io/change-rule: "upsert after upserting connector"
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: connector.appliveview.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.1.0-build.1
+  values:
+  - secretRef:
+      name: appliveview-connector-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: appliveview-connector-values
+  namespace: tap-install
+stringData:
+  values.yml: #@ yaml.encode(data.values.appliveview_connector)
+#@ end
+#@ end
