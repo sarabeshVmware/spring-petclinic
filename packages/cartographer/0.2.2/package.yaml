@@ -1,0 +1,37 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cartographer.tanzu.vmware.com.0.2.2
+  annotations:
+    kapp.k14s.io/change-group: carto.run/meta
+spec:
+  refName: cartographer.tanzu.vmware.com
+  version: 0.2.2
+  releaseNotes: https://github.com/vmware-tanzu/cartographer/releases/tag/0.2.2
+  releasedAt: "2022-02-14T18:27:45Z"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:ab7f0078310cf44ed6e28d34c556b06ef90fe37b853362dfffed7828ded06abd
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          inline:
+            paths:
+              namespace.yaml: |-
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cartographer-system
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
