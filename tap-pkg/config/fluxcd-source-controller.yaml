@@ -9,15 +9,14 @@ kind: PackageInstall
 metadata:
   name: fluxcd-source-controller
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: fluxcd.source.controller.tanzu.vmware.com
     versionSelection:
-      constraints: 0.16.1
+      constraints: 0.16.3
 
 #@ end
 #@ end
-
