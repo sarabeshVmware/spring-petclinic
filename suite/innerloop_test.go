@@ -188,15 +188,15 @@ func TestInnerloopBasic(t *testing.T) {
 	f7 := features.New("verify-image-repositories").
 		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify image-repositories status")
-			imagerepository := [2]string{suiteConfig.Innerloop.Workload.Name + "-delivery", suiteConfig.Innerloop.Workload.Name}
-			for _, imageRepo := range imagerepository {
-				status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
-				t.Logf("ImageRepository %s status is : %t", imageRepo, status)
-				if !status {
-					t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
-					t.Fail()
+			//imagerepository := [2]string{suiteConfig.Innerloop.Workload.Name + "-delivery", suiteConfig.Innerloop.Workload.Name}
+			//for _, imageRepo := range imagerepository {
+			status := kubectl_helper.VerifyImageRepositoryStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+			t.Logf("ImageRepository %s status is : %t", suiteConfig.Innerloop.Workload.Name, status)
+			if !status {
+				t.Error(fmt.Errorf("ImageRepository %s is not ready.", suiteConfig.Innerloop.Workload.Name))
+				t.Fail()
 				}
-			}
+			//}
 
 			return ctx
 		}).
@@ -288,7 +288,19 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-
+	f17 := features.New("verify-image-repository-delivery").
+	Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Logf("verify image-repositories-delivery status")
+		imageRepo := suiteConfig.Innerloop.Workload.Name + "-delivery"
+		status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+		t.Logf("ImageRepository %s status is : %t", imageRepo, status)
+		if !status {
+			t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
+			t.Fail()
+			}
+		return ctx
+	}).
+	Feature()
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
@@ -531,7 +543,7 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, cleanup)
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasic **************")
 }
