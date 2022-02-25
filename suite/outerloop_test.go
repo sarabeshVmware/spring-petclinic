@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
@@ -38,6 +39,7 @@ type outerloopConfiguration struct {
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
 		Name                string `yaml:"name"`
+		RepoTemplate        string `yaml: "repo_template"`
 		NewString           string `yaml:"new_string"`
 		OriginalString      string `yaml:"original_string"`
 		CommitMessage       string `yaml:"commit_message"`
@@ -113,6 +115,7 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
+
 	return outerloopConfig, nil
 }
 
@@ -326,7 +329,7 @@ var verifyGitrepoStatus = features.New("verify-gitrepo-status").
 		t.Log("verifying gitrepo ready status")
 
 		// check
-		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace, 5, 30)
+		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.GitrepositoryName, outerloopConfig.Namespace, 5, 30)
 		if !gitrepoReady {
 			t.Error("gitrepo not ready")
 			t.FailNow()
@@ -732,6 +735,40 @@ var deleteWorkload = features.New("delete-workload").
 			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
 		} else {
 			t.Log("deleted workload")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var createGithubRepo = features.New("create-github-repo").
+	Assess("create-github-repo", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("creating github repo")
+
+		// create repo
+		err := gith.CreateGithubRepo(outerlooConfig.Project.Name, outerloopConfig.Project.RepoTemplate, outerloop.Project.AccessToken)
+		if err != nil {
+			t.Error("error while creating repo ")
+			t.FailNow()
+		} else {
+			t.Log("created repo")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deleteGithubRepo = features.New("delete-github-repo").
+	Assess("delete-github-repo", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deleting github repo")
+
+		// create repo
+		err := gith.DeleteGithubRepo(outerlooConfig.Project.Name, outerloop.Project.AccessToken)
+		if err != nil {
+			t.Error("error while deleting repo ")
+			t.FailNow()
+		} else {
+			t.Log("deleted repo")
 		}
 
 		return ctx
