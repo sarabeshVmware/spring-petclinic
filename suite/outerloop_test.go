@@ -611,22 +611,6 @@ var gitUpdate = features.New("git-update").
 
 		return ctx
 	}).
-	/*
-		Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Log("updating tag in repo")
-
-			// tag
-			err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
-			if err != nil {
-				t.Error("error while updating tag in repo")
-				t.Fail()
-			} else {
-				t.Log("updated tag in repo")
-			}
-
-			return ctx
-		}).
-	*/
 	Feature()
 
 var verifyWebpageNew = features.New("verify-webpage-new").
@@ -689,22 +673,6 @@ var gitReset = features.New("git-reset").
 
 		return ctx
 	}).
-	/*
-		Assess("git-tag", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Log("updating tag in repo")
-
-		// 	// tag
-		// 	err := git.GitMoveTagToLatestCommit(filepath.Join(utils.GetFileDir(), outerloopConfig.Project.Name), outerloopConfig.Project.Tag)
-		// 	if err != nil {
-		// 		t.Error("error while updating tag in repo")
-		// 		t.Fail()
-		// 	} else {
-		// 		t.Log("updated tag in repo")
-		// 	}
-
-			return ctx
-		}).
-	*/
 	Feature()
 
 var removeProjectDir = features.New("remove-project-dir").
