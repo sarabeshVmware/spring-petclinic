@@ -1,0 +1,28 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: services-toolkit.tanzu.vmware.com.0.5.1
+spec:
+  refName: services-toolkit.tanzu.vmware.com
+  version: 0.5.1
+  releaseNotes: https://docs.vmware.com/en/Services-Toolkit-for-VMware-Tanzu/0.5/services-toolkit-0-5/GUID-overview.html
+  releasedAt: "2022-02-23T21:06:16Z"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      deploy:
+      - kapp: {}
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:9f739406ada507ee3b0590301633666357371581897d44a95db1f7b8b5c6926d
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - kbld.yaml
+          - .imgpkg/images.yml
