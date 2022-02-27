@@ -5,22 +5,12 @@ package suite
 import (
 	"context"
 	"io/ioutil"
-	"net/http"
 	"os"
-	"strings"
+	"testing"
 	"time"
 
-	"fmt"
-	"path/filepath"
-
-	"testing"
-
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
-
-	// "gitlab.eng.vmware.com/tap/tap-packages/suite/stepfuncs"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
@@ -116,7 +106,7 @@ func TestOuterloopBasic(t *testing.T) {
 		gitUpdate,
 		verifyWebpageNew,
 		//gitReset,
-		cleanRemoveProjectDir,
+		removeProjectDir,
 		deleteWorkload,
 		deleteGithubRepo,
 	)
