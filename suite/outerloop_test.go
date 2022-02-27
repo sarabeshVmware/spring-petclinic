@@ -39,7 +39,7 @@ type outerloopConfiguration struct {
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
 		Name                string `yaml:"name"`
-		RepoTemplate        string `yaml: "repo_template"`
+		RepoTemplate        string `yaml:"repo_template"`
 		NewString           string `yaml:"new_string"`
 		OriginalString      string `yaml:"original_string"`
 		CommitMessage       string `yaml:"commit_message"`
