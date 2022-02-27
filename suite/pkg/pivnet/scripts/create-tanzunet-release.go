@@ -64,7 +64,10 @@ func main() {
 		log.Printf("Artifact created, id: %d, name: %s\n", artifact_det.ID, artifact_det.Name)
 
 		log.Println("Waiting till artifacts addition is complete")
-		pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID)
+		artifactsAdded := pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID)
+		if !artifactsAdded {
+			log.Fatal("Exiting as artifact did not get created in tanzunet")
+		}
 		pivnet_libs.ListArtifactReferences(config.ProductSlug, "", config.Digest)
 
 		log.Println("Add artifact reference to release")

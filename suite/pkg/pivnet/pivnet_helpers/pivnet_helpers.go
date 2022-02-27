@@ -9,10 +9,10 @@ import (
 )
 
 func WaitTillArtifactReferenceIsReady(productSlug string, artifactReferenceId int) bool {
-	count := 40
-	for count <= 40 {
+	count := 30
+	for count <= 30 {
 		if count == 0 {
-			log.Fatalf("Artifacts are not generated after 20 mins")
+			log.Fatalf("Artifacts are not generated after 30 mins")
 			return false
 		}
 		artifact_Details := pivnet_libs.GetArtifactReference(productSlug, artifactReferenceId)
@@ -20,8 +20,8 @@ func WaitTillArtifactReferenceIsReady(productSlug string, artifactReferenceId in
 			log.Println("Artifact created")
 			return true
 		}
-		log.Printf("Waiting for 30s for artifacts getting generated ...")
-		time.Sleep(30 * time.Second)
+		log.Printf("Waiting for 1 min for artifacts getting generated ...")
+		time.Sleep(60 * time.Second)
 		count -= 1
 	}
 	return false
