@@ -4,11 +4,13 @@ package suite
 
 import (
 	"context"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
 	"time"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"

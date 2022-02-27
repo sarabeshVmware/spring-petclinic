@@ -714,7 +714,7 @@ var createGithubRepo = features.New("create-github-repo").
 		t.Log("creating github repo")
 
 		// create repo
-		err := github.CreateGithubRepo(outerloopConfig.Project.Name, outerloopConfig.Project.RepoTemplate, outerloop.Project.AccessToken)
+		err := github.CreateGithubRepo(outerloopConfig.Project.Name, outerloopConfig.Project.RepoTemplate, outerloopConfig.Project.AccessToken)
 		if err != nil {
 			t.Error("error while creating repo ")
 			t.FailNow()
@@ -731,7 +731,7 @@ var deleteGithubRepo = features.New("delete-github-repo").
 		t.Log("deleting github repo")
 
 		// create repo
-		err := github.DeleteGithubRepo(outerloopConfig.Project.Name, outerloop.Project.AccessToken)
+		err := github.DeleteGithubRepo(outerloopConfig.Project.Name, outerloopConfig.Project.AccessToken)
 		if err != nil {
 			t.Error("error while deleting repo ")
 			t.FailNow()
