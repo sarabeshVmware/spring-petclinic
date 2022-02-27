@@ -737,3 +737,36 @@ var deleteWorkload = features.New("delete-workload").
 		return ctx
 	}).
 	Feature()
+
+var verifyDeliverables = features.New("verify-deliverables").
+    Assess("verify-deliverables-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+        t.Log("verifying deliverables ready status")
+
+        // check
+        if !kubectl_helpers.ValidateServiceBindings(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
+            t.Error("deliverables not ready")
+            t.FailNow()
+        } else {
+            t.Log("deliverables ready")
+        }
+
+        return ctx
+    }).
+    Feature()
+
+var verifyServiceBindings = features.New("verify-service-bindings").
+    Assess("verify-service-bindings-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+        t.Log("verifying service bindings ready status")
+
+        // check
+        if !kubectl_helpers.ValidateServiceBindings(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
+            t.Error("service bindings not ready")
+            t.FailNow()
+        } else {
+            t.Log("service bindings ready")
+        }
+
+        return ctx
+    }).
+    Feature()
+
