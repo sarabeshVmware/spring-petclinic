@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: service-bindings.labs.vmware.com
     versionSelection:
-      constraints: 0.6.0
+      constraints: 0.6.1
       prereleases: {}
 
 #@ end
