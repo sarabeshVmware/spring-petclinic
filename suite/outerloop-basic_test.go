@@ -68,35 +68,13 @@ func TestOuterloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	deployApps := features.New("deploy-apps-via-yaml-configurations").
-		// TODO: remove
-		// Assess("deploy-springpetclinic-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		// 	return stepfuncs.DeployAppInNamespace(ctx, t, cfg, true, outerloopConfig.SpringPetclinic.Name, []string{outerloopConfig.SpringPetclinic.YamlFile}, outerloopConfig.Namespace)
-		// }).
-		Assess("deploy-mysqldb", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			name, files, namespace := outerloopConfig.Mysql.Name, []string{outerloopConfig.Mysql.YamlFile}, outerloopConfig.Namespace
-
-			t.Logf("deploying app %s in namespace %s", name, namespace)
-			cmd, output, err := exec.KappDeployAppInNamespace(name, files, namespace)
-			t.Logf("command executed: %s", cmd)
-			if err != nil {
-				t.Error(fmt.Errorf("error while deploying app %s in namespace %s: %w: %s", name, namespace, err, output))
-				t.FailNow()
-			}
-			t.Logf("app %s deployed in namespace %s: %s", name, namespace, output)
-			return ctx
-
-			// return stepfuncs.DeployAppInNamespace(ctx, t, cfg, true, outerloopConfig.Mysql.Name, []string{outerloopConfig.Mysql.YamlFile}, outerloopConfig.Namespace)
-		}).
-		Feature()
-
 	// // TODO: servicebinding check
 
 	// TODO: new build check, ksvc revision updation check
 	testenv.Test(t,
 		updateTap,
 		createGithubRepo,
-		deployApps,
+		deployMysqldbService,
 		deployWorkload,
 		verifyGitrepoStatus,
 		verifyBuildStatus,

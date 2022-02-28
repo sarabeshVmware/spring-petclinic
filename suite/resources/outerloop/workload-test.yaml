@@ -10,7 +10,7 @@ metadata:
 spec:
   source:
     git:
-      url: https://github.com/dapdelivery/<REPO_NAME>.git
+      url: https://github.com/dapdelivery/<GITHUB_REPO_NAME>.git
       ref:
         branch: main
   serviceClaims:
