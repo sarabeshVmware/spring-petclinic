@@ -91,6 +91,7 @@ func TestOuterloopTestScan(t *testing.T) {
 		verifyWebpageOriginal,
 		gitUpdate,
 		verifyWebpageNew,
+		// validations for build and ksvc
 		removeProjectDir,
 		deleteWorkload,
 		deleteGithubRepo,
