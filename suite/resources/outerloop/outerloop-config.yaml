@@ -11,7 +11,7 @@ project:
   file: src/main/resources/templates/vets/vetList.html
   repo_template: spring-petclinic-template
   name: <GITHUB_REPO_NAME>
-  new_string: "Blah Blah at VMWare!!!"
+  new_string: "Validation checks at VMWare!!!"
   original_string: "Veterinarians"
   commit_message: "update vets.html: new header"
   repository: https://github.com/dapdelivery/<GITHUB_REPO_NAME>.git
