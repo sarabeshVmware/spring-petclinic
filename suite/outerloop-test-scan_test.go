@@ -68,6 +68,7 @@ func TestOuterloopTestScan(t *testing.T) {
 
 	testenv.Test(t,
 		updateTap,
+		createGithubRepo,
 		verifyGrypePackageInstalled,
 		verifyScanningPackageInstalled,
 		deployScanPolicy,
@@ -82,15 +83,17 @@ func TestOuterloopTestScan(t *testing.T) {
 		verifyBuildStatus,
 		verifyImageScanStatus,
 		verifyPodintents,
+		verifyDeliverables,
+		verifyServiceBindings,
 		verifyTaskrunStatus,
 		verifyKsvcStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,
 		verifyWebpageNew,
-		gitReset,
 		removeProjectDir,
 		deleteWorkload,
+		deleteGithubRepo,
 	)
 	t.Log("************** TestCase END: TestOuterloopTestScan **************")
 }

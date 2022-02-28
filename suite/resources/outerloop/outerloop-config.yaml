@@ -9,11 +9,12 @@ project:
   host: spring-petclinic.my-apps.example.com
   webpage_relative_path: vets.html
   file: src/main/resources/templates/vets/vetList.html
-  name: spring-petclinic-demo
-  new_string: "Veterinarians at VMWare!!!"
+  repo_template: spring-petclinic-template
+  name: <GITHUB_REPO_NAME>
+  new_string: "Validation checks at VMWare!!!"
   original_string: "Veterinarians"
   commit_message: "update vets.html: new header"
-  repository: https://github.com/dapdelivery/spring-petclinic-demo.git
+  repository: https://github.com/dapdelivery/<GITHUB_REPO_NAME>.git
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
   access_token: <ACCESS_TOKEN>
@@ -43,3 +44,4 @@ workload:
   imagescan_name: spring-petclinic
   sourcescan_name: spring-petclinic
   pipeline_name: developer-defined-tekton-pipeline
+  app_name: spring-petclinic

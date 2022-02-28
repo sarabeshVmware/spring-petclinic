@@ -504,3 +504,26 @@ func ValidateLatestImageStatus(namespace string, timeoutInMins int, intervalInSe
 	}
 	return result
 }
+
+func ValidateDeliverables(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating deliverables")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		deliverables := kubectl_lib.GetDeliverables(name, namespace)
+		if len(deliverables) < 1 {
+			log.Println("Deliverable is ready yet")
+		} else if deliverables[0].READY == "True" && deliverables[0].REASON == "Ready" {
+			log.Printf("Deliverable %s is ready", deliverables[0].NAME)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Deliverable is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
