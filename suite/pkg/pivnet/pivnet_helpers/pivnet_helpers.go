@@ -16,7 +16,7 @@ func WaitTillArtifactReferenceIsReady(productSlug string, artifactReferenceId in
 	for finalTimeout > 0 {
 		artifact_Details := pivnet_libs.GetArtifactReference(productSlug, artifactReferenceId)
 		if artifact_Details.ReplicationStatus == "complete" {
-			log.Printf("Artifact created. Total time taken: %d", timeSpent)
+			log.Printf("Artifact created. Total time taken: %d mins %d seconds", timeSpent/60, timeSpent%60)
 			result = true
 			break
 		}
