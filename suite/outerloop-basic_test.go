@@ -4,7 +4,6 @@ package suite
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
