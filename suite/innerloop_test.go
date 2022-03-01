@@ -301,6 +301,18 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
+	f18 := features.New("verify-deliverables").
+		Assess("verify-deliverables-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying deliverables ready status")
+			if !kubectl_helpers.ValidateDeliverables(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30) {
+				t.Error("deliverables not ready")
+				t.FailNow()
+			} else {
+				t.Log("deliverables ready")
+			}
+			return ctx
+		}).
+		Feature()
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
@@ -515,32 +527,6 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	f18 := features.New("verify-new-builds").
-		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify build status")
-			status := kubectl_helper.VerifyBuildStatus("tanzu-java-web-app-build-2", suiteConfig.Innerloop.Workload.Namespace, 10, 30)
-			t.Logf("Build status is : %t", status)
-			if !status {
-				t.Error(fmt.Errorf("Build is not ready."))
-				t.Fail()
-			}
-			return ctx
-		}).
-		Feature()
-
-	f19 := features.New("verify-new-ksvc").
-		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify ksvc status")
-			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, "tanzu-java-web-app-00002", 5, 30)
-			t.Logf("ksvc status is : %t", status)
-			if !status {
-				t.Error(fmt.Errorf("ksvc %s is not ready.", suiteConfig.Innerloop.Workload.Name))
-				t.Fail()
-			}
-			return ctx
-		}).
-		Feature()
-
 	cleanup := features.New("cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("kill tilt process")
@@ -570,7 +556,7 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, f19, cleanup)
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasic **************")
 }
