@@ -77,7 +77,6 @@ type outerloopConfiguration struct {
 		ImageScanName       string `yaml:"imagescan_name"`
 		SourceScanName      string `yaml:"sourcescan_name"`
 		PipelineName        string `yaml:"pipeline_name"`
-		AppName				string `yaml:"app_name"`
 	} `yaml:"workload"`
 }
 
@@ -347,7 +346,8 @@ var verifyBuildStatus = features.New("verify-build-status").
 		t.Log("verifying build succeeded status")
 
 		// check
-		buildSucceeded := kubectl_helpers.VerifyBuildStatus(outerloopConfig.Namespace, 15, 60)
+		buildname := fmt.Sprintf("%s-build-1", outerloopConfig.Workload.Name)
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
 			t.FailNow()
@@ -436,7 +436,8 @@ var verifyKsvcStatus = features.New("verify-ksvc-status").
 		t.Log("verifying ksvc ready status")
 
 		// check
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, 5, 30)
+		ksvcLatestReady := fmt.Sprintf("%s-00002", outerloopConfig.Workload.Name)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -749,7 +750,7 @@ var verifyDeliverables = features.New("verify-deliverables").
 		t.Log("verifying deliverables ready status")
 
 		// check
-		if !kubectl_helpers.ValidateDeliverables(outerloopConfig.Workload.AppName, outerloopConfig.Namespace, 5, 30) {
+		if !kubectl_helpers.ValidateDeliverables(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30) {
 			t.Error("deliverables not ready")
 			t.FailNow()
 		} else {
@@ -765,12 +766,48 @@ var verifyServiceBindings = features.New("verify-service-bindings").
 		t.Log("verifying service bindings ready status")
 
 		// check
-		sbname := fmt.Sprintf("%[1]s-%[1]s-db", outerloopConfig.Workload.AppName)
+		sbname := fmt.Sprintf("%[1]s-%[1]s-db", outerloopConfig.Workload.Name)
 		if !kubectl_helpers.ValidateServiceBindings(sbname, outerloopConfig.Namespace, 5, 30) {
 			t.Error("service bindings not ready")
 			t.FailNow()
 		} else {
 			t.Log("service bindings ready")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildStatusAfterUpdate = features.New("verify-build-status").
+	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying build succeeded status")
+
+		// check
+		buildname := fmt.Sprintf("%s-build-2", outerloopConfig.Workload.Name)
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
+		if !buildSucceeded {
+			t.Error("build not succeeded")
+			t.FailNow()
+		} else {
+			t.Log("build succeeded")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyKsvcStatusAfterUpdate = features.New("verify-ksvc-status").
+	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying ksvc ready status")
+
+		// check
+		ksvcLatestReady := fmt.Sprintf("%s-00003", outerloopConfig.Workload.Name)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
+		if !ksvcReady {
+			t.Error("ksvc not ready")
+			t.FailNow()
+		} else {
+			t.Log("ksvc ready")
 		}
 
 		return ctx

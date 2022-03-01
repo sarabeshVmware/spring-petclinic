@@ -44,4 +44,3 @@ workload:
   imagescan_name: spring-petclinic
   sourcescan_name: spring-petclinic
   pipeline_name: developer-defined-tekton-pipeline
-  app_name: spring-petclinic

@@ -86,6 +86,8 @@ func TestOuterloopTestingSC(t *testing.T) {
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,
+		verifyBuildStatusAfterUpdate,
+		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
 		// validations for build and ksvc
 		removeProjectDir,

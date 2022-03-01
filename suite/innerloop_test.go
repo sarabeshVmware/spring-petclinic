@@ -195,7 +195,7 @@ func TestInnerloopBasic(t *testing.T) {
 			if !status {
 				t.Error(fmt.Errorf("ImageRepository %s is not ready.", suiteConfig.Innerloop.Workload.Name))
 				t.Fail()
-				}
+			}
 			//}
 
 			return ctx
@@ -205,7 +205,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f8 := features.New("verify-builds").
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
-			status := kubectl_helper.VerifyBuildStatus(suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+			status := kubectl_helper.VerifyBuildStatus("tanzu-java-web-app-build-1", suiteConfig.Innerloop.Workload.Namespace, 10, 30)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("Build is not ready."))
@@ -289,22 +289,22 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Feature()
 	f17 := features.New("verify-image-repository-delivery").
-	Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Logf("verify image-repositories-delivery status")
-		imageRepo := suiteConfig.Innerloop.Workload.Name + "-delivery"
-		status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
-		t.Logf("ImageRepository %s status is : %t", imageRepo, status)
-		if !status {
-			t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
-			t.Fail()
+		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify image-repositories-delivery status")
+			imageRepo := suiteConfig.Innerloop.Workload.Name + "-delivery"
+			status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+			t.Logf("ImageRepository %s status is : %t", imageRepo, status)
+			if !status {
+				t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
+				t.Fail()
 			}
-		return ctx
-	}).
-	Feature()
+			return ctx
+		}).
+		Feature()
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
-			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
+			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, "tanzu-java-web-app-00001", 5, 30)
 			t.Logf("ksvc status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("ksvc %s is not ready.", suiteConfig.Innerloop.Workload.Name))
@@ -514,6 +514,33 @@ func TestInnerloopBasic(t *testing.T) {
 			// return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!")
 		}).
 		Feature()
+
+	f17 := features.New("verify-new-builds").
+		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify build status")
+			status := kubectl_helper.VerifyBuildStatus("tanzu-java-web-app-build-2", suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+			t.Logf("Build status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("Build is not ready."))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+
+	f18 := features.New("verify-new-ksvc").
+		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify ksvc status")
+			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, "tanzu-java-web-app-00002", 5, 30)
+			t.Logf("ksvc status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("ksvc %s is not ready.", suiteConfig.Innerloop.Workload.Name))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+
 	cleanup := features.New("cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("kill tilt process")
@@ -543,7 +570,7 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, cleanup)
+	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f17, f18, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasic **************")
 }
