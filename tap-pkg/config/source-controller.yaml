@@ -12,7 +12,7 @@
 #@  if hasattr(data.values, "source_controller"):
 #@    values.update(data.values.source_controller)
 #@  end
-#@  if hasattr(data.values, "shared") and hasattr(data.values.shared, "ca_cert_data") and type(data.values.shared.ca_cert_data) == "string" :
+#@  if data.values.shared.ca_cert_data :
 #@    # append shared ca_cert_data to component specific ca_cert_data
 #@    values["ca_cert_data"] = values["ca_cert_data"] + data.values.shared.ca_cert_data
 #@  end
