@@ -11,7 +11,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.1-build.1@sha256:27b29b5f1222e6c674e594d19ecfde737402f8f6f0b29ff363c4fd866f6ddc0e
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.1-build.2@sha256:828ef6b117901cb94ded7c63ed078bd8b3fab395f1fd4159fd6618242a180cb7
       template:
       - ytt:
           paths:

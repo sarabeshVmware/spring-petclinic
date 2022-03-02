@@ -1,12 +1,25 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
 #@ load("@ytt:overlay", "overlay")
+#@ load("@ytt:assert", "assert")
+#@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
+#@ def validate():
+#@  if hasattr(data.values.buildservice, "descriptor_name"):
+#@   valid_descriptors = ["tap-1.0.0-lite","tap-1.0.0-full","lite","full"]
+#@   if not data.values.buildservice.descriptor_name in valid_descriptors:
+#@     assert.fail("Expected descriptor_name to be one of: {}".format(valid_descriptors))
+#@   end
+#@  end
+#@ end
+
 #@ def user_values():
+#@ validate()
+
 #@overlay/match by=overlay.all
 #@overlay/match-child-defaults missing_ok=True
 --- #@ data.values.buildservice
@@ -18,7 +31,6 @@ descriptor_name: tap-1.0.0-lite
 #@ if/end profiles.is_any_enabled([profiles.light]):
 disable_smart_warmer: true
 #@ end
-
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -33,8 +45,7 @@ spec:
   packageRef:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
-      constraints: 1.4.2
-      prereleases: {}
+      constraints: 1.4.3
   values:
   - secretRef:
       name: buildservice-values
