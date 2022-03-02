@@ -43,6 +43,14 @@ spec:
             type: string
           default: []
           description: "List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])"
+        shared:
+          type: object
+          properties:
+            ca_cert_data:
+              type: string
+              default: ""
+              description: "Optional: PEM Encoded certificate data to trust TLS connections with a private CA."
+          description: "Common properties shared across multiple components"
         api_portal:
           type: object
           additionalProperties: true
