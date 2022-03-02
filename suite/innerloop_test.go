@@ -304,7 +304,7 @@ func TestInnerloopBasic(t *testing.T) {
 	f18 := features.New("verify-deliverables").
 		Assess("verify-deliverables-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("verifying deliverables ready status")
-			if !kubectl_helpers.ValidateDeliverables(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30) {
+			if !kubectl_helper.ValidateDeliverables(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30) {
 				t.Error("deliverables not ready")
 				t.FailNow()
 			} else {
