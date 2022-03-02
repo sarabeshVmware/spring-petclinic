@@ -284,16 +284,16 @@ func ValidateLearningCenter(name string, namespace string) bool {
 	return strings.Contains(res, "HTTP/1.1 302 Found")
 }
 
-func VerifyBuildStatus(namespace string, timeoutInMins int, intervalInSeconds int) bool {
+func VerifyBuildStatus(buildName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Validating build status")
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
-		builds := kubectl_lib.GetBuilds("", namespace)
+		builds := kubectl_lib.GetBuilds(buildName, namespace)
 		if len(builds) < 1 {
 			log.Println("Builds are not generated yet")
-		} else if builds[len(builds)-1].SUCCEEDED == "True" {
-			log.Printf("Build %s status is verified successfully. Status is %s", builds[len(builds)-1].NAME, builds[len(builds)-1].SUCCEEDED)
+		} else if builds[0].SUCCEEDED == "True" {
+			log.Printf("Build %s status is verified successfully. Status is %s", builds[0].NAME, builds[0].SUCCEEDED)
 			result = true
 			break
 		}
@@ -335,7 +335,7 @@ func GetWorkloadStatus(name string, namespace string) string {
 
 }
 
-func VerifyKsvcStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+func VerifyKsvcStatus(name string, namespace string, latestReady string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Validating ksvc status")
 	finalTimeout := timeoutInMins * 60
 	result := false
@@ -343,8 +343,8 @@ func VerifyKsvcStatus(name string, namespace string, timeoutInMins int, interval
 		ksvc := kubectl_lib.GetKsvc(name, namespace)
 		if len(ksvc) < 1 {
 			log.Println("Knative services are not generated yet")
-		} else if ksvc[0].READY == "True" {
-			log.Printf("Knative %s status is verified successfully. Status is %s", ksvc[0].NAME, ksvc[0].READY)
+		} else if (ksvc[0].READY == "True") && (ksvc[0].LATESTREADY == latestReady) {
+			log.Printf("Knative %s status is verified successfully. Status is %s. LatestReady is %s.", ksvc[0].NAME, ksvc[0].READY, ksvc[0].LATESTREADY)
 			result = true
 			break
 		}
@@ -501,6 +501,29 @@ func ValidateLatestImageStatus(namespace string, timeoutInMins int, intervalInSe
 	}
 	if !result {
 		log.Printf("Latest image not successfull after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func ValidateDeliverables(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating deliverables")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		deliverables := kubectl_lib.GetDeliverables(name, namespace)
+		if len(deliverables) < 1 {
+			log.Println("Deliverable is ready yet")
+		} else if deliverables[0].READY == "True" && deliverables[0].REASON == "Ready" {
+			log.Printf("Deliverable %s is ready", deliverables[0].NAME)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Deliverable is not ready after %d mins", timeoutInMins)
 	}
 	return result
 }

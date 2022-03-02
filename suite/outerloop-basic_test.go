@@ -66,9 +66,6 @@ func TestOuterloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	// // TODO: servicebinding check
-
-	// TODO: new build check, ksvc revision updation check
 	testenv.Test(t,
 		updateTap,
 		createGithubRepo,
@@ -77,13 +74,17 @@ func TestOuterloopBasic(t *testing.T) {
 		verifyGitrepoStatus,
 		verifyBuildStatus,
 		verifyPodintents,
+		verifyDeliverables,
+		verifyServiceBindings,
 		verifyKsvcStatus,
 		verifyTaskrunStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,
+		verifyBuildStatusAfterUpdate,
+		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
-		//gitReset,
+		// validations for build and ksvc
 		removeProjectDir,
 		deleteWorkload,
 		deleteGithubRepo,
