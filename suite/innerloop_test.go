@@ -205,7 +205,8 @@ func TestInnerloopBasic(t *testing.T) {
 	f8 := features.New("verify-builds").
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
-			status := kubectl_helper.VerifyBuildStatus("tanzu-java-web-app-build-1", suiteConfig.Innerloop.Workload.Namespace, 10, 30)
+			buildName := suiteConfig.Innerloop.Workload.Name + "-build-1"
+			status := kubectl_helper.VerifyBuildStatus(buildName, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("Build is not ready."))
@@ -316,7 +317,8 @@ func TestInnerloopBasic(t *testing.T) {
 	f11 := features.New("verify-ksvc").
 		Assess("verify-ksvc-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify ksvc status")
-			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, "tanzu-java-web-app-00001", 5, 30)
+			ksvcName := suiteConfig.Innerloop.Workload.Name + "-00001"
+			status := kubectl_helper.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, ksvcName, 5, 30)
 			t.Logf("ksvc status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("ksvc %s is not ready.", suiteConfig.Innerloop.Workload.Name))
