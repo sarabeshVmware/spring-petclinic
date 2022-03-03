@@ -56,12 +56,12 @@ type outerloopConfiguration struct {
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"spring_petclinic_pipeline"`
 	Workload struct {
-		Name         string `yaml:"name"`
-		YamlFile     string `yaml:"yaml_file"`
-		TestYamlFile string `yaml:"test_yaml_file"`
-		BuildNameSuffix string `yaml:"build_name_suffix"`
-		PipelineName    string `yaml:"pipeline_name"`
-		TaskRunInfix	string `yaml:"taskrun_name_infix"`
+		Name                 string `yaml:"name"`
+		YamlFile             string `yaml:"yaml_file"`
+		TestYamlFile         string `yaml:"test_yaml_file"`
+		BuildNameSuffix      string `yaml:"build_name_suffix"`
+		PipelineName         string `yaml:"pipeline_name"`
+		TaskRunInfix         string `yaml:"taskrun_name_infix"`
 		ServiceBindingSuffix string `yaml:"service_binding_suffix"`
 	} `yaml:"workload"`
 }
@@ -455,8 +455,8 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying taskrun succeeded status")
 
-		taskRunPrefix:= fmt.Sprintf("%s-%s", outerloopConfig.Workload.Name, outerloopConfig..Workload.TaskRunInfix)
-		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus( taskRunPrefix,outerloopConfig.Namespace, 5, 30)
+		taskRunPrefix := fmt.Sprintf("%s-%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunInfix)
+		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
 			t.FailNow()

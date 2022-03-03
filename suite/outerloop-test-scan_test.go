@@ -86,11 +86,13 @@ func TestOuterloopTestScan(t *testing.T) {
 		verifyDeliverables,
 		verifyServiceBindings,
 		verifyTaskrunStatus,
+		verifyRevisionStatus,
 		verifyKsvcStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,
 		verifyBuildStatusAfterUpdate,
+		verifyRevisionStatus,
 		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
 		// validations for build and ksvc
