@@ -186,8 +186,12 @@ func GetRevisions(name string, namespace string) []GetRevisionsOutput {
 		return revisions
 	}
 
-	ss := linux_util.FieldIndices(temp[0])
+	ss := linux_util.FieldIndicesWithSingleSpace(temp[0])
 	headers := linux_util.GetFields(temp[0], ss)
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, " ", "_")
+	}
+
 	for _, element := range temp[1:] {
 		words := linux_util.GetFields(element, ss)
 		var revision GetRevisionsOutput
