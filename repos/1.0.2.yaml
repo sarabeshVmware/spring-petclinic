@@ -66,6 +66,7 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
+      - 1.1.1
   - name: build-service
     versions:
       - 1.4.2
@@ -78,7 +79,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2-build.7
+      - 1.0.2
   - name: learning-center-workshops
     versions:
       - 0.1.0
