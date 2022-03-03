@@ -20,7 +20,7 @@ spec:
   packageRef:
     refName: controller.conventions.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.6.1
+      constraints: 0.6.2
   values:
   - secretRef:
       name: conventions-controller-values
