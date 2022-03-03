@@ -15,6 +15,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
@@ -81,6 +82,8 @@ type outerloopConfiguration struct {
 }
 
 var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "outerloop")
+var buildName = ""
+var ksvcLatestReady = ""
 
 func getOuterloopConfig() (outerloopConfiguration, error) {
 	log.Printf("getting outerloop config")
@@ -346,7 +349,9 @@ var verifyBuildStatus = features.New("verify-build-status").
 		t.Log("verifying build succeeded status")
 
 		// check
-		buildname := fmt.Sprintf("%s-build-1", outerloopConfig.Workload.Name)
+		//buildname := fmt.Sprintf("%s-build-1", outerloopConfig.Workload.Name)
+		builds := kubectl_libs.GetBuilds("", outerloopConfig.Namespace)
+		buildName = builds[len(builds)-1].NAME
 		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
@@ -436,7 +441,9 @@ var verifyKsvcStatus = features.New("verify-ksvc-status").
 		t.Log("verifying ksvc ready status")
 
 		// check
-		ksvcLatestReady := fmt.Sprintf("%s-00002", outerloopConfig.Workload.Name)
+		// ksvcLatestReady := fmt.Sprintf("%s-00002", outerloopConfig.Workload.Name)
+		ksvcs = kubectl_libs.GetKsvc(outerloopConfig.Namespace)
+		ksvcLatestReady = ksvcs[len(ksvcs)-1].LATESTREADY
 		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
@@ -783,7 +790,31 @@ var verifyBuildStatusAfterUpdate = features.New("verify-build-status").
 		t.Log("verifying build succeeded status")
 
 		// check
-		buildname := fmt.Sprintf("%s-build-2", outerloopConfig.Workload.Name)
+		// buildname := fmt.Sprintf("%s-build-2", outerloopConfig.Workload.Name)
+		oldBuildName = buildName
+		// loop and try till latest build name > old build name
+		finalTimeout := 5 * 60
+		intervalInSeconds := 30
+		newBuildCreated := false
+		for finalTimeout > 0 {
+			builds := kubectl_libs.GetBuilds("", outerloopConfig.Namespace)
+			buildName = builds[len(builds)-1].NAME
+			if buildName > oldBuildName {
+				log.Println("New build created")
+				newBuildCreated = true
+				break
+			} else {
+				log.Println("Waiting till new build is generated")
+			}
+			log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+			time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+			finalTimeout -= intervalInSeconds
+		}
+		if !newBuildCreated {
+			t.Error("new build not created after source code modification")
+			t.FailNow()
+		}
+
 		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
@@ -801,7 +832,32 @@ var verifyKsvcStatusAfterUpdate = features.New("verify-ksvc-status").
 		t.Log("verifying ksvc ready status")
 
 		// check
-		ksvcLatestReady := fmt.Sprintf("%s-00003", outerloopConfig.Workload.Name)
+		// ksvcLatestReady := fmt.Sprintf("%s-00003", outerloopConfig.Workload.Name)
+		ksvcLatestReadyOld = ksvcLatestReady
+
+		// loop and try till latest build name > old build name
+		finalTimeout := 5 * 60
+		intervalInSeconds := 30
+		newKsvcreated := false
+		for finalTimeout > 0 {
+			ksvcs := kubectl_libs.GetKsvc("", outerloopConfig.Namespace)
+			ksvcLatestReady = builds[len(ksvcs)-1].LATESTREADY
+			if ksvcLatestReady > ksvcLatestReadyOld {
+				log.Println("New ksvc created")
+				newKsvcreated = true
+				break
+			} else {
+				log.Println("Waiting till new ksvc is generated")
+			}
+			log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+			time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+			finalTimeout -= intervalInSeconds
+		}
+		if !newKsvcreated {
+			t.Error("new ksvc not created after source code modification")
+			t.FailNow()
+		}
+
 		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
