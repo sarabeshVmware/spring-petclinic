@@ -331,7 +331,7 @@ var verifyBuildStatus = features.New("verify-build-status").
 	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying build succeeded status")
 
-		buildName = fmt.Sprintf("%s-%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.BuildNameSuffix)
+		buildName = fmt.Sprintf("%s%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.BuildNameSuffix)
 		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildName, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
@@ -453,7 +453,7 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying taskrun succeeded status")
 
-		taskRunPrefix := fmt.Sprintf("%s-%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunInfix)
+		taskRunPrefix := fmt.Sprintf("%s%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunInfix)
 		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
