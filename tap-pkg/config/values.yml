@@ -54,6 +54,9 @@ ootb_supply_chain_testing_scanning: {}
 ootb_delivery_basic: {}
 
 #@schema/type any=True
+ootb_templates: {}
+
+#@schema/type any=True
 image_policy_webhook: {}
 
 #@schema/type any=True
