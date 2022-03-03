@@ -15,7 +15,6 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
