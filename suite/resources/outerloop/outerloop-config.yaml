@@ -20,27 +20,14 @@ project:
   access_token: <ACCESS_TOKEN>
 scan_policy:
   yaml_file: scan-policy.yaml
-spring_petclinic: # TODO remove section in cleanup
-  build_name_prefix: spring-petclinic
-  gitrepository_name: spring-petclinic
-  imagerepository_name: spring-petclinic-delivery
-  ksvc_name: spring-petclinic
-  name: spring-petclinic-tests-pipeline
-  podintent_name: spring-petclinic
-  taskrun_name_prefix: spring-petclinic-config-writer
-  yaml_file: spring-petclinic-tests-pipeline.yaml
 spring_petclinic_pipeline:
   yaml_file: spring-petclinic-tests-pipeline.yaml
 workload:
   name: spring-petclinic
   yaml_file: workload.yaml
   test_yaml_file: workload-test.yaml
-  build_name_prefix: spring-petclinic
-  gitrepository_name: spring-petclinic
-  imagerepository_name: spring-petclinic-delivery
-  ksvc_name: spring-petclinic
-  podintent_name: spring-petclinic
-  taskrun_name_prefix: spring-petclinic-config-writer
-  imagescan_name: spring-petclinic
-  sourcescan_name: spring-petclinic
+  # imagerepository_name: spring-petclinic-delivery
+  taskrun_name_infix: -config-writer-
   pipeline_name: developer-defined-tekton-pipeline
+  build_name_suffix: -build-1
+  service_binding_suffix: -db
