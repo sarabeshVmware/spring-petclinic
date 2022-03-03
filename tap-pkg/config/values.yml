@@ -12,6 +12,9 @@ ceip_policy_disclosed: false
 excluded_packages:
 - ""
 
+shared:
+  ca_cert_data: ""
+
 #@schema/type any=True
 api_portal: {}
 
