@@ -442,7 +442,7 @@ var verifyKsvcStatus = features.New("verify-ksvc-status").
 
 		// check
 		// ksvcLatestReady := fmt.Sprintf("%s-00002", outerloopConfig.Workload.Name)
-		ksvcs = kubectl_libs.GetKsvc(outerloopConfig.Namespace)
+		ksvcs = kubectl_libs.GetKsvc("", outerloopConfig.Namespace)
 		ksvcLatestReady = ksvcs[len(ksvcs)-1].LATESTREADY
 		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
