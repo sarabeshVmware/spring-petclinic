@@ -352,7 +352,7 @@ var verifyBuildStatus = features.New("verify-build-status").
 		//buildname := fmt.Sprintf("%s-build-1", outerloopConfig.Workload.Name)
 		builds := kubectl_libs.GetBuilds("", outerloopConfig.Namespace)
 		buildName = builds[len(builds)-1].NAME
-		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildName, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
 			t.FailNow()
