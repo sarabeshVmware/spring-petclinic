@@ -1,6 +1,9 @@
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
+#@ load("_profiles.star", "profiles")
 
-
-
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run, profiles.view]):
+#@ if profiles.is_pkg_enabled("contour.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -17,7 +20,7 @@ spec:
   packageRef:
     refName: contour.tanzu.vmware.com
     versionSelection:
-      constraints: 1.18.2+tap.2
+      constraints: 1.18.2+tap.1
       prereleases: {}
   values:
   - secretRef:
@@ -29,12 +32,8 @@ metadata:
   name: contour-values
   namespace: tap-install
 stringData:
-  values.yaml: |
-    namespace: contour-external
-    envoy:
-      service:
-        type: LoadBalancer
+  values.yaml: #@ yaml.encode(data.values.contour)
 
-
-
+#@ end
+#@ end
 
