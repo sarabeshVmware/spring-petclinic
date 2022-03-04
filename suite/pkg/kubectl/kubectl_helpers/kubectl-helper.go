@@ -413,9 +413,9 @@ func VerifyTaskrunStatus(taskrunPrefix string, namespace string, timeoutInMins i
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
 		} else {
-			for i, taskrun := range taskruns {
-				if taskrun[i].SUCCEEDED == "True" && strings.HasPrefix(taskrun[i].NAME, taskrunPrefix) {
-					log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[i].NAME, taskruns[i].SUCCEEDED)
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
 					result = true
 					return result
 				}
@@ -440,9 +440,9 @@ func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespa
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
 		} else {
-			for i, taskrun := range taskruns {
-				if taskrun[i].SUCCEEDED == "True" && strings.HasPrefix(taskrun[i].NAME, taskrunPrefix) && strings.HasSuffix(taskrun[i].NAME, taskrunSuffix) {
-					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun[i].NAME, taskrun[i].SUCCEEDED)
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) && strings.HasSuffix(taskrun.NAME, taskrunSuffix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
 					result = true
 					return result
 				}
