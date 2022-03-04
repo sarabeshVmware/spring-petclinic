@@ -30,12 +30,19 @@ packages:
       - 1.0.1
       - 1.0.2-build.2
       - 1.0.2
+  - name: application-live-view-backend
+    versions:
+      - 1.1.0-build.1
+  - name: application-live-view-connector
+    versions:
       - 1.1.0-build.1
   - name: app-live-view-conventions
     versions:
       - 1.0.1
       - 1.0.2-build.2
       - 1.0.2
+  - name: application-live-view-conventions
+    versions:
       - 1.1.0-build.1
   - name: scan-controller
     versions:

@@ -1,0 +1,13 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: backend.appliveview.tanzu.vmware.com
+spec:
+  maintainers:
+    - name : "Martin Lippert"
+  providerName: "VMware"
+  displayName: "Application Live View for VMware Tanzu"
+  longDescription: "Application Live View is a lightweight insights and troubleshooting tool that helps Application Developers and Application Operators to look inside of running applications"
+  shortDescription: "App for monitoring and troubleshooting running apps"
+  supportDescription: "https://tanzu.vmware.com/support"

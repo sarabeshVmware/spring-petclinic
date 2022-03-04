@@ -1,0 +1,112 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-basic.tanzu.vmware.com.0.7.0-build.1
+spec:
+  refName: ootb-supply-chain-basic.tanzu.vmware.com
+  version: 0.7.0-build.1
+  releasedAt: "2022-03-03T23:32:42Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-basic
+      properties:
+        cluster_builder:
+          type: string
+          description: |
+            Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: |
+            Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        git_implementation:
+          type: string
+          description: Determines which git client library to use. Valid options are go-git or libgit2.
+          default: go-git
+          examples:
+          - go-git
+        registry:
+          type: object
+          properties:
+            server:
+              type: string
+              description: |
+                Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: |
+                Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+        gitops:
+          type: object
+          properties:
+            repository_prefix:
+              type: string
+              description: |
+                Default prefix to be used for forming Git SSH URLs for pushing Kubernetes configuration produced by the supply chain.
+              examples:
+              - git@github.com:vmware-tanzu
+              - git@internal.gitlab.company.com:/group
+            branch:
+              type: string
+              description: |
+                Default branch to use for pushing Kubernetes configuration files produced by the supply chain.
+              default: main
+              examples:
+              - staging
+            commit_message:
+              type: string
+              description: |
+                Default git commit message to write when publishing Kubernetes configuration files produces by the supply chain to git.
+              default: bump configuration
+              examples:
+              - alice
+              - bob
+            username:
+              type: string
+              description: |
+                Default user name to be used for the commits produced by the supply chain.
+              default: supplychain
+              examples:
+              - alice
+              - bob
+            email:
+              type: string
+              description: |
+                Default user email to be used for the commits produced by the supply chain.
+              default: supplychain@cluster.local
+              examples:
+              - alice@users.noreply.github.com
+            ssh_secret:
+              type: string
+              description: |
+                Name of the default Secret containing SSH credentials to lookup in the developer namespace for the supply chain to fetch source code from and push configuration to.
+              default: git-ssh
+              examples:
+              - credentials
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:61207e090a167d025fec90aa8f5a703021b3a36563bd885430f57e3b91fb28ef
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m

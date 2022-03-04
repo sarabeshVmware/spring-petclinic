@@ -2,7 +2,7 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
-  name: conventions.appliveview.tanzu.vmware.com
+  name: build.appliveview.tanzu.vmware.com
 spec:
   maintainers:
     - name : "Martin Lippert"

@@ -79,7 +79,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2
+      - 1.0.2-build.8
   - name: learning-center-workshops
     versions:
       - 0.1.0
