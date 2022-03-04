@@ -69,7 +69,6 @@ func AddArtifactReference(productSlug string, releaseVersion string, artifactRef
 		if err == nil && response == "" {
 			return true
 		}
-		// if already exists , return true: Release already contains this artifact reference
 		log.Printf("Waiting for 30s to retry")
 		time.Sleep(30 * time.Second)
 		count -= 1

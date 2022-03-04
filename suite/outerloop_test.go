@@ -29,12 +29,10 @@ import (
 type outerloopConfiguration struct {
 	CatalogInfoYaml string `yaml:"catalog_info_yaml"`
 	Mysql           struct {
-		Name     string `yaml:"name"`
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"mysql"`
 	Namespace string `yaml:"namespace"`
 	Project   struct {
-		Application         string `yaml:"application"`
 		Host                string `yaml:"host"`
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
@@ -61,6 +59,7 @@ type outerloopConfiguration struct {
 		BuildNameSuffix      string `yaml:"build_name_suffix"`
 		PipelineName         string `yaml:"pipeline_name"`
 		TaskRunInfix         string `yaml:"taskrun_name_infix"`
+		TaskRunTestSuffix    string `yaml:"taskrun_test_suffix"`
 		ServiceBindingSuffix string `yaml:"service_binding_suffix"`
 	} `yaml:"workload"`
 }
@@ -455,6 +454,22 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 
 		taskRunPrefix := fmt.Sprintf("%s%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunInfix)
 		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, outerloopConfig.Namespace, 5, 30)
+		if !taskrunSucceeded {
+			t.Error("taskrun not succeeded")
+			t.FailNow()
+		} else {
+			t.Log("taskrun succeeded")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyTestTaskrunStatus = features.New("verify-test-taskrun-status").
+	Assess("verify-test-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying test taskrun succeeded status")
+
+		taskrunSucceeded := kubectl_helpers.VerifyTestTaskrunStatus(outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunTestSuffix, outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
 			t.FailNow()

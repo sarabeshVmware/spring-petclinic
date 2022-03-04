@@ -86,6 +86,7 @@ func TestOuterloopTestScan(t *testing.T) {
 		verifyDeliverables,
 		verifyServiceBindings,
 		verifyTaskrunStatus,
+		verifyTestTaskrunStatus,
 		verifyRevisionStatus,
 		verifyKsvcStatus,
 		verifyWorkloadStatus,

@@ -412,7 +412,30 @@ func VerifyTaskrunStatus(taskrunPrefix string, namespace string, timeoutInMins i
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else if taskruns[len(taskruns)-1].SUCCEEDED == "True" && strings.HasPrefix(taskruns[len(taskruns)-1].NAME, taskrunPrefix) {
+		} else if taskruns[0].SUCCEEDED == "True" && strings.HasPrefix(taskruns[0].NAME, taskrunPrefix) {
+			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[0].NAME, taskruns[0].SUCCEEDED)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("task run is not generated after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating task run status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		taskruns := kubectl_lib.GetTaskruns("", namespace)
+		if len(taskruns) < 1 {
+			log.Println("taskruns are not generated yet")
+		} else if taskruns[len(taskruns)-1].SUCCEEDED == "True" && strings.HasPrefix(taskruns[len(taskruns)-1].NAME, taskrunPrefix) && strings.HasSuffix(taskruns[len(taskruns)-1].NAME, taskrunSuffix) {
 			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[len(taskruns)-1].NAME, taskruns[len(taskruns)-1].SUCCEEDED)
 			result = true
 			break

@@ -84,6 +84,7 @@ func TestOuterloopTestingSC(t *testing.T) {
 		verifyRevisionStatus,
 		verifyKsvcStatus,
 		verifyTaskrunStatus,
+		verifyTestTaskrunStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,

@@ -1,11 +1,9 @@
 ---
 catalog_info_yaml: https://github.com/dapdelivery/tap-catalog/blob/master/catalog-info.yaml
 mysql:
-  name: mysql-db # TODO: to be removed in cleanup
   yaml_file: mysql-service.yaml
 namespace: my-apps
 project:
-  application: spring-petclinic.my-apps.example.com # TODO: to be removed in cleanup
   host: spring-petclinic.my-apps.example.com
   webpage_relative_path: vets.html
   file: src/main/resources/templates/vets/vetList.html
@@ -26,8 +24,8 @@ workload:
   name: spring-petclinic
   yaml_file: workload.yaml
   test_yaml_file: workload-test.yaml
-  # imagerepository_name: spring-petclinic-delivery
   taskrun_name_infix: -config-writer-
+  taskrun_test_suffix: -test
   pipeline_name: developer-defined-tekton-pipeline
   build_name_suffix: -build-1
   service_binding_suffix: -db
