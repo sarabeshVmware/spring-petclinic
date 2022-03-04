@@ -439,15 +439,15 @@ func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespa
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else{
+		} else {
 			for i, taskrun := range taskruns {
 				if taskrun[i].SUCCEEDED == "True" && strings.HasPrefix(taskrun[i].NAME, taskrunPrefix) && strings.HasSuffix(taskrun[i].NAME, taskrunSuffix) {
 					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun[i].NAME, taskrun[i].SUCCEEDED)
 					result = true
 					return result
+				}
 			}
-		} 
-		
+		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
 		finalTimeout -= intervalInSeconds
