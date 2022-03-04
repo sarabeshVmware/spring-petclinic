@@ -152,10 +152,10 @@ func FieldIndices(s string) []span {
 func FieldIndicesWithSingleSpace(s string) []span {
 	spans := indices(s)
 	mergedspans := make([]span, 0, 32)
-	skip := false
+	skip := 0
 	for index := range spans {
-		if skip {
-			skip = false
+		if skip > 0 {
+			skip -= 1
 			continue
 		}
 		if index == len(spans)-1 {
@@ -163,8 +163,14 @@ func FieldIndicesWithSingleSpace(s string) []span {
 			continue
 		}
 		if spans[index].end+1 == spans[index+1].start {
-			mergedspans = append(mergedspans, span{spans[index].start, spans[index+1].end})
-			skip = true
+			if index+2 <= len(spans)-1 && spans[index+1].end+1 == spans[index+2].start {
+				skip += 2
+				mergedspans = append(mergedspans, span{spans[index].start, spans[index+2].end})
+			} else {
+				skip += 1
+				mergedspans = append(mergedspans, span{spans[index].start, spans[index+1].end})
+			}
+
 		} else {
 			mergedspans = append(mergedspans, span{spans[index].start, spans[index].end})
 		}
@@ -175,6 +181,7 @@ func FieldIndicesWithSingleSpace(s string) []span {
 		}
 		mergedspans[index-1].end = mergedspans[index].start
 	}
+
 	return mergedspans
 }
 

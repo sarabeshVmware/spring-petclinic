@@ -29,12 +29,10 @@ import (
 type outerloopConfiguration struct {
 	CatalogInfoYaml string `yaml:"catalog_info_yaml"`
 	Mysql           struct {
-		Name     string `yaml:"name"`
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"mysql"`
 	Namespace string `yaml:"namespace"`
 	Project   struct {
-		Application         string `yaml:"application"`
 		Host                string `yaml:"host"`
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
@@ -51,36 +49,24 @@ type outerloopConfiguration struct {
 	ScanPolicy struct {
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"scan_policy"`
-	SpringPetclinic struct {
-		BuildNamePrefix     string `yaml:"build_name_prefix"`
-		GitrepositoryName   string `yaml:"gitrepository_name"`
-		ImagerepositoryName string `yaml:"imagerepository_name"`
-		KsvcName            string `yaml:"ksvc_name"`
-		Name                string `yaml:"name"`
-		PodintentName       string `yaml:"podintent_name"`
-		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
-		YamlFile            string `yaml:"yaml_file"`
-	} `yaml:"spring_petclinic"`
 	SpringPetclinicPipeline struct {
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"spring_petclinic_pipeline"`
 	Workload struct {
-		Name                string `yaml:"name"`
-		YamlFile            string `yaml:"yaml_file"`
-		TestYamlFile        string `yaml:"test_yaml_file"`
-		BuildNamePrefix     string `yaml:"build_name_prefix"`
-		GitrepositoryName   string `yaml:"gitrepository_name"`
-		ImagerepositoryName string `yaml:"imagerepository_name"`
-		KsvcName            string `yaml:"ksvc_name"`
-		PodintentName       string `yaml:"podintent_name"`
-		TaskrunNamePrefix   string `yaml:"taskrun_name_prefix"`
-		ImageScanName       string `yaml:"imagescan_name"`
-		SourceScanName      string `yaml:"sourcescan_name"`
-		PipelineName        string `yaml:"pipeline_name"`
+		Name                 string `yaml:"name"`
+		YamlFile             string `yaml:"yaml_file"`
+		TestYamlFile         string `yaml:"test_yaml_file"`
+		BuildNameSuffix      string `yaml:"build_name_suffix"`
+		PipelineName         string `yaml:"pipeline_name"`
+		TaskRunInfix         string `yaml:"taskrun_name_infix"`
+		TaskRunTestSuffix    string `yaml:"taskrun_test_suffix"`
+		ServiceBindingSuffix string `yaml:"service_binding_suffix"`
 	} `yaml:"workload"`
 }
 
 var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "outerloop")
+var buildName = ""
+var ksvcLatestReady = ""
 
 func getOuterloopConfig() (outerloopConfiguration, error) {
 	log.Printf("getting outerloop config")
@@ -111,7 +97,6 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	// update outerloop config for full file paths
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
-	outerloopConfig.SpringPetclinic.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinic.YamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
@@ -262,7 +247,7 @@ var verifySourceScanStatus = features.New("verify-source-scan-status").
 		t.Log("verifying source scan status")
 
 		// check
-		sourceScanCompleted := kubectl_helpers.ValidateSourceScans(outerloopConfig.Workload.SourceScanName, outerloopConfig.Namespace, 5, 30)
+		sourceScanCompleted := kubectl_helpers.ValidateSourceScans(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !sourceScanCompleted {
 			t.Error("source scan completed")
 			t.FailNow()
@@ -279,7 +264,7 @@ var verifyImageScanStatus = features.New("verify-imagescan-status").
 		t.Log("verifying image scan status")
 
 		// check
-		imageScanCompleted := kubectl_helpers.ValidateImageScans(outerloopConfig.Workload.ImageScanName, outerloopConfig.Namespace, 5, 30)
+		imageScanCompleted := kubectl_helpers.ValidateImageScans(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !imageScanCompleted {
 			t.Error("image scan completed")
 			t.FailNow()
@@ -296,7 +281,7 @@ var verifyPipelineRunStatus = features.New("verify-pipeline-runs-status").
 		t.Log("verifying pipeline runs status")
 
 		// check
-		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns("", outerloopConfig.Namespace, 5, 30)
+		pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !pipelineRunSucceeded {
 			t.Error("pipeline runs not succeeded")
 			t.FailNow()
@@ -313,7 +298,7 @@ var verifyImageskpac = features.New("verify-images.kpac-status").
 		t.Logf("verifying latest image status")
 
 		// check
-		if !kubectl_helpers.ValidateLatestImageStatus(suiteConfig.Innerloop.Workload.Namespace, 10, 30) {
+		if !kubectl_helpers.ValidateLatestImageStatus(outerloopConfig.Namespace, 10, 30) {
 			t.Error("image status is not true")
 			t.FailNow()
 		} else {
@@ -329,7 +314,7 @@ var verifyGitrepoStatus = features.New("verify-gitrepo-status").
 		t.Log("verifying gitrepo ready status")
 
 		// check
-		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.GitrepositoryName, outerloopConfig.Namespace, 5, 30)
+		gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !gitrepoReady {
 			t.Error("gitrepo not ready")
 			t.FailNow()
@@ -345,9 +330,8 @@ var verifyBuildStatus = features.New("verify-build-status").
 	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying build succeeded status")
 
-		// check
-		buildname := fmt.Sprintf("%s-build-1", outerloopConfig.Workload.Name)
-		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
+		buildName = fmt.Sprintf("%s%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.BuildNameSuffix)
+		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildName, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
 			t.FailNow()
@@ -364,7 +348,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying podintent ready status")
 
 		// check
-		if !kubectl_helpers.VerifyPodIntentStatus(outerloopConfig.SpringPetclinic.PodintentName, outerloopConfig.Namespace, 5, 30) {
+		if !kubectl_helpers.VerifyPodIntentStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30) {
 			t.Error("podintent not ready")
 			t.FailNow()
 		} else {
@@ -377,7 +361,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying appliveview labels present in podintent")
 
 		// check
-		alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
 		if !alvLabelsPresent {
 			t.Error("appliveview lables absent in podintent")
 			t.FailNow()
@@ -391,7 +375,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying springbootconventions labels present in podintent")
 
 		// check
-		springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
 		if !springbootconventionsLabelsPresent {
 			t.Error("springbootconventions lables absent in podintent")
 			t.FailNow()
@@ -405,7 +389,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying appliveview conventions present in podintent")
 
 		// check
-		appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
 		if !appliveviewConventionsPresent {
 			t.Error("appliveview conventions absent in podintent")
 			t.FailNow()
@@ -419,7 +403,7 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 		t.Log("verifying springbootconventions conventions present in podintent")
 
 		// check
-		springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(outerloopConfig.Workload.PodintentName, outerloopConfig.Namespace)
+		springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
 		if !springbootconventionsConventionsPresent {
 			t.Error("springbootconventions conventions absent in podintent")
 			t.FailNow()
@@ -431,13 +415,28 @@ var verifyPodintents = features.New("verify-podintents-labels-conventions").
 	}).
 	Feature()
 
+var verifyRevisionStatus = features.New("verify-revision-status").
+	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying revision ready status")
+
+		latestRevision := kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
+		revisionReady := kubectl_helpers.ValidateRevisionStatus(latestRevision, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
+		ksvcLatestReady = latestRevision
+		if !revisionReady {
+			t.Error("revision not ready")
+			t.FailNow()
+		} else {
+			t.Log("revision ready")
+		}
+		return ctx
+	}).
+	Feature()
+
 var verifyKsvcStatus = features.New("verify-ksvc-status").
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying ksvc ready status")
 
-		// check
-		ksvcLatestReady := fmt.Sprintf("%s-00002", outerloopConfig.Workload.Name)
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -453,8 +452,24 @@ var verifyTaskrunStatus = features.New("verify-taskrun-status").
 	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying taskrun succeeded status")
 
-		// check
-		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(outerloopConfig.Namespace, 5, 30)
+		taskRunPrefix := fmt.Sprintf("%s%s", outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunInfix)
+		taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, outerloopConfig.Namespace, 5, 30)
+		if !taskrunSucceeded {
+			t.Error("taskrun not succeeded")
+			t.FailNow()
+		} else {
+			t.Log("taskrun succeeded")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyTestTaskrunStatus = features.New("verify-test-taskrun-status").
+	Assess("verify-test-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying test taskrun succeeded status")
+
+		taskrunSucceeded := kubectl_helpers.VerifyTestTaskrunStatus(outerloopConfig.Workload.Name, outerloopConfig.Workload.TaskRunTestSuffix, outerloopConfig.Namespace, 5, 30)
 		if !taskrunSucceeded {
 			t.Error("taskrun not succeeded")
 			t.FailNow()
@@ -698,7 +713,7 @@ var deleteWorkload = features.New("delete-workload").
 	Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("deleting workload")
 
-		// deploy workload
+		// delete workload
 		err := tanzuCmds.TanzuDeleteWorkload(outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace)
 		if err != nil {
 			t.Error("error while deleting workload")
@@ -765,8 +780,7 @@ var verifyServiceBindings = features.New("verify-service-bindings").
 	Assess("verify-service-bindings-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying service bindings ready status")
 
-		// check
-		sbname := fmt.Sprintf("%[1]s-%[1]s-db", outerloopConfig.Workload.Name)
+		sbname := fmt.Sprintf("%[1]s-%[1]s%[2]s", outerloopConfig.Workload.Name, outerloopConfig.Workload.ServiceBindingSuffix)
 		if !kubectl_helpers.ValidateServiceBindings(sbname, outerloopConfig.Namespace, 5, 30) {
 			t.Error("service bindings not ready")
 			t.FailNow()
@@ -782,16 +796,13 @@ var verifyBuildStatusAfterUpdate = features.New("verify-build-status").
 	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying build succeeded status")
 
-		// check
-		buildname := fmt.Sprintf("%s-build-2", outerloopConfig.Workload.Name)
-		buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildname, outerloopConfig.Namespace, 15, 60)
+		buildSucceeded := kubectl_helpers.VerifyNewerBuildStatus(buildName, outerloopConfig.Namespace, 15, 60)
 		if !buildSucceeded {
 			t.Error("build not succeeded")
 			t.FailNow()
 		} else {
 			t.Log("build succeeded")
 		}
-
 		return ctx
 	}).
 	Feature()
@@ -800,9 +811,7 @@ var verifyKsvcStatusAfterUpdate = features.New("verify-ksvc-status").
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying ksvc ready status")
 
-		// check
-		ksvcLatestReady := fmt.Sprintf("%s-00003", outerloopConfig.Workload.Name)
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.KsvcName, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()

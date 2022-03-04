@@ -202,15 +202,15 @@ func ValidatePipelineExists(name string, namespace string, timeoutInMins int, in
 	return result
 }
 
-func ValidatePipelineRuns(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+func ValidatePipelineRuns(prefix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Validating pipeline runs")
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
-		prs := kubectl_lib.GetPipelineRuns(name, namespace)
+		prs := kubectl_lib.GetPipelineRuns("", namespace)
 		if (prs == kubectl_lib.GetPipelineRunsOutput{}) {
 			log.Println("Pipeline runs not created yet")
-		} else if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" {
+		} else if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" && strings.HasPrefix(prs.NAME, prefix) {
 			log.Println("Pipeline runs created successfully")
 			result = true
 			break
@@ -404,7 +404,7 @@ func VerifyGitRepoStatus(name string, namespace string, timeoutInMins int, inter
 	return result
 }
 
-func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds int) bool {
+func VerifyTaskrunStatus(taskrunPrefix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Validating task run status")
 	finalTimeout := timeoutInMins * 60
 	result := false
@@ -412,10 +412,41 @@ func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds 
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else if taskruns[len(taskruns)-1].SUCCEEDED == "True" {
-			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[len(taskruns)-1].NAME, taskruns[len(taskruns)-1].SUCCEEDED)
-			result = true
-			break
+		} else {
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
+					result = true
+					return result
+				}
+			}
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("task run is not generated after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating task run status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		taskruns := kubectl_lib.GetTaskruns("", namespace)
+		if len(taskruns) < 1 {
+			log.Println("taskruns are not generated yet")
+		} else {
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) && strings.HasSuffix(taskrun.NAME, taskrunSuffix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
+					result = true
+					return result
+				}
+			}
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
@@ -524,6 +555,92 @@ func ValidateDeliverables(name string, namespace string, timeoutInMins int, inte
 	}
 	if !result {
 		log.Printf("Deliverable is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func GetLatestRevision(config_name string, namespace string) string {
+	log.Printf("Get revisions for config: %s", config_name)
+	revs := kubectl_lib.GetRevisions("", namespace)
+	revisionName := ""
+	for i := len(revs) - 1; i >= 0; i-- {
+		if revs[i].CONFIG_NAME == config_name {
+			revisionName = revs[i].NAME
+			log.Printf("Latest revision is %s", revisionName)
+			break
+		}
+	}
+	if revisionName == "" {
+		log.Printf("No revisions found for config: %s", config_name)
+	}
+	return revisionName
+}
+
+func ValidateRevisionStatus(revision_name, config string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating revision")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		revision := kubectl_lib.GetRevisions(revision_name, namespace)
+		if len(revision) < 1 {
+			log.Printf("Revision: %s is not created yet", revision_name)
+		} else if revision[0].READY == "True" && revision[0].CONFIG_NAME == config {
+			log.Printf("Revision %s is ready", revision[0].NAME)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Revision is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func VerifyNewerBuildStatus(oldBuildName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating newer build status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		builds := kubectl_lib.GetBuilds("", namespace)
+		if len(builds) < 1 {
+			log.Println("Builds are not generated yet")
+		} else if builds[len(builds)-1].SUCCEEDED == "True" && builds[len(builds)-1].NAME > oldBuildName {
+			log.Printf("Build %s status is verified successfully. Status is %s", builds[len(builds)-1].NAME, builds[len(builds)-1].SUCCEEDED)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Newer build compared to %s is not ready after %d mins", oldBuildName, timeoutInMins)
+	}
+	return result
+}
+
+func VerifyNewerKsvcStatus(name string, namespace string, oldKsvcCreated string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating ksvc status")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		ksvc := kubectl_lib.GetKsvc("", namespace)
+		if len(ksvc) < 1 {
+			log.Println("Knative services are not generated yet")
+		} else if (ksvc[len(ksvc)-1].READY == "True") && (ksvc[len(ksvc)-1].LATESTREADY > oldKsvcCreated) {
+			log.Printf("Knative %s status is verified successfully. Status is %s. LatestCreated is %s.", ksvc[len(ksvc)-1].NAME, ksvc[len(ksvc)-1].READY, ksvc[len(ksvc)-1].LATESTCREATED)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Ksvc is not generated after %d mins", timeoutInMins)
 	}
 	return result
 }
