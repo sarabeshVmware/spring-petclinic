@@ -18,7 +18,20 @@ spec:
   packageRef:
     refName: ootb-templates.tanzu.vmware.com
     versionSelection:
-      constraints: 0.6.1
+      constraints: 0.7.0-build.1
+  values:
+  - secretRef:
+      name: ootb-templates-values
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ootb-templates-values
+  namespace: tap-install
+type: Opaque
+stringData:
+  values.yml: #@ yaml.encode(data.values.ootb_templates)
 
 #@ end
 #@ end

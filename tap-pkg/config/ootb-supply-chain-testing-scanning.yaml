@@ -20,7 +20,7 @@ spec:
   packageRef:
     refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
     versionSelection:
-      constraints: 0.6.1
+      constraints: 0.7.0-build.1
   values:
   - secretRef:
       name: ootb-supply-chain-testing-scanning-values
