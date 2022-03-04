@@ -32,7 +32,7 @@ spec:
   packageRef:
     refName: controller.source.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.2
+      constraints: 0.3.3
   values:
   - secretRef:
       name: source-controller-values
