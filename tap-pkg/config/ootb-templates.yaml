@@ -19,6 +19,7 @@ spec:
     refName: ootb-templates.tanzu.vmware.com
     versionSelection:
       constraints: 0.7.0-build.1
+      prereleases: {}
   values:
   - secretRef:
       name: ootb-templates-values
