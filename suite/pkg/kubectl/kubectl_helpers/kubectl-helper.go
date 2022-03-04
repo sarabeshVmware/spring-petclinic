@@ -412,10 +412,14 @@ func VerifyTaskrunStatus(taskrunPrefix string, namespace string, timeoutInMins i
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else if taskruns[0].SUCCEEDED == "True" && strings.HasPrefix(taskruns[0].NAME, taskrunPrefix) {
-			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[0].NAME, taskruns[0].SUCCEEDED)
-			result = true
-			break
+		} else {
+			for i, taskrun := range taskruns {
+				if taskrun[i].SUCCEEDED == "True" && strings.HasPrefix(taskrun[i].NAME, taskrunPrefix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[i].NAME, taskruns[i].SUCCEEDED)
+					result = true
+					return result
+				}
+			}
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
@@ -435,11 +439,15 @@ func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespa
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else if taskruns[len(taskruns)-1].SUCCEEDED == "True" && strings.HasPrefix(taskruns[len(taskruns)-1].NAME, taskrunPrefix) && strings.HasSuffix(taskruns[len(taskruns)-1].NAME, taskrunSuffix) {
-			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[len(taskruns)-1].NAME, taskruns[len(taskruns)-1].SUCCEEDED)
-			result = true
-			break
-		}
+		} else{
+			for i, taskrun := range taskruns {
+				if taskrun[i].SUCCEEDED == "True" && strings.HasPrefix(taskrun[i].NAME, taskrunPrefix) && strings.HasSuffix(taskrun[i].NAME, taskrunSuffix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun[i].NAME, taskrun[i].SUCCEEDED)
+					result = true
+					return result
+			}
+		} 
+		
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
 		finalTimeout -= intervalInSeconds
