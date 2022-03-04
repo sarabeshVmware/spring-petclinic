@@ -1493,7 +1493,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/tap-gui/bundle@sha256:290c5928817175f8be0f39be8ac39802aa26a6210a42acbe2c7e5cc3ebaf211b
+          image: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:290c5928817175f8be0f39be8ac39802aa26a6210a42acbe2c7e5cc3ebaf211b
       template:
       - ytt:
           paths:
