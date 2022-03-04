@@ -1,0 +1,27 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap-auth.tanzu.vmware.com.0.1.0-build.0
+spec:
+  refName: tap-auth.tanzu.vmware.com
+  version: 0.1.0-build.0
+  releasedAt: "2022-03-01T21:11:24Z"
+  releaseNotes: https://docs.vmware.com/en/VMware-Tanzu-Application-Platform/index.html
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tap-auth/tap-auth-bundle@sha256:019896f3de9e9c779ac88b4c388efb01847a1704e1e07d255c009d8cb4bb7a85
+      template:
+      - ytt:
+          paths:
+          - tap-roles/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      properties: {}
