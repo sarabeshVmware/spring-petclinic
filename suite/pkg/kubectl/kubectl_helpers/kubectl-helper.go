@@ -1,6 +1,7 @@
 package kubectl_helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -336,7 +337,7 @@ func GetWorkloadStatus(name string, namespace string) string {
 }
 
 func VerifyKsvcStatus(name string, namespace string, latestReady string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating ksvc status")
+	log.Printf("Validating ksvc status READY == true and LATESTREADY == %s", latestReady)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -559,6 +560,59 @@ func ValidateDeliverables(name string, namespace string, timeoutInMins int, inte
 	return result
 }
 
+type Secrets struct {
+	Name string `json:"name"`
+}
+
+func PatchServiceAccountWithNewSecret(sa string, namespace string, newSecret string) bool {
+
+	log.Println("Patching the default service account")
+	raw := kubectl_lib.GetServiceAccountJson(sa, namespace)
+	if raw == nil {
+		return false
+	}
+
+	var secret Secrets
+	secret.Name = newSecret
+	var secrets = append(raw.Secrets, secret)
+
+	var secretPatch, err = json.Marshal(secrets)
+	if err != nil {
+		log.Printf("error unmarshaling: %v", err)
+	}
+	log.Printf("Patch to be added : %s", string(secretPatch))
+	res := kubectl_lib.PatchServiceAccount(sa, namespace, "'{\"secrets\":"+string(secretPatch)+"}'")
+	if !res {
+		log.Println("Error while patching")
+		return false
+	}
+	log.Println("Patch completed")
+	return true
+}
+
+func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating workloads ")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		status := GetWorkloadStatus(name, namespace)
+		if status == "True" {
+			log.Println("Workload validated successfully")
+			result = true
+			break
+		} else {
+			log.Printf("workload ready status: %s", status)
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Workload validation not successfull after %d mins", timeoutInMins)
+	}
+	return result
+}
+
 func GetLatestRevision(config_name string, namespace string) string {
 	log.Printf("Get revisions for config: %s", config_name)
 	revs := kubectl_lib.GetRevisions("", namespace)
@@ -624,6 +678,7 @@ func VerifyNewerBuildStatus(oldBuildName string, namespace string, timeoutInMins
 
 func VerifyNewerKsvcStatus(name string, namespace string, oldKsvcCreated string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Validating ksvc status")
+	log.Printf("Validating ksvc status READY == true and greater than oldBuildName == %s", oldKsvcCreated)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {

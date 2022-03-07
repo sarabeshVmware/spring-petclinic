@@ -7,6 +7,13 @@ innerloop:
     name: tanzu-java-web-app
     namespace: my-apps
     url: "tanzu-java-web-app.my-apps.example.com"
+    gitrepository: https://github.com/dapdelivery/tanzu-java-web-app
+    yaml_file: resources/innerloop/tanzu-web-app-workload.yaml
+    application_file_path: "tanzu-java-web-app/src/main/java/com/example/springboot/HelloController.java"
+    new_string: "Greetings from Spring Boot + TAP!"
+    original_string: "Greetings from Spring Boot + Tanzu!"
+    build_name_suffix: -build-1
+    image_delivery_suffix: -delivery
 package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
   name: tanzu-tap-repository
@@ -36,3 +43,6 @@ tanzu-cluster-essentials:
   bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
   registry: registry.tanzu.vmware.com
   filename: install.sh
+git-credentials:
+  username: dapdelivery
+  email: svc.dapdelivery@gmail.com
