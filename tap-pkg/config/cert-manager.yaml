@@ -17,7 +17,7 @@ spec:
   packageRef:
     refName: cert-manager.tanzu.vmware.com
     versionSelection:
-      constraints: 1.5.3+tap.1
+      constraints: 1.5.3+tap.2
       prereleases: {}
 
 #@ end
