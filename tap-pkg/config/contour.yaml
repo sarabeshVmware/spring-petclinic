@@ -20,7 +20,7 @@ spec:
   packageRef:
     refName: contour.tanzu.vmware.com
     versionSelection:
-      constraints: 1.18.2+tap.2
+      constraints: 1.18.2+tap.1
       prereleases: {}
   values:
   - secretRef:
