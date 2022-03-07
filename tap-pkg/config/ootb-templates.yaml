@@ -1,7 +1,26 @@
 #@ load("_profiles.star", "profiles")
+#@ load("@ytt:struct", "struct")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run]):
 #@ if profiles.is_pkg_enabled("ootb-templates.tanzu.vmware.com"):
+
+#@ def ootb_templates_values():
+#@   pkg_values_dict = struct.decode(data.values.ootb_templates)
+#@
+#@   if not profiles.is_any_enabled([profiles.run]):
+#@     return struct.encode(pkg_values_dict)
+#@   end
+#@
+#@   if 'excluded_templates' not in pkg_values_dict:
+#@     pkg_values_dict['excluded_templates'] = []
+#@   end
+#@
+#@   pkg_values_dict['excluded_templates'].append('git-writer')
+#@   pkg_values_dict['excluded_templates'].append('image-writer')
+#@   return pkg_values_dict
+#@ end
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -32,7 +51,7 @@ metadata:
   namespace: tap-install
 type: Opaque
 stringData:
-  values.yml: #@ yaml.encode(data.values.ootb_templates)
+  values.yml: #@ yaml.encode(ootb_templates_values())
 
 #@ end
 #@ end
