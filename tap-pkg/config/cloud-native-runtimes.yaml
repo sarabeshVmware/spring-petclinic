@@ -17,7 +17,7 @@ ingress:
 #@ end
 
 #@ def cnrsValues():
-#@ if hasattr(data.values, "contour"):
+#@ if hasattr(data.values, "contour") and hasattr(data.values.contour, "namespace"):
 #@ if data.values.contour.namespace:
 #@ return overlay.apply(data.values.cnrs, cnrsOverlay())
 #@ end
