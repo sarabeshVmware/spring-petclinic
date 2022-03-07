@@ -1,0 +1,91 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: buildservice.tanzu.vmware.com.1.4.3
+spec:
+  refName: buildservice.tanzu.vmware.com
+  version: 1.4.3
+  capacityRequirementsDescription: Cluster with nodes > 50GB ephemeral storage, Registry > 10GB available space
+  releaseNotes: https://docs.vmware.com/en/VMware-Tanzu-Build-Service/index.html
+  releasedAt: "2022-02-24T00:00:00Z"
+  valuesSchema:
+    openAPIv3:
+      title: buildservice.tanzu.vmware.com values schema
+      properties:
+        kp_default_repository:
+          type: string
+          description: Docker repository used for builder images and dependencies
+          examples:
+            - registry.io/build-service
+        kp_default_repository_username:
+          type: string
+          description: Username for kp_default_repository
+          examples:
+            - janedoe@vmware.com
+            - _json_key
+        kp_default_repository_password:
+          type: string
+          description: Password for kp_default_repository
+          examples:
+            - password
+        tanzunet_username:
+          type: string
+          description: 'Optional: Tanzunet registry username required for dependency import at install.'
+          examples:
+            - janedoe@vmware.com
+        tanzunet_password:
+          type: string
+          description: 'Optional: Tanzunet registry password required for dependency import at install.'
+          examples:
+            - password
+        admin_users:
+          type: string
+          description: 'Optional: Comma separated list of users who will be granted admin privileges on Build Service.'
+          examples:
+            - user1,user2
+        admin_groups:
+          type: string
+          description: 'Optional: Comma separated list of groups that will be granted admin privileges on Build Service.'
+          examples:
+            - group1,group2
+        ca_cert_data:
+          type: string
+          description: 'Optional: TBS registry ca certificate'
+        http_proxy:
+          type: string
+          description: 'Optional: the HTTP proxy to use for network traffic.'
+        https_proxy:
+          type: string
+          description: 'Optional: the HTTPS proxy to use for network traffic.'
+        no_proxy:
+          type: string
+          description: 'Optional: A comma-separated list of hostnames, IP addresses, or IP ranges in CIDR format that should not use a proxy.'
+        descriptor_version:
+          type: string
+          description: 'Optional: Version of descriptor to use during install. This will override the version installed by default.'
+        enable_automatic_dependency_updates:
+          type: bool
+          description: 'Optional: Allow automatic import of new dependency updates from Tanzunet'
+        descriptor_name:
+          type: string
+          description: Name of descriptor to import (required for dependency updater feature)
+          examples:
+            - tap-1.0.0-lite
+            - tap-1.0.0-full
+            - lite
+            - full
+  template:
+    spec:
+      fetch:
+        - imgpkgBundle:
+            image: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:82ab5890edfdc887862a5ea7b5918b26401f6808d994fe6bb6f70dde287e2861
+      template:
+        - ytt:
+            paths:
+              - config/
+        - kbld:
+            paths:
+              - '-'
+              - .imgpkg/images.yml
+      deploy:
+        - kapp: {}

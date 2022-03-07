@@ -69,6 +69,7 @@ func TestOuterloopTestingSC(t *testing.T) {
 	// test
 	testenv.Test(t,
 		updateTap,
+		createGithubRepo,
 		deployMysqldbService,
 		deploySpringpetclinicPipeline,
 		verifyPipelineStatus,
@@ -78,15 +79,23 @@ func TestOuterloopTestingSC(t *testing.T) {
 		verifyImageskpac,
 		verifyBuildStatus,
 		verifyPodintents,
+		verifyDeliverables,
+		verifyServiceBindings,
+		verifyRevisionStatus,
 		verifyKsvcStatus,
 		verifyTaskrunStatus,
+		verifyTestTaskrunStatus,
 		verifyWorkloadStatus,
 		verifyWebpageOriginal,
 		gitUpdate,
+		verifyBuildStatusAfterUpdate,
+		verifyRevisionStatus,
+		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
-		gitReset,
+		// validations for build and ksvc
 		removeProjectDir,
 		deleteWorkload,
+		deleteGithubRepo,
 	)
 	t.Log("************** TestCase END: TestOuterloopTestingSC **************")
 }

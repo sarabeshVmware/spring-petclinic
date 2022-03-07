@@ -12,6 +12,9 @@ ceip_policy_disclosed: false
 excluded_packages:
 - ""
 
+shared:
+  ca_cert_data: ""
+
 #@schema/type any=True
 api_portal: {}
 
@@ -20,6 +23,9 @@ accelerator: {}
 
 #@schema/type any=True
 appliveview: {}
+
+#@schema/type any=True
+appliveview_connector: {}
 
 #@schema/type any=True
 cartographer: {}
@@ -46,6 +52,9 @@ ootb_supply_chain_testing_scanning: {}
 
 #@schema/type any=True
 ootb_delivery_basic: {}
+
+#@schema/type any=True
+ootb_templates: {}
 
 #@schema/type any=True
 image_policy_webhook: {}

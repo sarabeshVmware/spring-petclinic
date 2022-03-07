@@ -1,0 +1,49 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: connector.appliveview.tanzu.vmware.com.1.1.0-build.2
+spec:
+  refName: connector.appliveview.tanzu.vmware.com
+  version: 1.1.0-build.2
+  releaseNotes: |
+        Release 1.1.0-build.2 of the App Live View Connector package
+  releasedAt: 2022-03-03T00:00:10Z
+  valuesSchema:
+    openAPIv3:
+      title: connector.appliveview.tanzu.vmware.com values schema
+      properties:
+        backend:
+          type: object
+          description: Backend Configuration
+          properties:
+            sslDisabled:
+              description: Flag for whether or not to disable ssl
+              type: boolean
+              default: false
+            host:
+              type: string
+              description: |
+                Domain to be used to reach the application live view backend. Prepend "appliveview"
+                subdomain to the value if you are using shared ingress. For example:
+                "example.com" would become "appliveview.example.com".
+            port:
+              description: Port to reach the application live view backend
+              type: number
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:8c51ca05fd275f2da98b6bab8360ad9c060ecba81cf5abe1911fcf6958cfdb9e
+
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}

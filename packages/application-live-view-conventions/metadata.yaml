@@ -1,0 +1,13 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: conventions.appliveview.tanzu.vmware.com
+spec:
+  maintainers:
+    - name : "Martin Lippert"
+  providerName: "VMware"
+  displayName: "Application Live View Conventions for VMware Tanzu"
+  longDescription: "The Application Live View convention server ships by default with Tanzu Application Platform (TAP). This convention applies application live view specific labels and environment properties to the Pod Spec of a running Spring Boot apps deployed to the platform."
+  shortDescription: "Application Live View convention server"
+  supportDescription: "https://tanzu.vmware.com/support"

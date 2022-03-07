@@ -2,7 +2,7 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.build, profiles.view]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.view]):
 #@ if profiles.is_pkg_enabled("metadata-store.apps.tanzu.vmware.com"):
 
 ---
@@ -19,8 +19,7 @@ spec:
   packageRef:
     refName: metadata-store.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.0-build.0
-      prereleases: {}
+      constraints: 1.1.0
   values:
   - secretRef:
       name: metadata-store-values

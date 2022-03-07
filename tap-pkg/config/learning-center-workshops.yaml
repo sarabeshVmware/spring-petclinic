@@ -19,7 +19,7 @@ spec:
   packageRef:
     refName: workshops.learningcenter.tanzu.vmware.com
     versionSelection:
-      constraints: 0.1.1
+      constraints: 0.2.0
 
 #@ end
 #@ end

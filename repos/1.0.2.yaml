@@ -22,6 +22,7 @@ packages:
     versions:
       - 0.5.0
       - 0.5.1-rc.1
+      - 0.5.1
   - name: app-live-view
     versions:
       - 1.0.1
@@ -57,6 +58,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
+      - 1.0.2
   - name: api-portal
     versions:
       - 1.0.8
@@ -64,9 +66,11 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
+      - 1.1.1
   - name: build-service
     versions:
       - 1.4.2
+      - 1.4.3
   - name: tap-gui
     versions:
       - 1.0.1
@@ -75,7 +79,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2-build.5
+      - 1.0.2-build.8
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -88,6 +92,7 @@ packages:
     versions:
       - 0.1.0
       - 0.2.1
+      - 0.2.2
   - name: ootb-templates
     versions:
       - 0.5.1
@@ -111,6 +116,7 @@ packages:
     versions:
       - 0.16.0
       - 0.16.1
+      - 0.16.3
   - name: tekton-pipelines
     versions:
       - 0.30.0
@@ -123,3 +129,4 @@ packages:
     versions:
       - 0.1.2
       - 0.1.3
+      - 0.1.4

@@ -10,4 +10,5 @@ spec:
   providerName: "VMware"
   maintainers:
   - name: "Thomas Risberg"
+  - name: "Diego Wong"
   supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
