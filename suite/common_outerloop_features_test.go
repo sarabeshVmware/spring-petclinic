@@ -1,4 +1,4 @@
-//go:build all || outerloop || outerloop_basic || outerloop_testing || outerloop_testing_scanning
+//go:build all || outerloop || outerloop_basic || outerloop_testing || outerloop_testing_scanning || outerloop_basic_supplychain_gitops_delivery_test
 
 package suite
 
@@ -61,12 +61,12 @@ type outerloopConfiguration struct {
 		TaskRunInfix         string `yaml:"taskrun_name_infix"`
 		TaskRunTestSuffix    string `yaml:"taskrun_test_suffix"`
 		ServiceBindingSuffix string `yaml:"service_binding_suffix"`
+		GitopsYamlFile       string `yaml:"gitops_yaml_file"`
+		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
 }
 
 var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "outerloop")
-var buildName = ""
-var ksvcLatestReady = ""
 
 func getOuterloopConfig() (outerloopConfiguration, error) {
 	log.Printf("getting outerloop config")
@@ -100,7 +100,8 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
-
+	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)
+	outerloopConfig.Workload.GitSSHSecretYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitSSHSecretYamlFile)
 	return outerloopConfig, nil
 }
 
@@ -129,6 +130,23 @@ var deploySpringpetclinicPipeline = features.New("deploy-pipeline-app-via-yaml-c
 
 		// deploy app
 		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.SpringPetclinicPipeline.YamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deploying springpetclinic-pipeline")
+			t.FailNow()
+		} else {
+			t.Log("deployed springpetclinic-pipeline")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deploySpringpetclinicPipelineWithGitops = features.New("deploy-pipeline-app-via-yaml-configurations-with-gitops").
+	Assess("deploy-springpetclinic-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying springpetclinic-pipeline")
+
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.Workload.GitopsYamlFile, outerloopConfig.Namespace)
 		if err != nil {
 			t.Error("error while deploying springpetclinic-pipeline")
 			t.FailNow()
@@ -738,7 +756,6 @@ var createGithubRepo = features.New("create-github-repo").
 		} else {
 			t.Log("created repo")
 		}
-
 		return ctx
 	}).
 	Feature()
@@ -755,7 +772,34 @@ var deleteGithubRepo = features.New("delete-github-repo").
 		} else {
 			t.Log("deleted repo")
 		}
+		return ctx
+	}).
+	Feature()
 
+var createGitSSHSecret = features.New("create-git-ssh-secret").
+	Assess("create-secret", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("Creating git-ssh secret")
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.Workload.GitSSHSecretYamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while creating git-ssh secret")
+			t.Fail()
+		} else {
+			t.Log("created git-ssh secret")
+		}
+		return ctx
+	}).
+	Feature()
+
+var patchServiceAccountSecrets = features.New("patch-sa-secret").
+	Assess("patch-sa-secret", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("Patching default sa secrets")
+		res := kubectl_helpers.PatchServiceAccountWithNewSecret("default", outerloopConfig.Namespace, "git-ssh")
+		if !res {
+			t.Error("error while patching sa secret")
+			t.Fail()
+		} else {
+			t.Log("patched sa secret")
+		}
 		return ctx
 	}).
 	Feature()

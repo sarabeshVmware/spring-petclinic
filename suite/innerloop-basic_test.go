@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
-	exec2 "os/exec"
 	"strings"
 	"testing"
 	"time"
@@ -23,9 +22,6 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
-
-const tiltApp = "tanzu-java-web-app"
-const tiltFile = tiltApp + "/Tiltfile"
 
 func TestInnerloopBasic(t *testing.T) {
 	t.Log("************** TestCase START: TestInnerloopBasic **************")
@@ -561,17 +557,4 @@ func TestInnerloopBasic(t *testing.T) {
 	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasic **************")
-}
-
-func compile() {
-	app := "./mvnw"
-	arg0 := "compile"
-	cmd := exec2.Command(app, arg0)
-	cmd.Dir = tiltApp
-	stdout, err := cmd.Output()
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-	fmt.Println(string(stdout))
 }

@@ -29,3 +29,5 @@ workload:
   pipeline_name: developer-defined-tekton-pipeline
   build_name_suffix: -build-1
   service_binding_suffix: -db
+  gitops_yaml_file: workload-gitops.yaml
+  gitssh_secret_yaml_file: git-ssh-secrets.yaml

@@ -19,9 +19,17 @@ var suiteConfig = struct {
 	CreateNamespaces []string `yaml:"create_namespaces"`
 	Innerloop        struct {
 		Workload struct {
-			Name      string `yaml:"name"`
-			Namespace string `yaml:"namespace"`
-			URL       string `yaml:"url"`
+			Name                string `yaml:"name"`
+			Namespace           string `yaml:"namespace"`
+			URL                 string `yaml:"url"`
+			Gitrepository       string `yaml:"gitrepository"`
+			YamlFile            string `yaml:"yaml_file"`
+			PodintentName       string `yaml:"podintent_name"`
+			ApplicationFilePath string `yaml:"application_file_path"`
+			NewString           string `yaml:"new_string"`
+			OriginalString      string `yaml:"original_string"`
+			BuildNameSuffix     string `yaml:"build_name_suffix"`
+			ImageDeliverySuffix string `yaml:"image_delivery_suffix"`
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
@@ -58,6 +66,10 @@ var suiteConfig = struct {
 		Registry string `yaml:"registry"`
 		Filename string `yaml:"filename"`
 	} `yaml:"tanzu-cluster-essentials"`
+	GitCredentials struct {
+		Username string `yaml:"username"`
+		Email    string `yaml:"email"`
+	} `yaml:"git-credentials"`
 }{}
 
 type tapValuesSchemaStruct struct {
@@ -152,6 +164,8 @@ func getTapValuesSchema() (tapValuesSchemaStruct, error) {
 }
 
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "suite")
+var buildName = ""
+var ksvcLatestReady = ""
 
 func TestMain(m *testing.M) {
 	// set logger
