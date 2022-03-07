@@ -65,7 +65,7 @@ spec:
   capacityRequirementsDescription: Varies significantly based on number of Services, Ingresses/HTTPProxies, etc. A starting point is 128MB RAM and 0.5 CPU for each Contour and Envoy pod, but this can and should be tuned based on observed usage.
   valuesSchema:
     openAPIv3:
-      title: contour.tanzu.vmware.com.1.18.2+tap.1 values schema
+      title: contour.tanzu.vmware.com.1.18.2+tap.2 values schema
       properties:
         namespace:
           type: string
