@@ -32,10 +32,7 @@ metadata:
   name: contour-values
   namespace: tap-install
 stringData:
-  values.yaml: |
-    envoy:
-      service:
-        type: LoadBalancer
+  values.yaml: #@ yaml.encode(data.values.contour)
 
 #@ end
 #@ end
