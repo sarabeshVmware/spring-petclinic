@@ -1,12 +1,13 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("cnrs.tanzu.vmware.com"):
 
 #@ def cnrsOverlay():
-ingress:  
+ingress:
   external:
     #@overlay/match missing_ok=True
     namespace: #@ data.values.contour.namespace
@@ -29,7 +30,7 @@ kind: PackageInstall
 metadata:
   name: cnrs
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
     kapp.k14s.io/change-rule.contour: "upsert after upserting contour"
 spec:
@@ -39,8 +40,8 @@ spec:
     versionSelection:
       constraints: 1.1.0
   values:
-  - secretRef:
-      name: cnrs-values
+    - secretRef:
+        name: cnrs-values
 ---
 apiVersion: v1
 kind: Secret
