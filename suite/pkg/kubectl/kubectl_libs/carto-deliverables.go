@@ -10,7 +10,7 @@ import (
 )
 
 type GetDeliverablesOutput struct {
-	NAME, SOURCE, DELIVERY, READY, REASON string
+	NAME, SOURCE, DELIVERY, READY, REASON, AGE string
 }
 
 func GetDeliverables(deliverableName string, namespace string) []GetDeliverablesOutput {
