@@ -159,5 +159,3 @@ func excluded_filepath(filepath string, exclude_filepath []string) bool {
 	}
 	return false
 }
-
-}
