@@ -113,6 +113,8 @@ func main() {
 	fmt.Println("Package Repository pushed to", bundleLock.Bundle.Image)
 	os.RemoveAll(bundleLockFilename)
 
+	// fmt.Println("Updating packages version in packages.yaml from ", targetChannelFilename)
+	// UpdatePackagesFile(targetChannelFilename)
 }
 
 func execCommand(command string, commandArgs []string) {
@@ -160,4 +162,56 @@ func excluded_filepath(filepath string, exclude_filepath []string) bool {
 	return false
 }
 
+func UpdatePackagesFile(betaFilePath string) {
+	packagesFilePath := "tap-packaging-tests/packages.yaml"
+	fmt.Println("Updating ", packagesFilePath)
+	sourceFile, err := os.ReadFile(betaFilePath)
+	check(err)
+	destFile, err := os.ReadFile(packagesFilePath)
+	check(err)
+
+	type BetaPackages struct {
+		Packages []struct {
+			Name     string   `yaml:"name"`
+			Versions []string `yaml:"versions"`
+		} `yaml:"packages"`
+	}
+	type TestPkgs struct {
+		Description         string   `yaml:"description"`
+		Name                string   `yaml:"name"`
+		Namespace           string   `yaml:"namespace"`
+		Package             string   `yaml:"package"`
+		ValuesFile          string   `yaml:"values_file,omitempty"`
+		Version             string   `yaml:"version"`
+		PackageDependencies []string `yaml:"package_dependencies,omitempty"`
+	}
+	beta4pkgs := BetaPackages{}
+	err = yaml.Unmarshal(sourceFile, &beta4pkgs)
+	check(err)
+
+	testpkg := []TestPkgs{}
+	err = yaml.Unmarshal(destFile, &testpkg)
+
+	check(err)
+	for i, val := range testpkg {
+		for _, betaval := range beta4pkgs.Packages {
+			if (val.Name == betaval.Name) || ((val.Name == "tap-full" || val.Name == "tap-dev-light") && betaval.Name == "tap") {
+				lastIndex := len(betaval.Versions) - 1
+				if val.Version == betaval.Versions[lastIndex] {
+					fmt.Printf("Version already updated for package %s \n", val.Name)
+				} else {
+					fmt.Printf("Changing version for package %s from %s to %s \n", val.Name, val.Version, betaval.Versions[lastIndex])
+
+					testpkg[i].Version = betaval.Versions[lastIndex]
+				}
+			}
+		}
+	}
+	changedDestFile, err := yaml.Marshal(&testpkg)
+	check(err)
+
+	// write to file
+	err = os.WriteFile(packagesFilePath, changedDestFile, 0644)
+	check(err)
+	fmt.Println(packagesFilePath, "Updated successfully.")
 }
