@@ -391,12 +391,10 @@ var verifyTanzuJavaWebAppRevisionStatus = features.New("verify-revision-status")
 	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying revision ready status")
 
-		latestRevision := kubectl_helpers.GetLatestRevision(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
-		t.Logf("latestRevision set to %s", latestRevision)
-		revisionReady := kubectl_helpers.ValidateRevisionStatus(latestRevision, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
-		if ksvcLatestReady == "" {
-			ksvcLatestReady = latestRevision
-		}
+		revisionName = kubectl_helpers.GetLatestRevision(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
+		t.Logf("latestRevision set to %s", revisionName)
+		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
+
 		if !revisionReady {
 			t.Error("revision not ready")
 			t.FailNow()
@@ -411,7 +409,7 @@ var verifyTanzuJavaWebAppKsvcStatus = features.New("verify-ksvc-status").
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Logf("verifying ksvc ready status %s", ksvcLatestReady)
 
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, revisionName, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -501,7 +499,7 @@ var verifyTanzuJavaWebAppKsvcStatusAfterUpdate = features.New("verify-ksvc-statu
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying ksvc ready status")
 
-		ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, revisionName, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -509,6 +507,22 @@ var verifyTanzuJavaWebAppKsvcStatusAfterUpdate = features.New("verify-ksvc-statu
 			t.Log("ksvc ready")
 		}
 
+		return ctx
+	}).
+	Feature()
+
+var verifyTanzuJavaWebAppRevisionStatusAfterUpdate = features.New("verify-revision-status").
+	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying revision ready status")
+
+		revisionName = kubectl_helpers.GetNewerRevision(revisionName, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
+		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
+		if !revisionReady {
+			t.Error("revision not ready")
+			t.FailNow()
+		} else {
+			t.Log("revision ready")
+		}
 		return ctx
 	}).
 	Feature()

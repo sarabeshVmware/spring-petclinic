@@ -81,7 +81,7 @@ func TestInnerLoopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
 		updateWorkloadTiltUp,
 		verifyTanzuJavaWebAppImageRepository,
 		verifyTanzuJavaWebAppBuildStatusAfterUpdate,
-		verifyTanzuJavaWebAppRevisionStatus,
+		verifyTanzuJavaWebAppRevisionStatusAfterUpdate,
 		verifyTanzuJavaWebAppKsvcStatusAfterUpdate,
 		verifyTanzuJavaWebAppWorkloadStatus,
 		makeChangesInFile,

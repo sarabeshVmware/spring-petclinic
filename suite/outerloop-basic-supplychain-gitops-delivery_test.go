@@ -84,7 +84,7 @@ func TestOuterloopBasicSupplychainGitopsDeliveryTest(t *testing.T) {
 		verifyWebpageOriginal,
 		gitUpdate,
 		verifyBuildStatusAfterUpdate,
-		verifyRevisionStatus,
+		verifyRevisionStatusAfterUpdate,
 		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
 		removeProjectDir,
