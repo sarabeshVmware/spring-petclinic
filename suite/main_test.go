@@ -166,6 +166,7 @@ func getTapValuesSchema() (tapValuesSchemaStruct, error) {
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "suite")
 var buildName = ""
 var ksvcLatestReady = ""
+var revisionName = ""
 
 func TestMain(m *testing.M) {
 	// set logger

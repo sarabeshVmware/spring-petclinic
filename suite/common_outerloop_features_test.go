@@ -316,7 +316,7 @@ var verifyImageskpac = features.New("verify-images.kpac-status").
 		t.Logf("verifying latest image status")
 
 		// check
-		if !kubectl_helpers.ValidateLatestImageStatus(outerloopConfig.Namespace, 10, 30) {
+		if !kubectl_helpers.ValidateLatestImageStatus(outerloopConfig.Namespace, 15, 60) {
 			t.Error("image status is not true")
 			t.FailNow()
 		} else {
@@ -437,9 +437,8 @@ var verifyRevisionStatus = features.New("verify-revision-status").
 	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying revision ready status")
 
-		latestRevision := kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
-		revisionReady := kubectl_helpers.ValidateRevisionStatus(latestRevision, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
-		ksvcLatestReady = latestRevision
+		revisionName = kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
+		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !revisionReady {
 			t.Error("revision not ready")
 			t.FailNow()
@@ -454,7 +453,7 @@ var verifyKsvcStatus = features.New("verify-ksvc-status").
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying ksvc ready status")
 
-		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, revisionName, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -855,7 +854,7 @@ var verifyKsvcStatusAfterUpdate = features.New("verify-ksvc-status").
 	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying ksvc ready status")
 
-		ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, ksvcLatestReady, 5, 30)
+		ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(outerloopConfig.Workload.Name, outerloopConfig.Namespace, revisionName, 5, 30)
 		if !ksvcReady {
 			t.Error("ksvc not ready")
 			t.FailNow()
@@ -863,6 +862,22 @@ var verifyKsvcStatusAfterUpdate = features.New("verify-ksvc-status").
 			t.Log("ksvc ready")
 		}
 
+		return ctx
+	}).
+	Feature()
+
+var verifyRevisionStatusAfterUpdate = features.New("verify-revision-status").
+	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying revision ready status")
+
+		revisionName = kubectl_helpers.GetNewerRevision(revisionName, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
+		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
+		if !revisionReady {
+			t.Error("revision not ready")
+			t.FailNow()
+		} else {
+			t.Log("revision ready")
+		}
 		return ctx
 	}).
 	Feature()

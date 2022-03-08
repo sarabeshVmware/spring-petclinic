@@ -113,8 +113,8 @@ func main() {
 	fmt.Println("Package Repository pushed to", bundleLock.Bundle.Image)
 	os.RemoveAll(bundleLockFilename)
 
-	fmt.Println("Updating packages version in packages.yaml from ", targetChannelFilename)
-	//UpdatePackagesFile(targetChannelFilename)
+	// fmt.Println("Updating packages version in packages.yaml from ", targetChannelFilename)
+	// UpdatePackagesFile(targetChannelFilename)
 }
 
 func execCommand(command string, commandArgs []string) {
