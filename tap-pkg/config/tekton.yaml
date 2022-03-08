@@ -9,14 +9,14 @@ kind: PackageInstall
 metadata:
   name: tekton-pipelines
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: tekton.tanzu.vmware.com
     versionSelection:
-      constraints: 0.30.0
+      constraints: 0.30.2
 
 #@ end
 #@ end
