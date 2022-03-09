@@ -520,7 +520,7 @@ var verifyWebpageOriginal = features.New("verify-webpage-original").
 		t.Log("getting external ip and checking for original string")
 
 		// get external IP
-		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
 		if err != nil {
 			t.Error("error while getting external IP")
 			t.FailNow()
@@ -652,7 +652,7 @@ var verifyWebpageNew = features.New("verify-webpage-new").
 		t.Log("getting external ip and checking for new string")
 
 		// get external IP
-		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
 		if err != nil {
 			t.Error("error while getting external IP")
 			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
