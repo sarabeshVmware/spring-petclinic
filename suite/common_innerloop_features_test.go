@@ -189,7 +189,7 @@ var verifyTanzuJavaWebAppResponseBeforeChange = features.New("verify-app-respons
 		t.Log("getting external ip and checking for string")
 
 		// get external IP
-		url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
 		if err != nil {
 			t.Error("error while getting external IP")
 			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
@@ -249,7 +249,7 @@ var verifyTanzuJavaWebAppResponseAfterChange = features.New("verify-app-response
 		t.Log("getting external ip and checking for new string")
 
 		// get external IP
-		url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig())
+		url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
 		if err != nil {
 			t.Error("error while getting external IP")
 			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
