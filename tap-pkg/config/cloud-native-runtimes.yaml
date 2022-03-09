@@ -1,17 +1,34 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("cnrs.tanzu.vmware.com"):
 
+#@ def cnrsOverlay():
+ingress:
+  external:
+    #@ if/end data.values.cnrs.ingress.external.namespace == "tanzu-system-ingress":
+    namespace: #@ data.values.contour.namespace
+  internal:
+    #@ if/end data.values.cnrs.ingress.internal.namespace == "tanzu-system-ingress":
+    namespace: #@ data.values.contour.namespace
+#@ end
+
+#@ def cnrsValues():
+#@ if hasattr(data.values.contour, "namespace"):
+#@ return overlay.apply(data.values.cnrs, cnrsOverlay())
+#@ end
+#@ return data.values.cnrs
+#@ end
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
   name: cnrs
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
     kapp.k14s.io/change-rule.contour: "upsert after upserting contour"
 spec:
@@ -30,7 +47,7 @@ metadata:
   name: cnrs-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(data.values.cnrs)
+  values.yaml: #@ yaml.encode(cnrsValues())
 
 #@ end
 #@ end
