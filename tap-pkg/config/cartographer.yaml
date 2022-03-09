@@ -18,7 +18,7 @@ spec:
   packageRef:
     refName: cartographer.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0-build.1
+      constraints: 0.3.0-build.2
       prereleases: {}
 
 #@ end

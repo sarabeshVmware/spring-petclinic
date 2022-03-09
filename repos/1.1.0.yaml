@@ -3,19 +3,23 @@ packages:
   - name: cert-manager
     versions:
       - 1.5.3+tap.1
+      - 1.5.3+tap.2
   - name: contour
     versions:
       - 1.18.2+tap.1
+      - 1.18.2+tap.2
   - name: convention-controller
     versions:
       - 0.5.0
       - 0.6.1
       - 0.6.2
+      - 0.6.3
   - name: service-binding
     versions:
       - 0.6.0
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: source-controller
     versions:
       - 0.2.0
@@ -71,6 +75,7 @@ packages:
     versions:
       - 0.5.0-build.1
       - 0.5.0
+      - 0.6.0-build.2
   - name: insight-metadata-store
     versions:
       - 1.0.1
@@ -90,6 +95,7 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
+      - 1.2.0
   - name: build-service
     versions:
       - 1.4.2
@@ -103,7 +109,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.1.0-build.7
+      - 1.1.0-build.8
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -120,6 +126,7 @@ packages:
       - 0.2.1
       - 0.2.2
       - 0.3.0-build.1
+      - 0.3.0-build.2
   - name: ootb-templates
     versions:
       - 0.5.1
@@ -152,6 +159,7 @@ packages:
   - name: tekton-pipelines
     versions:
       - 0.30.0
+      - 0.30.2
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
