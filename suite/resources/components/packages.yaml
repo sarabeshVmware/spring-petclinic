@@ -1,0 +1,113 @@
+- name: cert-manager
+  package: cert-manager.tanzu.vmware.com
+  values_file: cert-manager-install.yaml
+  rbac_file: cert-manager-rbac.yaml
+  poll_timout: 30m
+- name: contour
+  package: contour.tanzu.vmware.com
+  values_file: contour-install.yaml
+  rbac_file: contour-rbac.yaml
+- name: cartographer
+  package: cartographer.tanzu.vmware.com
+- name: conventions-controller
+  package: controller.conventions.apps.tanzu.vmware.com
+- name: scanning
+  package: scanning.apps.tanzu.vmware.com
+- name: learningcenter
+  package: learningcenter.tanzu.vmware.com
+  values_file: learning-center-config.yaml
+- name: tekton-pipelines
+  package: tekton.tanzu.vmware.com
+- name: ootb-templates                
+  package: ootb-templates.tanzu.vmware.com
+- name: ootb-templates        
+  package: ootb-templates.tanzu.vmware.com
+- name: service-bindings   
+  package: service-bindings.labs.vmware.com
+- name: source-controller   
+  package: controller.source.apps.tanzu.vmware.com
+- name: services-toolkit
+  package: services-toolkit.tanzu.vmware.com
+- name: appliveview
+  package: backend.appliveview.tanzu.vmware.com
+- name: appliveview-conventions    
+  package: conventions.appliveview.tanzu.vmware.com
+- name: grype
+  package: grype.scanning.apps.tanzu.vmware.com
+- name: accelerator
+  package: accelerator.apps.tanzu.vmware.com
+- name: developer-conventions       
+  package: developer-conventions.tanzu.vmware.com
+- name: metadata-store
+  package: metadata-store.apps.tanzu.vmware.com
+- name: image-policy-webhook     
+  package: image-policy-webhook.signing.apps.tanzu.vmware.com
+- name: api-portal
+  package: api-portal.tanzu.vmware.com
+- name: cnrs
+  package: cnrs.tanzu.vmware.com
+  values_file: cnrs.yaml
+- name: buildservice   
+  package: buildservice.tanzu.vmware.com
+  values_file: tbs-values.yaml
+- name: tap-gui       
+  package:  tap-gui.tanzu.vmware.com
+- name: learningcenter-workshops              
+  package:  workshops.learningcenter.tanzu.vmware.com
+- name: ootb-supply-chain-basic      
+  package: ootb-supply-chain-basic.tanzu.vmware.com
+  values_file: ootb-supply-chain-basic-values.yaml
+- name: ootb-supply-chain-testing         
+  package: ootb-supply-chain-testing.tanzu.vmware.com
+  values_file: ootb-supply-chain-testing-values.yaml
+- name: ootb-supply-chain-testing-scanning
+  package: ootb-supply-chain-testing-scanning.tanzu.vmware.com
+  values_file: ootb-supply-chain-testing-scanning-values.yaml
+- name: ootb-delivery-basic
+  package: ootb-delivery-basic.tanzu.vmware.com
+- name: spring-boot-conventions    
+  package: spring-boot-conventions.tanzu.vmware.com
+- name: fluxcd-source-controller    
+  package: fluxcd.source.controller.tanzu.vmware.com
+- name: tap-telemetry
+  package: tap-telemetry.tanzu.vmware.com
+
+        
+   
+  
+           
+  
+# NAME                      PACKAGE-NAME                                        PACKAGE-VERSION  STATUS               
+  # accelerator               accelerator.apps.tanzu.vmware.com                   1.1.0-build.2    Reconcile succeeded  
+  # api-portal                api-portal.tanzu.vmware.com                         1.0.9            Reconcile succeeded  
+  # appliveview               backend.appliveview.tanzu.vmware.com                1.1.0-build.2    Reconcile succeeded  
+  # appliveview-conventions   conventions.appliveview.tanzu.vmware.com            1.1.0-build.2    Reconcile succeeded  
+  # buildservice              buildservice.tanzu.vmware.com                       1.4.2            Reconcile succeeded  
+  # cartographer              cartographer.tanzu.vmware.com                       0.3.0-build.1    Reconcile succeeded  
+  # cert-manager              cert-manager.tanzu.vmware.com                       1.5.3+tap.1      Reconcile succeeded  
+  # cnrs                      cnrs.tanzu.vmware.com                               1.1.0            Reconcile succeeded  
+  # contour                   contour.tanzu.vmware.com                            1.18.2+tap.1     Reconcile succeeded  
+  # conventions-controller    controller.conventions.apps.tanzu.vmware.com        0.6.2            Reconcile succeeded  
+  # developer-conventions     developer-conventions.tanzu.vmware.com              0.5.0            Reconcile succeeded  
+  # fluxcd-source-controller  fluxcd.source.controller.tanzu.vmware.com           0.16.3           Reconcile succeeded  
+  # grype                     grype.scanning.apps.tanzu.vmware.com                1.1.0-build.1    Reconcile succeeded  
+  # image-policy-webhook      image-policy-webhook.signing.apps.tanzu.vmware.com  1.1.0-build.1    Reconcile succeeded  
+  # learningcenter            learningcenter.tanzu.vmware.com                     0.2.0            Reconcile succeeded  
+  # learningcenter-workshops  workshops.learningcenter.tanzu.vmware.com           0.2.0            Reconcile succeeded  
+  # metadata-store            metadata-store.apps.tanzu.vmware.com                1.1.0            Reconcile succeeded  
+  # ootb-delivery-basic       ootb-delivery-basic.tanzu.vmware.com                0.7.0-build.1    Reconcile succeeded  
+  # ootb-supply-chain-basic   ootb-supply-chain-basic.tanzu.vmware.com            0.7.0-build.1    Reconcile succeeded  
+  # ootb-templates            ootb-templates.tanzu.vmware.com                     0.7.0-build.1    Reconcile succeeded  
+  # scanning                  scanning.apps.tanzu.vmware.com                      1.1.0-build.1    Reconcile succeeded  
+  # service-bindings          service-bindings.labs.vmware.com                    0.7.0            Reconcile succeeded  
+  # services-toolkit          services-toolkit.tanzu.vmware.com                   0.6.0-rc.1       Reconcile succeeded  
+  # source-controller         controller.source.apps.tanzu.vmware.com             0.3.3            Reconcile succeeded  
+  # spring-boot-conventions   spring-boot-conventions.tanzu.vmware.com            0.4.0            Reconcile succeeded  
+  # tap-gui                   tap-gui.tanzu.vmware.com                            1.1.0-rc.15      Reconcile succeeded  
+  # tap-telemetry             tap-telemetry.tanzu.vmware.com                      0.1.4            Reconcile succeeded  
+  # tekton-pipelines          tekton.tanzu.vmware.com                             0.30.0           Reconcile succeeded
+
+#  appliveview-connector     connector.appliveview.tanzu.vmware.com              1.1.0-build.2    Reconcile succeeded  
+#  tap                       tap.tanzu.vmware.com                                1.1.0-build.7    Reconcile succeeded  
+#   tap-auth                  tap-auth.tanzu.vmware.com                           0.1.0-build.0    Reconcile succeeded  
+ 
