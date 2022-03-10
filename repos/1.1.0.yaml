@@ -11,26 +11,21 @@ packages:
   - name: convention-controller
     versions:
       - 0.5.0
-      - 0.6.1
-      - 0.6.2
+      - 0.5.1
       - 0.6.3
   - name: service-binding
     versions:
       - 0.6.0
       - 0.6.1
-      - 0.7.0
       - 0.7.1
   - name: source-controller
     versions:
       - 0.2.0
-      - 0.3.1
       - 0.2.1
-      - 0.3.2
       - 0.3.3
   - name: services-toolkit
     versions:
       - 0.5.0
-      - 0.5.1-rc.1
       - 0.5.1
       - 0.6.0-rc.1
   - name: app-live-view
@@ -80,7 +75,6 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.0
       - 1.1.0
   - name: image-policy-webhook
     versions:
@@ -95,21 +89,23 @@ packages:
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
+      - 1.1.1
       - 1.2.0
   - name: build-service
     versions:
       - 1.4.2
+      - 1.4.3
   - name: tap-gui
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.1
       - 1.1.0-rc.15
   - name: tap
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.1.0-build.8
+      - 1.0.2
+      - 1.1.0-build.9
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -125,7 +121,6 @@ packages:
       - 0.1.0
       - 0.2.1
       - 0.2.2
-      - 0.3.0-build.1
       - 0.3.0-build.2
   - name: ootb-templates
     versions:
@@ -159,6 +154,7 @@ packages:
   - name: tekton-pipelines
     versions:
       - 0.30.0
+      - 0.30.1
       - 0.30.2
   - name: ootb-delivery-basic
     versions:
