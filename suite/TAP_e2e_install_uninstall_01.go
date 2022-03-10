@@ -1,16 +1,20 @@
-//go:build all || outerloop || outerloop_basic_delivery
+//go:build all || install
 
 package suite
 
 import (
 	"context"
-	"io/ioutil"
+	// "io/ioutil"
+	"log"
 	"os"
+	"path/filepath"
 	"testing"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+	"gopkg.in/yaml.v3"
+
+	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
+	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -55,45 +59,58 @@ func getPackagesList() (Packages, error) {
 	return pkgList, nil
 }
 
-
 func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
 
 	var pkgList, _ = getPackagesList()
-	for _, pkg := pkgList	{
-		log.Printf("package : %s", pkg.Name)
-		//fetch versions n list them first
-		f1 := features.New("install-uninstall-cert-manager").
-			Assess("install-component", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-				kubectl_helpers.GetWorkloadStatus("")
-				return ctx
-			}).
-			Assess("update-tap", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-				t.Logf("updating package %s", suiteConfig.Tap.Name)
-				cmd, output, err := exec.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile)
-				t.Logf("command executed: %s", cmd)
-				if err != nil {
-					t.Error(fmt.Errorf("error while updating package %s: %w: %s", suiteConfig.Tap.Name, err, output))
-					t.FailNow()
-				}
-				t.Logf("package %s updated: %s", suiteConfig.Tap.Name, output)
-				t.Logf("sleeping for 1 minute")
-				time.Sleep(time.Minute)
-				return ctx
+	t.Log("=====================")
+	t.Logf("%v", pkgList)
+	t.Log("====================")
+
+	f1 := features.New("test").
+		Assess("test", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			for _, pkg := range pkgList {
+				t.Logf("kgname: %s", pkg.Name)
+			}
+			return ctx
 		}).
 		Feature()
-	}
 
-	for _, pkg := pkgList	{
-		// tetst here
-		// write feature for each pkg last version uninstall
-	}
+	/*
+	   for _, pkg := pkgList   {
+	           log.Printf("package : %s", pkg.Name)
+	           //fetch versions n list them first
+	           f1 := features.New("install-uninstall-cert-manager").
+	                   Assess("install-component", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	                           kubectl_helpers.GetWorkloadStatus("")
+	                           return ctx
+	                   }).
+	                   Assess("update-tap", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	                           t.Logf("updating package %s", suiteConfig.Tap.Name)
+	                           cmd, output, err := exec.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile)
+	                           t.Logf("command executed: %s", cmd)
+	                           if err != nil {
+	                                   t.Error(fmt.Errorf("error while updating package %s: %w: %s", suiteConfig.Tap.Name, err, output))
+	                                   t.FailNow()
+	                           }
+	                           t.Logf("package %s updated: %s", suiteConfig.Tap.Name, output)
+	                           t.Logf("sleeping for 1 minute")
+	                           time.Sleep(time.Minute)
+	                           return ctx
+	           }).
+	           Feature()
+	   }
 
+	   for _, pkg := pkgList   {
+	           // tetst here
+	           // write feature for each pkg last version uninstall
+	   }
+	*/
 	//loop and install uninstall pkg components
 
 	// test
 	testenv.Test(t,
-		TestInstallUninstallAllComponentAllVersionInPackageRepo,
+		f1,
 	)
 	t.Log("************** TestCase END: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
 }
