@@ -63,13 +63,20 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
 	pkgList, _ := getPackagesList()
+	latestPkgList := tanzu_libs.ListAllAvailablePackages("tap-install")
 	f1 := features.New("install-individual-packages").
 		Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
 				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
-				for _, pkgVersion := range availablePkgs {
-					t.Logf("version: %s", pkg.VERSION)
+				for index, pkgVersion := range availablePkgs {
+					t.Logf("version: %s", pkgVersion.VERSION)
+					if index == len(pkgVersions-1) {
+						tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+					} else {
+						tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+						tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+					}
 				}
 			}
 			return ctx
@@ -80,6 +87,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
+				tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
 			}
 			return ctx
 		}).
@@ -88,39 +96,70 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	f3 := features.New("install-uninstall-tap-packages").
 		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
-				t.Logf("pkgname: %s", pkg.Name)
+				if pkg.Name == "tap" {
+					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
+					for _, pkgVersion := range availablePkgs {
+						tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+						tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+					}
+					break
+				} else {
+					continue
+				}
 			}
 			return ctx
 		}).
 		Feature()
 
-	/*
-	   for _, pkg := pkgList   {
-	           log.Printf("package : %s", pkg.Name)
-	           //fetch versions n list them first
-	           f1 := features.New("install-uninstall-cert-manager").
-	                   Assess("install-component", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	                           kubectl_helpers.GetWorkloadStatus("")
-	                           return ctx
-	                   }).
-	                   Assess("update-tap", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	                           t.Logf("updating package %s", suiteConfig.Tap.Name)
-	                           cmd, output, err := exec.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile)
-	                           t.Logf("command executed: %s", cmd)
-	                           if err != nil {
-	                                   t.Error(fmt.Errorf("error while updating package %s: %w: %s", suiteConfig.Tap.Name, err, output))
-	                                   t.FailNow()
-	                           }
-	                           t.Logf("package %s updated: %s", suiteConfig.Tap.Name, output)
-	                           t.Logf("sleeping for 1 minute")
-	                           time.Sleep(time.Minute)
-	                           return ctx
-	           }).
-	           Feature()
-	   }
+	f4 := features.New("install-cert-manager-packages").
+		Assess("install-cert-manager-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			for _, pkg := range pkgList {
+				if pkg.Name == "cert-manager" {
+					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
+					for index, pkgVersion := range availablePkgs {
+						t.Logf("version: %s", pkgVersion.VERSION)
+						if index == len(pkgVersions-1) {
+							tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+						} else {
+							tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+							tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+						}
+					}
+					break
+				} else {
+					continue
+				}
+			}
+			return ctx
+		}).
+		Feature()
 
-	*/
+	f5 := features.New("install-contour-packages").
+		Assess("install-contour-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			for _, pkg := range pkgList {
+				if pkg.Name == "contour" {
+					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
+					for index, pkgVersion := range availablePkgs {
+						t.Logf("version: %s", pkgVersion.VERSION)
+						if index == len(pkgVersions-1) {
+							tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+						} else {
+							tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
+							tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+						}
+					}
+					break
+				} else {
+					continue
+				}
+			}
+			return ctx
+		}).
+		Feature()
+
 	testenv.Test(t,
+		f4,
+		f5,
 		f1,
 		f2,
 		f3,

@@ -20,7 +20,7 @@ type ListAvailablePackagesOutput struct {
 func ListAvailablePackages(packageName string, namespace string) []ListAvailablePackagesOutput {
 	installedPackages := []ListAvailablePackagesOutput{}
 	cmd := "tanzu package available list"
-	if packageName == "" {
+	if packageName != "" {
 		cmd += fmt.Sprintf(" %s", packageName)
 	}
 	if namespace != "" {
