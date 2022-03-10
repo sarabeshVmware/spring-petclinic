@@ -12,7 +12,8 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/client"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
@@ -66,7 +67,7 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("get-externalip", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, accNamespace := "acc-server", "accelerator-system"
 			t.Logf("getting external ip for %s (namespace %s)", service, accNamespace)
-			serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig())
+			serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig(), 2, 30)
 			if err != nil {
 				t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
 				t.FailNow()
@@ -342,7 +343,7 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("get-externalip", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, envoyNamespace := "envoy", "tanzu-system-ingress"
 			t.Logf("getting external ip for %s service (namespace %s)", service, envoyNamespace)
-			serviceExternalIp, err := client.GetServiceExternalIP(service, envoyNamespace, cfg.Client().RESTConfig())
+			serviceExternalIp, err := client.GetServiceExternalIP(service, envoyNamespace, cfg.Client().RESTConfig(), 2, 30)
 			if err != nil {
 				t.Error(fmt.Errorf("error while getting external ip for %s service (namespace %s): %w", service, envoyNamespace, err))
 				t.FailNow()
