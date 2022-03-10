@@ -14,7 +14,7 @@ import (
 
 	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
-	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
@@ -60,17 +60,35 @@ func getPackagesList() (Packages, error) {
 }
 
 func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
-	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
+	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
-	var pkgList, _ = getPackagesList()
-	t.Log("=====================")
-	t.Logf("%v", pkgList)
-	t.Log("====================")
-
-	f1 := features.New("test").
-		Assess("test", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	pkgList, _ := getPackagesList()
+	f1 := features.New("install-individual-packages").
+		Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
-				t.Logf("kgname: %s", pkg.Name)
+				t.Logf("pkgname: %s", pkg.Name)
+				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
+				for _, pkgVersion := range availablePkgs {
+					t.Logf("version: %s", pkg.VERSION)
+				}
+			}
+			return ctx
+		}).
+		Feature()
+
+	f2 := features.New("uninstall-individual-packages").
+		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			for _, pkg := range pkgList {
+				t.Logf("pkgname: %s", pkg.Name)
+			}
+			return ctx
+		}).
+		Feature()
+
+	f3 := features.New("install-uninstall-tap-packages").
+		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			for _, pkg := range pkgList {
+				t.Logf("pkgname: %s", pkg.Name)
 			}
 			return ctx
 		}).
@@ -101,16 +119,11 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	           Feature()
 	   }
 
-	   for _, pkg := pkgList   {
-	           // tetst here
-	           // write feature for each pkg last version uninstall
-	   }
 	*/
-	//loop and install uninstall pkg components
-
-	// test
 	testenv.Test(t,
 		f1,
+		f2,
+		f3,
 	)
 	t.Log("************** TestCase END: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
 }
