@@ -20,11 +20,11 @@ roleRef:
   name: contour-tap-install-cluster-admin-role
 subjects:
 - kind: ServiceAccount
-  name: contour-tap-install-sa
+  name: tap-install-sa
   namespace: tap-install
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: contour-tap-install-sa
+  name: tap-install-sa
   namespace: tap-install
