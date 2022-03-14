@@ -194,6 +194,7 @@ func TestMain(m *testing.M) {
 
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
+	suiteConfig.TanzuClusterEssentials.Filename = fmt.Sprintf("../%s", suiteConfig.TanzuClusterEssentials.Filename)
 
 	// developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 
