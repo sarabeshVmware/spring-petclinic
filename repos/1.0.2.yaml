@@ -21,7 +21,6 @@ packages:
   - name: services-toolkit
     versions:
       - 0.5.0
-      - 0.5.1-rc.1
       - 0.5.1
   - name: app-live-view
     versions:
@@ -79,7 +78,7 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.0.2-build.8
+      - 1.0.2
   - name: learning-center-workshops
     versions:
       - 0.1.0
