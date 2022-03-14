@@ -1,5 +1,5 @@
 gitops:
   ssh_secret: ""
 registry:
-  repository: tanzu-application-platform/ci-pipeline/apps-0001
-  server: dev.registry.tanzu.vmware.com
+  repository: <REPOSITORY>
+  server: <SERVER>

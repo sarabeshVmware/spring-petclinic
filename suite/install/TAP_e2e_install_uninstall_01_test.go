@@ -29,7 +29,7 @@ type Packages []struct {
 	PollTimout string `yaml:"poll_timout,omitempty"`
 }
 
-var PackagesResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "components")
+var PackagesResourcesDir = filepath.Join(utils.GetFileDir(), "../resources/components")
 
 func getPackagesList() (Packages, error) {
 	log.Printf("getting package list")

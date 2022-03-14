@@ -163,7 +163,7 @@ func getTapValuesSchema() (tapValuesSchemaStruct, error) {
 	return tapValuesSchema, nil
 }
 
-var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "suite")
+var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../resources/suite")
 var buildName = ""
 var ksvcLatestReady = ""
 var revisionName = ""
@@ -195,35 +195,35 @@ func TestMain(m *testing.M) {
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 
-	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
+	// developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 
 	// setup
 	testenv.Setup(
-		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle,
-			suiteConfig.TanzuClusterEssentials.Registry,
-			suiteConfig.TapRegistrySecret.Username,
-			suiteConfig.TapRegistrySecret.Password,
-			suiteConfig.TanzuClusterEssentials.Filename),
+		// envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle,
+		// 	suiteConfig.TanzuClusterEssentials.Registry,
+		// 	suiteConfig.TapRegistrySecret.Username,
+		// 	suiteConfig.TapRegistrySecret.Password,
+		// 	suiteConfig.TanzuClusterEssentials.Filename),
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
-		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
-		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
+		// envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
+		// envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Namespace),
 		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10, 60),
-		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
-		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
-		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
-		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+		// envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
+		// envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
+		// envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
+		// envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
 	)
 
 	// finish
-	testenv.Finish(
-		envfuncs.DeleteDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
-		envfuncs.UninstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
-		envfuncs.DeletePackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
-		envfuncs.DeleteSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Namespace),
-		envfuncs.DeleteSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
-		envfuncs.DeleteNamespaces(suiteConfig.CreateNamespaces),
-	)
+	// testenv.Finish(
+	// 	envfuncs.DeleteDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+	// 	envfuncs.UninstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
+	// 	envfuncs.DeletePackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
+	// 	envfuncs.DeleteSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Namespace),
+	// 	envfuncs.DeleteSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
+	// 	envfuncs.DeleteNamespaces(suiteConfig.CreateNamespaces),
+	// )
 
 	os.Exit(testenv.Run(m))
 }

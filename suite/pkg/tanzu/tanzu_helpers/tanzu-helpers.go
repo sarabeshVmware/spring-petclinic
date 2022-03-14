@@ -33,18 +33,15 @@ func IsScanningInstalled(namespace string) bool {
 	return scanningInstalled
 }
 
-func ValidateInstalledPackageStatus(name string, namespace string, status string, timeoutInMins int, intervalInSeconds int) bool {
+func ValidateInstalledPackageStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
 	log.Println("Executing: ValidateInstalledPackageStatus")
-	if status == "" {
-		status = "Reconcile succeeded" //Default validation status
-	}
 	result := false
 	finalTimeout := timeoutInMins * 60
 	for finalTimeout > 0 {
 		pkg := tanzu_libs.GetInstalledPackages(name, namespace)
 		if len(pkg) < 1 {
 			log.Println("Package installation not started yet")
-		} else if pkg[0].Status == status {
+		} else if pkg[0].Status == "Reconcile succeeded" {
 			log.Printf("Package %s installation is verified successfully.", name)
 			result = true
 			break

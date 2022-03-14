@@ -1,6 +1,6 @@
-kp_default_repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/ci-pipeline/build-service
-kp_default_repository_username: svc.dap-delivery@vmware.com
-kp_default_repository_password: <pwd>
-tanzunet_username: svc.dap-delivery@vmware.com
-tanzunet_password: <pwd>
+kp_default_repository: <KP-DEFAULT-REPOSITORY>
+kp_default_repository_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
+kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
+tanzunet_password: <TANZUNET-PASSWORD>
+tanzunet_username: <TANZUNET-USERNAME>
 descriptor_name: tap-1.0.0-lite
