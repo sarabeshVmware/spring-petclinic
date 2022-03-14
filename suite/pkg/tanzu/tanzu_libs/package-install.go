@@ -13,7 +13,7 @@ import (
 
 func InstallePackage(installedPackageName string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) {
 
-	cmd := fmt.Sprintf("tanzu package install %s --package-name %s --version %s --namespace %s --yes", installedPackageName, packageName, version, namespace)
+	cmd := fmt.Sprintf("tanzu package install %s --package-name %s --version %s --namespace %s", installedPackageName, packageName, version, namespace)
 	if valuesFile != "" {
 		cmd += fmt.Sprintf(" --values-file %s", valuesFile)
 	}

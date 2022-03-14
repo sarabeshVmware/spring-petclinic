@@ -71,7 +71,7 @@ type ListAllAvailablePackagesOutput struct {
 	NAME, DISPLAY_NAME, SHORT_DESCRIPTION, LATEST_VERSION, NAMESPACE string
 }
 
-func ListAllAvailablePackages(packageName string, namespace string) []ListAllAvailablePackagesOutput {
+func ListAllAvailablePackages(namespace string) []ListAllAvailablePackagesOutput {
 	installedPackages := []ListAllAvailablePackagesOutput{}
 	cmd := "tanzu package available list"
 	if namespace != "" {

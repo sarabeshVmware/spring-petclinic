@@ -18,7 +18,7 @@
   values_file: learning-center-config.yaml
 - name: tekton-pipelines
   package: tekton.tanzu.vmware.com
-- name: ootb-templates                
+- name: ootb-templates
   package: ootb-templates.tanzu.vmware.com
 - name: ootb-templates        
   package: ootb-templates.tanzu.vmware.com
@@ -47,10 +47,10 @@
 - name: cnrs
   package: cnrs.tanzu.vmware.com
   values_file: cnrs.yaml
-- name: buildservice   
+- name: buildservice 
   package: buildservice.tanzu.vmware.com
   values_file: tbs-values.yaml
-- name: tap-gui       
+- name: tap-gui  
   package:  tap-gui.tanzu.vmware.com
 - name: learningcenter-workshops              
   package:  workshops.learningcenter.tanzu.vmware.com
