@@ -1,6 +1,6 @@
 //go:build all || install
 
-package suite
+package install_tests
 
 import (
 	"context"
@@ -12,8 +12,8 @@ import (
 
 	"gopkg.in/yaml.v3"
 
-	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
@@ -73,18 +73,18 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
 	pkgList, _ := getPackagesList()
-	//latestPkgList := tanzu_libs.ListAllAvailablePackages("tap-install")
+	//latestPkgList := tanzu_libs.ListAllAvailablePackages(suiteConfig.PackageRepository.Namespace)
 	f1 := features.New("install-individual-packages").
 		Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
-				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
+				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 				for index, pkgVersion := range availablePkgs {
-					t.Logf("version: %s", pkgVersion.VERSION)
-					tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
-					tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, "tap-install", 5, 30)
+					t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
+					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
+					tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 					if index != len(availablePkgs)-1 {
-						tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+						tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
 					}
 				}
 			}
@@ -96,7 +96,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
-				tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+				tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
 			}
 			return ctx
 		}).
@@ -104,18 +104,18 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 
 	f3 := features.New("install-uninstall-tap-packages").
 		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			for _, pkg := range pkgList {
-				if pkg.Name == "tap" {
-					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
-					for _, pkgVersion := range availablePkgs {
-						tanzu_libs.InstallePackage(pkg.Name, pkg.Package, pkgVersion.VERSION, "tap-install", pkg.ValuesFile, pkg.PollTimout)
-						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, "tap-install", 15, 60)
-						tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
+			valuesFile := ""
+			for _, pkgVersion := range availablePkgs {
+				err := tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
+				if err != nil {
+					pass := kubectl_helper.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
+					if !pass {
+						kubectl_helper.LogFailedResourcesDetails(namespace)
+						log.Printf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace)
 					}
-					break
-				} else {
-					continue
 				}
+				tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
 			}
 			return ctx
 		}).
@@ -125,23 +125,23 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("install-cert-manager-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "cert-manager" {
-					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
-					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, "tap-install")
+					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
+					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, suiteConfig.PackageRepository.Namespace)
 					if err != nil {
 						t.Error("error while applying cert-manager rbac file")
 						t.FailNow()
 					} else {
 						t.Log("applied cert-manager rbac")
 					}
+					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
-						t.Logf("version: %s", pkgVersion.VERSION)
-						oldText := "<VERSION>"
+						t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 						utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 						oldText = pkgVersion.VERSION
-						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, "tap-install")
-						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, "tap-install", 5, 30)
+						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
+						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+							tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
 						}
 					}
 					break
@@ -157,23 +157,23 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("install-contour-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "contour" {
-					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, "tap-install")
-					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, "tap-install")
+					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
+					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, suiteConfig.PackageRepository.Namespace)
 					if err != nil {
 						t.Error("error while applying contour rbac file")
 						t.FailNow()
 					} else {
 						t.Log("applied contour rbac")
 					}
+					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
-						t.Logf("version: %s", pkgVersion.VERSION)
-						oldText := "<VERSION>"
+						t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 						utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 						oldText = pkgVersion.VERSION
-						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, "tap-install")
-						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, "tap-install", 5, 30)
+						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
+						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Package, "tap-install")
+							tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
 						}
 					}
 					break

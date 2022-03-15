@@ -6,12 +6,11 @@ package tanzu_libs
 import (
 	"fmt"
 	"log"
-	"strings"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
-func InstallePackage(installedPackageName string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) {
+func InstallPackage(installedPackageName string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) error {
 
 	cmd := fmt.Sprintf("tanzu package install %s --package-name %s --version %s --namespace %s", installedPackageName, packageName, version, namespace)
 	if valuesFile != "" {
@@ -21,8 +20,13 @@ func InstallePackage(installedPackageName string, packageName string, version st
 		cmd += fmt.Sprintf(" --poll-timeout %s", pollTimeout)
 	}
 	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil && !strings.Contains(res, "Uninstalled package") {
-		log.Printf("Error while deleting the package %s. Error %v,  Output %s", packageName, err, res)
+	if err != nil {
+		log.Printf("error while installing package %s (%s) in namespace %s", installedPackageName, packageName, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", res)
+	} else {
+		log.Printf("package %s (%s) installed in namespace %s", installedPackageName, packageName, namespace)
+		log.Printf("output: %s", res)
 	}
-
+	return err
 }
