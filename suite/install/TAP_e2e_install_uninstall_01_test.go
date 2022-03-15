@@ -107,11 +107,11 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 
 	uninstallAllIndividualPackages := features.New("uninstall-individual-packages").
 		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			for _, pkg := range pkgList {
-				t.Logf("pkgname: %s", pkg.Name)
-				tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+			for i := len(pkgList) - 1; i >= 0; i-- {
+				t.Logf("pkgname: %s", pkgList[i].Name)
+				tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
 				if err != nil {
-					t.Error(fmt.Errorf"Uninstallation FAILED for package : %s", pkg.Name))
+					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s", pkgList[i].Name))
 					t.Fail()
 				}
 			}
@@ -127,7 +127,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 				installed := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
 				if !installed {
 					kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
-					t.Error(fmt.Errorf"error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace))
+					t.Error(fmt.Errorf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace))
 					t.Fail()
 				} else {
 					t.Logf("Installed package : %s, version: %s successfully", suiteConfig.Tap.Name, pkgVersion.VERSION)
@@ -156,24 +156,30 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					}
 					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
-						t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
-						utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
-						oldText = pkgVersion.VERSION
-						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
-						installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
-						if installed {
-							t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
-						} else {
-							t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
-							t.Fail()
-						}
-						if index != len(availablePkgs)-1 {
-							err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
-							if err != nil {
-								t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
-								t.Fail()
-							}
-						}
+						// write new feature every time
+						installCertMgr := features.New("install-cert-mgr").
+							Asses(fmt.Sprintf("install-cert-mgr-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
+								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
+								oldText = pkgVersion.VERSION
+								kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
+								installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+								if installed {
+									t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
+								} else {
+									t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+									t.Fail()
+								}
+								if index != len(availablePkgs)-1 {
+									err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+									if err != nil {
+										t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+										t.Fail()
+									}
+								}
+								return ctx
+							}).
+							Feature()
 					}
 					break
 				} else {
