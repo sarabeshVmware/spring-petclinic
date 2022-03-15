@@ -65,7 +65,7 @@ packages:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.2
+      - 1.1.0-build.3
   - name: developer-conventions
     versions:
       - 0.5.0-build.1
@@ -99,13 +99,13 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-rc.15
+      - 1.1.0-rc.22
   - name: tap
     versions:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.9
+      - 1.1.0-build.10
   - name: learning-center-workshops
     versions:
       - 0.1.0
