@@ -80,14 +80,24 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 				if pkg.Name == "cert-manager" || pkg.Name == "contour" {
 					continue
 				}
-				t.Logf("pkgname: %s", pkg.Name)
+				t.Logf("Installing package: %s", pkg.Name)
 				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 				for index, pkgVersion := range availablePkgs {
-					t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
+					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
-					tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+					installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+					if installed {
+						t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
+					} else {
+						t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+						t.Fail()
+					}
 					if index != len(availablePkgs)-1 {
-						tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+						err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+						if err != nil {
+							t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+							t.Fail()
+						}
 					}
 				}
 			}
@@ -100,6 +110,10 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
 				tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+				if err != nil {
+					t.Error(fmt.Errorf"Uninstallation FAILED for package : %s", pkg.Name))
+					t.Fail()
+				}
 			}
 			return ctx
 		}).
@@ -109,15 +123,20 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.PackageName, suiteConfig.PackageRepository.Namespace)
 			for _, pkgVersion := range availablePkgs {
-				err := tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
-				if err != nil {
-					pass := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
-					if !pass {
-						kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
-						log.Printf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace)
-					}
+				tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
+				installed := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
+				if !installed {
+					kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
+					t.Error(fmt.Errorf"error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace))
+					t.Fail()
+				} else {
+					t.Logf("Installed package : %s, version: %s successfully", suiteConfig.Tap.Name, pkgVersion.VERSION)
 				}
 				tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
+				if err != nil {
+					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", suiteConfig.Tap.Name, pkgVersion.VERSION))
+					t.Fail()
+				}
 			}
 			return ctx
 		}).
@@ -131,7 +150,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, suiteConfig.PackageRepository.Namespace)
 					if err != nil {
 						t.Error("error while applying cert-manager rbac file")
-						t.FailNow()
+						t.Fail()
 					} else {
 						t.Log("applied cert-manager rbac")
 					}
@@ -141,9 +160,19 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 						utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 						oldText = pkgVersion.VERSION
 						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
-						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+						installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+						if installed {
+							t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
+						} else {
+							t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+							t.Fail()
+						}
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+							err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+							if err != nil {
+								t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+								t.Fail()
+							}
 						}
 					}
 					break
@@ -163,7 +192,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					err := kubectlCmds.KubectlApplyConfiguration(pkg.RbacFile, suiteConfig.PackageRepository.Namespace)
 					if err != nil {
 						t.Error("error while applying contour rbac file")
-						t.FailNow()
+						t.Fail()
 					} else {
 						t.Log("applied contour rbac")
 					}
@@ -173,9 +202,19 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 						utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 						oldText = pkgVersion.VERSION
 						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
-						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+						installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+						if installed {
+							t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
+						} else {
+							t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+							t.Fail()
+						}
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+							err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+							if err != nil {
+								t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+								t.Fail()
+							}
 						}
 					}
 					break

@@ -113,12 +113,12 @@ func GetInstalledPackages(name string, namespace string) GetInstalledPackagesOut
 	return raw
 }
 
-func DeleteInstalledPackage(name string, namespace string) {
+func DeleteInstalledPackage(name string, namespace string) error {
 
 	cmd := fmt.Sprintf("tanzu package installed delete %s --namespace %s --yes", name, namespace)
 	res, err := linux_util.ExecuteCmd(cmd)
 	if err != nil && !strings.Contains(res, "Uninstalled package") {
 		log.Printf("Error while deleting the package %s. Error %v,  Output %s", name, err, res)
 	}
-
+	return err
 }
