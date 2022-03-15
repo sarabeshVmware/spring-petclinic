@@ -140,7 +140,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
 						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
+							tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
 						}
 					}
 					break
@@ -172,7 +172,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 						kubectlCmds.KubectlApplyConfiguration(pkg.ValuesFile, suiteConfig.PackageRepository.Namespace)
 						tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 						if index != len(availablePkgs)-1 {
-							tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
+							tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
 						}
 					}
 					break
