@@ -77,6 +77,9 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	f1 := features.New("install-individual-packages").
 		Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
+				if pkg.Name == "cert-manager" || pkg.Name == "contour" {
+					continue
+				}
 				t.Logf("pkgname: %s", pkg.Name)
 				availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 				for index, pkgVersion := range availablePkgs {
