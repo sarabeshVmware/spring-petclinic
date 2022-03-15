@@ -84,7 +84,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
 					tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 					if index != len(availablePkgs)-1 {
-						tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
+						tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
 					}
 				}
 			}
@@ -109,13 +109,13 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			for _, pkgVersion := range availablePkgs {
 				err := tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
 				if err != nil {
-					pass := kubectl_helper.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
+					pass := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
 					if !pass {
-						kubectl_helper.LogFailedResourcesDetails(namespace)
+						kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
 						log.Printf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace)
 					}
 				}
-				tanzu_libs.DeleteInstalledPackage(pkg.Package, suiteConfig.PackageRepository.Namespace)
+				tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
 			}
 			return ctx
 		}).
