@@ -74,7 +74,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 
 	pkgList, _ := getPackagesList()
 	//latestPkgList := tanzu_libs.ListAllAvailablePackages(suiteConfig.PackageRepository.Namespace)
-	f1 := features.New("install-individual-packages").
+	installAllIndividualPackages := features.New("install-individual-packages").
 		Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "cert-manager" || pkg.Name == "contour" {
@@ -95,7 +95,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		}).
 		Feature()
 
-	f2 := features.New("uninstall-individual-packages").
+	uninstallAllIndividualPackages := features.New("uninstall-individual-packages").
 		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				t.Logf("pkgname: %s", pkg.Name)
@@ -105,9 +105,9 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		}).
 		Feature()
 
-	f3 := features.New("install-uninstall-tap-packages").
+	installUninstallTapPackages := features.New("install-uninstall-tap-packages").
 		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
+			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.PackageName, suiteConfig.PackageRepository.Namespace)
 			for _, pkgVersion := range availablePkgs {
 				err := tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
 				if err != nil {
@@ -123,7 +123,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		}).
 		Feature()
 
-	f4 := features.New("install-cert-manager-packages").
+	installCertManagerPackages := features.New("install-cert-manager-packages").
 		Assess("install-cert-manager-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "cert-manager" {
@@ -155,7 +155,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		}).
 		Feature()
 
-	f5 := features.New("install-contour-packages").
+	installContourPackages := features.New("install-contour-packages").
 		Assess("install-contour-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "contour" {
@@ -188,11 +188,11 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Feature()
 
 	testenv.Test(t,
-		f4,
-		f5,
-		f1,
-		f2,
-		f3,
+		installCertManagerPackages,
+		installContourPackages,
+		installAllIndividualPackages,
+		uninstallAllIndividualPackages,
+		installUninstallTapPackages,
 	)
 	t.Log("************** TestCase END: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
 }
