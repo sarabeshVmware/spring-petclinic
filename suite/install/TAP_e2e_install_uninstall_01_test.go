@@ -5,6 +5,7 @@ package install_tests
 import (
 	"context"
 	// "io/ioutil"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
