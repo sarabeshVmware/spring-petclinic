@@ -110,7 +110,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for i := len(pkgList) - 1; i >= 0; i-- {
 				t.Logf("pkgname: %s", pkgList[i].Name)
-				tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
+				err := tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
 				if err != nil {
 					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s", pkgList[i].Name))
 					t.Fail()
@@ -133,7 +133,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 				} else {
 					t.Logf("Installed package : %s, version: %s successfully", suiteConfig.Tap.Name, pkgVersion.VERSION)
 				}
-				tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
+				err := tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
 				if err != nil {
 					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", suiteConfig.Tap.Name, pkgVersion.VERSION))
 					t.Fail()
@@ -159,7 +159,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					for index, pkgVersion := range availablePkgs {
 						// write new feature every time
 						installCertMgr := features.New("install-cert-mgr").
-							Asses(fmt.Sprintf("install-cert-mgr-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+							Assess(fmt.Sprintf("install-cert-mgr-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 								oldText = pkgVersion.VERSION
