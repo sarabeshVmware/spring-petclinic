@@ -70,6 +70,43 @@ func getPackagesList() (Packages, error) {
 	return pkgList, err
 }
 
+// pkgList, _ := getPackagesList()
+
+// func installUnistallPackage(packageName string){
+// 	for _, pkg := range pkgList {
+// 		if pkg.Name != packageName {
+// 			continue
+// 		}
+// 		t.Logf("Installing package: %s", pkg.Name)
+// 		availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
+// 		for index, pkgVersion := range availablePkgs {
+// 			installIndividualPackages := features.New(fmt.Sprintf("install-%s-package"), packageName).
+// 			Assess(fmt.Sprintf("install-version-%s",pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+// 				t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
+// 				tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
+// 				installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
+// 				if installed {
+// 					t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
+// 				} else {
+// 					t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+// 					t.Fail()
+// 				}
+// 				if index != len(availablePkgs)-1 {
+// 					err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
+// 					if err != nil {
+// 						t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
+// 						t.Fail()
+// 					}
+// 				}
+// 			return ctx
+// 		}).
+// 		Feature()
+// 		testenv.Test(t,installIndividualPackages)
+// 		}
+// 		break
+
+// }
+
 func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
@@ -181,6 +218,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 								return ctx
 							}).
 							Feature()
+						testenv.Test(t, installCertMgr)
 					}
 					break
 				} else {
@@ -233,6 +271,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		}).
 		Feature()
 
+	// testEnv.TestInParallel(t, installCertManagerPackages, installContourPackages)
 	testenv.Test(t,
 		installCertManagerPackages,
 		installContourPackages,
