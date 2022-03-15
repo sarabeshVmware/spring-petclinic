@@ -1,0 +1,303 @@
+---
+apiVersion: imgpkg.carvel.dev/v1alpha1
+images:
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.8
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: 1.0.8
+          url: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.8
+  image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package@sha256:5622312b61dccac7f7fac63930c6285d35d0cb32a0442ef4d05c8a299d361cc9
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package@sha256:10b846f2b6b2ef544b2ffe3bbc28b745161be43982b3b23a460ffc8967941e6d
+  image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package@sha256:10b846f2b6b2ef544b2ffe3bbc28b745161be43982b3b23a460ffc8967941e6d
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:1.0.0
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: 1.0.0
+          url: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle:1.0.0
+  image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:0e4d9f41e331efa08ee10d09a45e8217703787d8b04e08339d99d17bf234d660
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:65e1842056eb6dadf5e66a38eb8ab1b30b376d151a66a8ca0bc83fb49bd7add2
+  image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:65e1842056eb6dadf5e66a38eb8ab1b30b376d151a66a8ca0bc83fb49bd7add2
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:9219a331e4c5ff867bcc8fdd055a4fbcdf7886850e58d56f5d3a9ed7e76f7333
+  image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:9219a331e4c5ff867bcc8fdd055a4fbcdf7886850e58d56f5d3a9ed7e76f7333
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:b918aa75d09174507b09fb2248bfbda8b204c5acc10cd28eda3cbbbb3b358643
+  image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:b918aa75d09174507b09fb2248bfbda8b204c5acc10cd28eda3cbbbb3b358643
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:2f1f2184a6ff6ff24837e425c760dbecf24906a2f77b69969e9b2e8f42de468f
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:2f1f2184a6ff6ff24837e425c760dbecf24906a2f77b69969e9b2e8f42de468f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:8c51ca05fd275f2da98b6bab8360ad9c060ecba81cf5abe1911fcf6958cfdb9e
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:8c51ca05fd275f2da98b6bab8360ad9c060ecba81cf5abe1911fcf6958cfdb9e
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:3bc3e569478367c43992f92a0f82b49f615eb1d3b476b74419c1d9892152419f
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:3bc3e569478367c43992f92a0f82b49f615eb1d3b476b74419c1d9892152419f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:8133d98e82ecc31e832effd47361c4cf8a847c032ff00aff50b838432b59f729
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:8133d98e82ecc31e832effd47361c4cf8a847c032ff00aff50b838432b59f729
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:9b71bc1a8ddab2c627782c0b5433e745742d99b88094050af6d986d7b59bf596
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:9b71bc1a8ddab2c627782c0b5433e745742d99b88094050af6d986d7b59bf596
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:a12badc8c9d91589f3ede0b94a08f7ae77bd52ed58265be05101b4aac2b7cc25
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:a12badc8c9d91589f3ede0b94a08f7ae77bd52ed58265be05101b4aac2b7cc25
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:fedeab44446f69ca67e85ab34c33ed3dd73428849b6ab29d0fafb9ea5ca87eb6
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:fedeab44446f69ca67e85ab34c33ed3dd73428849b6ab29d0fafb9ea5ca87eb6
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:01ff1c931b7cb8a0b55694e51932053188a129f67d9fc6d2b68bd4f0afa1bb7f
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:01ff1c931b7cb8a0b55694e51932053188a129f67d9fc6d2b68bd4f0afa1bb7f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:0a28d4955627b3f44a1fa2b2baf01404e801ba3892f722ef6106b3b6e502a549
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:0a28d4955627b3f44a1fa2b2baf01404e801ba3892f722ef6106b3b6e502a549
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:500db0e9393704bf36b7b8b4b12a3979ddc0566ed523b3729db5dc2b9ac8a6d7
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:500db0e9393704bf36b7b8b4b12a3979ddc0566ed523b3729db5dc2b9ac8a6d7
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:523344fa60bd9af45bf0f87a132b613d020fa09b4cbc587a79987a5596aef32f
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:523344fa60bd9af45bf0f87a132b613d020fa09b4cbc587a79987a5596aef32f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:bdb2f92316f3e286e7cb6d4d158f3c83cbfdb68a3a3c8f3e45fa85933e23226b
+  image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:bdb2f92316f3e286e7cb6d4d158f3c83cbfdb68a3a3c8f3e45fa85933e23226b
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:82ab5890edfdc887862a5ea7b5918b26401f6808d994fe6bb6f70dde287e2861
+  image: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:82ab5890edfdc887862a5ea7b5918b26401f6808d994fe6bb6f70dde287e2861
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:df141360ada9c93975c4d51e9843a1b63092ca8d180df6539f4aacce437603fe
+  image: dev.registry.tanzu.vmware.com/build-service/bundle@sha256:df141360ada9c93975c4d51e9843a1b63092ca8d180df6539f4aacce437603fe
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.5.0-build.1
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: 0.5.0-build.1
+          url: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle:0.5.0-build.1
+  image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:5d9890cf1d63267657a88666b3cdc0b0779b1b72eeb214ed2a9b2e3ba990923c
+  image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:5d9890cf1d63267657a88666b3cdc0b0779b1b72eeb214ed2a9b2e3ba990923c
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
+  image: dev.registry.tanzu.vmware.com/developer-conventions/developer-conventions-bundle@sha256:e5a6dabdc27e08ff43e651c1ed5671c6e74c8031311a0c0e2606f9645386823a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
+  image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:3e90cb4294f8bf03007ba6fe9b5f30ed28ea506e1c225ac72a32601e82b8d988
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:ce5d0e06708660a8bd3d238753b770097b3076f6443423436ebc69a198e21151
+  image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:ce5d0e06708660a8bd3d238753b770097b3076f6443423436ebc69a198e21151
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:d68c5d216cfdfe4d70823133098381eb6c7a60dd7a09c58ba502b1266b0af9b7
+  image: dev.registry.tanzu.vmware.com/fluxcd-source-controller/fluxcd-source-controller-bundle@sha256:d68c5d216cfdfe4d70823133098381eb6c7a60dd7a09c58ba502b1266b0af9b7
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:08559b7c25cea67109a53d9deb05bc16d1d6408ba9a3264ad752eed4a5bbbbd8
+  image: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:08559b7c25cea67109a53d9deb05bc16d1d6408ba9a3264ad752eed4a5bbbbd8
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:2f9c32c977de3ba4e32a3d448150bb209020cb73776149b553460d52bf2e1871
+  image: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:2f9c32c977de3ba4e32a3d448150bb209020cb73776149b553460d52bf2e1871
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:9a0e38b31fede6752606b01ba3d058123878832543ae484fef87bf97550e0716
+  image: dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:9a0e38b31fede6752606b01ba3d058123878832543ae484fef87bf97550e0716
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:0e2f929844b851f1f98a647829471227dfcb651805e9a6527e729410d8bddab2
+  image: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:0e2f929844b851f1f98a647829471227dfcb651805e9a6527e729410d8bddab2
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:72830119ba882dde541502384c5edac3aa7f5806ab325bf8235b12b0b7860642
+  image: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:72830119ba882dde541502384c5edac3aa7f5806ab325bf8235b12b0b7860642
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:cd38601896da00055e550c71f948de0ed1d69ac82f72d3d1ee4ae974447c50e5
+  image: dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:cd38601896da00055e550c71f948de0ed1d69ac82f72d3d1ee4ae974447c50e5
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:bf56764c935e1dfff1c026770b540187400934764863faf7ea81dd6e6bfd1eca
+  image: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:bf56764c935e1dfff1c026770b540187400934764863faf7ea81dd6e6bfd1eca
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:ddbef93d83d9b6963302d46891fbc2c448b6269e2cc72cf58e01573d5ce5796a
+  image: dev.registry.tanzu.vmware.com/ootb-delivery-basic/ootb-delivery-basic@sha256:ddbef93d83d9b6963302d46891fbc2c448b6269e2cc72cf58e01573d5ce5796a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:61207e090a167d025fec90aa8f5a703021b3a36563bd885430f57e3b91fb28ef
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:61207e090a167d025fec90aa8f5a703021b3a36563bd885430f57e3b91fb28ef
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:a091bad0d0932454a27c759af7a2919e376de84e4039da9b69beeaa1c0434958
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-basic/ootb-supply-chain-basic@sha256:a091bad0d0932454a27c759af7a2919e376de84e4039da9b69beeaa1c0434958
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:5e25f06113b81459fc6d978d1814c92444dfce6c998c86370f8c238121d27246
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:5e25f06113b81459fc6d978d1814c92444dfce6c998c86370f8c238121d27246
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:f3d0420a6f505e6e929525adafca234ebc9bfc23444297505f42f03f4e625ca1
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:f3d0420a6f505e6e929525adafca234ebc9bfc23444297505f42f03f4e625ca1
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:658565a709c0bb594f722c44a0b1ad1fa921c9acbb1ee171519855fe21786a65
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:658565a709c0bb594f722c44a0b1ad1fa921c9acbb1ee171519855fe21786a65
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:774e9d64a22d79a6817a0207668de2ee546fb17e8e9aa813206af3dd028ac1c8
+  image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:774e9d64a22d79a6817a0207668de2ee546fb17e8e9aa813206af3dd028ac1c8
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:2d346ff49465eb48be068cf4e4a4cad90d1c6dc2ad35c992a0794ca180838f3f
+  image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:2d346ff49465eb48be068cf4e4a4cad90d1c6dc2ad35c992a0794ca180838f3f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:5a4cf069261f9010c5461d7956541eba400fcd0de8259404d36694dac32bc2db
+  image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:5a4cf069261f9010c5461d7956541eba400fcd0de8259404d36694dac32bc2db
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:f896abcb2f679a1ec70f9d785d7e741d8881291c25936a81416cae6decfe50d8
+  image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:f896abcb2f679a1ec70f9d785d7e741d8881291c25936a81416cae6decfe50d8
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:531712ebbf78c42cdc627bfa33e2f9005661ef54c18a448b054a492137df471c
+  image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:531712ebbf78c42cdc627bfa33e2f9005661ef54c18a448b054a492137df471c
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:9f739406ada507ee3b0590301633666357371581897d44a95db1f7b8b5c6926d
+  image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit-package-bundle@sha256:9f739406ada507ee3b0590301633666357371581897d44a95db1f7b8b5c6926d
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:67ce658227cf5a730a636991a21c7fbf9f72393e60deacdc2dc503a8b0e7d89b
+  image: dev.registry.tanzu.vmware.com/scp-toolkit/scp-toolkit@sha256:67ce658227cf5a730a636991a21c7fbf9f72393e60deacdc2dc503a8b0e7d89b
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/serverless/1.1.0-build.7@sha256:9c0f7069e7bcaff3bf91e8958c8b24644ecd13927ee0e64011e058172ccd8315
+  image: dev.registry.tanzu.vmware.com/serverless/1.1.0-build.7@sha256:9c0f7069e7bcaff3bf91e8958c8b24644ecd13927ee0e64011e058172ccd8315
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/serverless/1.1.1-build.49@sha256:0456622233e1ecce02c163ac845e09e385874d1d774e88f8495e3e617e359361
+  image: dev.registry.tanzu.vmware.com/serverless/1.1.1-build.49@sha256:0456622233e1ecce02c163ac845e09e385874d1d774e88f8495e3e617e359361
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/serverless/1.2.0-build.11@sha256:5e59753c0cb4a721206da4168c00eb0d0a9ed4997fc1db90d979447d89edc403
+  image: dev.registry.tanzu.vmware.com/serverless/1.2.0-build.11@sha256:5e59753c0cb4a721206da4168c00eb0d0a9ed4997fc1db90d979447d89edc403
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:b19371c32ceca54cf586e44ce1e5c1139e2e8e74a75b4b7b97d5b1d9b8052471
+  image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:b19371c32ceca54cf586e44ce1e5c1139e2e8e74a75b4b7b97d5b1d9b8052471
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:ce51a2d5e51ad6fcaba34c8f85ad576ef4dacb756042693b9c5d7901d0ae24b1
+  image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:ce51a2d5e51ad6fcaba34c8f85ad576ef4dacb756042693b9c5d7901d0ae24b1
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:e8f52ce61238d3b3f16f0ce0a2f1ae13a4e62e97f0c948457de83025760b66a6
+  image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:e8f52ce61238d3b3f16f0ce0a2f1ae13a4e62e97f0c948457de83025760b66a6
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:2bd149d4647ed7795f87e5e0f20c36638c7530d12f0885d12ac4602227650515
+  image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:2bd149d4647ed7795f87e5e0f20c36638c7530d12f0885d12ac4602227650515
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:4782a7d866d0ac275f8f11fa7a9f14ecbff7c583d9eecc1fd55de98aa25b3c0d
+  image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:4782a7d866d0ac275f8f11fa7a9f14ecbff7c583d9eecc1fd55de98aa25b3c0d
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:ab7f0078310cf44ed6e28d34c556b06ef90fe37b853362dfffed7828ded06abd
+  image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:ab7f0078310cf44ed6e28d34c556b06ef90fe37b853362dfffed7828ded06abd
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:d2c94525e9ab44ee50b5a0e187dc7006a6d7229872f7fd16e6dc07b2b3603ed7
+  image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:d2c94525e9ab44ee50b5a0e187dc7006a6d7229872f7fd16e6dc07b2b3603ed7
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.0-build.5@sha256:65645079ffe4f0d274b17eabb8e4f7d39729d53f59bdd6358e42d5cb79bfe1b2
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates@sha256:65645079ffe4f0d274b17eabb8e4f7d39729d53f59bdd6358e42d5cb79bfe1b2
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.0.1-build.2@sha256:916f5baa7d3bddd550ccbeaeea6689f3bf12ac9fc37dbdfde75391c5e08db8de
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates@sha256:916f5baa7d3bddd550ccbeaeea6689f3bf12ac9fc37dbdfde75391c5e08db8de
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates:v1.1.0-build.1@sha256:7a951a430b8ab50995a8041e702eb7708a49c480e0a0bce347cccf09fb4bf4ae
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/grype-templates@sha256:7a951a430b8ab50995a8041e702eb7708a49c480e0a0bce347cccf09fb4bf4ae
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:12c36c6050f469daea4194e22b90621dc2f27fdcfc925bc9f014d67d78304112
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:12c36c6050f469daea4194e22b90621dc2f27fdcfc925bc9f014d67d78304112
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:15492787d8d975c4f9d68b57015de63e358c4af1aeaef171a3d6f833cf3927a3
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:15492787d8d975c4f9d68b57015de63e358c4af1aeaef171a3d6f833cf3927a3
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:49c481a909d642ffb5978253800acad52c96d11275c6565aeedfe8aaa48c3871
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:49c481a909d642ffb5978253800acad52c96d11275c6565aeedfe8aaa48c3871
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:632421df32df6c3eeee96d509edb1dd1179636322f18d315de68600237103390
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/image-policy-webhook-bundle@sha256:632421df32df6c3eeee96d509edb1dd1179636322f18d315de68600237103390
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:0e169d8d11a0392e064ab947af4a30c20b11455cebac9753fb6eb733ab07fc0e
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:0e169d8d11a0392e064ab947af4a30c20b11455cebac9753fb6eb733ab07fc0e
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-bundle@sha256:f5529e516687ebc1d0986ec5f3240c30475d734a39cac57b191d3479c44e0fd4
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-package@sha256:742cbb9e918d5142930e3ee3728b2886639d9cf5c93e70813fb4c1f2404d709a
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/insight-metadata-store-package@sha256:742cbb9e918d5142930e3ee3728b2886639d9cf5c93e70813fb4c1f2404d709a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.0-build.5@sha256:f0a39fdff4e8a41d12ab9139c71550a5819ad1d375c64963b895d21f4ca69b78
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:f0a39fdff4e8a41d12ab9139c71550a5819ad1d375c64963b895d21f4ca69b78
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.0.1-build.2@sha256:828ef6b117901cb94ded7c63ed078bd8b3fab395f1fd4159fd6618242a180cb7
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:828ef6b117901cb94ded7c63ed078bd8b3fab395f1fd4159fd6618242a180cb7
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.1.0-build.1@sha256:e48ca678eccf54f8e3ff425b681e74efedfd26313386a45f8898a80673642b68
+  image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller@sha256:e48ca678eccf54f8e3ff425b681e74efedfd26313386a45f8898a80673642b68
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/cert-manager-pkg@sha256:e4b2967b7b0779dc363ca0411fa098e251ba4c1fcd97cf1b976ea71b23aee2c4
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/cert-manager-pkg@sha256:e4b2967b7b0779dc363ca0411fa098e251ba4c1fcd97cf1b976ea71b23aee2c4
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/contour-pkg@sha256:0fa15087a20bf738567766d5faf237af928daa975822c581dbdfffb8d29fdf19
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:0e82786cabb59287893827fff05b9cffa496623838406c0660b77f896d65774b
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:0e82786cabb59287893827fff05b9cffa496623838406c0660b77f896d65774b
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:616ad86559b2326d9b4a119347e4b685c2285400e93f0d16c91e925a757271a1
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:616ad86559b2326d9b4a119347e4b685c2285400e93f0d16c91e925a757271a1
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:ef6b5debec854cb80499ca0cfc186060b29ce05dab4b7e4f31b9168b749d501f
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:ef6b5debec854cb80499ca0cfc186060b29ce05dab4b7e4f31b9168b749d501f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:fa1c8f2332a5a088eb044c3a8fab78cb59b2e4002b3bfc352a46fb214f5a4caa
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:fa1c8f2332a5a088eb044c3a8fab78cb59b2e4002b3bfc352a46fb214f5a4caa
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:2d3b5e53ed294e3f7ce64294dd6db0f50aef78ff8b1fdd1b02b513fd5aa0d23f
+  image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:2d3b5e53ed294e3f7ce64294dd6db0f50aef78ff8b1fdd1b02b513fd5aa0d23f
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:dc610ba492e687a3a6bbde3c3d50482853e04187ac9621aa6b8c35c7b6046a47
+  image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:dc610ba492e687a3a6bbde3c3d50482853e04187ac9621aa6b8c35c7b6046a47
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:eba78cfe2a835a0560a944c071ab910928851ca1527d81441e1cc032a1e1bd82
+  image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:eba78cfe2a835a0560a944c071ab910928851ca1527d81441e1cc032a1e1bd82
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:7a6c923da1893495d217f48830abb426965acee2c39efa207c83300706d23f82
+  image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:7a6c923da1893495d217f48830abb426965acee2c39efa207c83300706d23f82
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:d3f1611e1eb90af224b66514238bb99719136a15f8ca01de41e6c2c648ce914a
+  image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:d3f1611e1eb90af224b66514238bb99719136a15f8ca01de41e6c2c648ce914a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:d4e9bca1c7520346dbc26087e8470380fd5339e4b3c3bf97d8e64bb58efc4c2c
+  image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:d4e9bca1c7520346dbc26087e8470380fd5339e4b3c3bf97d8e64bb58efc4c2c
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:1554f9cd792c47678a44a6259447987aa60e5fc945d198bbcf7266f8700865e0
+  image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:1554f9cd792c47678a44a6259447987aa60e5fc945d198bbcf7266f8700865e0
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:f12fff08838e358093fcd5dc9a7b26aed5d012edb917977c20d9162769a57cb5
+  image: dev.registry.tanzu.vmware.com/tanzu-spring-boot-convention/spring-boot-conventions@sha256:f12fff08838e358093fcd5dc9a7b26aed5d012edb917977c20d9162769a57cb5
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-auth/tap-auth-bundle@sha256:019896f3de9e9c779ac88b4c388efb01847a1704e1e07d255c009d8cb4bb7a85
+  image: dev.registry.tanzu.vmware.com/tap-auth/tap-auth-bundle@sha256:019896f3de9e9c779ac88b4c388efb01847a1704e1e07d255c009d8cb4bb7a85
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-gui/bundle:1.0.1
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: 1.0.1
+          url: dev.registry.tanzu.vmware.com/tap-gui/bundle:1.0.1
+  image: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:413b3670c53ff30c4f143b008034c97ee1ee97d6f96ba2e113af873e8d3172b5
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:23152e73ea7f18be32d3ca420bc5eb422e0297230c015ec966a87dafd79a3a02
+  image: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:23152e73ea7f18be32d3ca420bc5eb422e0297230c015ec966a87dafd79a3a02
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:290c5928817175f8be0f39be8ac39802aa26a6210a42acbe2c7e5cc3ebaf211b
+  image: dev.registry.tanzu.vmware.com/tap-gui/bundle@sha256:290c5928817175f8be0f39be8ac39802aa26a6210a42acbe2c7e5cc3ebaf211b
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle:0.1.2
+    kbld.carvel.dev/origins: |
+      - resolved:
+          tag: 0.1.2
+          url: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle:0.1.2
+  image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:809e9bb10f392cf4acb72e07286dc38992a35693b55699f475ae6da8d1c04442
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:64139ce3b28af09b8e3a5459ff07be55781802ba1a58b5f5968702981e702b0a
+  image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:64139ce3b28af09b8e3a5459ff07be55781802ba1a58b5f5968702981e702b0a
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:b54005450651b6ba8ce3a30a21ad2a70a4fd941e43b8f26995252af0eca3f2c3
+  image: dev.registry.tanzu.vmware.com/tap-telemetry/telemetry-bundle@sha256:b54005450651b6ba8ce3a30a21ad2a70a4fd941e43b8f26995252af0eca3f2c3
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:43ee0f943436615e532291132592f43f44792bbcea8fe61b031b49aa1c8f7d50
+  image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:43ee0f943436615e532291132592f43f44792bbcea8fe61b031b49aa1c8f7d50
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:5afcaa2571e6c782a39ba2c0f1fc5e9681739484c65e4621eda700ba8f7be595
+  image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:5afcaa2571e6c782a39ba2c0f1fc5e9681739484c65e4621eda700ba8f7be595
+- annotations:
+    kbld.carvel.dev/id: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:a68ebab27505789fccc463b71f111e4ed2ae85c52c7118c268a795cc878df690
+  image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:a68ebab27505789fccc463b71f111e4ed2ae85c52c7118c268a795cc878df690
+kind: ImagesLock

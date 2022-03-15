@@ -1,0 +1,309 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: api-portal.tanzu.vmware.com
+spec:
+  displayName: API portal
+  longDescription: |-
+    API portal promotes collaboration across different lines of business teams.
+    The API service provider exposes the API endpoints by adding the OpenAPI URL into the API portal deployment and document the API endpoints in the OpenAPI format in the portal.
+    The API consumer therefore can discover the API endpoints and further try out the endpoints and receive sample responses in the portal.
+  shortDescription: A unified user interface to enable search, discovery and try-out of API endpoints at ease.
+  categories: []
+  providerName: VMware
+  iconSVGBase64: PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCA1OC44NiI+CiAgPGc+CiAgICA8Zz4KICAgICAgPHBhdGggZD0iTTM5LjMsNTIuNjdIMjFhMi4zNSwyLjM1LDAsMCwxLTEuODYtLjg5TDcuNTIsMzcuMjRhMi4zOCwyLjM4LDAsMCwxLS40NS0yLjA2bDQuNDItMTcuOGEyLjQyLDIuNDIsMCwwLDEsMS4yNS0xLjU2TDI5LjEyLDcuNjFhMi4zOSwyLjM5LDAsMCwxLDIuMTIsMGwxNi41OSw4LjIyYTIuMzQsMi4zNCwwLDAsMSwxLjI2LDEuNThsNC4yMiwxNy44YTIuMzgsMi4zOCwwLDAsMS0uNDYsMkw0MS4xNSw1MS43OUEyLjM3LDIuMzcsMCwwLDEsMzkuMyw1Mi42N1pNMjEsNTAuMjJIMzkuMjZMNTAuOTEsMzUuNzMsNDYuNzEsMTgsMzAuMTksOS44MiwxMy44NywxOCw5LjQ2LDM1Ljc0WiIgc3R5bGU9ImZpbGw6ICMyMzhmY2YiLz4KICAgICAgPGc+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSI1MS4yMiAxMi41NSA1My4zIDEwLjg0IDMxLjQxIDAgMzEuNDEgMi43NCA1MS4yMiAxMi41NSIgc3R5bGU9ImZpbGw6ICMxYmJmZDMiLz4KICAgICAgICA8cG9seWdvbiBwb2ludHM9IjMuMiAzOC4wMiAwLjUzIDM4LjYxIDE1LjggNTcuNzcgMTcgNTUuMzQgMy4yIDM4LjAyIiBzdHlsZT0iZmlsbDogIzc5YmY0MyIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iMjguOTUgMi43NSAyOC45NSAwLjAxIDcuMzUgMTAuODQgOS4zNyAxMi41OCAyOC45NSAyLjc1IiBzdHlsZT0iZmlsbDogIzFiYmZkMyIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iNy45MSAxNC41NiA1LjgzIDEyLjc3IDAgMzYuMjEgMi42OCAzNS42MiA3LjkxIDE0LjU2IiBzdHlsZT0iZmlsbDogIzFkNDQ4OSIvPgogICAgICAgIDxwb2x5Z29uIHBvaW50cz0iNTcuNzEgMzUuNjMgNjAuMzggMzYuMjIgNTQuODMgMTIuNzcgNTIuNzEgMTQuNTEgNTcuNzEgMzUuNjMiIHN0eWxlPSJmaWxsOiAjMWQ0NDg5Ii8+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSI1Ny4xNiAzOC4wMiA0My4yMSA1NS4zNyA0NC40IDU3LjggNTkuODMgMzguNjEgNTcuMTYgMzguMDIiIHN0eWxlPSJmaWxsOiAjNzliZjQzIi8+CiAgICAgICAgPHBvbHlnb24gcG9pbnRzPSIxOS4yMSA1Ni40IDE4LjAxIDU4Ljg2IDQyLjE4IDU4Ljg2IDQwLjk4IDU2LjQgMTkuMjEgNTYuNCIgc3R5bGU9ImZpbGw6ICMxYmJmZDMiLz4KICAgICAgPC9nPgogICAgPC9nPgogIDwvZz4KPC9zdmc+Cg==
+  maintainers:
+  - name: VMware
+  supportDescription: https://tanzu.vmware.com/support
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: api-portal.tanzu.vmware.com.1.0.8
+spec:
+  refName: api-portal.tanzu.vmware.com
+  version: 1.0.8
+  releasedAt: "2021-12-16T00:00:00Z"
+  releaseNotes: |
+    Resolved the CVE issues; recommend upgrade from the previous versions
+  valuesSchema:
+    openAPIv3:
+      title: api-portal.tanzu.vmware.com values schema
+      examples: []
+      properties:
+        apiPortalServer:
+          type: object
+          description: API portal server configurations
+          properties:
+            replicaCount:
+              type: integer
+              description: Number of replicas
+              default: 1
+            title:
+              type: string
+              description: Title of the API portal instance
+              default: API portal
+            description:
+              type: string
+              description: Description of the API portal instance
+              default: API portal for <namespace> namespace
+            sourceUrls:
+              type: string
+              description: OpenAPI urls to load
+              default: https://petstore.swagger.io/v2/swagger.json,https://petstore3.swagger.io/api/v3/openapi.json
+            sourceUrlsCacheTtlSec:
+              type: string
+              description: Time after which they will be refreshed (in seconds)
+              default: "300"
+            sourceUrlsTimeoutSec:
+              type: string
+              description: Timeout for remote OpenAPI retrieval (in seconds)
+              default: "10"
+            requestMemory:
+              type: string
+              description: Requests describes the minimum amount of memory resources required.
+              default: 512Mi
+            requestCpu:
+              type: string
+              description: Requests describes the minimum amount of cpu resources required.
+              default: 100m
+            limitMemory:
+              type: string
+              description: Limits describes the maximum amount of memory resources allowed.
+              default: 1024Mi
+            limitCpu:
+              type: string
+              description: Limits describes the maximum amount of cpu resources allowed.
+              default: 500m
+            namespace:
+              type: string
+              description: The namespace to deploy API portal to
+              default: api-portal
+            sso:
+              type: object
+              description: SSO Configuration
+              properties:
+                secret:
+                  type: string
+                  description: Secret name to search in the namespace which contains "scope", "issuer-uri", "client-id" and "client-secret"
+                  default: sso-credentials
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package:1.0.8
+      template:
+      - ytt:
+          paths:
+          - config/
+          - values.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: api-portal.tanzu.vmware.com.1.0.9
+spec:
+  refName: api-portal.tanzu.vmware.com
+  version: 1.0.9
+  releasedAt: "2022-01-03T00:00:00Z"
+  releaseNotes: |
+    Resolved the CVE issues; recommend upgrade from the previous versions
+  valuesSchema:
+    openAPIv3:
+      title: api-portal.tanzu.vmware.com values schema
+      examples: []
+      properties:
+        apiPortalServer:
+          type: object
+          description: API portal server configurations
+          properties:
+            replicaCount:
+              type: integer
+              description: Number of replicas
+              default: 1
+            title:
+              type: string
+              description: Title of the API portal instance
+              default: API portal
+            description:
+              type: string
+              description: Description of the API portal instance
+              default: API portal for <namespace> namespace
+            sourceUrls:
+              type: string
+              description: OpenAPI urls to load
+              default: https://petstore.swagger.io/v2/swagger.json,https://petstore3.swagger.io/api/v3/openapi.json
+            sourceUrlsCacheTtlSec:
+              type: string
+              description: Time after which they will be refreshed (in seconds)
+              default: "300"
+            sourceUrlsTimeoutSec:
+              type: string
+              description: Timeout for remote OpenAPI retrieval (in seconds)
+              default: "10"
+            requestMemory:
+              type: string
+              description: Requests describes the minimum amount of memory resources required.
+              default: 512Mi
+            requestCpu:
+              type: string
+              description: Requests describes the minimum amount of cpu resources required.
+              default: 100m
+            limitMemory:
+              type: string
+              description: Limits describes the maximum amount of memory resources allowed.
+              default: 1024Mi
+            limitCpu:
+              type: string
+              description: Limits describes the maximum amount of cpu resources allowed.
+              default: 500m
+            namespace:
+              type: string
+              description: The namespace to deploy API portal to
+              default: api-portal
+            sso:
+              type: object
+              description: SSO Configuration
+              properties:
+                secret:
+                  type: string
+                  description: Secret name to search in the namespace which contains "scope", "issuer-uri", "client-id" and "client-secret"
+                  default: sso-credentials
+  licenses:
+  - VMware Proprietary
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/api-portal/api-portal-carvel-package@sha256:10b846f2b6b2ef544b2ffe3bbc28b745161be43982b3b23a460ffc8967941e6d
+      template:
+      - ytt:
+          paths:
+          - config/
+          - values.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: PackageMetadata
+metadata:
+  name: accelerator.apps.tanzu.vmware.com
+spec:
+  displayName: "Application Accelerator for VMware Tanzu"
+  longDescription: "Application Accelerator is used to create new projects and configurations which follow enterprise standards."
+  shortDescription: "Used to create new projects and configurations."
+  providerName: "VMware"
+  maintainers:
+  - name: "Thomas Risberg"
+  - name: "Diego Wong"
+  supportDescription: "Support available from VMware. Refer to the VMware Product Guide for specific support terms."
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: accelerator.apps.tanzu.vmware.com.1.1.0-build.2
+spec:
+  refName: accelerator.apps.tanzu.vmware.com
+  version: 1.1.0-build.2
+  releasedAt: 2022-03-03T00:00:00Z
+  releaseNotes: |
+        Release 1.1.0-build.2 of the Application Accelerator for VMware Tanzu package
+  valuesSchema:
+    openAPIv3:
+      title: accelerator.apps.tanzu.vmware.com values schema
+      properties:
+        server:
+          description: 'UI Server Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the acc-server service.
+              default: LoadBalancer
+              examples:
+              - NodePort
+            watched_namespace:
+              type: string
+              description: The namespace that the server watches for accelerator resources.
+              default: default
+            engine_invocation_url:
+              type: string
+              description: The URL the server uses for invoking the accelerator engine.
+              default: "http://acc-engine.accelerator-system.svc.cluster.local/invocations"
+          type: object
+        engine:
+          description: 'Accelerator Engine Configuration'
+          properties:
+            service_type:
+              type: string
+              description: The service type for the Service of the engine.
+              default: ClusterIP
+              examples:
+              - NodePort
+            max_direct_memory_size:
+              type: string
+              description: The max size for the Java -XX:MaxDirectMemorySize setting.
+              default: 32M
+              examples:
+              - 64M
+          type: object
+        samples:
+          description: 'Sample Configuration'
+          properties:
+            include:
+              type: boolean
+              description: Whether to include the bundled sample Accelerators in the install.
+              default: true
+          type: object
+        ingress:
+          description: 'Ingress Configuration'
+          properties:
+            include:
+              type: boolean
+              description: Whether to include the ingress configuration in the install.
+              default: false
+          type: object
+        domain:
+          description: 'Top level domain to use for ingress configuration'
+          default: tap.example.com
+          type: string
+        tls:
+          description: 'TLS Secret Configuration'
+          properties:
+            secretName:
+              type: string
+              description: The name of the secret.
+              default: tls
+            namespace:
+              type: string
+              description: The namespace for the secret.
+              default: tanzu-system-ingress
+          type: object
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-accelerator/acc-install-bundle@sha256:b918aa75d09174507b09fb2248bfbda8b204c5acc10cd28eda3cbbbb3b358643
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}

@@ -46,9 +46,9 @@
   values_file: ootb-supply-chain-testing-scanning-values.yaml
 - name: ootb-delivery-basic
   package: ootb-delivery-basic.tanzu.vmware.com
-- name: scanning
+- name: scan-controller
   package: scanning.apps.tanzu.vmware.com
-- name: grype
+- name: grype-scanner
   package: grype.scanning.apps.tanzu.vmware.com
 - name: metadata-store
   package: metadata-store.apps.tanzu.vmware.com
