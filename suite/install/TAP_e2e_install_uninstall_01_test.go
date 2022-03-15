@@ -105,7 +105,6 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	f3 := features.New("install-uninstall-tap-packages").
 		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
-			valuesFile := ""
 			for _, pkgVersion := range availablePkgs {
 				err := tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
 				if err != nil {
