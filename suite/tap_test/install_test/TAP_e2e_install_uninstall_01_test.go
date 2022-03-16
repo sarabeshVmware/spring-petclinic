@@ -29,13 +29,13 @@ type Packages []struct {
 	PollTimout string `yaml:"poll_timout,omitempty"`
 }
 
-var PackagesResourcesDir = filepath.Join(utils.GetFileDir(), "../resources/components")
+var PackagesResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/components")
 
 func getPackagesList() (Packages, error) {
 	log.Printf("getting package list")
 
 	pkgList := Packages{}
-	file := filepath.Join(PackagesResourcesDir, "packages.yaml")
+	file := filepath.Join(PackagesResourcesDir, "install-metadata.yaml")
 
 	// read file
 	pkgListBytes, err := os.ReadFile(file)
@@ -75,7 +75,7 @@ func installUnistallPackage(t *testing.T, packageName string) {
 		if pkg.Name != packageName {
 			continue
 		}
-		t.Logf("Installing package: %s", pkg.Name)
+		t.Logf("Installing and Uninstalling package: %s", pkg.Name)
 		availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 		for index, pkgVersion := range availablePkgs {
 			installIndividualPackages := features.New(packageName).
