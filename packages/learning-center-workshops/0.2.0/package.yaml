@@ -6,14 +6,14 @@ metadata:
 spec:
   refName: "workshops.learningcenter.tanzu.vmware.com"
   version: "0.2.0"
-  releasedAt: "2022-03-03T00:38:29Z"
+  releasedAt: "2022-03-16T21:15:05Z"
   licenses: 
   - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: "dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:cd38601896da00055e550c71f948de0ed1d69ac82f72d3d1ee4ae974447c50e5"
+          image: "dev.registry.tanzu.vmware.com/learning-center/workshops-package@sha256:2522df0c6957dd1ac82ba6ec9d295f7af906637c95abab6a069cb2a81fed7b8e"
       template:
       - ytt:
           paths:
