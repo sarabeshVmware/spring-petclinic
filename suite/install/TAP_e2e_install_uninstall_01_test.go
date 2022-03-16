@@ -70,9 +70,8 @@ func getPackagesList() (Packages, error) {
 	return pkgList, err
 }
 
-pkgList, _ := getPackagesList()
-
 func installUnistallPackage(packageName string) {
+	pkgList, _ := getPackagesList()
 	for _, pkg := range pkgList {
 		if pkg.Name != packageName {
 			continue
@@ -110,7 +109,7 @@ func installUnistallPackage(packageName string) {
 func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
-	// pkgList, _ := getPackagesList()
+	pkgList, _ := getPackagesList()
 	//latestPkgList := tanzu_libs.ListAllAvailablePackages(suiteConfig.PackageRepository.Namespace)
 	// installAllIndividualPackages := features.New("install-individual-packages").
 	// 	Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -318,14 +317,14 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	
+
 	installFluxcdSourceControllerPackages := features.New("install-fluxcd-source-controller-packages").
 		Assess("install-fluxcd-source-controller-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("fluxcd-source-controller")
 			return ctx
 		}).
 		Feature()
-	
+
 	installTektonPipelinesPackages := features.New("install-tekton-pipelines-packages").
 		Assess("install-tekton-pipelines-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("tekton-pipelines")
@@ -367,7 +366,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	
+
 	installGrypeScannerPackages := features.New("install-grype-scanner-packages").
 		Assess("install-grype-scanner-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("grype-scanner")
@@ -381,7 +380,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-		
+
 	installAppLiveViewConventionsPackages := features.New("install-appliveview-conventions-packages").
 		Assess("install-appliveview-conventions-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("appliveview-conventions")
@@ -409,7 +408,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-		
+
 	installTapGuiPackages := features.New("install-tap-gui-packages").
 		Assess("install-tap-gui-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("tap-gui")
@@ -465,7 +464,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	
+
 	installOotbDeliveryBasicPackages := features.New("install-ootb-delivery-basic-packages").
 		Assess("install-ootb-delivery-basic-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			installUnistallPackage("ootb-delivery-basic")
@@ -475,8 +474,8 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 
 	testEnv.TestInParallel(t, installCertManagerPackages, installServiceBindingsPackages, installSourceControllerPackages, installServicesToolkitPackages, installScanControllerPackages, installApiPortalPackages, installBuildServicePackages, installFluxcdSourceControllerPackages, installTektonPipelinesPackages, installTapTelemetryPackages)
 	testEnv.TestInParallel(t, installContourPackages, installConventionsControllerPackages, installImageWebhookPolicyPackages, installMetadataStorePackages, installCartographerPackages, installGrypeScannerPackages)
-	testEnv.TestInParallel(t,installAppLiveViewPackages,installAppLiveViewConventionsPackages,installAcceleratorPackages,installDeveloperConventionsPackages, installCloudNativeRuntimesPackages,installTapGuiPackages,installLearningCenterPackages,installOotbTemplatesPackages,installSpringBootConventionsPackages)
-	testEnv.TestInParallel(t,installLearningCenterWorkshopsPackages,installOotbSupplyChainBasicPackages,installOotbSupplyChainTestingPackages,installOotbSupplyChainTestingScanningPackages,installOotbDeliveryBasicPackages)
+	testEnv.TestInParallel(t, installAppLiveViewPackages, installAppLiveViewConventionsPackages, installAcceleratorPackages, installDeveloperConventionsPackages, installCloudNativeRuntimesPackages, installTapGuiPackages, installLearningCenterPackages, installOotbTemplatesPackages, installSpringBootConventionsPackages)
+	testEnv.TestInParallel(t, installLearningCenterWorkshopsPackages, installOotbSupplyChainBasicPackages, installOotbSupplyChainTestingPackages, installOotbSupplyChainTestingScanningPackages, installOotbDeliveryBasicPackages)
 	testenv.Test(t,
 		// installCertManagerPackages,
 		// installContourPackages,
