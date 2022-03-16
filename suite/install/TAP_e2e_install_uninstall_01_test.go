@@ -79,8 +79,8 @@ func installUnistallPackage(t *testing.T, packageName string) {
 		t.Logf("Installing package: %s", pkg.Name)
 		availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 		for index, pkgVersion := range availablePkgs {
-			installIndividualPackages := features.New(fmt.Sprintf("install-%s-packages", packageName)).
-				Assess(fmt.Sprintf("install-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installIndividualPackages := features.New(packageName).
+				Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
 					installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
@@ -194,7 +194,7 @@ func TestInstallPackages(t *testing.T) {
 					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
 						// write new feature every time
-						installCertMgr := features.New("install-version").
+						installCertMgr := features.New(pkg.Name).
 							Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
@@ -242,7 +242,7 @@ func TestInstallPackages(t *testing.T) {
 					}
 					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
-						installContour := features.New("install-version").
+						installContour := features.New(pkg.Name).
 							Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
