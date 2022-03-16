@@ -78,7 +78,7 @@ func installUnistallPackage(t *testing.T, packageName string) {
 		t.Logf("Installing and Uninstalling package: %s", pkg.Name)
 		availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 		for index, pkgVersion := range availablePkgs {
-			installIndividualPackages := features.New(packageName).
+			installIndividualPackages := features.New(fmt.Sprintf("install-uninstall-%s", packageName)).
 				Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
@@ -113,12 +113,18 @@ func TestInstallPackages(t *testing.T) {
 	uninstallAllIndividualPackages := features.New("uninstall-individual-packages").
 		Assess("uninstallation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for i := len(pkgList) - 1; i >= 0; i-- {
-				t.Logf("pkgname: %s", pkgList[i].Name)
-				err := tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
-				if err != nil {
-					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s", pkgList[i].Name))
-					t.Fail()
-				}
+				uninstallPkg := features.New(pkgList[i].Name).
+					Assess("uninstall", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+						t.Logf("uninstalling package: %s", pkgList[i].Name)
+						err := tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
+						if err != nil {
+							t.Error(fmt.Errorf("Uninstallation FAILED for package : %s", pkgList[i].Name))
+							t.Fail()
+						}
+						return ctx
+					}).
+					Feature()
+				testenv.Test(t, uninstallPkg)
 			}
 			return ctx
 		}).
@@ -128,20 +134,27 @@ func TestInstallPackages(t *testing.T) {
 		Assess("install-uninstall", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.PackageName, suiteConfig.PackageRepository.Namespace)
 			for _, pkgVersion := range availablePkgs {
-				tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
-				installed := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
-				if !installed {
-					kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
-					t.Error(fmt.Errorf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace))
-					t.Fail()
-				} else {
-					t.Logf("Installed package : %s, version: %s successfully", suiteConfig.Tap.Name, pkgVersion.VERSION)
-				}
-				err := tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
-				if err != nil {
-					t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", suiteConfig.Tap.Name, pkgVersion.VERSION))
-					t.Fail()
-				}
+				installUninstallTapPkg := features.New(suiteConfig.Tap.Name).
+					Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+
+						tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
+						installed := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
+						if !installed {
+							kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
+							t.Error(fmt.Errorf("error while installing package %s (%s)", suiteConfig.Tap.Name, suiteConfig.Tap.Namespace))
+							t.Fail()
+						} else {
+							t.Logf("Installed package : %s, version: %s successfully", suiteConfig.Tap.Name, pkgVersion.VERSION)
+						}
+						err := tanzu_libs.DeleteInstalledPackage(suiteConfig.Tap.Name, suiteConfig.PackageRepository.Namespace)
+						if err != nil {
+							t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", suiteConfig.Tap.Name, pkgVersion.VERSION))
+							t.Fail()
+						}
+						return ctx
+					}).
+					Feature()
+				testenv.Test(t, installUninstallTapPkg)
 			}
 			return ctx
 		}).
