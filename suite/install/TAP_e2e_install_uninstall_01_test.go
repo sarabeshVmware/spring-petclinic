@@ -4,7 +4,6 @@ package install_tests
 
 import (
 	"context"
-	// "io/ioutil"
 	"fmt"
 	"log"
 	"os"
@@ -110,37 +109,6 @@ func TestInstallPackages(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
 	pkgList, _ := getPackagesList()
-	//latestPkgList := tanzu_libs.ListAllAvailablePackages(suiteConfig.PackageRepository.Namespace)
-	// installAllIndividualPackages := features.New("install-individual-packages").
-	// 	Assess("install-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 		for _, pkg := range pkgList {
-	// 			if pkg.Name == "cert-manager" || pkg.Name == "contour" {
-	// 				continue
-	// 			}
-	// 			t.Logf("Installing package: %s", pkg.Name)
-	// 			availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
-	// 			for index, pkgVersion := range availablePkgs {
-	// 				t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
-	// 				tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
-	// 				installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
-	// 				if installed {
-	// 					t.Logf("Installed package : %s, version: %s successfully", pkg.Name, pkgVersion.VERSION)
-	// 				} else {
-	// 					t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
-	// 					t.Fail()
-	// 				}
-	// 				if index != len(availablePkgs)-1 {
-	// 					err := tanzu_libs.DeleteInstalledPackage(pkg.Name, suiteConfig.PackageRepository.Namespace)
-	// 					if err != nil {
-	// 						t.Error(fmt.Errorf("Uninstallation FAILED for package : %s, version: %s", pkg.Name, pkgVersion.VERSION))
-	// 						t.Fail()
-	// 					}
-	// 				}
-	// 			}
-	// 		}
-	// 		return ctx
-	// 	}).
-	// 	Feature()
 
 	uninstallAllIndividualPackages := features.New("uninstall-individual-packages").
 		Assess("uninstallation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -472,14 +440,41 @@ func TestInstallPackages(t *testing.T) {
 		}).
 		Feature()
 
-	testenv.TestInParallel(t, installCertManagerPackages, installServiceBindingsPackages, installSourceControllerPackages, installServicesToolkitPackages, installScanControllerPackages, installApiPortalPackages, installBuildServicePackages, installFluxcdSourceControllerPackages, installTektonPipelinesPackages, installTapTelemetryPackages)
-	testenv.TestInParallel(t, installContourPackages, installConventionsControllerPackages, installImageWebhookPolicyPackages, installMetadataStorePackages, installCartographerPackages, installGrypeScannerPackages)
-	testenv.TestInParallel(t, installAppLiveViewPackages, installAppLiveViewConventionsPackages, installAcceleratorPackages, installDeveloperConventionsPackages, installCloudNativeRuntimesPackages, installTapGuiPackages, installLearningCenterPackages, installOotbTemplatesPackages, installSpringBootConventionsPackages)
-	testenv.TestInParallel(t, installLearningCenterWorkshopsPackages, installOotbSupplyChainBasicPackages, installOotbSupplyChainTestingPackages, installOotbSupplyChainTestingScanningPackages, installOotbDeliveryBasicPackages)
+	testenv.TestInParallel(t,
+		installCertManagerPackages,
+		installServiceBindingsPackages,
+		installSourceControllerPackages,
+		installServicesToolkitPackages,
+		installScanControllerPackages,
+		installApiPortalPackages,
+		installBuildServicePackages,
+		installFluxcdSourceControllerPackages,
+		installTektonPipelinesPackages,
+		installTapTelemetryPackages)
+	testenv.TestInParallel(t,
+		installContourPackages,
+		installConventionsControllerPackages,
+		installImageWebhookPolicyPackages,
+		installMetadataStorePackages,
+		installCartographerPackages,
+		installGrypeScannerPackages)
+	testenv.TestInParallel(t,
+		installAppLiveViewPackages,
+		installAppLiveViewConventionsPackages,
+		installAcceleratorPackages,
+		installDeveloperConventionsPackages,
+		installCloudNativeRuntimesPackages,
+		installTapGuiPackages,
+		installLearningCenterPackages,
+		installOotbTemplatesPackages,
+		installSpringBootConventionsPackages)
+	testenv.TestInParallel(t,
+		installLearningCenterWorkshopsPackages,
+		installOotbSupplyChainBasicPackages,
+		installOotbSupplyChainTestingPackages,
+		installOotbSupplyChainTestingScanningPackages,
+		installOotbDeliveryBasicPackages)
 	testenv.Test(t,
-		// installCertManagerPackages,
-		// installContourPackages,
-		// installAllIndividualPackages,
 		uninstallAllIndividualPackages,
 		installUninstallTapPackages,
 	)
