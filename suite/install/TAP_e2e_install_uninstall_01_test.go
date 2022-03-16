@@ -70,7 +70,7 @@ func getPackagesList() (Packages, error) {
 	return pkgList, err
 }
 
-func installUnistallPackage(packageName string) {
+func installUnistallPackage(t *testing.T, packageName string) {
 	pkgList, _ := getPackagesList()
 	for _, pkg := range pkgList {
 		if pkg.Name != packageName {
@@ -79,7 +79,7 @@ func installUnistallPackage(packageName string) {
 		t.Logf("Installing package: %s", pkg.Name)
 		availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
 		for index, pkgVersion := range availablePkgs {
-			installIndividualPackages := features.New(fmt.Sprintf("install-%s-package"), packageName).
+			installIndividualPackages := features.New(fmt.Sprintf("install-%s-packages", packageName)).
 				Assess(fmt.Sprintf("install-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
@@ -106,7 +106,7 @@ func installUnistallPackage(packageName string) {
 	}
 }
 
-func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
+func TestInstallPackages(t *testing.T) {
 	t.Log("************** TestCase START: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 
 	pkgList, _ := getPackagesList()
@@ -143,7 +143,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 	// 	Feature()
 
 	uninstallAllIndividualPackages := features.New("uninstall-individual-packages").
-		Assess("uninstall-individual-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("uninstallation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for i := len(pkgList) - 1; i >= 0; i-- {
 				t.Logf("pkgname: %s", pkgList[i].Name)
 				err := tanzu_libs.DeleteInstalledPackage(pkgList[i].Name, suiteConfig.PackageRepository.Namespace)
@@ -157,7 +157,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Feature()
 
 	installUninstallTapPackages := features.New("install-uninstall-tap-packages").
-		Assess("install-uninstall-tap-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("install-uninstall", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			availablePkgs := tanzu_libs.ListAvailablePackages(suiteConfig.Tap.PackageName, suiteConfig.PackageRepository.Namespace)
 			for _, pkgVersion := range availablePkgs {
 				tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
@@ -180,7 +180,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Feature()
 
 	installCertManagerPackages := features.New("install-cert-manager-packages").
-		Assess("install-cert-manager-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "cert-manager" {
 					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
@@ -194,8 +194,8 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
 						// write new feature every time
-						installCertMgr := features.New("install-cert-mgr").
-							Assess(fmt.Sprintf("install-cert-mgr-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+						installCertMgr := features.New("install-version").
+							Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 								oldText = pkgVersion.VERSION
@@ -229,7 +229,7 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Feature()
 
 	installContourPackages := features.New("install-contour-packages").
-		Assess("install-contour-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			for _, pkg := range pkgList {
 				if pkg.Name == "contour" {
 					availablePkgs := tanzu_libs.ListAvailablePackages(pkg.Package, suiteConfig.PackageRepository.Namespace)
@@ -242,8 +242,8 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 					}
 					oldText := "<VERSION>"
 					for index, pkgVersion := range availablePkgs {
-						installContour := features.New("install-contour").
-							Assess(fmt.Sprintf("install-contour-version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+						installContour := features.New("install-version").
+							Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 								t.Logf("pkg: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 								utils.ReplaceStringInFile(pkg.ValuesFile, oldText, pkgVersion.VERSION)
 								oldText = pkgVersion.VERSION
@@ -277,205 +277,205 @@ func TestInstallUninstallAllComponentAllVersionInPackageRepo(t *testing.T) {
 		Feature()
 
 	installServiceBindingsPackages := features.New("install-service-bindings-packages").
-		Assess("install-service-bindings-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("service-bindings")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "service-bindings")
 			return ctx
 		}).
 		Feature()
 
 	installSourceControllerPackages := features.New("install-source-controller-packages").
-		Assess("install-source-controller-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("source-controller")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "source-controller")
 			return ctx
 		}).
 		Feature()
 
 	installServicesToolkitPackages := features.New("install-services-toolkit-packages").
-		Assess("install-services-toolkit-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("services-toolkit")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "services-toolkit")
 			return ctx
 		}).
 		Feature()
 
 	installScanControllerPackages := features.New("install-scan-controller-packages").
-		Assess("install-scan-controller-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("scan-controller")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "scan-controller")
 			return ctx
 		}).
 		Feature()
 
 	installApiPortalPackages := features.New("install-api-portal-packages").
-		Assess("install-api-portal-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("api-portal")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "api-portal")
 			return ctx
 		}).
 		Feature()
 
 	installBuildServicePackages := features.New("install-buildservice-packages").
-		Assess("install-buildservice-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("buildservice")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "buildservice")
 			return ctx
 		}).
 		Feature()
 
 	installFluxcdSourceControllerPackages := features.New("install-fluxcd-source-controller-packages").
-		Assess("install-fluxcd-source-controller-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("fluxcd-source-controller")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "fluxcd-source-controller")
 			return ctx
 		}).
 		Feature()
 
 	installTektonPipelinesPackages := features.New("install-tekton-pipelines-packages").
-		Assess("install-tekton-pipelines-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("tekton-pipelines")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "tekton-pipelines")
 			return ctx
 		}).
 		Feature()
 
 	installTapTelemetryPackages := features.New("install-tap-telemetry-packages").
-		Assess("install-tap-telemetry-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("tap-telemetry")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "tap-telemetry")
 			return ctx
 		}).
 		Feature()
 
 	installConventionsControllerPackages := features.New("install-conventions-controller-packages").
-		Assess("install-conventions-controller-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("conventions-controller")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "conventions-controller")
 			return ctx
 		}).
 		Feature()
 
 	installImageWebhookPolicyPackages := features.New("install-image-policy-webhook-packages").
-		Assess("install-image-policy-webhook-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("image-policy-webhook")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "image-policy-webhook")
 			return ctx
 		}).
 		Feature()
 
 	installMetadataStorePackages := features.New("install-metadata-store-packages").
-		Assess("install-metadata-store-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("metadata-store")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "metadata-store")
 			return ctx
 		}).
 		Feature()
 
 	installCartographerPackages := features.New("install-cartographer-packages").
-		Assess("install-cartographer-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("cartographer")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "cartographer")
 			return ctx
 		}).
 		Feature()
 
 	installGrypeScannerPackages := features.New("install-grype-scanner-packages").
-		Assess("install-grype-scanner-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("grype-scanner")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "grype-scanner")
 			return ctx
 		}).
 		Feature()
 
 	installAppLiveViewPackages := features.New("install-appliveview-packages").
-		Assess("install-appliveview-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("appliveview")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "appliveview")
 			return ctx
 		}).
 		Feature()
 
 	installAppLiveViewConventionsPackages := features.New("install-appliveview-conventions-packages").
-		Assess("install-appliveview-conventions-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("appliveview-conventions")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "appliveview-conventions")
 			return ctx
 		}).
 		Feature()
 
 	installAcceleratorPackages := features.New("install-accelerator-packages").
-		Assess("install-accelerator-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("accelerator")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "accelerator")
 			return ctx
 		}).
 		Feature()
 
 	installDeveloperConventionsPackages := features.New("install-developer-conventions-packages").
-		Assess("install-developer-conventions-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("developer-conventions")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "developer-conventions")
 			return ctx
 		}).
 		Feature()
 
 	installCloudNativeRuntimesPackages := features.New("install-cnrs-packages").
-		Assess("install-cnrs-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("cnrs")
+		Assess("iinstallation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "cnrs")
 			return ctx
 		}).
 		Feature()
 
 	installTapGuiPackages := features.New("install-tap-gui-packages").
-		Assess("install-tap-gui-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("tap-gui")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "tap-gui")
 			return ctx
 		}).
 		Feature()
 
 	installLearningCenterPackages := features.New("install-learningcenter-packages").
-		Assess("install-learningcenter-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("learningcenter")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "learningcenter")
 			return ctx
 		}).
 		Feature()
 
 	installOotbTemplatesPackages := features.New("install-ootb-templates-packages").
-		Assess("install-ootb-templates-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("ootb-templates")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "ootb-templates")
 			return ctx
 		}).
 		Feature()
 
 	installSpringBootConventionsPackages := features.New("install-spring-boot-conventions-packages").
-		Assess("install-spring-boot-conventions-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("spring-boot-conventions")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "spring-boot-conventions")
 			return ctx
 		}).
 		Feature()
 
 	installLearningCenterWorkshopsPackages := features.New("install-learningcenter-workshops-packages").
-		Assess("install-learningcenter-workshops-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("learningcenter-workshops")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "learningcenter-workshops")
 			return ctx
 		}).
 		Feature()
 
 	installOotbSupplyChainBasicPackages := features.New("install-ootb-supply-chain-basic-packages").
-		Assess("install-ootb-supply-chain-basic-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("ootb-supply-chain-basic")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "ootb-supply-chain-basic")
 			return ctx
 		}).
 		Feature()
 
 	installOotbSupplyChainTestingPackages := features.New("install-ootb-supply-chain-testing-packages").
-		Assess("install-ootb-supply-chain-testing-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("ootb-supply-chain-testing")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "ootb-supply-chain-testing")
 			return ctx
 		}).
 		Feature()
 
 	installOotbSupplyChainTestingScanningPackages := features.New("install-ootb-supply-chain-testing-scanning-packages").
-		Assess("install-ootb-supply-chain-testing-scanning-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("ootb-supply-chain-testing-scanning")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "ootb-supply-chain-testing-scanning")
 			return ctx
 		}).
 		Feature()
 
 	installOotbDeliveryBasicPackages := features.New("install-ootb-delivery-basic-packages").
-		Assess("install-ootb-delivery-basic-packages", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			installUnistallPackage("ootb-delivery-basic")
+		Assess("installation", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			installUnistallPackage(t, "ootb-delivery-basic")
 			return ctx
 		}).
 		Feature()
 
-	testEnv.TestInParallel(t, installCertManagerPackages, installServiceBindingsPackages, installSourceControllerPackages, installServicesToolkitPackages, installScanControllerPackages, installApiPortalPackages, installBuildServicePackages, installFluxcdSourceControllerPackages, installTektonPipelinesPackages, installTapTelemetryPackages)
-	testEnv.TestInParallel(t, installContourPackages, installConventionsControllerPackages, installImageWebhookPolicyPackages, installMetadataStorePackages, installCartographerPackages, installGrypeScannerPackages)
-	testEnv.TestInParallel(t, installAppLiveViewPackages, installAppLiveViewConventionsPackages, installAcceleratorPackages, installDeveloperConventionsPackages, installCloudNativeRuntimesPackages, installTapGuiPackages, installLearningCenterPackages, installOotbTemplatesPackages, installSpringBootConventionsPackages)
-	testEnv.TestInParallel(t, installLearningCenterWorkshopsPackages, installOotbSupplyChainBasicPackages, installOotbSupplyChainTestingPackages, installOotbSupplyChainTestingScanningPackages, installOotbDeliveryBasicPackages)
+	testenv.TestInParallel(t, installCertManagerPackages, installServiceBindingsPackages, installSourceControllerPackages, installServicesToolkitPackages, installScanControllerPackages, installApiPortalPackages, installBuildServicePackages, installFluxcdSourceControllerPackages, installTektonPipelinesPackages, installTapTelemetryPackages)
+	testenv.TestInParallel(t, installContourPackages, installConventionsControllerPackages, installImageWebhookPolicyPackages, installMetadataStorePackages, installCartographerPackages, installGrypeScannerPackages)
+	testenv.TestInParallel(t, installAppLiveViewPackages, installAppLiveViewConventionsPackages, installAcceleratorPackages, installDeveloperConventionsPackages, installCloudNativeRuntimesPackages, installTapGuiPackages, installLearningCenterPackages, installOotbTemplatesPackages, installSpringBootConventionsPackages)
+	testenv.TestInParallel(t, installLearningCenterWorkshopsPackages, installOotbSupplyChainBasicPackages, installOotbSupplyChainTestingPackages, installOotbSupplyChainTestingScanningPackages, installOotbDeliveryBasicPackages)
 	testenv.Test(t,
 		// installCertManagerPackages,
 		// installContourPackages,
