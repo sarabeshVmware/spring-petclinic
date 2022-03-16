@@ -8,9 +8,11 @@
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
+#@ descriptor_mapping = {"lite":"tap-1.1-lite", "full":"tap-1.1-full"}
+#@ valid_descriptors = descriptor_mapping.keys()
+
 #@ def validate():
 #@  if hasattr(data.values.buildservice, "descriptor_name"):
-#@   valid_descriptors = ["tap-1.0.0-lite","tap-1.0.0-full","lite","full"]
 #@   if not data.values.buildservice.descriptor_name in valid_descriptors:
 #@     assert.fail("Expected descriptor_name to be one of: {}".format(valid_descriptors))
 #@   end
@@ -27,9 +29,17 @@
 
 #@ def default_values():
 ---
-descriptor_name: tap-1.0.0-lite
+descriptor_name: tap-1.1-lite
 #@ if/end profiles.is_any_enabled([profiles.light]):
 disable_smart_warmer: true
+#@ end
+
+#@ def updated_values():
+#@overlay/match by=overlay.all
+#@overlay/match-child-defaults missing_ok=True
+---
+#@ if/end hasattr(data.values.buildservice, "descriptor_name"):
+descriptor_name: #@ descriptor_mapping[data.values.buildservice.descriptor_name]
 #@ end
 
 ---
@@ -38,7 +48,7 @@ kind: PackageInstall
 metadata:
   name: buildservice
   namespace: tap-install
-  annotations: 
+  annotations:
     kapp.k14s.io/change-rule: "delete before deleting serviceaccount"
 spec:
   serviceAccountName: tap-install-sa
@@ -56,7 +66,7 @@ metadata:
   name: buildservice-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(overlay.apply(default_values(), user_values()))
+  values.yaml: #@ yaml.encode(overlay.apply(default_values(), user_values(), updated_values()))
 
 #@ end
 #@ end
