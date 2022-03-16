@@ -176,15 +176,8 @@ func TestMain(m *testing.M) {
 		log.Fatal(fmt.Errorf("error while setting log file %s: %w", logFile, err))
 	}
 
-	// get kubeconfig
-	home, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(fmt.Errorf("error while getting user home directory: %w", err))
-	}
-	envconf.NewFromFlags()
-	testenv = env.NewWithKubeConfig(filepath.Join(home, ".kube", "config"))
-	// cfg, _ := envconf.NewFromFlags()
-	// testenv = env.NewWithConfig(cfg)
+	cfg, _ := envconf.NewFromFlags()
+	testenv = env.NewWithConfig(cfg)
 
 	// read suite config
 	suiteConfigBytes, err := os.ReadFile(filepath.Join(suiteResourcesDir, "suite-config.yaml"))
