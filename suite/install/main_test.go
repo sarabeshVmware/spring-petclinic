@@ -11,6 +11,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gopkg.in/yaml.v3"
 	"sigs.k8s.io/e2e-framework/pkg/env"
+	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
 var testenv env.Environment
@@ -181,6 +182,8 @@ func TestMain(m *testing.M) {
 		log.Fatal(fmt.Errorf("error while getting user home directory: %w", err))
 	}
 	testenv = env.NewWithKubeConfig(filepath.Join(home, ".kube", "config"))
+	cfg, _ := envconf.NewFromFlags()
+	testenv = env.NewWithConfig(cfg)
 
 	// read suite config
 	suiteConfigBytes, err := os.ReadFile(filepath.Join(suiteResourcesDir, "suite-config.yaml"))
@@ -195,8 +198,6 @@ func TestMain(m *testing.M) {
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 	suiteConfig.TanzuClusterEssentials.Filename = fmt.Sprintf("../%s", suiteConfig.TanzuClusterEssentials.Filename)
-
-	// developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 
 	// setup
 	testenv.Setup(
