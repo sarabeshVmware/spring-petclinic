@@ -9,22 +9,29 @@
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ descriptor_mapping = {"lite":"tap-1.1-lite", "full":"tap-1.1-full"}
-#@ valid_descriptors = descriptor_mapping.keys()
 
-#@ def validate():
-#@  if hasattr(data.values.buildservice, "descriptor_name"):
-#@   if not data.values.buildservice.descriptor_name in valid_descriptors:
-#@     assert.fail("Expected descriptor_name to be one of: {}".format(valid_descriptors))
-#@   end
-#@  end
+#@ def values():
+#@   validate()
+#@   return overlay.apply(default_values(), user_values(), sanitized_values())
 #@ end
 
 #@ def user_values():
-#@ validate()
-
 #@overlay/match by=overlay.all
 #@overlay/match-child-defaults missing_ok=True
---- #@ data.values.buildservice
+--- #@ collect_user_values()
+#@ end
+
+#@ def collect_user_values():
+#@   values = {
+#@     "ca_cert_data": ""
+#@   }
+#@   values.update(data.values.buildservice)
+#@
+#@   if data.values.shared.ca_cert_data :
+#@     # append shared ca_cert_data to component specific ca_cert_data
+#@     values["ca_cert_data"] = values["ca_cert_data"] + data.values.shared.ca_cert_data
+#@   end
+#@   return values
 #@ end
 
 #@ def default_values():
@@ -34,12 +41,21 @@ descriptor_name: tap-1.1-lite
 disable_smart_warmer: true
 #@ end
 
-#@ def updated_values():
+#@ def sanitized_values():
 #@overlay/match by=overlay.all
 #@overlay/match-child-defaults missing_ok=True
 ---
 #@ if/end hasattr(data.values.buildservice, "descriptor_name"):
 descriptor_name: #@ descriptor_mapping[data.values.buildservice.descriptor_name]
+#@ end
+
+#@ def validate():
+#@   if hasattr(data.values.buildservice, "descriptor_name"):
+#@     valid_descriptors = descriptor_mapping.keys()
+#@     if not data.values.buildservice.descriptor_name in valid_descriptors:
+#@       assert.fail("Expected descriptor_name to be one of: {}".format(valid_descriptors))
+#@     end
+#@   end
 #@ end
 
 ---
@@ -66,7 +82,7 @@ metadata:
   name: buildservice-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(overlay.apply(default_values(), user_values(), updated_values()))
+  values.yaml: #@ yaml.encode(values())
 
 #@ end
 #@ end
