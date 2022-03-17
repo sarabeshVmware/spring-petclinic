@@ -13,7 +13,7 @@ spec:
   packageRef:
     refName: tap-auth.tanzu.vmware.com
     versionSelection:
-      constraints: 0.1.0-build.0
+      constraints: 1.0.0
       prereleases: {}
 
 #@ end
