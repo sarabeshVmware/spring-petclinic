@@ -1,4 +1,4 @@
-//go:build all || outerloop || outerloop_basic || outerloop_testing || outerloop_testing_scanning || outerloop_basic_supplychain_gitops_delivery_test
+//go:build all || outerloop || outerloop_basic || outerloop_testing || outerloop_testing_scanning || outerloop_basic_delivery || outerloop_scan_multiple_apps
 
 package suite
 
@@ -64,6 +64,19 @@ type outerloopConfiguration struct {
 		GitopsYamlFile       string `yaml:"gitops_yaml_file"`
 		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
+	BuildPacks struct {
+		Repository string `yaml:"repository"`
+		Username   string `yaml:"username"`
+		Email      string `yaml:"email"`
+		ScanPolicy string `yaml:"scan_policy"`
+		Workloads  []struct {
+			Name                string `yaml:"name"`
+			FilePath            string `yaml:"file_path"`
+			WebpageRelativePath string `yaml:"webpage_relative_path"`
+		} `yaml:"workloads"`
+		NodeJSAngularYamlFile string `yaml:"nodejs_angular_workload_yaml_file"`
+		NodeJSAngularWorkload string `yaml:"nodejs_angular_workload"`
+	} `yaml:"buildpacks"`
 }
 
 var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "resources", "outerloop")
@@ -102,6 +115,7 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
 	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)
 	outerloopConfig.Workload.GitSSHSecretYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitSSHSecretYamlFile)
+	outerloopConfig.BuildPacks.ScanPolicy = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.ScanPolicy)
 	return outerloopConfig, nil
 }
 
@@ -164,6 +178,23 @@ var deployScanPolicy = features.New("deploy-scan-policy-via-yaml").
 
 		// deploy app
 		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.ScanPolicy.YamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deploying scanpolicy")
+			t.FailNow()
+		} else {
+			t.Log("deployed scanpolicy")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deployLenientScanPolicy = features.New("deploy-scan-policy-via-yaml").
+	Assess("deploy-scanpolicy", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying scanpolicy")
+
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.BuildPacks.ScanPolicy, outerloopConfig.Namespace)
 		if err != nil {
 			t.Error("error while deploying scanpolicy")
 			t.FailNow()
@@ -877,6 +908,341 @@ var verifyRevisionStatusAfterUpdate = features.New("verify-revision-status").
 			t.FailNow()
 		} else {
 			t.Log("revision ready")
+		}
+		return ctx
+	}).
+	Feature()
+
+var deployBuildPacksPipeline = features.New("deploy-pipeline-app-via-yaml-configurations").
+	Assess("deploy-buildpacks-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying buildpacks-test-pipeline")
+
+		// deploy app
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.SpringPetclinicPipeline.YamlFile, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deploying buildpacks-test-pipeline")
+			t.FailNow()
+		} else {
+			t.Log("deployed buildpacks-test-pipeline")
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deployBuildPackWorkloads = features.New("deploy-buildpack-workloads").
+	Assess("deploying-buildpack-workloads-test", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deploying workloads")
+
+		// deploy workloads
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			workload_yaml_file := filepath.Join(outerloopResourcesDir, workload.FilePath)
+			err := tanzuCmds.TanzuDeployWorkload(workload_yaml_file, outerloopConfig.Namespace)
+			if err != nil {
+				t.Errorf("error while deploying %s", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("deployed workload %s", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsGitrepoStatus = features.New("verify-buildpacks-gitrepo-status").
+	Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying gitrepo ready status")
+
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(workload.Name, outerloopConfig.Namespace, 5, 30)
+			if !gitrepoReady {
+				t.Errorf("%s gitrepo not ready", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("deployed workload %s", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
+	Assess("delete-buildpack-workloads", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deleting workloads")
+
+		// delete workload
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			workload_yaml_file := filepath.Join(outerloopResourcesDir, workload.FilePath)
+			err := tanzuCmds.TanzuDeleteWorkload(workload_yaml_file, outerloopConfig.Namespace)
+			if err != nil {
+				t.Errorf("error while deleting workload %s", workload.Name)
+				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			} else {
+				t.Logf("deleted workload %s", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsSourceScanStatus = features.New("verify-buildpacks-source-scan-status").
+	Assess("verify-source-scan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying source scan status")
+
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			sourceScanCompleted := kubectl_helpers.ValidateSourceScans(workload.Name, outerloopConfig.Namespace, 5, 30)
+			if !sourceScanCompleted {
+				t.Errorf("source scan %s completed", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("source scan %s completed successfully", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsBuildStatus = features.New("verify-buildpacks-build-status").
+	Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying build succeeded status")
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			buildName = fmt.Sprintf("%s%s", workload.Name, outerloopConfig.Workload.BuildNameSuffix)
+			buildSucceeded := kubectl_helpers.VerifyBuildStatus(buildName, outerloopConfig.Namespace, 15, 60)
+			if !buildSucceeded {
+				t.Errorf("build %s not succeeded", buildName)
+				t.FailNow()
+			} else {
+				t.Logf("build %s succeeded", buildName)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsPodintents = features.New("verify-buildpacks-podintents-labels-conventions").
+	Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying podintent ready status")
+
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			if !kubectl_helpers.VerifyPodIntentStatus(workload.Name, outerloopConfig.Namespace, 5, 30) {
+				t.Errorf("podintent %s not ready", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("podintent %s ready", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	// Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 	t.Log("verifying appliveview labels present in podintent")
+
+	// 	// check
+	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
+	// 		alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(workload.Name, outerloopConfig.Namespace)
+	// 		if !alvLabelsPresent {
+	// 			t.Errorf("appliveview lables absent in podintent %s", workload.Name)
+	// 			t.FailNow()
+	// 		} else {
+	// 			t.Logf("appliveview labels present in podintent %s", workload.Name)
+	// 		}
+	// 	}
+
+	// 	return ctx
+	// }).
+	// Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 	t.Log("verifying springbootconventions labels present in podintent")
+
+	// 	// check
+	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
+	// 		springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(workload.Name, outerloopConfig.Namespace)
+	// 		if !springbootconventionsLabelsPresent {
+	// 			t.Errorf("springbootconventions lables absent in podintent %s", workload.Name)
+	// 			t.FailNow()
+	// 		} else {
+	// 			t.Logf("springbootconventions labels present in podintent %s", workload.Name)
+	// 		}
+	// 	}
+
+	// 	return ctx
+	// }).
+	// Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 	t.Log("verifying appliveview conventions present in podintent")
+
+	// 	// check
+	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
+	// 		appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(workload.Name, outerloopConfig.Namespace)
+	// 		if !appliveviewConventionsPresent {
+	// 			t.Errorf("appliveview conventions absent in podintent %s", workload.Name)
+	// 			t.FailNow()
+	// 		} else {
+	// 			t.Logf("appliveview conventions present in podintent %s", workload.Name)
+	// 		}
+	// 	}
+
+	// 	return ctx
+	// }).
+	// Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	// 	t.Log("verifying springbootconventions conventions present in podintent")
+
+	// 	// check
+	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
+	// 		springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(workload.Name, outerloopConfig.Namespace)
+	// 		if !springbootconventionsConventionsPresent {
+	// 			t.Errorf("springbootconventions conventions absent in podintent %s", workload.Name)
+	// 			t.FailNow()
+	// 		} else {
+	// 			t.Logf("springbootconventions conventions present in podintent %s", workload.Name)
+	// 		}
+	// 	}
+
+	// 	return ctx
+	// }).
+	Feature()
+
+var verifyBuildPackWorkloadsImageScanStatus = features.New("verify-buildpacks-imagescan-status").
+	Assess("verify-imagescan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying image scan status")
+
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			imageScanCompleted := kubectl_helpers.ValidateImageScans(workload.Name, outerloopConfig.Namespace, 5, 30)
+			if !imageScanCompleted {
+				t.Errorf("image scan %s completed", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("image scan %s completed successfully", workload.Name)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsTaskrunStatus = features.New("verify-buildpacks-taskrun-status").
+	Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying taskrun succeeded status")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			taskRunPrefix := fmt.Sprintf("%s%s", workload.Name, outerloopConfig.Workload.TaskRunInfix)
+			taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, outerloopConfig.Namespace, 5, 30)
+			if !taskrunSucceeded {
+				t.Errorf("taskrun %s not succeeded", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("taskrun %s succeeded", workload.Name)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsTestTaskrunStatus = features.New("verify-buildpacks-test-taskrun-status").
+	Assess("verify-test-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying test taskrun succeeded status")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			taskrunSucceeded := kubectl_helpers.VerifyTestTaskrunStatus(workload.Name, outerloopConfig.Workload.TaskRunTestSuffix, outerloopConfig.Namespace, 5, 30)
+			if !taskrunSucceeded {
+				t.Errorf("taskrun %s not succeeded", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("taskrun %s succeeded", workload.Name)
+			}
+		}
+
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsWorkloadStatus = features.New("verify-buildpacks-workload-status").
+	Assess("verify-workload-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying workload ready status")
+
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			workloadStatus := kubectl_helpers.GetWorkloadStatus(workload.Name, outerloopConfig.Namespace)
+			if workloadStatus != "True" {
+				t.Errorf("workload %s not ready", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("workload %s ready", workload.Name)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsRevisionStatus = features.New("verify-buildpacks-revision-status").
+	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying revision ready status")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace)
+			revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, workload.Name, outerloopConfig.Namespace, 5, 30)
+			if !revisionReady {
+				t.Errorf("revision %s not ready", revisionName)
+				t.FailNow()
+			} else {
+				t.Logf("revision %s ready", revisionName)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsKsvcStatus = features.New("verify-buildpacks-ksvc-status").
+	Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying ksvc ready status")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace)
+			ksvcReady := kubectl_helpers.VerifyKsvcStatus(workload.Name, outerloopConfig.Namespace, revisionName, 5, 30)
+			if !ksvcReady {
+				t.Errorf("ksvc %s not ready", revisionName)
+				t.FailNow()
+			} else {
+				t.Logf("ksvc %s ready", revisionName)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpage-reachability").
+	Assess("get-externalip-and-check-webpage-reachability", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("getting external ip and checking reachability")
+
+		// get external IP
+		externalIP, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
+		if err != nil {
+			t.Error("error while getting external IP")
+			t.FailNow()
+		} else {
+			t.Log("external IP retrieved")
+		}
+
+		// set url
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			url := fmt.Sprintf("%s/%s", externalIP, workload.WebpageRelativePath)
+			if !strings.HasPrefix(url, "http://") {
+				url = "http://" + url
+			}
+			host := fmt.Sprintf("%s.%s.example.com", workload.Name, outerloopConfig.Namespace)
+			t.Logf("sending GET request host: %s, url: %s", host, url)
+			isWebpageReachable, _ := misc.VerifyWebpageReachable(host, url, 10, 30)
+			if !isWebpageReachable {
+				t.Errorf("webpage %s is not reachable", workload.Name)
+				t.FailNow()
+			} else {
+				t.Logf("webpage %s is reachable", workload.Name)
+			}
 		}
 		return ctx
 	}).

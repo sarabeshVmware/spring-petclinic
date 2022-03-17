@@ -31,3 +31,18 @@ workload:
   service_binding_suffix: -db
   gitops_yaml_file: workload-gitops.yaml
   gitssh_secret_yaml_file: git-ssh-secrets.yaml
+buildpacks:
+  repository: https://github.com/dapdelivery/samples.git
+  username: dapdelivery
+  email: svc.dapdelivery@gmail.com
+  scan_policy: lenient-scan-policy.yaml
+  workloads:
+  # deployment not working error: ng command not found
+  # - name: nodejs-angular-app
+  #   file_path: buildpack-workloads/workload-nodejs-angular.yaml
+  - name: java-maven-app
+    file_path: buildpack-workloads/workload-java-maven.yaml
+    webpage_relative_path: actuator/health
+  - name: python-pip-app
+    file_path: buildpack-workloads/workload-python-pip.yaml
+    webpage_relative_path: 
