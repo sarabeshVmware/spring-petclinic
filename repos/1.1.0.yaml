@@ -36,11 +36,11 @@ packages:
   - name: application-live-view-backend
     versions:
       - 1.1.0-build.1
-      - 1.1.0-build.2
+      - 1.1.0-build.3
   - name: application-live-view-connector
     versions:
       - 1.1.0-build.1
-      - 1.1.0-build.2
+      - 1.1.0-build.3
   - name: app-live-view-conventions
     versions:
       - 1.0.1
@@ -49,7 +49,7 @@ packages:
   - name: application-live-view-conventions
     versions:
       - 1.1.0-build.1
-      - 1.1.0-build.2
+      - 1.1.0-build.3
   - name: scan-controller
     versions:
       - 1.0.0
@@ -65,7 +65,7 @@ packages:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.2
+      - 1.1.0-build.3
   - name: developer-conventions
     versions:
       - 0.5.0-build.1
@@ -99,13 +99,13 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-rc.15
+      - 1.1.0-rc.44
   - name: tap
     versions:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.9
+      - 1.1.0-build.12
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -121,7 +121,7 @@ packages:
       - 0.1.0
       - 0.2.1
       - 0.2.2
-      - 0.3.0-build.2
+      - 0.3.0-build.3
   - name: ootb-templates
     versions:
       - 0.5.1
@@ -155,7 +155,7 @@ packages:
     versions:
       - 0.30.0
       - 0.30.1
-      - 0.30.2
+      - 0.33.2
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
@@ -168,4 +168,4 @@ packages:
       - 0.1.4
   - name: tap-auth
     versions:
-      - 0.1.0-build.0
+      - 1.0.0

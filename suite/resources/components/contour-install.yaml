@@ -1,0 +1,12 @@
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: contour
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: contour.tanzu.vmware.com
+    versionSelection:
+      constraints: <VERSION>
+      prereleases: {}

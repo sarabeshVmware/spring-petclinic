@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
@@ -28,9 +29,9 @@ func DeleteWorkload(name string, namespace string) {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
 		cmd += " -A"
-	}	
+	}
 	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil && strings.Contains(res, "Deleted workload"){
+	if err != nil && strings.Contains(res, "Deleted workload") {
 		log.Println("Error while deleting the workload %s. Error %w, Output %s", name, err, res)
 	}
 
@@ -43,9 +44,9 @@ func DeleteAllWorkload(namespace string) {
 		cmd += fmt.Sprintf(" -n %s", namespace)
 	} else {
 		cmd += " -A"
-	}	
+	}
 	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil && strings.Contains(res, "Deleted workloads"){
+	if err != nil && strings.Contains(res, "Deleted workloads") {
 		log.Println("Error while deleting the workloads. Error %w, Output %s", err, res)
 	}
 

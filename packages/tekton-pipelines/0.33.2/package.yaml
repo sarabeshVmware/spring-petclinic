@@ -1,0 +1,30 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tekton.tanzu.vmware.com.0.33.2
+spec:
+  refName: tekton.tanzu.vmware.com
+  version: 0.33.2
+  releasedAt: "2022-03-03T18:16:40Z"
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:d1e90969641670b939ed0dd01d85ebfe3c14c0ec234c6ffd2362c9034f680fda
+      template:
+      - ytt:
+          paths:
+          - config/config.yaml
+          - config/tap.yaml
+          - ytt.yaml
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+          - kbld.yaml
+          - kapp.yaml
+      deploy:
+      - kapp: {}
