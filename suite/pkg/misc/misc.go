@@ -4,7 +4,6 @@
 package misc
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -41,37 +40,45 @@ func VerifyWebpageContainsString(host string, url string, validationString strin
 
 			// perform http request and get response
 			response, err := http.DefaultClient.Do(request)
-			log.Printf("status code: %d", response.StatusCode)
-			log.Printf("status: %s", response.Status)
-
-			// if status is not OK
-			if err == nil && response.StatusCode != http.StatusOK {
-				err = fmt.Errorf("status not OK")
-			}
-
 			if err != nil {
 				log.Print("error while getting a response")
 				log.Printf("error: %s", err)
 				log.Printf("sleeping for %d seconds", secondsGap)
 				time.Sleep(time.Duration(secondsGap) * time.Second)
+				continue
 			} else {
+				defer response.Body.Close()
+
 				log.Print("got valid response")
-				log.Print("reading response body")
+				log.Printf("status code: %d", response.StatusCode)
+				log.Printf("status: %s", response.Status)
 
-				// read response body
-				resultBytes, err := ioutil.ReadAll(response.Body)
-				if err != nil {
-					log.Print("error while reading response body")
-					log.Printf("error: %s", err)
-					return false, err
+				// check response status
+				if response.StatusCode != http.StatusOK {
+					log.Print("response status is not OK")
+					log.Printf("sleeping for %d seconds", secondsGap)
+					time.Sleep(time.Duration(secondsGap) * time.Second)
+					continue
 				} else {
-					log.Print("read response body")
-				}
+					log.Print("response status is OK")
+					log.Print("reading response body")
 
-				// assign to body
-				body = string(resultBytes)
-				log.Print(body)
-				break
+					// read response body
+					resultBytes, err := ioutil.ReadAll(response.Body)
+					if err != nil {
+						log.Print("error while reading response body")
+						log.Printf("error: %s", err)
+						return false, err
+					} else {
+						log.Print("read response body")
+					}
+
+					// assign to body
+					body = string(resultBytes)
+					log.Print(body)
+
+					break
+				}
 			}
 		}
 
