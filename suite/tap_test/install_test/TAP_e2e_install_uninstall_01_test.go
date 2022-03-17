@@ -136,8 +136,14 @@ func TestInstallPackages(t *testing.T) {
 			for _, pkgVersion := range availablePkgs {
 				installUninstallTapPkg := features.New(suiteConfig.Tap.Name).
 					Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-
-						tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout)
+						valuesFile := ""
+						if pkgVersion.VERSION < "1.1.0" {
+							t.Logf("tap package version %s less than 1.1.0", version)
+							valuesFile = filepath.Join(PackagesResourcesDir, "tap-values.yaml")
+						} else {
+							valuesFile = suiteConfig.Tap.ValuesSchemaFile
+						}
+						tanzu_libs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, pkgVersion.VERSION, suiteConfig.Tap.Namespace, valuesFile, suiteConfig.Tap.PollTimeout)
 						installed := kubectl_helpers.ValidateTAPInstallation(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60)
 						if !installed {
 							kubectl_helpers.LogFailedResourcesDetails(suiteConfig.Tap.Namespace)
@@ -491,5 +497,5 @@ func TestInstallPackages(t *testing.T) {
 		uninstallAllIndividualPackages,
 		installUninstallTapPackages,
 	)
-	t.Log("************** TestCase END: TestInstallUninstallAllComponentAllVersionInPAckageRepo **************")
+	t.Log("************** TestCase END: TestInstallUninstallAllComponentAllVersionInPackageRepo **************")
 }
