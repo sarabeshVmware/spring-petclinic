@@ -138,7 +138,7 @@ func TestInstallPackages(t *testing.T) {
 					Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 						valuesFile := ""
 						if pkgVersion.VERSION < "1.1.0" {
-							t.Logf("tap package version %s less than 1.1.0", version)
+							t.Logf("tap package version %s less than 1.1.0", pkgVersion.VERSION)
 							valuesFile = filepath.Join(PackagesResourcesDir, "tap-values.yaml")
 						} else {
 							valuesFile = suiteConfig.Tap.ValuesSchemaFile
