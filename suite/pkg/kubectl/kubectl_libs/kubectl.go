@@ -51,6 +51,48 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	return builds
 }
 
+type GetImagesOutput struct {
+	NAME, LATESTIMAGE, READY string
+}
+
+func GetImages(imageName string, namespace string) []GetImagesOutput {
+	images := []GetImagesOutput{}
+	cmd := "kubectl get images.kpac"
+	if imageName != "" {
+		cmd += fmt.Sprintf(" %s", imageName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return images
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return images
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var image GetImagesOutput
+		for index, value := range words {
+			reflect.ValueOf(&image).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		images = append(images, image)
+	}
+
+	fmt.Printf("images: %+v\n", images)
+	return images
+}
+
 type GetLatestImageOutput struct {
 	NAME, LATESTIMAGE, READY string
 }

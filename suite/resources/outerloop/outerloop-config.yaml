@@ -32,17 +32,46 @@ workload:
   gitops_yaml_file: workload-gitops.yaml
   gitssh_secret_yaml_file: git-ssh-secrets.yaml
 buildpacks:
-  repository: https://github.com/dapdelivery/samples.git
-  username: dapdelivery
-  email: svc.dapdelivery@gmail.com
   scan_policy: lenient-scan-policy.yaml
   workloads:
   # deployment not working error: ng command not found
   # - name: nodejs-angular-app
   #   file_path: buildpack-workloads/workload-nodejs-angular.yaml
   - name: java-maven-app
-    file_path: buildpack-workloads/workload-java-maven.yaml
+    git_repository: https://github.com/dapdelivery/test-buildpack-java-maven.git
     webpage_relative_path: actuator/health
+    contains_conventions : true
+
   - name: python-pip-app
-    file_path: buildpack-workloads/workload-python-pip.yaml
-    webpage_relative_path: 
+    git_repository: https://github.com/dapdelivery/test-buildpack-python-pip.git
+
+  - name: dotnet-aspnet-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-dotnet-aspnet.git
+  
+  # - name: ruby-rake-app
+  #   git_repository: https://github.com/dapdelivery/test-buildpack-ruby-rake.git
+  #   git_branch:
+  #   webpage_relative_path: 
+  
+  # - name: php-composer-app
+  #   git_repository: https://github.com/dapdelivery/test-buildpack-php-composer.git
+  #   git_branch:
+  #   webpage_relative_path: 
+  
+  # - name: nginx-sample-app
+  #   git_repository: https://github.com/dapdelivery/test-buildpack-nginx-sample.git
+  #   git_branch:
+  #   webpage_relative_path: 
+
+  # - name: httpd-sample-app
+  #   git_repository: https://github.com/dapdelivery/test-buildpack-httpd-sample.git
+  #   git_branch:
+  #   webpage_relative_path: 
+
+  - name: go-dep-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-go-dep.git
+  
+  # - name: git-sample-app
+  #   git_repository: https://github.com/dapdelivery/test-buildpack-git-sample.git
+  #   git_branch:
+  #   webpage_relative_path: 

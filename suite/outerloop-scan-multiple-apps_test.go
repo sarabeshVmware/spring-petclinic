@@ -84,7 +84,9 @@ func TestOuterloopScanSupplychainMultipleApps(t *testing.T) {
 		verifyBuildPackWorkloadsKsvcStatus,
 		verifyBuildPackWorkloadsWorkloadStatus,
 		verifyBuildPackWorkloadsReachability,
-		//deleteBuildPackWorkloads,
+		listBuildPackWorkloadsVulnerabilities,
+		verifyBuildPackWorkloadsDataExistInMetadata,
+		deleteBuildPackWorkloads,
 	)
 	t.Log("************** TestCase END: TestOuterloopScanSupplychainMultipleApps **************")
 }

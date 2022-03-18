@@ -65,17 +65,14 @@ type outerloopConfiguration struct {
 		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
 	BuildPacks struct {
-		Repository string `yaml:"repository"`
-		Username   string `yaml:"username"`
-		Email      string `yaml:"email"`
 		ScanPolicy string `yaml:"scan_policy"`
 		Workloads  []struct {
 			Name                string `yaml:"name"`
-			FilePath            string `yaml:"file_path"`
+			GitRepository       string `yaml:"git_repository"`
+			GitBranch           string `yaml:"git_branch"`
 			WebpageRelativePath string `yaml:"webpage_relative_path"`
+			ContainsConventions bool   `yanl:"contains_conventions"`
 		} `yaml:"workloads"`
-		NodeJSAngularYamlFile string `yaml:"nodejs_angular_workload_yaml_file"`
-		NodeJSAngularWorkload string `yaml:"nodejs_angular_workload"`
 	} `yaml:"buildpacks"`
 }
 
@@ -936,8 +933,13 @@ var deployBuildPackWorkloads = features.New("deploy-buildpack-workloads").
 
 		// deploy workloads
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			workload_yaml_file := filepath.Join(outerloopResourcesDir, workload.FilePath)
-			err := tanzuCmds.TanzuDeployWorkload(workload_yaml_file, outerloopConfig.Namespace)
+			var branch string
+			if workload.GitBranch == "" {
+				branch = "main"
+			} else {
+				branch = workload.GitBranch
+			}
+			err := tanzuCmds.TanzuDeployWorkloadByCommand(workload.Name, outerloopConfig.Namespace, workload.GitRepository, branch, "web", "true")
 			if err != nil {
 				t.Errorf("error while deploying %s", workload.Name)
 				t.FailNow()
@@ -975,8 +977,7 @@ var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
 
 		// delete workload
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			workload_yaml_file := filepath.Join(outerloopResourcesDir, workload.FilePath)
-			err := tanzuCmds.TanzuDeleteWorkload(workload_yaml_file, outerloopConfig.Namespace)
+			err := tanzuCmds.TanzuDeleteWorkloadByName(workload.Name, outerloopConfig.Namespace)
 			if err != nil {
 				t.Errorf("error while deleting workload %s", workload.Name)
 				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
@@ -1041,70 +1042,78 @@ var verifyBuildPackWorkloadsPodintents = features.New("verify-buildpacks-podinte
 
 		return ctx
 	}).
-	// Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 	t.Log("verifying appliveview labels present in podintent")
+	Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying appliveview labels present in podintent")
 
-	// 	// check
-	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
-	// 		alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(workload.Name, outerloopConfig.Namespace)
-	// 		if !alvLabelsPresent {
-	// 			t.Errorf("appliveview lables absent in podintent %s", workload.Name)
-	// 			t.FailNow()
-	// 		} else {
-	// 			t.Logf("appliveview labels present in podintent %s", workload.Name)
-	// 		}
-	// 	}
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(workload.Name, outerloopConfig.Namespace)
+			if alvLabelsPresent && workload.ContainsConventions {
+				t.Logf("appliveview labels present in podintent %s", workload.Name)
+			} else if !workload.ContainsConventions {
+				t.Logf("appliveview lables absent in podintent %s", workload.Name)
+			} else {
+				t.Errorf("appliveview lables absent in podintent %s", workload.Name)
+				t.FailNow()
+			}
+		}
 
-	// 	return ctx
-	// }).
-	// Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 	t.Log("verifying springbootconventions labels present in podintent")
+		return ctx
+	}).
+	Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying springbootconventions labels present in podintent")
 
-	// 	// check
-	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
-	// 		springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(workload.Name, outerloopConfig.Namespace)
-	// 		if !springbootconventionsLabelsPresent {
-	// 			t.Errorf("springbootconventions lables absent in podintent %s", workload.Name)
-	// 			t.FailNow()
-	// 		} else {
-	// 			t.Logf("springbootconventions labels present in podintent %s", workload.Name)
-	// 		}
-	// 	}
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(workload.Name, outerloopConfig.Namespace)
+			if springbootconventionsLabelsPresent && workload.ContainsConventions {
+				t.Logf("springbootconventions labels present in podintent %s", workload.Name)
+			} else if !workload.ContainsConventions {
+				t.Logf("springbootconventions labels absent in podintent %s", workload.Name)
+			} else {
+				t.Errorf("springbootconventions lables absent in podintent %s", workload.Name)
+				t.FailNow()
+			}
+		}
 
-	// 	return ctx
-	// }).
-	// Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 	t.Log("verifying appliveview conventions present in podintent")
+		return ctx
+	}).
+	Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying appliveview conventions present in podintent")
 
-	// 	// check
-	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
-	// 		appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(workload.Name, outerloopConfig.Namespace)
-	// 		if !appliveviewConventionsPresent {
-	// 			t.Errorf("appliveview conventions absent in podintent %s", workload.Name)
-	// 			t.FailNow()
-	// 		} else {
-	// 			t.Logf("appliveview conventions present in podintent %s", workload.Name)
-	// 		}
-	// 	}
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(workload.Name, outerloopConfig.Namespace)
+			if appliveviewConventionsPresent && workload.ContainsConventions {
+				t.Logf("appliveview conventions present in podintent %s", workload.Name)
+			} else if !workload.ContainsConventions {
+				t.Logf("appliveview conventions absent in podintent %s", workload.Name)
+			} else {
+				t.Errorf("appliveview conventions absent in podintent %s", workload.Name)
+				t.FailNow()
+			}
+		}
 
-	// 	return ctx
-	// }).
-	// Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-	// 	t.Log("verifying springbootconventions conventions present in podintent")
+		return ctx
+	}).
+	Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verifying springbootconventions conventions present in podintent")
 
-	// 	// check
-	// 	for _, workload := range outerloopConfig.BuildPacks.Workloads {
-	// 		springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(workload.Name, outerloopConfig.Namespace)
-	// 		if !springbootconventionsConventionsPresent {
-	// 			t.Errorf("springbootconventions conventions absent in podintent %s", workload.Name)
-	// 			t.FailNow()
-	// 		} else {
-	// 			t.Logf("springbootconventions conventions present in podintent %s", workload.Name)
-	// 		}
-	// 	}
+		// check
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(workload.Name, outerloopConfig.Namespace)
+			if springbootconventionsConventionsPresent && workload.ContainsConventions {
+				t.Logf("springbootconventions conventions present in podintent %s", workload.Name)
+			} else if !workload.ContainsConventions {
+				t.Logf("springbootconventions conventions absent in podintent %s", workload.Name)
+			} else {
+				t.Errorf("springbootconventions conventions absent in podintent %s", workload.Name)
+				t.FailNow()
+			}
+		}
 
-	// 	return ctx
-	// }).
+		return ctx
+	}).
 	Feature()
 
 var verifyBuildPackWorkloadsImageScanStatus = features.New("verify-buildpacks-imagescan-status").
@@ -1242,6 +1251,40 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 				t.FailNow()
 			} else {
 				t.Logf("webpage %s is reachable", workload.Name)
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulnerabilities").
+	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("listing vulnerabilities")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			err := tanzuCmds.TanzuListImageVulnerabilities(workload.Name, outerloopConfig.Namespace)
+			if err != nil {
+				t.Errorf("error while getting vulnerabilities for %s", workload.Name)
+				t.FailNow()
+			}
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpacks-metadata").
+	Assess("verify metadata", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verify metadata")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			status, err := tanzuCmds.TanzuVerifyImageMetadata(workload.Name, outerloopConfig.Namespace)
+			if err != nil {
+				t.Errorf("error while getting metadata for %s", workload.Name)
+				t.FailNow()
+			}
+			if !status {
+				t.Errorf("metadata not available for %s", workload.Name)
+				t.FailNow()
 			}
 		}
 		return ctx

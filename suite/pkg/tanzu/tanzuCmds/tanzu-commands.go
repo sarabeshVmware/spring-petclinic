@@ -9,6 +9,7 @@ import (
 	"log"
 	"strings"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
@@ -278,6 +279,24 @@ func TanzuDeployWorkload(workloadFile string, namespace string) error {
 	return err
 }
 
+func TanzuDeployWorkloadByCommand(workload string, namespace string, gitRepository string, gitBranch string, workloadType string, hasTests string) error {
+	log.Printf("deploying workload %s in namespace %s", workload, namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("tanzu apps workload create %s --git-repo %s --git-branch %s --label \"apps.kubernetes.io/name=%s\" --label \"app.kubernetes.io/part-of=%s\" --label \"apps.tanzu.vmware.com/workload-type=%s\" --label \"apps.tanzu.vmware.com/has-tests=%s\" -y -n %s", workload, gitRepository, gitBranch, workload, workload, workloadType, hasTests, namespace)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while deploying workload %s in namespace %s", workload, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("workload %s deployed in namespace %s", workload, namespace)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
+
 func TanzuDeleteWorkload(workloadFile string, namespace string) error {
 	log.Printf("deleting workload %s in namespace %s", workloadFile, namespace)
 
@@ -294,4 +313,70 @@ func TanzuDeleteWorkload(workloadFile string, namespace string) error {
 	}
 
 	return err
+}
+
+func TanzuDeleteWorkloadByName(workload string, namespace string) error {
+	log.Printf("deleting workload %s in namespace %s", workload, namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("tanzu apps workload delete %s -n %s -y", workload, namespace)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while deleting workload %s in namespace %s", workload, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("workload %s deleted in namespace %s", workload, namespace)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
+
+func TanzuListImageVulnerabilities(image string, namespace string) error {
+	log.Printf("getting vulnerabilities for workload image %s ", image)
+
+	images := kubectl_libs.GetImages(image, namespace)
+	log.Printf("images: %v", images)
+	if len(images) == 0 {
+		err := fmt.Errorf("no images is found for %s", image)
+		return err
+	}
+	imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+	log.Printf("imageDigests %s :", imageDigest)
+
+	//get vulnerabilites for image digest
+	cmd := fmt.Sprintf("tanzu insight images vulnerabilities --digest %s --format text", imageDigest)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while getting vulnerabilities for %s", image)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("vulnerabilities output for image %s:", images[0].LATESTIMAGE)
+	}
+
+	return err
+}
+
+func TanzuVerifyImageMetadata(image string, namespace string) (bool, error) {
+	log.Printf("getting metadata for workload image %s ", image)
+
+	images := kubectl_libs.GetImages(image, namespace)
+	log.Printf("images: %v", images)
+	imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+	log.Printf("imageDigests %s :", imageDigest)
+
+	//get vulnerabilites for image digest
+	cmd := fmt.Sprintf("tanzu insight images get --digest %s --format text", imageDigest)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while getting metadata for %s", image)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("metadata present for image %s:", images[0].LATESTIMAGE)
+		return true, err
+	}
+	return false, err
 }
