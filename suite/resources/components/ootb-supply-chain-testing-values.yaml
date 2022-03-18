@@ -1,0 +1,5 @@
+gitops:
+  ssh_secret: ""
+registry:
+  repository: <REPOSITORY>
+  server: <SERVER>

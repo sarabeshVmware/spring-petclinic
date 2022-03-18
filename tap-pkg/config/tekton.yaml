@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: tekton.tanzu.vmware.com
     versionSelection:
-      constraints: 0.30.2
+      constraints: 0.33.2
 
 #@ end
 #@ end
