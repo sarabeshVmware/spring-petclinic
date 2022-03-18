@@ -12,14 +12,13 @@ import (
 	"testing"
 	"time"
 
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/exec"
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	tanzu_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 
-	// "gitlab.eng.vmware.com/tap/tap-packages/suite/stepfuncs"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
@@ -32,31 +31,49 @@ func TestInnerloopBasic(t *testing.T) {
 		t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
 	}
 
-	f1 := features.New("update-tap-light-supplychainbasic").
-		Assess("update-schema", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	updateTap := features.New("update-tap-full-supplychainbasic").
+		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tap package")
+
+			// get schema and update values
+			tapValuesSchema, err := getTapValuesSchema()
+			if err != nil {
+				t.Error("error while getting tap values schema")
+				t.FailNow()
+			}
 			tapValuesSchema.Profile = "light"
 			tapValuesSchema.SupplyChain = "basic"
 			tapValuesSchema.Accelerator.Server.ServiceType = "LoadBalancer"
-			t.Logf("updating tap values schema %s", suiteConfig.Tap.ValuesSchemaFile)
-			err := utils.WriteYAMLFile(suiteConfig.Tap.ValuesSchemaFile, tapValuesSchema)
+
+			// create temporary file
+			t.Log("creating tempfile for tap values schema")
+			tempFile, err := ioutil.TempFile("", "tap-values*.yaml")
 			if err != nil {
-				t.Error(fmt.Errorf("error while updating tap values schema %s: %w", suiteConfig.Tap.ValuesSchemaFile, err))
+				t.Error("error while creating tempfile for tap values schema")
 				t.FailNow()
+			} else {
+				t.Log("created tempfile")
 			}
-			t.Logf("tap values schema %s updated", suiteConfig.Tap.ValuesSchemaFile)
-			return ctx
-		}).
-		Assess("update-tap", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("updating package %s", suiteConfig.Tap.Name)
-			cmd, output, err := exec.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile)
-			t.Logf("command executed: %s", cmd)
+			defer os.Remove(tempFile.Name())
+
+			// write the updated schema to the temporary file
+			err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
 			if err != nil {
-				t.Error(fmt.Errorf("error while updating package %s: %w: %s", suiteConfig.Tap.Name, err, output))
+				t.Error("error while writing updated tap values schema to YAML file")
 				t.FailNow()
+			} else {
+				t.Log("wrote tap values schema to file")
 			}
-			t.Logf("package %s updated: %s", suiteConfig.Tap.Name, output)
-			t.Logf("sleeping for 1 minute")
-			time.Sleep(time.Minute)
+
+			// update tap
+			err = tanzuCmds.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, tempFile.Name())
+			if err != nil {
+				t.Error("error while updating tap")
+				t.FailNow()
+			} else {
+				t.Log("updated tap")
+			}
+
 			return ctx
 		}).
 		Feature()
@@ -79,73 +96,54 @@ func TestInnerloopBasic(t *testing.T) {
 		}).
 		Feature()
 
-	acceleratorNameKey := "acceleratorName"
-	f3 := features.New("generate-acc-project").
+	f3 := features.New("generate-acc-project-and-unzip").
 		Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			acceleratorProject := "tanzu-java-web-app"
-			acceleratorName := "tanzu-java-web-app"
+			t.Logf("generating tanzu java web app accelerator project")
+
+			// generate project
 			repositoryPrefix := tapValuesSchema.OotbSupplyChainBasic.Registry.Server + "/" + tapValuesSchema.OotbSupplyChainBasic.Registry.Repository
-			t.Logf("generating accelerator project %s (namespace %s)", acceleratorProject, suiteConfig.Tap.Namespace)
-
-			count := 4
-			for count <= 4 {
-				if count == 0 {
-					t.Error("accelerator project not generated after 4 mins")
-					t.FailNow()
-				}
-				cmd, output, err := exec.TanzuGenerateAccelerator(acceleratorName, acceleratorProject, repositoryPrefix, ctx.Value(accServerExternalIpKey).(string), suiteConfig.Tap.Namespace)
-				t.Logf("command executed: %s", cmd)
-				if err != nil {
-					t.Logf("error while generating accelerator project %s in namespace %s: %s", acceleratorProject, suiteConfig.Tap.Namespace, output)
-					t.Logf("waiting for 30s for accelerator project getting generated ...")
-					time.Sleep(30 * time.Second)
-					count -= 1
-				} else {
-					t.Logf("Accelerator project %s generated in namespace %s: %s", acceleratorProject, suiteConfig.Tap.Namespace, output)
-					break
-				}
-			}
-			return context.WithValue(ctx, acceleratorNameKey, acceleratorName)
-		}).
-		Feature()
-
-	f4 := features.New("unzip-acc-project-zip").
-		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			zipFile := ctx.Value(acceleratorNameKey).(string) + ".zip"
-			t.Logf("Listing accelerator project zip %s)", zipFile)
-			output, err := exec.RunCommand(fmt.Sprintf("ls -lt %s", zipFile))
-			t.Logf("command executed: ls -lt %s. output %s", zipFile, output)
+			err := tanzuCmds.TanzuGenerateAccelerator("tanzu-java-web-app", "tanzu-java-web-app", repositoryPrefix, ctx.Value(accServerExternalIpKey).(string), suiteConfig.Tap.Namespace, 4, 30)
 			if err != nil {
-				t.Error(fmt.Errorf("error while listing accelerator project zip file %s: %w: %s", zipFile, err, output))
+				t.Error("error while generating accelerator project")
 				t.FailNow()
+			} else {
+				t.Log("accelerator project generated")
 			}
-			t.Logf("Listing existing project files if exists")
-			output, err = exec.RunCommand(fmt.Sprintf("ls -lt %s", ctx.Value(acceleratorNameKey).(string)))
-			t.Logf("command executed: ls -lt %s. output %s", ctx.Value(acceleratorNameKey).(string), output)
+
+			return ctx
+		}).
+		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			project := "tanzu-java-web-app"
+			zipFile := project + ".zip"
+
+			t.Logf("listing existing project files if exists")
+			output, err := linux_util.ExecuteCmd(fmt.Sprintf("ls -lt %s", project))
+			t.Logf("command executed: ls -lt %s. output %s", project, output)
 			if err == nil {
-				t.Logf("Deleting %s folder", ctx.Value(acceleratorNameKey))
-				output, err := exec.RunCommand(fmt.Sprintf("rm -rf %s", ctx.Value(acceleratorNameKey).(string)))
-				t.Logf("command executed: rm -rf %s. output %s", ctx.Value(acceleratorNameKey).(string), output)
+				t.Logf("deleting %s folder", project)
+				output, err := linux_util.ExecuteCmd(fmt.Sprintf("rm -rf %s", project))
+				t.Logf("command executed: rm -rf %s. output %s", project, output)
 				if err != nil {
-					t.Error(fmt.Errorf("error while Deleting project files %s: %w: %s", ctx.Value(acceleratorNameKey).(string), err, output))
+					t.Error(fmt.Errorf("error while deleting project files %s: %w: %s", project, err, output))
 					t.FailNow()
 				}
 			}
-			t.Logf("Unzip %s", zipFile)
-			output, err = exec.RunCommand(fmt.Sprintf("unzip %s", zipFile))
+
+			t.Logf("unzipping file %s", zipFile)
+			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s", zipFile))
 			t.Logf("command executed: unzip %s. output %s", zipFile, output)
 			if err != nil {
 				t.Error(fmt.Errorf("error while unzip accelerator project zip file %s: %w: %s", zipFile, err, output))
 				t.FailNow()
 			}
 			t.Logf("Accelerator project zip files %s unzipped successfully", zipFile)
+
 			return ctx
 		}).
 		Feature()
 
 	f5 := features.New("update-allow-context-tilt").
 		Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			//tiltFile := ctx.Value(acceleratorNameKey).(string) + "/Tiltfile"
 			newLine := "allow_k8s_contexts(k8s_context())"
 			t.Logf("Appending Line %s in tilt file %s", newLine, tiltFile)
 			file, err := os.OpenFile(tiltFile, os.O_APPEND|os.O_WRONLY, 0644)
@@ -167,10 +165,9 @@ func TestInnerloopBasic(t *testing.T) {
 		Assess("tilting-up", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("Setting NAMESPACE environment variable to %s", suiteConfig.Innerloop.Workload.Namespace)
 			os.Setenv("NAMESPACE", suiteConfig.Innerloop.Workload.Namespace)
-			//tiltFile := ctx.Value(acceleratorNameKey).(string) + "/Tiltfile"
 			tiltCmd := fmt.Sprintf("tilt up --file %s --port 11223", tiltFile)
 			t.Logf("Running tilt command %s", tiltCmd)
-			proc, err := exec.RunCommandWithOutWait(tiltCmd)
+			proc, err := linux_util.RunCommandWithOutWait(tiltCmd)
 			t.Logf("command executed: %s", tiltCmd)
 			if err != nil {
 				t.Error(fmt.Errorf("error while tilting-up : %w", err))
@@ -354,17 +351,6 @@ func TestInnerloopBasic(t *testing.T) {
 		Feature()
 
 	f14 := features.New("verify-app-response").
-		// Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		// 	t.Logf("verify app %s response", tiltApp)
-		// 	result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL)
-		// 	t.Logf("App response is : %s", result)
-		// 	if result != "Greetings from Spring Boot + Tanzu!" {
-		// 		t.Error(fmt.Errorf("App response not valid"))
-		// 		t.FailNow()
-		// 	}
-		// 	return ctx
-		// }).
-		// Feature()
 		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			url, host, validationString := ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + Tanzu!"
 
@@ -437,7 +423,7 @@ func TestInnerloopBasic(t *testing.T) {
 			newString := "Greetings from Spring Boot + TAP!"
 			filePath := "tanzu-java-web-app/src/main/java/com/example/springboot/HelloController.java"
 			t.Logf("Replace from string %s to string %s in file %s", oldString, newString, filePath)
-			err := exec.ReplaceStringInFile(filePath, oldString, newString)
+			err := utils.ReplaceStringInFile(filePath, oldString, newString)
 			t.Logf("Compiling and building app %s", tiltApp)
 			compile()
 			if err != nil {
@@ -449,17 +435,6 @@ func TestInnerloopBasic(t *testing.T) {
 		Feature()
 
 	f16 := features.New("verify-app-response-after-replace-string").
-		// Assess("verify-app-response", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		// 	t.Logf("verify app %s response", tiltApp)
-		// 	result := exec.GetAppResponse(ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL)
-		// 	t.Logf("App response is : %s", result)
-		// 	if result != "Greetings from Spring Boot + TAP!" {
-		// 		t.Error(fmt.Errorf("App response not valid"))
-		// 		t.FailNow()
-		// 	}
-		// 	return ctx
-		// }).
-		// Feature()
 		Assess("check-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			url, host, validationString := ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!"
 
@@ -555,7 +530,7 @@ func TestInnerloopBasic(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
+	testenv.Test(t, updateTap, f2, f3, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasic **************")
 }
