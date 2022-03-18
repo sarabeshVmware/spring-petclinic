@@ -5,21 +5,25 @@ package suite
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"encoding/base64"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 	"gopkg.in/yaml.v3"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -1258,6 +1262,72 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 	Feature()
 
 var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulnerabilities").
+	Assess("setup insight plugin configs", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		serviceAccount := kubectl_libs.GetServiceAccountJson("metadata-store-read-write-client", "metadata-store")
+		secretName := serviceAccount.Secrets[0].Name
+		secret := kubectl_libs.GetSecrets(secretName, "metadata-store")
+		encodedToken := string(secret.Data.Token)
+		decodedToken, err := base64.StdEncoding.DecodeString(encodedToken)
+		if err != nil {
+			t.Error("error while decoding token")
+			t.FailNow()
+		}
+		t.Logf("%s", decodedToken)
+		externalIP, err := client.GetServiceExternalIP("metadata-store-app", "metadata-store", cfg.Client().RESTConfig(), 2, 30)
+		if err != nil {
+			t.Error("error while getting external IP")
+			t.FailNow()
+		} else {
+			t.Log("external IP retrieved")
+		}
+		cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
+		res, err := linux_util.ExecuteCmd(cmd)
+		if err != nil {
+			log.Println("error")
+		}
+		t.Logf("%s", res)
+
+		t.Logf("%s", externalIP)
+		caSecret := kubectl_libs.GetSecrets("app-tls-cert", "metadata-store")
+		caEncodedToken := string(caSecret.Data.CaCrt)
+		caDecodedSecret, err := base64.StdEncoding.DecodeString(caEncodedToken)
+		if err != nil {
+			t.Error("error while decoding token")
+			t.FailNow()
+		}
+		// create temporary file
+		t.Log("creating tempfile for cert")
+		tempFile, err := ioutil.TempFile("", "ca*.crt")
+		if err != nil {
+			t.Error("error while creating tempfile for tap values schema")
+			t.FailNow()
+		} else {
+			t.Log("created tempfile")
+		}
+		defer os.Remove(tempFile.Name())
+		err = os.WriteFile(tempFile.Name(), caDecodedSecret, 0677)
+		if err != nil {
+			log.Printf("error while writing to file %s", tempFile.Name())
+			log.Printf("error: %s", err)
+		} else {
+			log.Printf("file %s written", tempFile.Name())
+		}
+
+		t.Logf("%s", tempFile.Name())
+		content, err := ioutil.ReadFile(tempFile.Name())
+		if err != nil {
+			t.FailNow()
+		}
+		text := string(content)
+		t.Logf("%s", text)
+
+		err = tanzuCmds.TanzuConfigureInsight(tempFile.Name(), tempFile.Name())
+		if err != nil {
+			t.FailNow()
+		}
+
+		return ctx
+	}).
 	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("listing vulnerabilities")
 

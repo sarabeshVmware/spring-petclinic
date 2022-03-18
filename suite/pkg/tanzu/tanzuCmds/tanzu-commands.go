@@ -380,3 +380,20 @@ func TanzuVerifyImageMetadata(image string, namespace string) (bool, error) {
 	}
 	return false, err
 }
+
+func TanzuConfigureInsight(capFilePath string, accessToken string) error {
+	log.Print("setting insight cli config")
+
+	//get vulnerabilites for image digest
+	cmd := fmt.Sprintf("tanzu insight config set-target https://metadata-store-app.metadata-store.svc.cluster.local:8443 --ca-cert %s --access-token %s", capFilePath, accessToken)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while configuring insight ")
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Print("insight configured ")
+		return err
+	}
+	return err
+}

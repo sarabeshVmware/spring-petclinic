@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -297,4 +298,40 @@ func GetRevisions(name string, namespace string) []GetRevisionsOutput {
 
 	fmt.Printf("revisions: %+v\n", revisions)
 	return revisions
+}
+
+type GetSecretsOutput struct {
+	APIVersion string `json:"apiVersion"`
+	Data       struct {
+		CaCrt     string `json:"ca.crt"`
+		Namespace string `json:"namespace"`
+		Token     string `json:"token"`
+	} `json:"data"`
+	Kind     string `json:"kind"`
+	Metadata struct {
+		Annotations struct {
+			KubernetesIoServiceAccountName string `json:"kubernetes.io/service-account.name"`
+			KubernetesIoServiceAccountUID  string `json:"kubernetes.io/service-account.uid"`
+		} `json:"annotations"`
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+		Name              string    `json:"name"`
+		Namespace         string    `json:"namespace"`
+		ResourceVersion   string    `json:"resourceVersion"`
+		UID               string    `json:"uid"`
+	} `json:"metadata"`
+	Type string `json:"type"`
+}
+
+func GetSecrets(name string, namespace string) *GetSecretsOutput {
+	var raw *GetSecretsOutput
+	cmd := fmt.Sprintf("kubectl get secrets %s -n %s -o json", name, namespace)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
 }
