@@ -169,6 +169,9 @@ func ValidateSourceScans(name string, namespace string, timeoutInMins int, inter
 			log.Println("Source scan complete successfully")
 			result = true
 			break
+		} else if srcScan.PHASE == "Completed" && srcScan.CVETOTAL >= "1" {
+			log.Println("Source scan complete, CVE(s) found")
+			break
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
