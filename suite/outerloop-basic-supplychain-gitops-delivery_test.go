@@ -67,6 +67,7 @@ func TestOuterloopBasicSupplychainGitopsDeliveryTest(t *testing.T) {
 	testenv.Test(t,
 		updateTap,
 		createGithubRepo,
+		createDestGithubRepo,
 		createGitSSHSecret,
 		patchServiceAccountSecrets,
 		deployMysqldbService,
@@ -90,7 +91,7 @@ func TestOuterloopBasicSupplychainGitopsDeliveryTest(t *testing.T) {
 		removeProjectDir,
 		deleteWorkload,
 		deleteGithubRepo,
-		//TO DO validate configuration repository for new image update and check ksvc status
+		deleteDestGithubRepo,
 	)
 	t.Log("************** TestCase END: TestOuterloopBasicSupplychainGitopsDeliveryTest **************")
 }

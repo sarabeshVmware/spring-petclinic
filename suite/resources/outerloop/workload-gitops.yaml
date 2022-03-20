@@ -10,7 +10,8 @@ metadata:
 spec:
   params:
   - name: gitops_repository
-    value: ssh://git@github.com/dapdelivery/spring-petclinic-demo-dest.git
+    # value: ssh://git@github.com/dapdelivery/spring-petclinic-demo-dest.git
+     value: ssh://git@github.com/dapdelivery/<GITHUB_DEST_REPO_NAME>.git
   - name: gitops_ssh_secret
     value: git-ssh
   source:

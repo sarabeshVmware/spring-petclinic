@@ -8,7 +8,9 @@ project:
   webpage_relative_path: vets.html
   file: src/main/resources/templates/vets/vetList.html
   repo_template: spring-petclinic-template
+  dest_repo_template: spring-petclinic-dest-template
   name: <GITHUB_REPO_NAME>
+  dest_name: <GITHUB_DEST_REPO_NAME>
   new_string: "Validation checks at VMWare!!!"
   original_string: "Veterinarians"
   commit_message: "update vets.html: new header"
