@@ -7,8 +7,6 @@ buildservice:
     kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
     tanzunet_password: <TANZUNET-PASSWORD>
     tanzunet_username: <TANZUNET-USERNAME>
-    descriptor_name: "tap-1.0.0-lite"
-    enable_automatic_dependency_updates: true
 ceip_policy_disclosed: true
 contour:
     envoy:
