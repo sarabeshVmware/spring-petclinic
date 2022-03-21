@@ -1423,7 +1423,7 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 		}
 		t.Logf("%s", res)
 		catCmd := "cat /etc/hosts"
-		_, err2 = linux_util.ExecuteCmd(catCmd)
+		_, err2 := linux_util.ExecuteCmd(catCmd)
 		if err2 != nil {
 			log.Println("error")
 		}
