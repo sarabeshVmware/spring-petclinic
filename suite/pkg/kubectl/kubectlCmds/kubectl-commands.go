@@ -76,7 +76,7 @@ func KubectlDeleteConfiguration(file string, namespace string) error {
 		log.Printf("output: %s", output)
 	} else {
 		log.Printf("configuration %s deleted from namespace %s", file, namespace)
-		//log.Printf("output: %s", output)
+		log.Printf("output: %s", output)
 	}
 
 	return err
