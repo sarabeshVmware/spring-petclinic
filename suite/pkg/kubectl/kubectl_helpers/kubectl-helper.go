@@ -165,13 +165,13 @@ func ValidateSourceScans(name string, namespace string, timeoutInMins int, inter
 		srcScan := kubectl_lib.GetSourceScan(name, namespace)
 		if (srcScan == kubectl_lib.GetSourceScanOutput{}) {
 			log.Println("Source scan is not started yet")
-		} else if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
-			log.Println("Source scan complete successfully")
-			result = true
-			break
 		} else if srcScan.PHASE == "Completed" && srcScan.CVETOTAL >= "1" {
 			log.Println("Source scan complete, CVE(s) found")
 			// TODO: tanzu insight list CVEs
+			break
+		} else if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
+			log.Println("Source scan complete successfully")
+			result = true
 			break
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
