@@ -27,7 +27,7 @@ packages:
     versions:
       - 0.5.0
       - 0.5.1
-      - 0.6.0-rc.1
+      - 0.6.0
   - name: app-live-view
     versions:
       - 1.0.1
