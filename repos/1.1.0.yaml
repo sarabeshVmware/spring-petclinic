@@ -127,7 +127,7 @@ packages:
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.1
+      - 0.7.0-build.2
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
