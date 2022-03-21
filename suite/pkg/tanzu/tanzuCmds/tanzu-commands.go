@@ -319,6 +319,7 @@ func TanzuGenerateAccelerator(acceleratorName string, projectName string, reposi
 			return nil
 		}
 	}
+
 	log.Printf("accelerator project not generated after %d retries", retries)
 	return err
 }
