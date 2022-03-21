@@ -1,0 +1,34 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-templates.tanzu.vmware.com.0.7.0-build.2
+spec:
+  refName: ootb-templates.tanzu.vmware.com
+  version: 0.7.0-build.2
+  releasedAt: "2022-03-18T21:42:57Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-templates
+      properties:
+        excluded_templates:
+          type: array
+          items:
+            type: string
+          default: []
+          description: List of templates to exclude from the installation (e.g. ['git-writer'])
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:a5e177f38d7287f2ca7ee2afd67ff178645d8f1b1e47af4f192a5ddd6404825e
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m

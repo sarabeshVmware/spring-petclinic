@@ -41,7 +41,9 @@ type outerloopConfiguration struct {
 		WebpageRelativePath string `yaml:"webpage_relative_path"`
 		File                string `yaml:"file"`
 		Name                string `yaml:"name"`
+		DestName            string `yaml:"dest_name"`
 		RepoTemplate        string `yaml:"repo_template"`
+		DestRepoTemplate    string `yaml:"dest_repo_template"`
 		NewString           string `yaml:"new_string"`
 		OriginalString      string `yaml:"original_string"`
 		CommitMessage       string `yaml:"commit_message"`
@@ -909,6 +911,38 @@ var verifyRevisionStatusAfterUpdate = features.New("verify-revision-status").
 			t.FailNow()
 		} else {
 			t.Log("revision ready")
+		}
+		return ctx
+	}).
+	Feature()
+
+var createDestGithubRepo = features.New("create-github-repo").
+	Assess("create-github-repo", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("creating github repo")
+
+		// create repo
+		err := github.CreateGithubRepo(outerloopConfig.Project.DestName, outerloopConfig.Project.DestRepoTemplate, outerloopConfig.Project.AccessToken)
+		if err != nil {
+			t.Error("error while creating repo ")
+			t.FailNow()
+		} else {
+			t.Log("created repo")
+		}
+		return ctx
+	}).
+	Feature()
+
+var deleteDestGithubRepo = features.New("delete-github-repo").
+	Assess("delete-github-repo", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deleting github repo")
+
+		// create repo
+		err := github.DeleteGithubRepo(outerloopConfig.Project.DestName, outerloopConfig.Project.AccessToken)
+		if err != nil {
+			t.Error("error while deleting repo ")
+			t.FailNow()
+		} else {
+			t.Log("deleted repo")
 		}
 		return ctx
 	}).
