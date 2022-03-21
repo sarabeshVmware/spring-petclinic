@@ -33,7 +33,7 @@ spec:
           type: string
           default: full
           description: "Profile to install. Valid values: full, light, iterate, build, run, view"
-        supply_chain: 
+        supply_chain:
           type: string
           default: basic
           description: "Supply chain to install. Valid values: basic, testing, testing_scanning"
@@ -70,7 +70,7 @@ spec:
           type: object
           additionalProperties: true
           description: "Cloud Native Runtimes configuration"
-          properties: 
+          properties:
             ingress:
               type: object
               properties:
@@ -91,11 +91,11 @@ spec:
                     namespace:
                       type: string
                       description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
-                      default: tanzu-system-ingress 
+                      default: tanzu-system-ingress
         ootb_supply_chain_basic:
           type: object
           additionalProperties: true
-          properties: {}           
+          properties: {}
           description: "OOTB Supply Chain Basic configuration"
         ootb_supply_chain_testing:
           type: object
@@ -131,6 +131,14 @@ spec:
               description: registry password (required)
               examples:
               - password
+            kp_default_repository_secret.name:
+              description: Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson.
+                Mutually exclusive with kp_default_repository_username/password.
+              type: string
+            kp_default_repository_secret.namespace:
+              description: Secret namespace for kp_default_repository credentials. Mutually
+                exclusive with kp_default_repository_username/password.
+              type: string
             tanzunet_username:
               type: string
               description: tanzunet registry username (required for dependency updater feature)
@@ -141,9 +149,32 @@ spec:
               description: tanzunet registry password (required for dependency updater feature)
               examples:
               - password
+            tanzunet_secret.name:
+              description: 'Optional: Secret name for tanzu network registry credentials
+                        of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password.'
+              type: string
+            tanzunet_secret.namespace:
+              description: 'Optional: Secret namespace for tanzu network registry credentials.
+                        Mutually exclusive with tanzunet_username/password.'
+              type: string
             ca_cert_data:
               type: string
               description: tbs registry ca certificate (used for self signed registry)
+            descriptor_name:
+              description: Name of descriptor to import (required for dependency updater
+                feature)
+              examples:
+                - lite
+                - full
+              type: string
+            descriptor_version:
+              description: 'Optional: Version of descriptor to use during install. This
+                        will override the version installed by default.'
+              type: string
+            enable_automatic_dependency_updates:
+              description: 'Optional: Allow automatic import of new dependency updates
+                        from Tanzunet'
+              type: bool
         tap_gui:
           type: object
           additionalProperties: true
