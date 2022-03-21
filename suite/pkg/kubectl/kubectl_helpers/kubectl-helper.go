@@ -617,21 +617,32 @@ func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, in
 	return result
 }
 
-func GetLatestRevision(config_name string, namespace string) string {
+func GetLatestRevision(config_name string, namespace string, timeoutInMins int, intervalInSeconds int) string {
 	log.Printf("Get revisions for config: %s in namespace: %s", config_name, namespace)
+	finalTimeout := timeoutInMins * 60
 	time.Sleep(time.Duration(60) * time.Second)
-	revs := kubectl_lib.GetRevisions("", namespace)
 	revisionName := ""
-	for i := len(revs) - 1; i >= 0; i-- {
-		if revs[i].CONFIG_NAME == config_name {
-			revisionName = revs[i].NAME
-			log.Printf("Latest revision is %s", revisionName)
+	for finalTimeout > 0 {
+		revs := kubectl_lib.GetRevisions("", namespace)
+		for i := len(revs) - 1; i >= 0; i-- {
+			if revs[i].CONFIG_NAME == config_name {
+				revisionName = revs[i].NAME
+				log.Printf("Latest revision is %s", revisionName)
+				break
+			}
+		}
+		if revisionName != "" {
+			log.Printf("Found latest revision: %s", revisionName)
 			break
 		}
+		log.Printf("%s not found, Waiting for %d seconds before retry", config_name, intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
 	}
 	if revisionName == "" {
-		log.Printf("No revisions found for config: %s", config_name)
+		log.Printf("Revision is not ready after %d mins", timeoutInMins)
 	}
+
 	return revisionName
 }
 
@@ -713,7 +724,7 @@ func GetNewerRevision(old_revision_name, config_name string, namespace string, t
 	finalTimeout := timeoutInMins * 60
 	revisionName := ""
 	for finalTimeout > 0 {
-		rev := GetLatestRevision(config_name, namespace)
+		rev := GetLatestRevision(config_name, namespace, 10, 30)
 		if rev > old_revision_name {
 			revisionName = rev
 			break

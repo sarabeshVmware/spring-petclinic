@@ -471,7 +471,7 @@ var verifyRevisionStatus = features.New("verify-revision-status").
 	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying revision ready status")
 
-		revisionName = kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace)
+		revisionName = kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 10, 30)
 		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !revisionReady {
 			t.Error("revision not ready")
@@ -1312,7 +1312,7 @@ var verifyBuildPackWorkloadsRevisionStatus = features.New("verify-buildpacks-rev
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyRevision := features.New(fmt.Sprintf("verify-revision-ready-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace)
+					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 10, 30)
 					revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, workload.Name, outerloopConfig.Namespace, 10, 30)
 					if !revisionReady {
 						t.Errorf("revision %s not ready", revisionName)
@@ -1336,7 +1336,7 @@ var verifyBuildPackWorkloadsKsvcStatus = features.New("verify-buildpacks-ksvc-st
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyKsvc := features.New(fmt.Sprintf("verify-ksvc-status-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace)
+					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 10, 30)
 					ksvcReady := kubectl_helpers.VerifyKsvcStatus(workload.Name, outerloopConfig.Namespace, revisionName, 5, 30)
 					if !ksvcReady {
 						t.Errorf("ksvc %s not ready", revisionName)
