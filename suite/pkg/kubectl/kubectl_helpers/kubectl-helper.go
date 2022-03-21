@@ -153,6 +153,10 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 	}
 	if !result {
 		log.Printf("Image scan failed/not completed after %d mins", timeoutInMins)
+		_, err := kubectl_lib.DescribeImageScan(name, namespace)
+		if err != nil {
+			log.Printf("error :%s", err)
+		}
 	}
 	return result
 }

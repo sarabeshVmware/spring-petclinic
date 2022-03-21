@@ -45,6 +45,24 @@ func GetImageScan(name string, namespace string) GetImageScanOutput {
 	return imgScan
 }
 
+func DescribeImageScan(name string, namespace string) (string, error) {
+	var output string
+	cmd := "kubectl describe imagescan"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while describing imagescan %s : %s", name, err)
+	}
+	return output, err
+}
+
 type GetSourceScanOutput struct {
 	NAME, PHASE, SCANNEDREVISION, SCANNEDREPOSITORY, AGE, CRITICAL, HIGH, MEDIUM, LOW, UNKNOWN, CVETOTAL string
 }

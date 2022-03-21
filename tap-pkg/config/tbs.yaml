@@ -37,7 +37,7 @@
 #@ def default_values():
 ---
 descriptor_name: tap-1.1-lite
-enable_automatic_dependency_updates: true
+# enable_automatic_dependency_updates: true
 #@ if/end profiles.is_any_enabled([profiles.light]):
 disable_smart_warmer: true
 #@ end
