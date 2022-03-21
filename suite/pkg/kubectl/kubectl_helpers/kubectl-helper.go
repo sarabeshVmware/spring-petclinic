@@ -169,6 +169,10 @@ func ValidateSourceScans(name string, namespace string, timeoutInMins int, inter
 			log.Println("Source scan complete successfully")
 			result = true
 			break
+		} else if srcScan.PHASE == "Completed" && srcScan.CVETOTAL >= "1" {
+			log.Println("Source scan complete, CVE(s) found")
+			// TODO: tanzu insight list CVEs
+			break
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
@@ -615,7 +619,7 @@ func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, in
 
 func GetLatestRevision(config_name string, namespace string) string {
 	log.Printf("Get revisions for config: %s in namespace: %s", config_name, namespace)
-	time.Sleep(time.Duration(10) * time.Second)
+	time.Sleep(time.Duration(60) * time.Second)
 	revs := kubectl_lib.GetRevisions("", namespace)
 	revisionName := ""
 	for i := len(revs) - 1; i >= 0; i-- {
