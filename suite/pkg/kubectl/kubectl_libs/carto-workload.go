@@ -10,7 +10,7 @@ import (
 )
 
 type GetWorkloadOutput struct {
-	NAME, SOURCE, SUPPLYCHAIN, READY, REASON string
+	NAME, SOURCE, SUPPLYCHAIN, READY, REASON, AGE string
 }
 
 func GetWorkload(workloadName string, namespace string) []GetWorkloadOutput {

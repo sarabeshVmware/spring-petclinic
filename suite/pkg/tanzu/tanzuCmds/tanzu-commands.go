@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -293,5 +294,32 @@ func TanzuDeleteWorkload(workloadFile string, namespace string) error {
 		log.Printf("output: %s", output)
 	}
 
+	return err
+}
+
+func TanzuGenerateAccelerator(acceleratorName string, projectName string, repositoryPrefix string, serverIP string, namespace string, retries int, intervalInSeconds int) error {
+	var output string
+	var err error
+
+	for iter := 0; iter < retries; iter++ {
+		log.Printf(`[iteration %d] generating accelerator project %s (projectName "%s", repositoryPrefix "%s", serverIP "%s") in namespace %s`, iter+1, acceleratorName, projectName, repositoryPrefix, serverIP, namespace)
+
+		// execute cmd
+		cmd := fmt.Sprintf(`tanzu accelerator generate %s --options '{"projectName":"%s", "repositoryPrefix":"%s", "includeKubernetes": true}' --server-url http://%s`, acceleratorName, projectName, repositoryPrefix, serverIP)
+		output, err = linux_util.ExecuteCmdInBashMode(cmd)
+		if err != nil {
+			log.Printf(`error while generating accelerator project %s (projectName "%s", repositoryPrefix "%s", serverIP "%s") in namespace %s`, acceleratorName, projectName, repositoryPrefix, serverIP, namespace)
+			log.Printf("error: %s", err)
+			log.Printf("output: %s", output)
+			log.Printf("waiting for %d seconds before retry", intervalInSeconds)
+			time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		} else {
+			log.Printf(`accelerator project %s (projectName "%s", repositoryPrefix "%s", serverIP "%s") generated in namespace %s`, acceleratorName, projectName, repositoryPrefix, serverIP, namespace)
+			log.Printf("output: %s", output)
+			return nil
+		}
+	}
+
+	log.Printf("accelerator project not generated after %d retries", retries)
 	return err
 }

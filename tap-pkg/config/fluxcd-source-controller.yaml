@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run, profiles.view]):
 #@ if profiles.is_pkg_enabled("fluxcd.source.controller.tanzu.vmware.com"):
 
 ---
@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: fluxcd.source.controller.tanzu.vmware.com
     versionSelection:
-      constraints: 0.16.3
+      constraints: 0.16.4
 
 #@ end
 #@ end

@@ -1,0 +1,21 @@
+#@ load("_profiles.star", "profiles")
+
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run, profiles.view]):
+#@ if profiles.is_pkg_enabled("tap-auth.tanzu.vmware.com"):
+
+apiVersion: packaging.carvel.dev/v1alpha1
+kind: PackageInstall
+metadata:
+  name: tap-auth
+  namespace: tap-install
+spec:
+  serviceAccountName: tap-install-sa
+  packageRef:
+    refName: tap-auth.tanzu.vmware.com
+    versionSelection:
+      constraints: 1.0.0
+      prereleases: {}
+
+#@ end
+#@ end
+

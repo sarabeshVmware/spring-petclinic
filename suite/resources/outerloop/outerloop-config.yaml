@@ -1,16 +1,16 @@
 ---
 catalog_info_yaml: https://github.com/dapdelivery/tap-catalog/blob/master/catalog-info.yaml
 mysql:
-  name: mysql-db # TODO: to be removed in cleanup
   yaml_file: mysql-service.yaml
 namespace: my-apps
 project:
-  application: spring-petclinic.my-apps.example.com # TODO: to be removed in cleanup
   host: spring-petclinic.my-apps.example.com
   webpage_relative_path: vets.html
   file: src/main/resources/templates/vets/vetList.html
   repo_template: spring-petclinic-template
+  dest_repo_template: spring-petclinic-dest-template
   name: <GITHUB_REPO_NAME>
+  dest_name: <GITHUB_DEST_REPO_NAME>
   new_string: "Validation checks at VMWare!!!"
   original_string: "Veterinarians"
   commit_message: "update vets.html: new header"
@@ -20,27 +20,16 @@ project:
   access_token: <ACCESS_TOKEN>
 scan_policy:
   yaml_file: scan-policy.yaml
-spring_petclinic: # TODO remove section in cleanup
-  build_name_prefix: spring-petclinic
-  gitrepository_name: spring-petclinic
-  imagerepository_name: spring-petclinic-delivery
-  ksvc_name: spring-petclinic
-  name: spring-petclinic-tests-pipeline
-  podintent_name: spring-petclinic
-  taskrun_name_prefix: spring-petclinic-config-writer
-  yaml_file: spring-petclinic-tests-pipeline.yaml
 spring_petclinic_pipeline:
   yaml_file: spring-petclinic-tests-pipeline.yaml
 workload:
   name: spring-petclinic
   yaml_file: workload.yaml
   test_yaml_file: workload-test.yaml
-  build_name_prefix: spring-petclinic
-  gitrepository_name: spring-petclinic
-  imagerepository_name: spring-petclinic-delivery
-  ksvc_name: spring-petclinic
-  podintent_name: spring-petclinic
-  taskrun_name_prefix: spring-petclinic-config-writer
-  imagescan_name: spring-petclinic
-  sourcescan_name: spring-petclinic
+  taskrun_name_infix: -config-writer-
+  taskrun_test_suffix: -test
   pipeline_name: developer-defined-tekton-pipeline
+  build_name_suffix: -build-1
+  service_binding_suffix: -db
+  gitops_yaml_file: workload-gitops.yaml
+  gitssh_secret_yaml_file: git-ssh-secrets.yaml

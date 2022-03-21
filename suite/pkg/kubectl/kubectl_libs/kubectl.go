@@ -1,6 +1,7 @@
 package kubectl_libs
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"reflect"
@@ -158,4 +159,100 @@ func GetIngress(name string, namespace string) GetIngressOutput {
 	}
 	fmt.Printf("Ingress: %+v\n", ingress)
 	return ingress
+}
+
+type GetServiceAccountJsonOutput struct {
+	APIVersion       string `json:"apiVersion"`
+	ImagePullSecrets []struct {
+		Name string `json:"name"`
+	} `json:"imagePullSecrets"`
+	Kind     string `json:"kind"`
+	Metadata struct {
+		Annotations struct {
+			KubectlKubernetesIoLastAppliedConfiguration string `json:"kubectl.kubernetes.io/last-applied-configuration"`
+		} `json:"annotations"`
+		CreationTimestamp string `json:"creationTimestamp"`
+		Name              string `json:"name"`
+		Namespace         string `json:"namespace"`
+		ResourceVersion   string `json:"resourceVersion"`
+		UID               string `json:"uid"`
+	} `json:"metadata"`
+	Secrets []struct {
+		Name string `json:"name"`
+	} `json:"secrets"`
+}
+
+func GetServiceAccountJson(name string, namespace string) *GetServiceAccountJsonOutput {
+	var raw *GetServiceAccountJsonOutput
+	cmd := fmt.Sprintf("kubectl get sa %s -n %s -o json", name, namespace)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
+}
+
+func PatchServiceAccount(sa string, namespace string, patch string) bool {
+	log.Printf("patching sa")
+	cmd := fmt.Sprintf("kubectl patch serviceaccount %s -n %s -p %s", sa, namespace, patch)
+	output, err := linux_util.ExecuteCmdInBashMode(cmd)
+	if err != nil {
+		log.Printf("error while applying patch %s for sa %s in namespace %s", patch, sa, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+		return false
+	} else {
+		log.Printf("applied patch %s for sa %s in namespace %s", patch, sa, namespace)
+		log.Printf("output: %s", output)
+	}
+	return true
+}
+
+type GetRevisionsOutput struct {
+	NAME, CONFIG_NAME, K8S_SERVICE_NAME, GENERATION, READY, REASON, ACTUAL_REPLICAS, DESIRED_REPLICAS string
+}
+
+func GetRevisions(name string, namespace string) []GetRevisionsOutput {
+	revisions := []GetRevisionsOutput{}
+	cmd := "kubectl get revision"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return revisions
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return revisions
+	}
+
+	ss := linux_util.FieldIndicesWithSingleSpace(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, " ", "_")
+	}
+
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var revision GetRevisionsOutput
+		for index, value := range words {
+			reflect.ValueOf(&revision).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		revisions = append(revisions, revision)
+	}
+
+	fmt.Printf("revisions: %+v\n", revisions)
+	return revisions
 }

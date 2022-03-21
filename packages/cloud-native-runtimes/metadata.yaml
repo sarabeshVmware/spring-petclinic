@@ -2,12 +2,12 @@ apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: PackageMetadata
 metadata:
   name: cnrs.tanzu.vmware.com
+  labels: {}
 spec:
   maintainers:
-    - name : "VMware"
-  displayName: "Cloud Native Runtimes"
-  longDescription: "Cloud Native Runtimes for Tanzu is a serverless application runtime for Kubernetes that is based on Knative and runs on a single Kubernetes cluster"
-  shortDescription: "Cloud Native Runtimes is a serverless runtime based on Knative"
-  providerName: "VMware"
-  supportDescription: "https://tanzu.vmware.com/support"
-
+  - name: VMware
+  displayName: Cloud Native Runtimes
+  longDescription: Cloud Native Runtimes for Tanzu is a serverless application runtime for Kubernetes that is based on Knative and runs on a single Kubernetes cluster
+  shortDescription: Cloud Native Runtimes is a serverless runtime based on Knative
+  providerName: VMware
+  supportDescription: https://tanzu.vmware.com/support

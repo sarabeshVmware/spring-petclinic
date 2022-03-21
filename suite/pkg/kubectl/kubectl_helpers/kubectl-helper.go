@@ -1,6 +1,7 @@
 package kubectl_helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -46,7 +47,7 @@ func ValidateAppLiveViewConventions(name string, namespace string) bool {
 }
 
 func ValidateSpringBootLabels(name string, namespace string) bool {
-	log.Println("Validating 'Spring Boot' labels")
+	log.Printf("Validating 'Spring Boot' labels, name: %s, namespace: %s", name, namespace)
 	raw := kubectl_lib.GetPodintentJson(name, namespace)
 	if raw == nil {
 		return false
@@ -98,7 +99,7 @@ func ValidateDeveloperConventions(name string, namespace string) bool {
 }
 
 func GetLatestImageRepositoryStatus(name string, namespace string) string {
-	log.Println("Get imagerepository status...")
+	log.Printf("Get imagerepository status, name: %s, namespace: %s", name, namespace)
 	imagerepos := kubectl_lib.GetImageRepositories(name, namespace)
 	if len(imagerepos) < 1 {
 		log.Println("No images found")
@@ -109,7 +110,7 @@ func GetLatestImageRepositoryStatus(name string, namespace string) string {
 }
 
 func GetLatestBuildStatus(name string, namespace string) string {
-	log.Println("Get build status...")
+	log.Printf("Get build status, name: %s, namespace: %s", name, namespace)
 	builds := kubectl_lib.GetBuilds(name, namespace)
 	if len(builds) < 1 {
 		log.Println("No builds found")
@@ -120,21 +121,21 @@ func GetLatestBuildStatus(name string, namespace string) string {
 }
 
 func GetLatestImageStatus(namespace string) string {
-	log.Println("Get latest image status...")
+	log.Printf("Get latest image status, namespace: %s", namespace)
 	image := kubectl_lib.GetLatestImage(namespace)
 	log.Printf("latest image status : %s", image.READY)
 	return image.READY
 }
 
 func GetKsvcStatus(name string, namespace string) string {
-	log.Println("Get ksvc image status...")
+	log.Printf("Get ksvc image status, name: %s, namespace: %s", name, namespace)
 	ksvc := kubectl_lib.GetKsvc(name, namespace)
 	log.Printf("ksvc image status : %s", ksvc[0].READY)
 	return ksvc[0].READY
 }
 
 func ValidateImageScans(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating image scans")
+	log.Printf("Validating image scans, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -157,13 +158,17 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 }
 
 func ValidateSourceScans(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating source scans")
+	log.Printf("Validating source scans, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
 		srcScan := kubectl_lib.GetSourceScan(name, namespace)
 		if (srcScan == kubectl_lib.GetSourceScanOutput{}) {
 			log.Println("Source scan is not started yet")
+		} else if srcScan.PHASE == "Completed" && srcScan.CVETOTAL >= "1" {
+			log.Println("Source scan complete, CVE(s) found")
+			// TODO: tanzu insight list CVEs
+			break
 		} else if srcScan.PHASE == "Completed" && srcScan.CRITICAL == "" && srcScan.HIGH == "" && srcScan.MEDIUM == "" && srcScan.LOW == "" && srcScan.UNKNOWN == "" && srcScan.CVETOTAL == "" {
 			log.Println("Source scan complete successfully")
 			result = true
@@ -180,7 +185,7 @@ func ValidateSourceScans(name string, namespace string, timeoutInMins int, inter
 }
 
 func ValidatePipelineExists(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating pipeline exists")
+	log.Printf("Validating pipeline exists, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -202,15 +207,15 @@ func ValidatePipelineExists(name string, namespace string, timeoutInMins int, in
 	return result
 }
 
-func ValidatePipelineRuns(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating pipeline runs")
+func ValidatePipelineRuns(prefix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating pipeline runs, prefix: %s, namespace: %s", prefix, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
-		prs := kubectl_lib.GetPipelineRuns(name, namespace)
+		prs := kubectl_lib.GetPipelineRuns("", namespace)
 		if (prs == kubectl_lib.GetPipelineRunsOutput{}) {
 			log.Println("Pipeline runs not created yet")
-		} else if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" {
+		} else if prs.SUCCEEDED == "True" && prs.REASON == "Succeeded" && strings.HasPrefix(prs.NAME, prefix) {
 			log.Println("Pipeline runs created successfully")
 			result = true
 			break
@@ -226,7 +231,7 @@ func ValidatePipelineRuns(name string, namespace string, timeoutInMins int, inte
 }
 
 func ValidateServiceBindings(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating service bindings")
+	log.Printf("Validating service bindings,name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -249,7 +254,7 @@ func ValidateServiceBindings(name string, namespace string, timeoutInMins int, i
 }
 
 func ValidateTrainingPortalStatus(name string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating training portals")
+	log.Printf("Validating training portals, name: %s", name)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -272,7 +277,7 @@ func ValidateTrainingPortalStatus(name string, timeoutInMins int, intervalInSeco
 }
 
 func ValidateLearningCenter(name string, namespace string) bool {
-	log.Println("Validating 'Learning Center'")
+	log.Printf("Validating 'Learning Center', name: %s, namespace: %s", name, namespace)
 	img := kubectl_lib.GetIngress(name, namespace)
 	cmd1 := fmt.Sprintf("echo '%s %s' >> /etc/hosts", img.ADDRESS, img.HOSTS)
 	linux_util.ExecuteCmd(cmd1)
@@ -285,7 +290,7 @@ func ValidateLearningCenter(name string, namespace string) bool {
 }
 
 func VerifyBuildStatus(buildName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating build status")
+	log.Printf("Validating build status, name: %s, namespace: %s", buildName, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -308,7 +313,7 @@ func VerifyBuildStatus(buildName string, namespace string, timeoutInMins int, in
 }
 
 func GetPodIntentStatus(name string, namespace string) string {
-	log.Println("Get podintents status...")
+	log.Printf("Get podintents status, name: %s, namespace: %s", name, namespace)
 	podintents := kubectl_lib.GetPodintent(name, namespace)
 	if len(podintents) > 0 {
 		log.Println("Found podintents")
@@ -322,7 +327,7 @@ func GetPodIntentStatus(name string, namespace string) string {
 }
 
 func GetWorkloadStatus(name string, namespace string) string {
-	log.Println("Get workload status...")
+	log.Printf("Get workload status, name: %s, namespace: %s", name, namespace)
 	workloads := kubectl_lib.GetWorkload(name, namespace)
 	if len(workloads) > 0 {
 		log.Println("Found workloads")
@@ -336,14 +341,14 @@ func GetWorkloadStatus(name string, namespace string) string {
 }
 
 func VerifyKsvcStatus(name string, namespace string, latestReady string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating ksvc status")
+	log.Printf("Validating ksvc status  READY == true and LATESTREADY == %s, name: %s, namespace: %s", latestReady, name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
 		ksvc := kubectl_lib.GetKsvc(name, namespace)
 		if len(ksvc) < 1 {
 			log.Println("Knative services are not generated yet")
-		} else if (ksvc[0].READY == "True") && (ksvc[0].LATESTREADY == latestReady) {
+		} else if (ksvc[0].READY == "True") && (ksvc[0].LATESTREADY >= latestReady) {
 			log.Printf("Knative %s status is verified successfully. Status is %s. LatestReady is %s.", ksvc[0].NAME, ksvc[0].READY, ksvc[0].LATESTREADY)
 			result = true
 			break
@@ -359,7 +364,7 @@ func VerifyKsvcStatus(name string, namespace string, latestReady string, timeout
 }
 
 func VerifyImageRepositoryStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating Image repository status")
+	log.Printf("Validating Image repository status, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -382,7 +387,7 @@ func VerifyImageRepositoryStatus(name string, namespace string, timeoutInMins in
 }
 
 func VerifyGitRepoStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating Git repository status")
+	log.Printf("Validating Git repository status, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -404,18 +409,49 @@ func VerifyGitRepoStatus(name string, namespace string, timeoutInMins int, inter
 	return result
 }
 
-func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating task run status")
+func VerifyTaskrunStatus(taskrunPrefix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating task run status, taskrunPrefix:%s, namespace:%s", taskrunPrefix, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
 		taskruns := kubectl_lib.GetTaskruns("", namespace)
 		if len(taskruns) < 1 {
 			log.Println("taskruns are not generated yet")
-		} else if taskruns[len(taskruns)-1].SUCCEEDED == "True" {
-			log.Printf("taskrun %s status is verified successfully, status is %s", taskruns[len(taskruns)-1].NAME, taskruns[len(taskruns)-1].SUCCEEDED)
-			result = true
-			break
+		} else {
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
+					result = true
+					return result
+				}
+			}
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("task run is not generated after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func VerifyTestTaskrunStatus(taskrunPrefix string, taskrunSuffix string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating task run status, taskrunPrefix: %s, taskrunSuffix: %s, namespace: %s", taskrunPrefix, taskrunSuffix, namespace)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		taskruns := kubectl_lib.GetTaskruns("", namespace)
+		if len(taskruns) < 1 {
+			log.Println("taskruns are not generated yet")
+		} else {
+			for _, taskrun := range taskruns {
+				if taskrun.SUCCEEDED == "True" && strings.HasPrefix(taskrun.NAME, taskrunPrefix) && strings.HasSuffix(taskrun.NAME, taskrunSuffix) {
+					log.Printf("taskrun %s status is verified successfully, status is %s", taskrun.NAME, taskrun.SUCCEEDED)
+					result = true
+					return result
+				}
+			}
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
@@ -428,7 +464,7 @@ func VerifyTaskrunStatus(namespace string, timeoutInMins int, intervalInSeconds 
 }
 
 func VerifyPodIntentStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating podintent status")
+	log.Printf("Validating podintent status, name: %s, namespace: %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -460,7 +496,7 @@ func LogFailedResourcesDetails(namespace string) {
 }
 
 func ValidateTAPInstallation(pkgName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating TAP installation status")
+	log.Printf("Validating TAP installation status. pkgname: %s, namespace: %s", pkgName, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -483,7 +519,7 @@ func ValidateTAPInstallation(pkgName string, namespace string, timeoutInMins int
 }
 
 func ValidateLatestImageStatus(namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating image scans")
+	log.Printf("Validating image scans in namespace: %s", namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -506,7 +542,7 @@ func ValidateLatestImageStatus(namespace string, timeoutInMins int, intervalInSe
 }
 
 func ValidateDeliverables(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
-	log.Println("Validating deliverables")
+	log.Printf("Validating deliverable %s in namespace %s", name, namespace)
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
@@ -526,4 +562,165 @@ func ValidateDeliverables(name string, namespace string, timeoutInMins int, inte
 		log.Printf("Deliverable is not ready after %d mins", timeoutInMins)
 	}
 	return result
+}
+
+type Secrets struct {
+	Name string `json:"name"`
+}
+
+func PatchServiceAccountWithNewSecret(sa string, namespace string, newSecret string) bool {
+
+	log.Println("Patching the default service account")
+	raw := kubectl_lib.GetServiceAccountJson(sa, namespace)
+	if raw == nil {
+		return false
+	}
+
+	var secret Secrets
+	secret.Name = newSecret
+	var secrets = append(raw.Secrets, secret)
+
+	var secretPatch, err = json.Marshal(secrets)
+	if err != nil {
+		log.Printf("error unmarshaling: %v", err)
+	}
+	log.Printf("Patch to be added : %s", string(secretPatch))
+	res := kubectl_lib.PatchServiceAccount(sa, namespace, "'{\"secrets\":"+string(secretPatch)+"}'")
+	if !res {
+		log.Println("Error while patching")
+		return false
+	}
+	log.Println("Patch completed")
+	return true
+}
+
+func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Println("Validating workloads ")
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		status := GetWorkloadStatus(name, namespace)
+		if status == "True" {
+			log.Println("Workload validated successfully")
+			result = true
+			break
+		} else {
+			log.Printf("workload ready status: %s", status)
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Workload validation not successfull after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func GetLatestRevision(config_name string, namespace string) string {
+	log.Printf("Get revisions for config: %s in namespace: %s", config_name, namespace)
+	time.Sleep(time.Duration(60) * time.Second)
+	revs := kubectl_lib.GetRevisions("", namespace)
+	revisionName := ""
+	for i := len(revs) - 1; i >= 0; i-- {
+		if revs[i].CONFIG_NAME == config_name {
+			revisionName = revs[i].NAME
+			log.Printf("Latest revision is %s", revisionName)
+			break
+		}
+	}
+	if revisionName == "" {
+		log.Printf("No revisions found for config: %s", config_name)
+	}
+	return revisionName
+}
+
+func ValidateRevisionStatus(revision_name, config string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating revision %s having config %s in namespace %s", revision_name, config, namespace)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		revision := kubectl_lib.GetRevisions(revision_name, namespace)
+		if len(revision) < 1 {
+			log.Printf("Revision: %s is not created yet", revision_name)
+		} else if revision[0].READY == "True" && revision[0].CONFIG_NAME == config {
+			log.Printf("Revision %s is ready", revision[0].NAME)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Revision is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func VerifyNewerBuildStatus(oldBuildName string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating newer build status. oldBuildName: %s", oldBuildName)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		builds := kubectl_lib.GetBuilds("", namespace)
+		if len(builds) < 1 {
+			log.Println("Builds are not generated yet")
+		} else if builds[len(builds)-1].SUCCEEDED == "True" && builds[len(builds)-1].NAME > oldBuildName {
+			log.Printf("Build %s status is verified successfully. Status is %s", builds[len(builds)-1].NAME, builds[len(builds)-1].SUCCEEDED)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Newer build compared to %s is not ready after %d mins", oldBuildName, timeoutInMins)
+	}
+	return result
+}
+
+func VerifyNewerKsvcStatus(name string, namespace string, revision string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating ksvc status READY == true and revision >= : %s", revision)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		ksvc := kubectl_lib.GetKsvc(name, namespace)
+		if len(ksvc) < 1 {
+			log.Println("Knative services are not generated yet")
+		} else if (ksvc[len(ksvc)-1].READY == "True") && (ksvc[len(ksvc)-1].LATESTREADY >= revision) {
+			log.Printf("Knative %s status is verified successfully. Status is %s. LatestCreated is %s.", ksvc[len(ksvc)-1].NAME, ksvc[len(ksvc)-1].READY, ksvc[len(ksvc)-1].LATESTCREATED)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Ksvc is not generated after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func GetNewerRevision(old_revision_name, config_name string, namespace string, timeoutInMins int, intervalInSeconds int) string {
+	log.Printf("Get revisions newer than %s for config: %s in namespace: %s", old_revision_name, config_name, namespace)
+
+	finalTimeout := timeoutInMins * 60
+	revisionName := ""
+	for finalTimeout > 0 {
+		rev := GetLatestRevision(config_name, namespace)
+		if rev > old_revision_name {
+			revisionName = rev
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if revisionName == "" {
+		log.Printf("No new revisions found for config: %s", config_name)
+	}
+	return revisionName
 }

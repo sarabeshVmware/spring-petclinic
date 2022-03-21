@@ -1,0 +1,171 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.1.1.0-build.9
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 1.1.0-build.9
+  releaseNotes: |
+    Release 1.1.0-build.9 of Tanzu Application Platform.
+    This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2022-03-10T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:616ad86559b2326d9b4a119347e4b685c2285400e93f0d16c91e925a757271a1
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: "Profile to install. Valid values: full, light, iterate, build, run, view"
+        supply_chain: 
+          type: string
+          default: basic
+          description: "Supply chain to install. Valid values: basic, testing, testing_scanning"
+        excluded_packages:
+          type: array
+          items:
+            type: string
+          default: []
+          description: "List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])"
+        shared:
+          type: object
+          properties:
+            ca_cert_data:
+              type: string
+              default: ""
+              description: "Optional: PEM Encoded certificate data to trust TLS connections with a private CA."
+          description: "Common properties shared across multiple components"
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "API Portal configuration"
+        accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Accelerator configuration"
+        appliveview:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "App Live View configuration"
+        cnrs:
+          type: object
+          additionalProperties: true
+          description: "Cloud Native Runtimes configuration"
+          properties: 
+            ingress:
+              type: object
+              properties:
+                reuse_crds:
+                  type: boolean
+                  description: "Optional: Only valid if a Contour instance already present in the cluster. Set to \"true\" if you want CNR to re-use the cluster's existing Contour CRDs."
+                  default: true
+                external:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance."
+                      default: tanzu-system-ingress
+                internal:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: "Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance."
+                      default: tanzu-system-ingress 
+        ootb_supply_chain_basic:
+          type: object
+          additionalProperties: true
+          properties: {}           
+          description: "OOTB Supply Chain Basic configuration"
+        ootb_supply_chain_testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing configuration"
+        ootb_supply_chain_testing_scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "OOTB Supply Chain Testing Scanning configuration"
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Image Policy Webhook configuration"
+        buildservice:
+          type: object
+          description: "Build Service configuration"
+          properties:
+            kp_default_repository:
+              type: string
+              description: docker repository (required)
+              examples:
+              - registry.io/build-service
+            kp_default_repository_username:
+              type: string
+              description: registry username (required)
+              examples:
+              - janedoe@vmware.com
+            kp_default_repository_password:
+              type: string
+              description: registry password (required)
+              examples:
+              - password
+            tanzunet_username:
+              type: string
+              description: tanzunet registry username (required for dependency updater feature)
+              examples:
+              - janedoe@vmware.com
+            tanzunet_password:
+              type: string
+              description: tanzunet registry password (required for dependency updater feature)
+              examples:
+              - password
+            ca_cert_data:
+              type: string
+              description: tbs registry ca certificate (used for self signed registry)
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "TAP GUI configuration"
+        learningcenter:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Learning Center configuration"
+        scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Scan controller configuration"
+        convention_controller:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Convention Controller configuration"
+        source_controller:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: "Source Controller configuration"

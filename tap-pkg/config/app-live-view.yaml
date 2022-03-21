@@ -14,12 +14,13 @@ metadata:
   annotations:
     kapp.k14s.io/change-rule.conventions: "upsert after upserting conventions"
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
+    kapp.k14s.io/change-rule.contour: "upsert after upserting contour"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: backend.appliveview.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.0-build.1
+      constraints: 1.1.0-build.3
       prereleases: {}
   values:
   - secretRef:

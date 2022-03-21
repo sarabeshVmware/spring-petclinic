@@ -7,7 +7,7 @@ spec:
   version: 1.4.3
   capacityRequirementsDescription: Cluster with nodes > 50GB ephemeral storage, Registry > 10GB available space
   releaseNotes: https://docs.vmware.com/en/VMware-Tanzu-Build-Service/index.html
-  releasedAt: "2022-02-24T00:00:00Z"
+  releasedAt: "2022-03-09T00:00:00Z"
   valuesSchema:
     openAPIv3:
       title: buildservice.tanzu.vmware.com values schema
