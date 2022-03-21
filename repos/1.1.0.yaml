@@ -65,7 +65,7 @@ packages:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.3
+      - 1.1.0
   - name: developer-conventions
     versions:
       - 0.5.0-build.1
@@ -81,7 +81,7 @@ packages:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.1
+      - 1.1.0
   - name: api-portal
     versions:
       - 1.0.8
@@ -100,13 +100,13 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-rc.44
+      - 1.1.0-rc.49
   - name: tap
     versions:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.12
+      - 1.1.0-build.13
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -132,17 +132,17 @@ packages:
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.1
+      - 0.7.0-build.2
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.1
+      - 0.7.0-build.2
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.1
+      - 0.7.0-build.2
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -152,6 +152,7 @@ packages:
       - 0.16.0
       - 0.16.1
       - 0.16.3
+      - 0.16.4
   - name: tekton-pipelines
     versions:
       - 0.30.0
@@ -161,7 +162,7 @@ packages:
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.1
+      - 0.7.0-build.2
   - name: tap-telemetry
     versions:
       - 0.1.2
