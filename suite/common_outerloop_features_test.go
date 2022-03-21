@@ -1279,7 +1279,7 @@ var verifyBuildPackWorkloadsRevisionStatus = features.New("verify-buildpacks-rev
 			verifyRevision := features.New(fmt.Sprintf("verify-revision-ready-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace)
-					revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, workload.Name, outerloopConfig.Namespace, 5, 30)
+					revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, workload.Name, outerloopConfig.Namespace, 10, 30)
 					if !revisionReady {
 						t.Errorf("revision %s not ready", revisionName)
 						t.Fail()

@@ -643,8 +643,11 @@ func ValidateRevisionStatus(revision_name, config string, namespace string, time
 			log.Printf("Revision %s is ready", revision[0].NAME)
 			result = true
 			break
+		} else {
+			log.Printf("revision status: %s, revision config: %s", revision[0].READY, revision[0].CONFIG_NAME)
 		}
-		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+
+		log.Printf("%s not found, Waiting for %d seconds before retry", config, intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
 		finalTimeout -= intervalInSeconds
 	}
