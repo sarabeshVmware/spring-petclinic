@@ -34,19 +34,22 @@ workload:
 buildpacks:
   scan_policy: lenient-scan-policy.yaml
   workloads:
-  # deployment not working error: ng command not found
-  # - name: nodejs-angular-app
-  #   file_path: buildpack-workloads/workload-nodejs-angular.yaml
   - name: java-maven-app
     git_repository: https://github.com/dapdelivery/test-buildpack-java-maven.git
     webpage_relative_path: actuator/health
     contains_conventions : true
-
+  - name: java-native-image-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-java-native-image-sample.git
+    webpage_relative_path: actuator/health
+    contains_conventions : true
   - name: python-pip-app
     git_repository: https://github.com/dapdelivery/test-buildpack-python-pip.git
-
   - name: dotnet-aspnet-app
     git_repository: https://github.com/dapdelivery/test-buildpack-dotnet-aspnet.git
+  - name: go-dep-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-go-dep.git
+  - name: nodejs-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-nodejs-sample.git
   
   # - name: ruby-rake-app
   #   git_repository: https://github.com/dapdelivery/test-buildpack-ruby-rake.git
@@ -68,9 +71,6 @@ buildpacks:
   #   git_branch:
   #   webpage_relative_path: 
 
-  - name: go-dep-app
-    git_repository: https://github.com/dapdelivery/test-buildpack-go-dep.git
-  
   # - name: git-sample-app
   #   git_repository: https://github.com/dapdelivery/test-buildpack-git-sample.git
   #   git_branch:
