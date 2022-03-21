@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: fluxcd.source.controller.tanzu.vmware.com
     versionSelection:
-      constraints: 0.16.3
+      constraints: 0.16.4
 
 #@ end
 #@ end
