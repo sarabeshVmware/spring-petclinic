@@ -391,7 +391,7 @@ var verifyTanzuJavaWebAppRevisionStatus = features.New("verify-revision-status")
 	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying revision ready status")
 
-		revisionName = kubectl_helpers.GetLatestRevision(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
+		revisionName = kubectl_helpers.GetLatestRevision(suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 1, 30)
 		t.Logf("latestRevision set to %s", revisionName)
 		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace, 5, 30)
 

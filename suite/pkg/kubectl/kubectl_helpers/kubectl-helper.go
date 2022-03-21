@@ -619,8 +619,10 @@ func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, in
 
 func GetLatestRevision(config_name string, namespace string, timeoutInMins int, intervalInSeconds int) string {
 	log.Printf("Get revisions for config: %s in namespace: %s", config_name, namespace)
-	finalTimeout := timeoutInMins * 60
+
 	time.Sleep(time.Duration(60) * time.Second)
+
+	finalTimeout := (timeoutInMins - 1) * 60
 	revisionName := ""
 	for finalTimeout > 0 {
 		revs := kubectl_lib.GetRevisions("", namespace)
@@ -724,7 +726,7 @@ func GetNewerRevision(old_revision_name, config_name string, namespace string, t
 	finalTimeout := timeoutInMins * 60
 	revisionName := ""
 	for finalTimeout > 0 {
-		rev := GetLatestRevision(config_name, namespace, 10, 30)
+		rev := GetLatestRevision(config_name, namespace, 1, 30)
 		if rev > old_revision_name {
 			revisionName = rev
 			break

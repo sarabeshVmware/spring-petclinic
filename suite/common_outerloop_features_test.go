@@ -22,6 +22,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 	"gopkg.in/yaml.v3"
@@ -471,7 +472,7 @@ var verifyRevisionStatus = features.New("verify-revision-status").
 	Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("verifying revision ready status")
 
-		revisionName = kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 10, 30)
+		revisionName = kubectl_helpers.GetLatestRevision(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 1, 30)
 		revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !revisionReady {
 			t.Error("revision not ready")
@@ -978,7 +979,7 @@ var deployBuildPackWorkloads = features.New("deploy-buildpack-workloads").
 					} else {
 						branch = workload.GitBranch
 					}
-					err := tanzuCmds.TanzuDeployWorkloadByCommand(workload.Name, outerloopConfig.Namespace, workload.GitRepository, branch, "web", "true")
+					err := tanzu_libs.TanzuDeployWorkloadByCommand(workload.Name, outerloopConfig.Namespace, workload.GitRepository, branch, "web", "true")
 					if err != nil {
 						t.Errorf("error while deploying %s", workload.Name)
 						t.Fail()
@@ -1026,7 +1027,7 @@ var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			deleteWorkload := features.New(fmt.Sprintf("deleting-workload-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					err := tanzuCmds.TanzuDeleteWorkloadByName(workload.Name, outerloopConfig.Namespace)
+					err := tanzu_libs.DeleteWorkload(workload.Name, outerloopConfig.Namespace)
 					if err != nil {
 						t.Errorf("error while deleting workload %s", workload.Name)
 						t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
@@ -1312,7 +1313,7 @@ var verifyBuildPackWorkloadsRevisionStatus = features.New("verify-buildpacks-rev
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyRevision := features.New(fmt.Sprintf("verify-revision-ready-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 10, 30)
+					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 5, 30)
 					revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, workload.Name, outerloopConfig.Namespace, 10, 30)
 					if !revisionReady {
 						t.Errorf("revision %s not ready", revisionName)
@@ -1336,7 +1337,7 @@ var verifyBuildPackWorkloadsKsvcStatus = features.New("verify-buildpacks-ksvc-st
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyKsvc := features.New(fmt.Sprintf("verify-ksvc-status-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 10, 30)
+					revisionName = kubectl_helpers.GetLatestRevision(workload.Name, outerloopConfig.Namespace, 5, 30)
 					ksvcReady := kubectl_helpers.VerifyKsvcStatus(workload.Name, outerloopConfig.Namespace, revisionName, 5, 30)
 					if !ksvcReady {
 						t.Errorf("ksvc %s not ready", revisionName)
@@ -1414,13 +1415,18 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 			t.Log("external IP retrieved")
 		}
 
-		//appending ip mapping for metadata servie to /etc/hosts
+		//appending ip mapping for metadata service to /etc/hosts
 		cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
 		res, err := linux_util.ExecuteCmd(cmd)
 		if err != nil {
 			log.Println("error")
 		}
 		t.Logf("%s", res)
+		cmd := "cat /etc/hosts"
+		_, err := linux_util.ExecuteCmd(cmd)
+		if err != nil {
+			log.Println("error")
+		}
 
 		//getting ca cert from app-tls-cert secret
 		caSecret := kubectl_libs.GetSecrets("app-tls-cert", "metadata-store")
@@ -1450,7 +1456,7 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 		}
 
 		//configure tanzu insight config set-target command
-		err = tanzuCmds.TanzuConfigureInsight(tempFile.Name(), string(decodedToken))
+		err = tanzu_libs.TanzuConfigureInsight(tempFile.Name(), string(decodedToken))
 		if err != nil {
 			t.FailNow()
 		}
@@ -1463,7 +1469,17 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					err := tanzuCmds.TanzuListImageVulnerabilities(workload.Name, outerloopConfig.Namespace)
+
+					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
+					log.Printf("images: %v", images)
+					if len(images) == 0 {
+						t.Errorf("no images is found for %s", workload.Name)
+						t.Fail()
+					}
+					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+					log.Printf("imageDigests %s :", imageDigest)
+
+					_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
 					if err != nil {
 						t.Errorf("error while getting vulnerabilities for %s", workload.Name)
 						t.Fail()
@@ -1484,12 +1500,22 @@ var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpack
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			verifyMetadata := features.New(fmt.Sprintf("verify-metadata-%s", workload.Name)).
 				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					status, err := tanzuCmds.TanzuVerifyImageMetadata(workload.Name, outerloopConfig.Namespace)
+
+					//getting image sha from kpack image for the workload
+					log.Printf("getting metadata for workload image %s ", workload.Name)
+
+					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
+					log.Printf("images: %v", images)
+					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+					log.Printf("imageDigests %s :", imageDigest)
+
+					//getting insight image metadata
+					status, err := tanzu_libs.GetInsightImages(imageDigest)
 					if err != nil {
 						t.Errorf("error while getting metadata for %s", workload.Name)
 						t.Fail()
 					}
-					if !status {
+					if status == "" {
 						t.Errorf("metadata not available for %s", workload.Name)
 						t.Fail()
 					}
