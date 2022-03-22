@@ -1417,7 +1417,7 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 
 		//appending ip mapping for metadata service to /etc/hosts
 		cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
-		res, err := linux_util.ExecuteCmd(cmd)
+		res, err := linux_util.ExecuteCmdInBashMode(cmd)
 		if err != nil {
 			log.Println("error")
 		}
