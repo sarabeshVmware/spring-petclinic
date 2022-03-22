@@ -79,6 +79,7 @@ func TestOuterloopScanSupplychainMultipleApps(t *testing.T) {
 		verifyBuildPackWorkloadsSourceScanStatus,
 		verifyBuildPackWorkloadsBuildStatus,
 		verifyBuildPackWorkloadsPodintents,
+		RestartScanLinkController, // temp workaround for https://jira.eng.vmware.com/browse/VSEE-464
 		verifyBuildPackWorkloadsImageScanStatus,
 		verifyBuildPackWorkloadsRevisionStatus,
 		verifyBuildPackWorkloadsKsvcStatus,

@@ -1527,3 +1527,16 @@ var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpack
 		return ctx
 	}).
 	Feature()
+
+var RestartScanLinkController = features.New("restaring-scan-link-controller").
+Assess("restart workaround", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	t.Log("verify scan-controller restart")
+	_, err := kubectl_libs.RestartScanLinkController()
+	if err != nil {
+		t.Errorf("error while restarting scan-link controller")
+		t.Fail()
+	}
+	}
+	return ctx
+}).
+Feature()
