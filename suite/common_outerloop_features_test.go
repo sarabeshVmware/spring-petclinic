@@ -1417,7 +1417,7 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 
 		//appending ip mapping for metadata service to /etc/hosts
 		cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
-		res, err := linux_util.ExecuteCmd(cmd)
+		res, err := linux_util.ExecuteCmdInBashMode(cmd)
 		if err != nil {
 			log.Println("error")
 		}
@@ -1523,6 +1523,18 @@ var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpack
 				}).
 				Feature()
 			testenv.Test(t, verifyMetadata)
+		}
+		return ctx
+	}).
+	Feature()
+
+var RestartScanLinkController = features.New("restaring-scan-link-controller").
+	Assess("restart workaround", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verify scan-controller restart")
+		_, err := kubectl_libs.RestartScanLinkController()
+		if err != nil {
+			t.Errorf("error while restarting scan-link controller")
+			t.Fail()
 		}
 		return ctx
 	}).

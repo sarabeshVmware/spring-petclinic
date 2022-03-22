@@ -335,3 +335,12 @@ func GetSecrets(name string, namespace string) *GetSecretsOutput {
 	}
 	return raw
 }
+
+func RestartScanLinkController() (string, error) {
+	cmd := "kubectl rollout restart deployment.apps/scan-link-controller-manager -n scan-link-system"
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while restarting scan controller")
+	}
+	return res, err
+}
