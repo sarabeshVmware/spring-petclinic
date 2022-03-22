@@ -142,7 +142,7 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		imageScan := kubectl_lib.GetImageScan(name, namespace)
 		if (imageScan == kubectl_lib.GetImageScanOutput{}) {
 			log.Println("Image scan is not started yet")
-		} else if imageScan.PHASE == "Completed" && imageScan.CVETOTAL >= "1" {
+		} else if imageScan.PHASE == "Completed" && ((imageScan.CRITICAL >= "1") || (imageScan.HIGH >= "1") || (imageScan.UNKNOWN >= "1")) {
 			log.Println("Image scan complete, CVE(s) found")
 			// TODO: tanzu insight list CVEs
 			break
