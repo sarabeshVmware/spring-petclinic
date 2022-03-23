@@ -64,7 +64,7 @@ func main() {
 		log.Printf("Artifact created, id: %d, name: %s\n", artifact_det.ID, artifact_det.Name)
 
 		log.Println("Waiting till artifacts addition is complete")
-		artifactsAdded := pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID, 30, 60)
+		artifactsAdded := pivnet_helpers.WaitTillArtifactReferenceIsReady(config.ProductSlug, artifact_det.ID, 40, 60)
 		if !artifactsAdded {
 			log.Fatal("Exiting as artifact did not get created in tanzunet")
 		}

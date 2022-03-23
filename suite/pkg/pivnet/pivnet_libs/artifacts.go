@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -67,6 +68,9 @@ func AddArtifactReference(productSlug string, releaseVersion string, artifactRef
 		cmd := fmt.Sprintf("pivnet-cli add-artifact-reference --product-slug=%s --release-version %s --artifact-reference-id=%d --format json", productSlug, releaseVersion, artifactReferenceId)
 		response, err := linux_util.ExecuteCmd(cmd)
 		if err == nil && response == "" {
+			return true
+		}
+		if strings.Contains(response, "Release already contains this artifact reference") {
 			return true
 		}
 		log.Printf("Waiting for 30s to retry")
