@@ -142,6 +142,10 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		imageScan := kubectl_lib.GetImageScan(name, namespace)
 		if (imageScan == kubectl_lib.GetImageScanOutput{}) {
 			log.Println("Image scan is not started yet")
+		} else if imageScan.PHASE == "Completed" && ((imageScan.CRITICAL >= "1") || (imageScan.HIGH >= "1") || (imageScan.UNKNOWN >= "1")) {
+			log.Println("Image scan complete, CVE(s) found")
+			// TODO: tanzu insight list CVEs
+			break
 		} else if imageScan.PHASE == "Completed" && (imageScan.CRITICAL == "0" || imageScan.CRITICAL == "") && (imageScan.HIGH == "0" || imageScan.HIGH == "") && (imageScan.UNKNOWN == "0" || imageScan.UNKNOWN == "") {
 			log.Println("Image scan complete successfully")
 			result = true
@@ -153,6 +157,10 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 	}
 	if !result {
 		log.Printf("Image scan failed/not completed after %d mins", timeoutInMins)
+		_, err := kubectl_lib.DescribeImageScan(name, namespace)
+		if err != nil {
+			log.Printf("error :%s", err)
+		}
 	}
 	return result
 }
@@ -617,21 +625,34 @@ func ValidateWorkloadStatus(name string, namespace string, timeoutInMins int, in
 	return result
 }
 
-func GetLatestRevision(config_name string, namespace string) string {
+func GetLatestRevision(config_name string, namespace string, timeoutInMins int, intervalInSeconds int) string {
 	log.Printf("Get revisions for config: %s in namespace: %s", config_name, namespace)
+
 	time.Sleep(time.Duration(60) * time.Second)
-	revs := kubectl_lib.GetRevisions("", namespace)
+
+	finalTimeout := (timeoutInMins - 1) * 60
 	revisionName := ""
-	for i := len(revs) - 1; i >= 0; i-- {
-		if revs[i].CONFIG_NAME == config_name {
-			revisionName = revs[i].NAME
-			log.Printf("Latest revision is %s", revisionName)
+	for finalTimeout > 0 {
+		revs := kubectl_lib.GetRevisions("", namespace)
+		for i := len(revs) - 1; i >= 0; i-- {
+			if revs[i].CONFIG_NAME == config_name {
+				revisionName = revs[i].NAME
+				log.Printf("Latest revision is %s", revisionName)
+				break
+			}
+		}
+		if revisionName != "" {
+			log.Printf("Found latest revision: %s", revisionName)
 			break
 		}
+		log.Printf("%s not found, Waiting for %d seconds before retry", config_name, intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
 	}
 	if revisionName == "" {
-		log.Printf("No revisions found for config: %s", config_name)
+		log.Printf("Revision is not ready after %d mins", timeoutInMins)
 	}
+
 	return revisionName
 }
 
@@ -647,8 +668,11 @@ func ValidateRevisionStatus(revision_name, config string, namespace string, time
 			log.Printf("Revision %s is ready", revision[0].NAME)
 			result = true
 			break
+		} else {
+			log.Printf("revision status: %s, revision config: %s", revision[0].READY, revision[0].CONFIG_NAME)
 		}
-		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+
+		log.Printf("%s not found, Waiting for %d seconds before retry", config, intervalInSeconds)
 		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
 		finalTimeout -= intervalInSeconds
 	}
@@ -710,7 +734,7 @@ func GetNewerRevision(old_revision_name, config_name string, namespace string, t
 	finalTimeout := timeoutInMins * 60
 	revisionName := ""
 	for finalTimeout > 0 {
-		rev := GetLatestRevision(config_name, namespace)
+		rev := GetLatestRevision(config_name, namespace, 1, 30)
 		if rev > old_revision_name {
 			revisionName = rev
 			break

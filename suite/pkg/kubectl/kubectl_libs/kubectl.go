@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
@@ -49,6 +50,48 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 
 	fmt.Printf("builds: %+v\n", builds)
 	return builds
+}
+
+type GetImagesOutput struct {
+	NAME, LATESTIMAGE, READY string
+}
+
+func GetImages(imageName string, namespace string) []GetImagesOutput {
+	images := []GetImagesOutput{}
+	cmd := "kubectl get images.kpac"
+	if imageName != "" {
+		cmd += fmt.Sprintf(" %s", imageName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return images
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return images
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var image GetImagesOutput
+		for index, value := range words {
+			reflect.ValueOf(&image).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		images = append(images, image)
+	}
+
+	fmt.Printf("images: %+v\n", images)
+	return images
 }
 
 type GetLatestImageOutput struct {
@@ -255,4 +298,49 @@ func GetRevisions(name string, namespace string) []GetRevisionsOutput {
 
 	fmt.Printf("revisions: %+v\n", revisions)
 	return revisions
+}
+
+type GetSecretsOutput struct {
+	APIVersion string `json:"apiVersion"`
+	Data       struct {
+		CaCrt     string `json:"ca.crt"`
+		Namespace string `json:"namespace"`
+		Token     string `json:"token"`
+	} `json:"data"`
+	Kind     string `json:"kind"`
+	Metadata struct {
+		Annotations struct {
+			KubernetesIoServiceAccountName string `json:"kubernetes.io/service-account.name"`
+			KubernetesIoServiceAccountUID  string `json:"kubernetes.io/service-account.uid"`
+		} `json:"annotations"`
+		CreationTimestamp time.Time `json:"creationTimestamp"`
+		Name              string    `json:"name"`
+		Namespace         string    `json:"namespace"`
+		ResourceVersion   string    `json:"resourceVersion"`
+		UID               string    `json:"uid"`
+	} `json:"metadata"`
+	Type string `json:"type"`
+}
+
+func GetSecrets(name string, namespace string) *GetSecretsOutput {
+	var raw *GetSecretsOutput
+	cmd := fmt.Sprintf("kubectl get secrets %s -n %s -o json", name, namespace)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
+}
+
+func RestartScanLinkController() (string, error) {
+	cmd := "kubectl rollout restart deployment.apps/scan-link-controller-manager -n scan-link-system"
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while restarting scan controller")
+	}
+	return res, err
 }
