@@ -139,4 +139,5 @@ func main() {
 			}
 		}
 	}
+	log.Printf("Release created in tanzunet: %s", config.ReleaseVersion)
 }

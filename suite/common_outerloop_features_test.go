@@ -1393,7 +1393,91 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 	}).
 	Feature()
 
+func listVulnerabilities(workloadName string)
+{
+	verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workloadName)).
+	Assess(fmt.Sprintf("%s", workloadName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+
+		images := kubectl_libs.GetImages(workloadName, outerloopConfig.Namespace)
+		log.Printf("images: %v", images)
+		if len(images) == 0 {
+			t.Errorf("no images is found for %s", workloadName)
+			t.Fail()
+		}
+		imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+		log.Printf("imageDigests %s :", imageDigest)
+
+		_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
+		if err != nil {
+			t.Errorf("error while getting vulnerabilities for %s", workloadName)
+			t.Fail()
+		}
+		return ctx
+	}).
+	Feature()
+	testenv.Test(t, verifyVulnerability)
+}
+
 var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulnerabilities").
+	testenv.Test(t, SetupInsightPluginConfig)
+	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("listing vulnerabilities")
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			listVulnerabilities(workload.Name)	
+		}
+		return ctx
+	}).
+	Feature()
+
+var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpacks-metadata").
+	Assess("verify metadata", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verify metadata")
+
+		for _, workload := range outerloopConfig.BuildPacks.Workloads {
+			verifyMetadata := features.New(fmt.Sprintf("verify-metadata-%s", workload.Name)).
+				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+
+					//getting image sha from kpack image for the workload
+					log.Printf("getting metadata for workload image %s ", workload.Name)
+
+					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
+					log.Printf("images: %v", images)
+					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+					log.Printf("imageDigests %s :", imageDigest)
+
+					//getting insight image metadata
+					status, err := tanzu_libs.GetInsightImages(imageDigest)
+					if err != nil {
+						t.Errorf("error while getting metadata for %s", workload.Name)
+						t.Fail()
+					}
+					if status == "" {
+						t.Errorf("metadata not available for %s", workload.Name)
+						t.Fail()
+					}
+					return ctx
+				}).
+				Feature()
+			testenv.Test(t, verifyMetadata)
+		}
+		return ctx
+	}).
+	Feature()
+
+var RestartScanLinkController = features.New("restaring-scan-link-controller").
+	Assess("restart workaround", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("verify scan-controller restart")
+		_, err := kubectl_libs.RestartScanLinkController()
+		if err != nil {
+			t.Errorf("error while restarting scan-link controller")
+			t.Fail()
+		}
+		return ctx
+	}).
+	Feature()
+
+
+var SetupInsightPluginConfig = features.New("setup-insight").
 	Assess("setup insight plugin configs", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		//getting metadata store app access token
 		serviceAccount := kubectl_libs.GetServiceAccountJson("metadata-store-read-write-client", "metadata-store")
@@ -1463,79 +1547,13 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 
 		return ctx
 	}).
+	Feature()
+
+
+var listVulnerabilities = features.New("list-vulnerabilities").
 	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("listing vulnerabilities")
-
-		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workload.Name)).
-				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-
-					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
-					log.Printf("images: %v", images)
-					if len(images) == 0 {
-						t.Errorf("no images is found for %s", workload.Name)
-						t.Fail()
-					}
-					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
-					log.Printf("imageDigests %s :", imageDigest)
-
-					_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
-					if err != nil {
-						t.Errorf("error while getting vulnerabilities for %s", workload.Name)
-						t.Fail()
-					}
-					return ctx
-				}).
-				Feature()
-			testenv.Test(t, verifyVulnerability)
-		}
-		return ctx
-	}).
-	Feature()
-
-var verifyBuildPackWorkloadsDataExistInMetadata = features.New("verify-buildpacks-metadata").
-	Assess("verify metadata", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Log("verify metadata")
-
-		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			verifyMetadata := features.New(fmt.Sprintf("verify-metadata-%s", workload.Name)).
-				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-
-					//getting image sha from kpack image for the workload
-					log.Printf("getting metadata for workload image %s ", workload.Name)
-
-					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
-					log.Printf("images: %v", images)
-					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
-					log.Printf("imageDigests %s :", imageDigest)
-
-					//getting insight image metadata
-					status, err := tanzu_libs.GetInsightImages(imageDigest)
-					if err != nil {
-						t.Errorf("error while getting metadata for %s", workload.Name)
-						t.Fail()
-					}
-					if status == "" {
-						t.Errorf("metadata not available for %s", workload.Name)
-						t.Fail()
-					}
-					return ctx
-				}).
-				Feature()
-			testenv.Test(t, verifyMetadata)
-		}
-		return ctx
-	}).
-	Feature()
-
-var RestartScanLinkController = features.New("restaring-scan-link-controller").
-	Assess("restart workaround", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		t.Log("verify scan-controller restart")
-		_, err := kubectl_libs.RestartScanLinkController()
-		if err != nil {
-			t.Errorf("error while restarting scan-link controller")
-			t.Fail()
-		}
+		listVulnerabilities(workload.Name)
 		return ctx
 	}).
 	Feature()
