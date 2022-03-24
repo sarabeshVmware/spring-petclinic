@@ -632,7 +632,7 @@ func GetLatestRevision(config_name string, namespace string, timeoutInMins int, 
 
 	finalTimeout := (timeoutInMins - 1) * 60
 	revisionName := ""
-	for finalTimeout > 0 {
+	for finalTimeout >= 0 {
 		revs := kubectl_lib.GetRevisions("", namespace)
 		for i := len(revs) - 1; i >= 0; i-- {
 			if revs[i].CONFIG_NAME == config_name {
