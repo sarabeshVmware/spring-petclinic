@@ -82,6 +82,7 @@ func TestOuterloopScanSupplychainGitSource(t *testing.T) {
 		verifyImageskpac,
 		verifyBuildStatus,
 		verifyImageScanStatus,
+		listSpringPetclinicVulnerabilities,
 		verifyPodintents,
 		verifyDeliverables,
 		verifyServiceBindings,
