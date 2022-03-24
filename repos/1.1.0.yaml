@@ -54,12 +54,12 @@ packages:
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.1.0-build.1
+      - 1.1.0
   - name: grype-scanner
     versions:
       - 1.0.0
       - 1.0.1
-      - 1.1.0-build.1
+      - 1.1.0
   - name: app-accelerator
     versions:
       - 1.0.0
@@ -75,7 +75,7 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0
+      - 1.1.1
   - name: image-policy-webhook
     versions:
       - 1.0.0
@@ -100,13 +100,13 @@ packages:
     versions:
       - 1.0.1
       - 1.0.2
-      - 1.1.0-rc.49
+      - 1.1.0-rc.52
   - name: tap
     versions:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.13
+      - 1.1.0-build.14
   - name: learning-center-workshops
     versions:
       - 0.1.0
