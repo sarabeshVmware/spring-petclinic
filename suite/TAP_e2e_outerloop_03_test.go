@@ -15,8 +15,8 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func TestOuterloopTestScan(t *testing.T) {
-	t.Log("************** TestCase START: TestOuterloopTestScan **************")
+func TestOuterloopScanSupplychainGitSource(t *testing.T) {
+	t.Log("************** TestCase START: TestOuterloopScanSupplychainGitSource **************")
 
 	updateTap := features.New("update-tap-full-supplychaintestscan").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -82,6 +82,7 @@ func TestOuterloopTestScan(t *testing.T) {
 		verifyImageskpac,
 		verifyBuildStatus,
 		verifyImageScanStatus,
+		listSpringPetclinicVulnerabilities,
 		verifyPodintents,
 		verifyDeliverables,
 		verifyServiceBindings,
@@ -100,5 +101,5 @@ func TestOuterloopTestScan(t *testing.T) {
 		deleteWorkload,
 		deleteGithubRepo,
 	)
-	t.Log("************** TestCase END: TestOuterloopTestScan **************")
+	t.Log("************** TestCase END: TestOuterloopScanSupplychainGitSource **************")
 }

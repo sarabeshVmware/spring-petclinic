@@ -1,4 +1,4 @@
-//go:build all || innerloop || innerloop_basic_git_source
+//go:build all || outerloop || outerloop_basic_delivery
 
 package suite
 
@@ -14,10 +14,9 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func TestInnerLoopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
-	t.Log("************** TestCase START: TestInnerLoopBasicSupplychainGitSourceLiveUpdate **************")
-
-	updateTap := features.New("update-tap-full-supplychainbasic").
+func TestOuterloopBasicSupplychainGitopsDelivery(t *testing.T) {
+	t.Log("************** TestCase START: TestOuterloopBasicSupplychainGitopsDeliveryTest **************")
+	updateTap := features.New("update-tap-full-supplychaintesting").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
@@ -27,8 +26,9 @@ func TestInnerLoopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
 				t.Error("error while getting tap values schema")
 				t.FailNow()
 			}
-			tapValuesSchema.Profile = "light"
+			tapValuesSchema.Profile = "full"
 			tapValuesSchema.SupplyChain = "basic"
+			tapValuesSchema.OotbSupplyChainBasic.Gitops.SSHSecret = "git-ssh"
 
 			// create temporary file
 			t.Log("creating tempfile for tap values schema")
@@ -63,30 +63,35 @@ func TestInnerLoopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
 		}).
 		Feature()
 
+	// test
 	testenv.Test(t,
 		updateTap,
-		deployTanzuJavaWebApp,
-		verifyTanzuJavaWebAppGitRepository,
-		verifyTanzuJavaWebAppBuildStatus,
-		verifyTanzuJavaWebAppImagesKpacStatus,
-		verifyTanzuJavaWebAppPodIntentStatus,
-		verifyTanzuJavaWebAppImageRepositoryDelivery,
-		verifyTanzuJavaWebAppDeliverable,
-		verifyTanzuJavaWebAppRevisionStatus,
-		verifyTanzuJavaWebAppKsvcStatus,
-		verifyTanzuJavaWebAppWorkloadStatus,
-		verifyTanzuJavaWebAppResponseBeforeChange,
-		gitCloneTanzuJavaWebApp,
-		updateTanzuJavaWebAppTiltFile,
-		updateWorkloadTiltUp,
-		verifyTanzuJavaWebAppImageRepository,
-		verifyTanzuJavaWebAppBuildStatusAfterUpdate,
-		verifyTanzuJavaWebAppRevisionStatusAfterUpdate,
-		verifyTanzuJavaWebAppKsvcStatusAfterUpdate,
-		verifyTanzuJavaWebAppWorkloadStatus,
-		makeChangesInFile,
-		verifyTanzuJavaWebAppResponseAfterChange,
-		cleanup,
+		createGithubRepo,
+		createDestGithubRepo,
+		createGitSSHSecret,
+		patchServiceAccountSecrets,
+		deployMysqldbService,
+		deploySpringpetclinicPipelineWithGitops,
+		verifyGitrepoStatus,
+		verifyImageskpac,
+		verifyBuildStatus,
+		verifyPodintents,
+		verifyDeliverables,
+		verifyServiceBindings,
+		verifyRevisionStatus,
+		verifyKsvcStatus,
+		verifyTaskrunStatus,
+		verifyWorkloadStatus,
+		verifyWebpageOriginal,
+		gitUpdate,
+		verifyBuildStatusAfterUpdate,
+		verifyRevisionStatusAfterUpdate,
+		verifyKsvcStatusAfterUpdate,
+		verifyWebpageNew,
+		removeProjectDir,
+		deleteWorkload,
+		deleteGithubRepo,
+		deleteDestGithubRepo,
 	)
-	t.Log("************** TestCase END: TestInnerLoopBasicSupplychainGitSourceLiveUpdate **************")
+	t.Log("************** TestCase END: TestOuterloopBasicSupplychainGitopsDelivery **************")
 }

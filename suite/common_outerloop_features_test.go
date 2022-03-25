@@ -1393,101 +1393,40 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 	}).
 	Feature()
 
+func listVulnerabilities(workloadName string, t *testing.T) {
+	verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workloadName)).
+		Assess(fmt.Sprintf("%s", workloadName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+
+			images := kubectl_libs.GetImages(workloadName, outerloopConfig.Namespace)
+			log.Printf("images: %v", images)
+			if len(images) == 0 {
+				t.Errorf("no images is found for %s", workloadName)
+				t.Fail()
+			}
+			imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
+			log.Printf("imageDigests %s :", imageDigest)
+
+			_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
+			if err != nil {
+				t.Errorf("error while getting vulnerabilities for %s", workloadName)
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+	testenv.Test(t, verifyVulnerability)
+}
+
 var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulnerabilities").
 	Assess("setup insight plugin configs", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-		//getting metadata store app access token
-		serviceAccount := kubectl_libs.GetServiceAccountJson("metadata-store-read-write-client", "metadata-store")
-		secretName := serviceAccount.Secrets[0].Name
-		secret := kubectl_libs.GetSecrets(secretName, "metadata-store")
-		encodedToken := string(secret.Data.Token)
-		decodedToken, err := base64.StdEncoding.DecodeString(encodedToken)
-		if err != nil {
-			t.Error("error while decoding token")
-			t.FailNow()
-		}
-
-		//getting metadata store app loadbalancer external ip
-		externalIP, err := client.GetServiceExternalIP("metadata-store-app", "metadata-store", cfg.Client().RESTConfig(), 2, 30)
-		if err != nil {
-			t.Error("error while getting external IP")
-			t.FailNow()
-		} else {
-			t.Log("external IP retrieved")
-		}
-
-		//appending ip mapping for metadata service to /etc/hosts
-		cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
-		res, err := linux_util.ExecuteCmdInBashMode(cmd)
-		if err != nil {
-			log.Println("error")
-		}
-		t.Logf("%s", res)
-		catCmd := "cat /etc/hosts"
-		_, err2 := linux_util.ExecuteCmd(catCmd)
-		if err2 != nil {
-			log.Println("error")
-		}
-
-		//getting ca cert from app-tls-cert secret
-		caSecret := kubectl_libs.GetSecrets("app-tls-cert", "metadata-store")
-		caEncodedToken := string(caSecret.Data.CaCrt)
-		caDecodedSecret, err := base64.StdEncoding.DecodeString(caEncodedToken)
-		if err != nil {
-			t.Error("error while decoding token")
-			t.FailNow()
-		}
-
-		// create temporary file for cert
-		t.Log("creating tempfile for cert")
-		tempFile, err := ioutil.TempFile("", "ca*.crt")
-		if err != nil {
-			t.Error("error while creating tempfile for tap values schema")
-			t.FailNow()
-		} else {
-			t.Log("created tempfile")
-		}
-		defer os.Remove(tempFile.Name())
-		err = os.WriteFile(tempFile.Name(), caDecodedSecret, 0677)
-		if err != nil {
-			log.Printf("error while writing to file %s", tempFile.Name())
-			log.Printf("error: %s", err)
-		} else {
-			log.Printf("file %s written", tempFile.Name())
-		}
-
-		//configure tanzu insight config set-target command
-		err = tanzu_libs.TanzuConfigureInsight(tempFile.Name(), string(decodedToken))
-		if err != nil {
-			t.FailNow()
-		}
-
+		t.Log("Setup metadata store and  insight config")
+		setupInsightPluginConfig(t, cfg)
 		return ctx
 	}).
 	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("listing vulnerabilities")
-
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workload.Name)).
-				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-
-					images := kubectl_libs.GetImages(workload.Name, outerloopConfig.Namespace)
-					log.Printf("images: %v", images)
-					if len(images) == 0 {
-						t.Errorf("no images is found for %s", workload.Name)
-						t.Fail()
-					}
-					imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
-					log.Printf("imageDigests %s :", imageDigest)
-
-					_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
-					if err != nil {
-						t.Errorf("error while getting vulnerabilities for %s", workload.Name)
-						t.Fail()
-					}
-					return ctx
-				}).
-				Feature()
-			testenv.Test(t, verifyVulnerability)
+			listVulnerabilities(workload.Name, t)
 		}
 		return ctx
 	}).
@@ -1536,6 +1475,88 @@ var RestartScanLinkController = features.New("restaring-scan-link-controller").
 			t.Errorf("error while restarting scan-link controller")
 			t.Fail()
 		}
+		return ctx
+	}).
+	Feature()
+
+func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
+	//getting metadata store app access token
+	serviceAccount := kubectl_libs.GetServiceAccountJson("metadata-store-read-write-client", "metadata-store")
+	secretName := serviceAccount.Secrets[0].Name
+	secret := kubectl_libs.GetSecrets(secretName, "metadata-store")
+	encodedToken := string(secret.Data.Token)
+	decodedToken, err := base64.StdEncoding.DecodeString(encodedToken)
+	if err != nil {
+		t.Error("error while decoding token")
+		t.FailNow()
+	}
+
+	//getting metadata store app loadbalancer external ip
+	externalIP, err := client.GetServiceExternalIP("metadata-store-app", "metadata-store", cfg.Client().RESTConfig(), 2, 30)
+	if err != nil {
+		t.Error("error while getting external IP")
+		t.FailNow()
+	} else {
+		t.Log("external IP retrieved")
+	}
+
+	//appending ip mapping for metadata service to /etc/hosts
+	cmd := fmt.Sprintf("echo '%s %s' >> /etc/hosts", externalIP, "metadata-store-app.metadata-store.svc.cluster.local")
+	res, err := linux_util.ExecuteCmdInBashMode(cmd)
+	if err != nil {
+		log.Println("error")
+	}
+	t.Logf("%s", res)
+	catCmd := "cat /etc/hosts"
+	_, err2 := linux_util.ExecuteCmd(catCmd)
+	if err2 != nil {
+		log.Println("error")
+	}
+
+	//getting ca cert from app-tls-cert secret
+	caSecret := kubectl_libs.GetSecrets("app-tls-cert", "metadata-store")
+	caEncodedToken := string(caSecret.Data.CaCrt)
+	caDecodedSecret, err := base64.StdEncoding.DecodeString(caEncodedToken)
+	if err != nil {
+		t.Error("error while decoding token")
+		t.FailNow()
+	}
+
+	// create temporary file for cert
+	t.Log("creating tempfile for cert")
+	tempFile, err := ioutil.TempFile("", "ca*.crt")
+	if err != nil {
+		t.Error("error while creating tempfile for tap values schema")
+		t.FailNow()
+	} else {
+		t.Log("created tempfile")
+	}
+	defer os.Remove(tempFile.Name())
+	err = os.WriteFile(tempFile.Name(), caDecodedSecret, 0677)
+	if err != nil {
+		log.Printf("error while writing to file %s", tempFile.Name())
+		log.Printf("error: %s", err)
+	} else {
+		log.Printf("file %s written", tempFile.Name())
+	}
+
+	//configure tanzu insight config set-target command
+	err = tanzu_libs.TanzuConfigureInsight(tempFile.Name(), string(decodedToken))
+	if err != nil {
+		t.FailNow()
+	}
+
+}
+
+var listSpringPetclinicVulnerabilities = features.New("list-vulnerabilities").
+	Assess("setup insight plugin configs", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("Setup metadata store and  insight config")
+		setupInsightPluginConfig(t, cfg)
+		return ctx
+	}).
+	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("listing vulnerabilities")
+		listVulnerabilities(outerloopConfig.Workload.Name, t)
 		return ctx
 	}).
 	Feature()

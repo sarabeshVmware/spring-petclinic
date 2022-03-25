@@ -23,8 +23,8 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func TestInnerloopBasic(t *testing.T) {
-	t.Log("************** TestCase START: TestInnerloopBasic **************")
+func TestInnerloopBasicSupplychainLocalSource(t *testing.T) {
+	t.Log("************** TestCase START: TestInnerloopBasicSupplychainLocalSource **************")
 
 	tapValuesSchema, err := getTapValuesSchema()
 	if err != nil {
@@ -532,5 +532,5 @@ func TestInnerloopBasic(t *testing.T) {
 		Feature()
 	testenv.Test(t, updateTap, f2, f3, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
 
-	t.Log("************** TestCase END: TestInnerloopBasic **************")
+	t.Log("************** TestCase END: TestInnerloopBasicSupplychainLocalSource **************")
 }

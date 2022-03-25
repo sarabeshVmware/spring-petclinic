@@ -15,8 +15,8 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func TestOuterloopTestingSC(t *testing.T) {
-	t.Log("************** TestCase START: TestOuterloopTestingSC **************")
+func TestOuterloopTestSupplychainGitSource(t *testing.T) {
+	t.Log("************** TestCase START: TestOuterloopTestSupplychainGitSource **************")
 
 	updateTap := features.New("update-tap-full-supplychaintesting").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -96,5 +96,5 @@ func TestOuterloopTestingSC(t *testing.T) {
 		deleteWorkload,
 		deleteGithubRepo,
 	)
-	t.Log("************** TestCase END: TestOuterloopTestingSC **************")
+	t.Log("************** TestCase END: TestOuterloopTestSupplychainGitSource **************")
 }
