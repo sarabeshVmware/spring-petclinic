@@ -53,3 +53,15 @@ func InstallClusterEssentials(bundle string, registry string, username string, p
 		return ctx, nil
 	}
 }
+
+func AddFinalizersToKappControllerClusterRole() env.Func {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
+		cmd := "kubectl get clusterrole kapp-controller-cluster-role -o json | jq '.rules[3].resources[2]=\"packageinstalls/finalizers\"' | kubectl apply -f -"
+		output, err := linux_util.ExecuteCmdInBashMode(cmd)
+		if err != nil {
+			return ctx, fmt.Errorf("error while editing kapp-controller: %w: %s", err, output)
+		}
+		log.Printf("Modifying the clusterrole kapp-controller-cluster-role to add packageinstalls/finalizers in the packaging.carvel.dev apiGroup successful")
+		return ctx, nil
+	}
+}
