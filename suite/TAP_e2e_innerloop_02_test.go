@@ -6,9 +6,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"net/http"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
@@ -350,72 +348,6 @@ func TestInnerloopBasicSupplychainLocalSource(t *testing.T) {
 		}).
 		Feature()
 
-	f14 := features.New("verify-app-response").
-		Assess("check-for-original-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			url, host, validationString := ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + Tanzu!"
-
-			t.Logf("checking application %s for result: %s", host, validationString)
-			validated := false
-			iter := 10
-			for i := 1; i <= iter; i++ {
-				if !strings.HasPrefix(url, "http://") {
-					url = "http://" + url
-				}
-				req, err := http.NewRequest("GET", url, nil)
-				if err != nil {
-					t.Error(fmt.Errorf("error while giving http request: %w", err))
-					t.FailNow()
-				}
-				req.Host = host
-
-				var retries int = 10
-				for retries > 0 {
-					resp, err := http.DefaultClient.Do(req)
-					if err != nil {
-						retries -= 1
-						t.Logf("didn't get response")
-						t.Logf("sleeping for 30 seconds")
-						time.Sleep(30 * time.Second)
-					} else {
-						t.Logf("status code is: %d", resp.StatusCode)
-						break
-					}
-				}
-				resp, err := http.DefaultClient.Do(req)
-				if err != nil {
-					t.Error(fmt.Errorf("error while giving http response: %w", err))
-					t.FailNow()
-				}
-				if resp.StatusCode != http.StatusOK {
-					t.Logf("bad HTTP Response: %s", resp.Status)
-					t.Logf("sleeping for 30 seconds")
-					time.Sleep(30 * time.Second)
-					continue
-				}
-				defer resp.Body.Close()
-				resultStringBytes, _ := ioutil.ReadAll(resp.Body)
-				resultString := string(resultStringBytes)
-				t.Logf(resultString)
-				if strings.Contains(resultString, validationString) {
-					t.Logf("application %s validated, got result: %s", host, validationString)
-					validated = true
-					break
-				} else {
-					t.Logf("getting string %s", resultString)
-					t.Logf("sleeping for 1 minute")
-					time.Sleep(1 * time.Minute)
-				}
-			}
-
-			if !validated {
-				t.Errorf(`application %s not validated %d iterations`, host, iter)
-				t.FailNow()
-			}
-			return ctx
-
-			// return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + Tanzu!")
-		}).
-		Feature()
 
 	f15 := features.New("replace-string-in-file").
 		Assess("replace-tanzu-to-tap ", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -434,72 +366,7 @@ func TestInnerloopBasicSupplychainLocalSource(t *testing.T) {
 		}).
 		Feature()
 
-	f16 := features.New("verify-app-response-after-replace-string").
-		Assess("check-for-new-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			url, host, validationString := ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!"
-
-			t.Logf("checking application %s for result: %s", host, validationString)
-			validated := false
-			iter := 10
-			for i := 1; i <= iter; i++ {
-				if !strings.HasPrefix(url, "http://") {
-					url = "http://" + url
-				}
-				req, err := http.NewRequest("GET", url, nil)
-				if err != nil {
-					t.Error(fmt.Errorf("error while giving http request: %w", err))
-					t.FailNow()
-				}
-				req.Host = host
-
-				var retries int = 10
-				for retries > 0 {
-					resp, err := http.DefaultClient.Do(req)
-					if err != nil {
-						retries -= 1
-						t.Logf("didn't get response")
-						t.Logf("sleeping for 30 seconds")
-						time.Sleep(30 * time.Second)
-					} else {
-						t.Logf("status code is: %d", resp.StatusCode)
-						break
-					}
-				}
-				resp, err := http.DefaultClient.Do(req)
-				if err != nil {
-					t.Error(fmt.Errorf("error while giving http response: %w", err))
-					t.FailNow()
-				}
-				if resp.StatusCode != http.StatusOK {
-					t.Logf("bad HTTP Response: %s", resp.Status)
-					t.Logf("sleeping for 30 seconds")
-					time.Sleep(30 * time.Second)
-					continue
-				}
-				defer resp.Body.Close()
-				resultStringBytes, _ := ioutil.ReadAll(resp.Body)
-				resultString := string(resultStringBytes)
-				t.Logf(resultString)
-				if strings.Contains(resultString, validationString) {
-					t.Logf("application %s validated, got result: %s", host, validationString)
-					validated = true
-					break
-				} else {
-					t.Logf("getting string %s", resultString)
-					t.Logf("sleeping for 1 minute")
-					time.Sleep(1 * time.Minute)
-				}
-			}
-
-			if !validated {
-				t.Errorf(`application %s not validated %d iterations`, host, iter)
-				t.FailNow()
-			}
-			return ctx
-
-			// return stepfuncs.VerifyApplicationRunningWithValidationString(ctx, t, cfg, ctx.Value(envoyServerExternalIpKey).(string), suiteConfig.Innerloop.Workload.URL, "Greetings from Spring Boot + TAP!")
-		}).
-		Feature()
+	
 
 	cleanup := features.New("cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -530,7 +397,7 @@ func TestInnerloopBasicSupplychainLocalSource(t *testing.T) {
 			return ctx
 		}).
 		Feature()
-	testenv.Test(t, updateTap, f2, f3, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, f14, f15, f16, f18, cleanup)
+	testenv.Test(t, updateTap, f2, f3, f5, f6, f7, f8, f9, f10, f17, f11, f12, f13, verifyTanzuJavaWebAppResponseBeforeChange, f15, verifyTanzuJavaWebAppResponseAfterChange, f18, cleanup)
 
 	t.Log("************** TestCase END: TestInnerloopBasicSupplychainLocalSource **************")
 }
