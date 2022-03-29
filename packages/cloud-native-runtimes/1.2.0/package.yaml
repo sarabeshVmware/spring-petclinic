@@ -9,7 +9,7 @@ spec:
     RAM, >30GB storage. Cluster with multiple nodes requires >2 CPUs, >4.0GB RAM,
     >20GB storage for each node.
   refName: cnrs.tanzu.vmware.com
-  releasedAt: 2022-03-16T00:00:00Z
+  releasedAt: 2022-03-29T00:00:00Z
   releaseNotes: |
     Release 1.2.0 of the Cloud Native Runtimes app package
   template:
@@ -18,7 +18,7 @@ spec:
       - kapp: {}
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/serverless/1.2.0-build.21@sha256:5a6d6e0dcbc8ccfe3177d41c8de191787b96567ac7ec4880fa39e3108c13d595
+          image: dev.registry.tanzu.vmware.com/serverless/1.2.0-build.41@sha256:d3fe444d362213b37d9cc5a97db06be32744e29de2296cc831c414ac4c3749e6
       template:
       - kbld:
           paths:
