@@ -40,6 +40,24 @@ func TanzuDeployWorkloadByCommand(workload string, namespace string, gitReposito
 	return err
 }
 
+func TanzuApplyWorkload(namespace string, workloadFile string) error {
+	log.Printf("deploying workload file %s in namespace %s", workloadFile, namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("tanzu apps workload apply -f %s -n %s -y", workloadFile, namespace)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while deploying workload file %s in namespace %s", workloadFile, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("workload file %s deployed in namespace %s", workloadFile, namespace)
+		log.Printf("output: %s", output)
+	}
+	return err
+
+}
+
 func DeleteWorkload(name string, namespace string) error {
 
 	cmd := fmt.Sprintf("tanzu apps workload delete -y %s", name)
