@@ -13,7 +13,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: N.A.
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:fba2538eaac5f9a82d126c38cf0fe3335e338afd845ccb615d29bc5c41078b3b
       template:
       - ytt:
           paths:
