@@ -93,7 +93,7 @@ func GetOuterloopConfig() (OuterloopConfig, error) {
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
-	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
+	outerloopConfig.Workload.YamlFile = filepath.Join("resources/suite", outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
 	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)
 	outerloopConfig.Workload.GitSSHSecretYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitSSHSecretYamlFile)

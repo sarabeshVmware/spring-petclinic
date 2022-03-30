@@ -103,7 +103,7 @@ func InnerloopCleanUp(t *testing.T, workloadName string, namespace string) featu
 			return ctx
 		}).
 		Assess("remove-dir", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			dir := filepath.Join(utils.GetFileDir(), workloadName)
+			dir := filepath.Join(rootDir, workloadName)
 
 			t.Logf("removing directory %s", dir)
 			err := os.RemoveAll(dir)

@@ -65,7 +65,7 @@ func InstallPackage(t *testing.T, name string, packageRepository string, version
 }
 
 func DeletePackage(t *testing.T, name string, namespace string) features.Feature {
-	return features.New("deleting-pacakge").
+	return features.New("deleting-package").
 		Assess(fmt.Sprintf("deleting-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			err := tanzu_libs.DeleteInstalledPackage(name, namespace)
 			if err != nil {
@@ -245,7 +245,7 @@ func ReplaceStringInFile(t *testing.T, originalString string, newString string, 
 			t.Logf("Replace from string %s to string %s in file %s", oldString, newString, filePath)
 			err := utils.ReplaceStringInFile(filePath, oldString, newString)
 			t.Logf("Compiling and building app %s", workload)
-			compile(filePath)
+			compile(filepath.Join(rootDir, workload))
 			if err != nil {
 				t.Error(fmt.Errorf("error while replacing string in file %s : %w", filePath, err))
 				t.FailNow()
