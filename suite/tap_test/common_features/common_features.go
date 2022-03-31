@@ -42,6 +42,22 @@ func compile(filepath string) {
 	fmt.Println(string(stdout))
 }
 
+func UpdatePackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
+	return features.New("updating package repository").
+		Assess(fmt.Sprintf("updating-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			log.Printf("updating pacakage repository %s", name)
+			tanzu_libs.TanzuUpdatePackageRepository(name, registry, version, namespace)
+			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
+			if updated {
+				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
+			} else {
+				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
 func InstallPackage(t *testing.T, name string, packageRepository string, version string, namespace string, valuesFile string, pollTimeout string) features.Feature {
 	return features.New("installing package").
 		Assess(fmt.Sprintf("installing-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -77,24 +93,10 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 		Feature()
 }
 
-func UpgradeTapVersion(t *testing.T, name string, tapPackageName string, tapRepositoryName string, tapRepositoryRegistry string, namespace string, tapVersion string, pollTimeout string) features.Feature {
+func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, tapVersion string, pollTimeout string) features.Feature {
 	return features.New(fmt.Sprintf("updating-tap-version-%s", tapVersion)).
-		Assess(fmt.Sprintf("upgrading-tap-repository-%s", tapRepositoryName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			log.Printf("upgrading tap repo to %s version ", tapRepositoryRegistry)
-
-			tanzu_libs.TanzuUpdatePackageRepository(tapRepositoryName, tapRepositoryRegistry, namespace)
-			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(tapRepositoryName, namespace, 5, 30)
-			if updated {
-				t.Logf("Updated repository : %s, image: %s successfully", tapRepositoryName, tapRepositoryRegistry)
-			} else {
-				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s", tapRepositoryName, tapRepositoryRegistry))
-				t.Fail()
-			}
-			return ctx
-		}).
-		Assess(fmt.Sprintf("upgrading-tap-package-%s", tapVersion), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			log.Printf("testing tap- %s ", tapVersion)
-
+		Assess(fmt.Sprintf("updating-tap-package-%s", tapVersion), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("updating tap- %s ", tapVersion)
 			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, "", pollTimeout)
 			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 5, 30)
 			if updated {
@@ -170,9 +172,9 @@ func TanzuDeployWorkload(t *testing.T, workloadYamlFile string, namespace string
 	return features.New("deploy-tanzu-workload-via-yaml").
 		Assess(fmt.Sprintf("deploy-workload-from-%s", workloadYamlFile), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("deploying workload yaml %s", workloadYamlFile)
-			workloadFilePath := filepath.Join(rootDir, workloadYamlFile)
+			//workloadFilePath := filepath.Join(rootDir, workloadYamlFile)
 			// deploy app
-			err := tanzu_libs.TanzuApplyWorkload(namespace, workloadFilePath)
+			err := tanzu_libs.TanzuApplyWorkload(namespace, workloadYamlFile)
 			if err != nil {
 				t.Errorf("error while deploying workload yaml %s", workloadYamlFile)
 				t.FailNow()
@@ -232,6 +234,7 @@ func GitClone(t *testing.T, gitUsername string, gitEmail string, gitRepository s
 			}
 
 			return ctx
+
 		}).
 		Feature()
 }
@@ -349,7 +352,7 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 				url = "http://" + url
 			}
 
-			webpageContainsString, _ := misc.VerifyWebpageContainsString(workloadUrl, url, verificationString, 10, 10, 30)
+			webpageContainsString, _ := misc.VerifyWebpageContainsString(workloadUrl, url, verificationString, 20, 10, 30)
 			if !webpageContainsString {
 				t.Error("webpage does not contains string")
 				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST

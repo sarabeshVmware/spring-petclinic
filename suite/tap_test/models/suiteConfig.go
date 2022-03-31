@@ -28,11 +28,10 @@ type SuiteConfig struct {
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
-		Image       string `yaml:"image"`
-		Name        string `yaml:"name"`
-		Namespace   string `yaml:"namespace"`
-		Registry    string `yaml:"registry"`
-		UpdateImage string `yaml:"update_image"`
+		Image     string `yaml:"image"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Registry  string `yaml:"registry"`
 	} `yaml:"package_repository"`
 	TapRegistrySecret struct {
 		Export    bool   `yaml:"export"`
@@ -57,7 +56,6 @@ type SuiteConfig struct {
 		PollTimeout      string `yaml:"poll_timeout"`
 		ValuesSchemaFile string `yaml:"values_schema_file"`
 		Version          string `yaml:"version"`
-		UpdateVersion    string `yaml:"update_version"`
 	} `yaml:"tap"`
 	TanzuClusterEssentials struct {
 		Bundle   string `yaml:"bundle"`
@@ -68,9 +66,17 @@ type SuiteConfig struct {
 		Username string `yaml:"username"`
 		Email    string `yaml:"email"`
 	} `yaml:"git-credentials"`
+	UpgradeVersions struct {
+		Image                 string `yaml:"image"`
+		TapVersion1           string `yaml:"tap-version-1"`
+		TapRepositoryVersion1 string `yaml:"tap-repository-version-1"`
+		TapVersion2           string `yaml:"tap-version-2"`
+		TapRepositoryVersion2 string `yaml:"tap-repository-version-2"`
+	} `yaml:"upgrade-versions"`
 }
 
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
+var suiteDir = filepath.Join(utils.GetFileDir(), "../..")
 
 func GetSuiteConfig() SuiteConfig {
 	var suiteConfig = SuiteConfig{}
@@ -86,6 +92,7 @@ func GetSuiteConfig() SuiteConfig {
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 	suiteConfig.TanzuClusterEssentials.Filename = fmt.Sprintf("../../%s", suiteConfig.TanzuClusterEssentials.Filename)
+	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
 
 	return suiteConfig
 }

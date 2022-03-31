@@ -18,15 +18,13 @@ package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
   name: tanzu-tap-repository
   namespace: tap-install
-  update_image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.2
-  update_image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.2
 tap_registry_secret:
   export: true
   name: tap-registry
   namespace: tap-install
   password: <TANZUNET-PASSWORD>
-  registry: dev.registry.tanzu.vmware.com
   username: <TANZUNET-USERNAME>
+  registry: registry.tanzu.vmware.com
 registry_credentials_secret:
   export: false
   name: registry-credentials
@@ -49,3 +47,9 @@ tanzu-cluster-essentials:
 git-credentials:
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
+upgrade-versions:
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages
+  tap-version-1: 1.0.2
+  tap-repository-version-1: 1.0.2
+  tap-version-2: 1.1.0-build.15
+  tap-repository-version-2: 1.1.0-build.15
