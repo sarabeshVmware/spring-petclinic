@@ -1,0 +1,31 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: run.appliveview.tanzu.vmware.com.1.0.3
+spec:
+  refName: run.appliveview.tanzu.vmware.com
+  version: 1.0.3
+  releaseNotes: |
+        Release 1.0.3 of the App Live View package
+  releasedAt: 2022-04-01T00:00:10Z
+  valuesSchema:
+    openAPIv3:
+      title: run.appliveview.tanzu.vmware.com values schema
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-install-bundle@sha256:01643a716b4a45a9f8c1f5dcaab3c23504153f0bf555ea687f21ab5cf2cc6345
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
