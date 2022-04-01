@@ -27,7 +27,7 @@ func TanzuDeployWorkloadByCommand(workload string, namespace string, gitReposito
 	log.Printf("deploying workload %s in namespace %s", workload, namespace)
 
 	// execute cmd
-	cmd := fmt.Sprintf("tanzu apps workload create %s --git-repo %s --git-branch %s --label \"apps.kubernetes.io/name=%s\" --label \"app.kubernetes.io/part-of=%s\" --label \"apps.tanzu.vmware.com/workload-type=%s\" --label \"apps.tanzu.vmware.com/has-tests=%s\" -y -n %s", workload, gitRepository, gitBranch, workload, workload, workloadType, hasTests, namespace)
+	cmd := fmt.Sprintf("tanzu apps workload create %s --git-repo %s --git-branch %s --label \"apps.kubernetes.io/name=%s\" --label \"app.kubernetes.io/part-of=%s\" --label \"apps.tanzu.vmware.com/workload-type=%s\" --label \"apps.tanzu.vmware.com/has-tests=%s\" --label \"tanzu.app.live.view.application.actuator.port=8080\" -y -n %s", workload, gitRepository, gitBranch, workload, workload, workloadType, hasTests, namespace)
 	output, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		log.Printf("error while deploying workload %s in namespace %s", workload, namespace)
