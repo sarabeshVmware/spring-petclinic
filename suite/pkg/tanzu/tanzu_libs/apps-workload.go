@@ -17,6 +17,7 @@ package tanzu_libs
 import (
 	"fmt"
 	"log"
+	"reflect"
 	"strings"
 
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -70,4 +71,63 @@ func DeleteAllWorkload(namespace string) error {
 	}
 	return err
 
+}
+
+type ListAppWorkloadsOutput struct {
+	NAMESPACE, NAME, APP, READY, AGE string
+}
+
+func ListAppWorkloads(appName string, namespace string) []ListAppWorkloadsOutput {
+	workloads := []ListAppWorkloadsOutput{}
+	cmd := "tanzu apps workload list"
+	if appName != "" {
+		cmd += fmt.Sprintf(" --app %s", appName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " --all-namespaces"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil || strings.Contains(response, "No workloads found.") {
+		return workloads
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	header_index := 0
+
+	if strings.HasPrefix(temp[1], " ") {
+		header_index = 1
+	} else {
+		header_index = 2
+	}
+
+	if len(temp) <= header_index+1 {
+		log.Printf("Output : %s", temp[0])
+		return workloads
+	}
+
+	indexSpans := linux_util.FieldIndices(temp[header_index])
+	headers := linux_util.GetFields(temp[header_index], indexSpans)
+
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, "-", "_")
+	}
+
+	for _, element := range temp[header_index+1:] {
+		words := linux_util.GetFields(element, indexSpans)
+		var workload ListAppWorkloadsOutput
+		for index, value := range words {
+			reflect.ValueOf(&workload).Elem().FieldByName(headers[index]).SetString(value)
+			if namespace != "" {
+				workload.NAMESPACE = namespace
+			}
+			if appName != "" {
+				workload.APP = appName
+			}
+		}
+		workloads = append(workloads, workload)
+	}
+	fmt.Printf("workloads: %+v\n", workloads)
+	return workloads
 }
