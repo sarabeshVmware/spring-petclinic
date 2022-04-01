@@ -94,28 +94,11 @@ func ListAppWorkloads(appName string, namespace string) []ListAppWorkloadsOutput
 	}
 
 	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
-	header_index := 0
 
-	if strings.HasPrefix(temp[1], " ") {
-		header_index = 1
-	} else {
-		header_index = 2
-	}
-
-	if len(temp) <= header_index+1 {
-		log.Printf("Output : %s", temp[0])
-		return workloads
-	}
-
-	indexSpans := linux_util.FieldIndices(temp[header_index])
-	headers := linux_util.GetFields(temp[header_index], indexSpans)
-
-	for index, ele := range headers {
-		headers[index] = strings.ReplaceAll(ele, "-", "_")
-	}
-
-	for _, element := range temp[header_index+1:] {
-		words := linux_util.GetFields(element, indexSpans)
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
 		var workload ListAppWorkloadsOutput
 		for index, value := range words {
 			reflect.ValueOf(&workload).Elem().FieldByName(headers[index]).SetString(value)
