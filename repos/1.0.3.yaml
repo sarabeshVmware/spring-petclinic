@@ -1,0 +1,135 @@
+---
+packages:
+  - name: cert-manager
+    versions:
+      - 1.5.3+tap.1
+  - name: contour
+    versions:
+      - 1.18.2+tap.1
+  - name: convention-controller
+    versions:
+      - 0.5.0
+      - 0.5.1
+  - name: service-binding
+    versions:
+      - 0.6.0
+      - 0.6.1
+  - name: source-controller
+    versions:
+      - 0.2.0
+      - 0.2.1
+  - name: services-toolkit
+    versions:
+      - 0.5.0
+      - 0.5.1
+  - name: app-live-view
+    versions:
+      - 1.0.1
+      - 1.0.2-build.2
+      - 1.0.2
+      - 1.0.3
+  - name: app-live-view-conventions
+    versions:
+      - 1.0.1
+      - 1.0.2-build.2
+      - 1.0.2
+  - name: scan-controller
+    versions:
+      - 1.0.0
+      - 1.0.1
+  - name: grype-scanner
+    versions:
+      - 1.0.0
+      - 1.0.1
+  - name: app-accelerator
+    versions:
+      - 1.0.0
+      - 1.0.1
+      - 1.0.2
+      - 1.0.3
+  - name: developer-conventions
+    versions:
+      - 0.5.0-build.1
+      - 0.5.0
+  - name: insight-metadata-store
+    versions:
+      - 1.0.1
+      - 1.0.2
+  - name: image-policy-webhook
+    versions:
+      - 1.0.0
+      - 1.0.1
+      - 1.0.2
+  - name: api-portal
+    versions:
+      - 1.0.8
+      - 1.0.9
+      - 1.0.9-sr.1
+  - name: cloud-native-runtimes
+    versions:
+      - 1.1.0
+      - 1.1.1
+  - name: build-service
+    versions:
+      - 1.4.2
+      - 1.4.3
+  - name: tap-gui
+    versions:
+      - 1.0.1
+      - 1.0.2
+  - name: tap
+    versions:
+      - 1.0.0
+      - 1.0.1
+      - 1.0.2
+      - 1.0.3
+  - name: learning-center-workshops
+    versions:
+      - 0.1.0
+      - 0.1.1
+  - name: learning-center
+    versions:
+      - 0.1.0
+      - 0.1.1
+  - name: cartographer
+    versions:
+      - 0.1.0
+      - 0.2.1
+      - 0.2.2
+  - name: ootb-templates
+    versions:
+      - 0.5.1
+      - 0.6.1
+  - name: ootb-supply-chain-basic
+    versions:
+      - 0.5.1
+      - 0.6.1
+  - name: ootb-supply-chain-testing
+    versions:
+      - 0.5.1
+      - 0.6.1
+  - name: ootb-supply-chain-testing-scanning
+    versions:
+      - 0.5.1
+      - 0.6.1
+  - name: spring-boot-conventions
+    versions:
+      - 0.3.0
+  - name: fluxcd-source-controller
+    versions:
+      - 0.16.0
+      - 0.16.1
+      - 0.16.3
+  - name: tekton-pipelines
+    versions:
+      - 0.30.0
+      - 0.30.1
+  - name: ootb-delivery-basic
+    versions:
+      - 0.5.1
+      - 0.6.1
+  - name: tap-telemetry
+    versions:
+      - 0.1.2
+      - 0.1.3
+      - 0.1.4
