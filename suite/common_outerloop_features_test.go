@@ -1037,10 +1037,10 @@ var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
 					return ctx
 				}).
 				Assess(fmt.Sprintf("validate-%s-deletion", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					err := tanzu_helpers.ValidateWorkloadDeleted(workload.Name, outerloopConfig.Namespace, 5, 30)
-					if err != nil {
+					workloadDeleted := tanzu_helpers.ValidateWorkloadDeleted(workload.Name, outerloopConfig.Namespace, 5, 30)
+					if !workloadDeleted {
 						t.Errorf("error while validating workload %s deletion", workload.Name)
-						t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+						t.Fail()
 					} else {
 						t.Logf("validated workload %s deletion", workload.Name)
 					}
