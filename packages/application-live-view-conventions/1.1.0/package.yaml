@@ -1,0 +1,30 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: conventions.appliveview.tanzu.vmware.com.1.1.0
+spec:
+  refName: conventions.appliveview.tanzu.vmware.com
+  version: 1.1.0
+  releaseNotes: |
+        Release 1.1.0 of the App Live View Conventions package
+  releasedAt: 2022-04-01T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:0c615f4d7eafa35d75ec7be29e6210802afe95cf2b1319f198bdf5175c5cf64e
+      template:
+      - ytt:
+          paths:
+          - "config"
+          - "values.yaml"
+      - kbld:
+          paths:
+          - "-"
+          - ".imgpkg/images.yml"
+      deploy:
+      - kapp: {}
