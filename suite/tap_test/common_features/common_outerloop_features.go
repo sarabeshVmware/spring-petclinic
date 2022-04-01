@@ -114,18 +114,8 @@ func UpdateGitRepository(t *testing.T, gitUsername string, gitEmail string, gitR
 
 			return ctx
 		}).
-		Feature()
-}
-
-func OuterloopCleanUp(t *testing.T, workloadName string, namespace string) features.Feature {
-	return features.New("innerloop cleanup").
-		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("Deleting workload")
-			tanzu_libs.DeleteWorkload(workloadName, namespace)
-			return ctx
-		}).
 		Assess("remove-dir", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			dir := filepath.Join(utils.GetFileDir(), workloadName)
+			dir := filepath.Join(rootDir, projectName)
 			t.Logf("removing directory %s", dir)
 			err := os.RemoveAll(dir)
 			if err != nil {
@@ -133,6 +123,16 @@ func OuterloopCleanUp(t *testing.T, workloadName string, namespace string) featu
 				t.FailNow()
 			}
 			t.Logf("directory %s removed", dir)
+			return ctx
+		}).
+		Feature()
+}
+
+func OuterloopCleanUp(t *testing.T, workloadName string, projectName string, namespace string) features.Feature {
+	return features.New("innerloop cleanup").
+		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("Deleting workload")
+			tanzu_libs.DeleteWorkload(workloadName, namespace)
 			return ctx
 		}).
 		Feature()

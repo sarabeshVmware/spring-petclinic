@@ -107,7 +107,7 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 			}
 			availablePkgs := tanzu_libs.ListInstalledPackages(namespace)
 			for _, pkg := range availablePkgs {
-				installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.NAME, namespace, 5, 30)
+				installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.NAME, namespace, 10, 30)
 				if installed {
 					t.Logf("Installed package : %s, version: %s successfully", pkg.NAME, pkg.PACKAGE_VERSION)
 				} else {
