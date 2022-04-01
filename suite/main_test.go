@@ -214,6 +214,7 @@ func TestMain(m *testing.M) {
 		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+		envfuncs.CreateClusterRoleBinding(),
 	)
 
 	// finish

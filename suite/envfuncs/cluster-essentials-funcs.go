@@ -65,3 +65,16 @@ func AddFinalizersToKappControllerClusterRole() env.Func {
 		return ctx, nil
 	}
 }
+
+func CreateClusterRoleBinding() env.Func {
+	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
+		cmd := "kubectl create clusterrolebinding apps-admin --clusterrole=cluster-admin --serviceaccount=my-apps:default"
+		output, err := linux_util.ExecuteCmdInBashMode(cmd)
+		if err != nil {
+			return ctx, fmt.Errorf("error while creating cluster role binding: %w: %s", err, output)
+		}
+		log.Printf("Creating cluster role binding successful")
+
+		return ctx, nil
+	}
+}
