@@ -1045,18 +1045,14 @@ var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
 					} else {
 						t.Logf("validated workload %s deletion", workload.Name)
 					}
-					t.Logf("Waiting for 2 mins after workload deletion to avoid ns getting stuck at deletion")
-					// root@tkg-cli-client:~# kubectl get apps -n my-apps
-					// NAME                DESCRIPTION                                                                                   SINCE-DEPLOY   AGE
-					// dotnet-aspnet-app   Delete failed: Preparing kapp: Getting service account: serviceaccounts "default" not found   23s            39m
-					// go-dep-app          Delete failed: Preparing kapp: Getting service account: serviceaccounts "default" not found   22s            38m
-					// nodejs-app          Delete failed: Preparing kapp: Getting service account: serviceaccounts "default" not found   22s            38m
-					time.Sleep(time.Duration(120) * time.Second)
 					return ctx
 				}).
 				Feature()
 			testenv.Test(t, deleteWorkload)
 		}
+		// workaround for kapp-controller issue: https://github.com/vmware-tanzu/carvel-kapp-controller/issues/416
+		t.Logf("Waiting for 2 mins after workload deletion to avoid ns getting stuck at deletion")
+		time.Sleep(time.Duration(120) * time.Second)
 		return ctx
 	}).
 	Feature()
