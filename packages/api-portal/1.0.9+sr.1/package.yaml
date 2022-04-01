@@ -1,10 +1,10 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: api-portal.tanzu.vmware.com.1.0.9-sr.1
+  name: api-portal.tanzu.vmware.com.1.0.9+sr.1
 spec:
   refName: api-portal.tanzu.vmware.com
-  version: 1.0.9-sr.1
+  version: 1.0.9+sr.1
   releasedAt: "2022-03-31T00:00:00Z"
   releaseNotes: |
     Resolved the CVE issues; recommend upgrade from the previous versions
