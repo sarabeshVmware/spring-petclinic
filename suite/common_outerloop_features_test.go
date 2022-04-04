@@ -784,6 +784,9 @@ var deleteWorkload = features.New("delete-workload").
 		} else {
 			t.Logf("validated workload %s deletion", outerloopConfig.Workload.Name)
 		}
+		// workaround for kapp-controller issue: https://github.com/vmware-tanzu/carvel-kapp-controller/issues/416
+		t.Logf("Waiting for 2 mins after workload deletion to avoid ns getting stuck at deletion")
+		time.Sleep(time.Duration(120) * time.Second)
 		return ctx
 	}).
 	Feature()
