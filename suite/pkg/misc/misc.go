@@ -95,11 +95,11 @@ func VerifyWebpageContainsString(host string, url string, validationString strin
 
 	for ; validationRetries >= 0; validationRetries-- {
 		log.Printf("validating string in webpage at url %s", url)
-		log.Printf("%d iterations left for validating string", validationRetries)
+		log.Printf("%d validation retries iterations left for validating string", validationRetries)
 
 		for ; requestRetries >= 0; requestRetries-- {
 			log.Print("performing http request to get a response")
-			log.Printf("%d iterations left for getting a response", requestRetries)
+			log.Printf("%d request retries iterations left for getting a response", requestRetries)
 
 			// perform http request and get response
 			response, err := http.DefaultClient.Do(request)

@@ -122,3 +122,24 @@ func DeleteInstalledPackage(name string, namespace string) error {
 	}
 	return err
 }
+
+func UpdateInstalledPackage(name string, packageName string, version string, namespace string, valuesFile string, pollTimeout string) error {
+
+	cmd := fmt.Sprintf("tanzu package installed update %s --package-name %s --version %s --namespace %s", name, packageName, version, namespace)
+	if valuesFile != "" {
+		cmd += fmt.Sprintf(" --values-file %s", valuesFile)
+	}
+	if pollTimeout != "" {
+		cmd += fmt.Sprintf(" --poll-timeout %s", pollTimeout)
+	}
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while updating package %s (%s) in namespace %s", name, packageName, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", res)
+	} else {
+		log.Printf("package %s (%s) updated in namespace %s", name, packageName, namespace)
+		log.Printf("output: %s", res)
+	}
+	return err
+}
