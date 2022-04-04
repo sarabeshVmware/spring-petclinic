@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"encoding/base64"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
@@ -1036,9 +1037,22 @@ var deleteBuildPackWorkloads = features.New("delete-buildpacks-workloads").
 					}
 					return ctx
 				}).
+				Assess(fmt.Sprintf("validate-%s-deletion", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+					workloadDeleted := tanzu_helpers.ValidateWorkloadDeleted(workload.Name, outerloopConfig.Namespace, 5, 30)
+					if !workloadDeleted {
+						t.Errorf("error while validating workload %s deletion", workload.Name)
+						t.Fail()
+					} else {
+						t.Logf("validated workload %s deletion", workload.Name)
+					}
+					return ctx
+				}).
 				Feature()
 			testenv.Test(t, deleteWorkload)
 		}
+		// workaround for kapp-controller issue: https://github.com/vmware-tanzu/carvel-kapp-controller/issues/416
+		t.Logf("Waiting for 2 mins after workload deletion to avoid ns getting stuck at deletion")
+		time.Sleep(time.Duration(120) * time.Second)
 		return ctx
 	}).
 	Feature()
