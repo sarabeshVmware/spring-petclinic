@@ -40,7 +40,7 @@ tap:
   values_schema_file: tap-values.yaml
   version: 1.0.1-build.7
 tanzu-cluster-essentials:
-  bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:82dfaf70656b54dcba0d4def85ccae1578ff27054e7533d08320244af7fb0343
+  bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:ab0a3539da241a6ea59c75c0743e9058511d7c56312ea3906178ec0f3491f51d
   registry: registry.tanzu.vmware.com
   filename: install.sh
 git-credentials:
