@@ -10,6 +10,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gopkg.in/yaml.v3"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 )
 
