@@ -45,6 +45,7 @@ tanzu-cluster-essentials:
   product_file_id: 1191295
   release_version: 1.1.0-rc.2 
   product_slug: tanzu-cluster-essentials
+  download_bundle: tanzu-cluster-essentials-linux-amd64-1.1.0-rc.2.tgz
   install_bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:ab0a3539da241a6ea59c75c0743e9058511d7c56312ea3906178ec0f3491f51d
   install_registry_hostname: registry.tanzu.vmware.com
   install_registry_username: <TANZUNET-USERNAME>

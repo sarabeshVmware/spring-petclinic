@@ -67,6 +67,7 @@ var suiteConfig = struct {
 		ProductFileId           int    `yaml:"product_file_id"`
 		ReleaseVersion          string `yaml:"release_version"`
 		ProductSlug             string `yaml:"product_slug"`
+		DownloadBundle          string `yaml:"download_bundle"`
 		InstallBundle           string `yaml:"install_bundle"`
 		InstallRegistryHostname string `yaml:"install_registry_hostname"`
 		InstallRegistryUsername string `yaml:"install_registry_username"`
@@ -210,6 +211,7 @@ func TestMain(m *testing.M) {
 			suiteConfig.TanzuClusterEssentials.ProductFileId,
 			suiteConfig.TanzuClusterEssentials.ReleaseVersion,
 			suiteConfig.TanzuClusterEssentials.ReleaseVersion,
+			suiteConfig.TanzuClusterEssentials.DownloadBundle,
 			suiteConfig.TanzuClusterEssentials.InstallBundle,
 			suiteConfig.TanzuClusterEssentials.InstallRegistryHostname,
 			suiteConfig.TanzuClusterEssentials.InstallRegistryUsername,

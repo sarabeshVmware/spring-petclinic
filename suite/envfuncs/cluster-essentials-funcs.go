@@ -16,7 +16,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
-func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, productFileId int, releaseVersion string, productSlug string, installBundle string, installRegistryHostname string, InstallRegistryUsername string, installRegistryPassword string) env.Func {
+func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, productFileId int, releaseVersion string, productSlug string, downloadBundle string, installBundle string, installRegistryHostname string, InstallRegistryUsername string, installRegistryPassword string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		kappControllerDeployed, err := client.CheckDeploymentExists("kapp-controller", cfg.Client().RESTConfig())
 		if err != nil {
@@ -38,7 +38,7 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		if !pivnet_libs.DownloadProductFile(productFileId, releaseVersion, productSlug) {
 			log.Fatalln("Unable to download product file")
 		}
-		extract_cluster_essentials_cmd := "mkdir ./tanzu-cluster-essentials; tar -xvf DOWNLOADED-CLUSTER-ESSENTIALS-BUNDLE -C ./tanzu-cluster-essentials"
+		extract_cluster_essentials_cmd := fmt.Sprintf("mkdir ./tanzu-cluster-essentials; tar -xvf %s -C ./tanzu-cluster-essentials", downloadBundle)
 		response, err := linux_util.ExecuteCmdInBashMode(extract_cluster_essentials_cmd)
 		if err != nil {
 			return ctx, fmt.Errorf("error while deploying cluster-essentials: %w: %s", err, response)
