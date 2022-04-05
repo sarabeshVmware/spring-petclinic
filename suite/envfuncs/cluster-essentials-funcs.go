@@ -39,7 +39,10 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 			log.Fatalln("Unable to download product file")
 		}
 		extract_cluster_essentials_cmd := "mkdir ./tanzu-cluster-essentials; tar -xvf DOWNLOADED-CLUSTER-ESSENTIALS-BUNDLE -C ./tanzu-cluster-essentials"
-		linux_util.ExecuteCmdInBashMode(extract_cluster_essentials_cmd)
+		response, err := linux_util.ExecuteCmdInBashMode(extract_cluster_essentials_cmd)
+		if err != nil {
+			return ctx, fmt.Errorf("error while deploying cluster-essentials: %w: %s", err, response)
+		}
 
 		log.Println("Installing Tanzu cluster Essentials...")
 		log.Println("Setting up required environment variables for installing Tanzu Cluster Essentials.")
@@ -53,7 +56,7 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		log.Println("INSTALL_REGISTRY_PASSWORD env set.")
 
 		install_cmd := "./tanzu-cluster-essentials/install.sh --yes"
-		linux_util.ExecuteCmdInBashMode(install_cmd)
+		output, err := linux_util.ExecuteCmdInBashMode(install_cmd)
 
 		if err != nil {
 			return ctx, fmt.Errorf("error while deploying cluster-essentials: %w: %s", err, output)
