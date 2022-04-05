@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"path"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_libs"
@@ -17,7 +16,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
-func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, productFileId int, releaseVersion string, productSlug string, installBundle string, installRegistryHostname string, InstallRegistryUsername string installRegistryPassword string) env.Func {
+func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, productFileId int, releaseVersion string, productSlug string, installBundle string, installRegistryHostname string, InstallRegistryUsername string, installRegistryPassword string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		kappControllerDeployed, err := client.CheckDeploymentExists("kapp-controller", cfg.Client().RESTConfig())
 		if err != nil {
@@ -36,7 +35,7 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		if !pivnet_libs.Login(tanzunetHost, tanzunetApiToken) {
 			log.Fatalln("Unable to login to tanzunet")
 		}
-		if !pivnet_libs.DownloadProductFile(productFileId, releaseVersion, productSlug){
+		if !pivnet_libs.DownloadProductFile(productFileId, releaseVersion, productSlug) {
 			log.Fatalln("Unable to download product file")
 		}
 		extract_cluster_essentials_cmd := "mkdir ./tanzu-cluster-essentials; tar -xvf DOWNLOADED-CLUSTER-ESSENTIALS-BUNDLE -C ./tanzu-cluster-essentials"
