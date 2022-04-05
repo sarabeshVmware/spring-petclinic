@@ -35,7 +35,7 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		if !pivnet_libs.Login(tanzunetHost, tanzunetApiToken) {
 			log.Fatalln("Unable to login to tanzunet")
 		}
-		if !pivnet_libs.DownloadProductFile(productFileId, releaseVersion, productSlug) {
+		if !pivnet_libs.DownloadProductFile(productFileId, productSlug, releaseVersion) {
 			log.Fatalln("Unable to download product file")
 		}
 		extract_cluster_essentials_cmd := fmt.Sprintf("mkdir ./tanzu-cluster-essentials; tar -xvf %s -C ./tanzu-cluster-essentials", downloadBundle)
