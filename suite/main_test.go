@@ -210,7 +210,7 @@ func TestMain(m *testing.M) {
 			suiteConfig.TanzuClusterEssentials.TanzunetApiToken,
 			suiteConfig.TanzuClusterEssentials.ProductFileId,
 			suiteConfig.TanzuClusterEssentials.ReleaseVersion,
-			suiteConfig.TanzuClusterEssentials.ReleaseVersion,
+			suiteConfig.TanzuClusterEssentials.ProductSlug,
 			suiteConfig.TanzuClusterEssentials.DownloadBundle,
 			suiteConfig.TanzuClusterEssentials.InstallBundle,
 			suiteConfig.TanzuClusterEssentials.InstallRegistryHostname,
