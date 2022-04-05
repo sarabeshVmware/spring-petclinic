@@ -42,16 +42,16 @@ func compile(filepath string) {
 	fmt.Println(string(stdout))
 }
 
-func UpdatePackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
+func UpdatePackageRepository(t *testing.T, name string, registry string, namespace string) features.Feature {
 	return features.New("updating package repository").
 		Assess(fmt.Sprintf("updating-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			log.Printf("updating pacakage repository %s", name)
-			tanzu_libs.TanzuUpdatePackageRepository(name, registry, version, namespace)
+			tanzu_libs.TanzuUpdatePackageRepository(name, registry, namespace)
 			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
 			if updated {
-				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
+				t.Logf("Updated repository : %s, image: %s successfully", name, registry)
 			} else {
-				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s", name, registry))
 				t.Fail()
 			}
 			return ctx

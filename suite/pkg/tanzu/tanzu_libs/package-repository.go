@@ -17,11 +17,11 @@ import (
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
-func TanzuUpdatePackageRepository(name string, registry string, version string, namespace string) error {
+func TanzuUpdatePackageRepository(name string, repositoryUrl string, namespace string) error {
 	log.Printf("updating package %s in namespace %s", name, namespace)
 
 	// execute cmd
-	cmd := fmt.Sprintf("tanzu package repository update %s --url %s:%s -n %s", name, registry, version, namespace)
+	cmd := fmt.Sprintf("tanzu package repository update %s --url %s -n %s", name, repositoryUrl, namespace)
 	output, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		log.Printf("error while updating repository %s in namespace %s", name, namespace)

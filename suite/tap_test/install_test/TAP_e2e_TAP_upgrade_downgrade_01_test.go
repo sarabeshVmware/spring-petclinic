@@ -11,8 +11,8 @@ func TestTapUgradeDowngrade(t *testing.T) {
 	t.Log("************** TestCase START: TestTapUpgradeDowngrade **************")
 
 	testenv.Test(t,
-		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.UpgradeVersions.TapRepositoryVersion1, suiteConfig.Tap.Namespace),
-		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion1, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
+		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.Tap.Namespace),
+		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 
 		//innerloop before tap update
 		common_features.TanzuDeployWorkload(t, suiteConfig.Innerloop.Workload.YamlFile, suiteConfig.Innerloop.Workload.Namespace),
@@ -37,8 +37,8 @@ func TestTapUgradeDowngrade(t *testing.T) {
 		common_features.VerifyWorkloadResponse(t, outerloopConfig.Project.Host, outerloopConfig.Project.NewString, outerloopConfig.Project.WebpageRelativePath),
 
 		//tap update
-		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.UpgradeVersions.TapRepositoryVersion2, suiteConfig.Tap.Namespace),
-		common_features.UpdateTapVersion(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Namespace, suiteConfig.UpgradeVersions.TapVersion2, suiteConfig.Tap.PollTimeout),
+		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.Tap.Namespace),
+		common_features.UpdateTapVersion(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Namespace, suiteConfig.UpgradeVersions.UpgradeTapVersion, suiteConfig.Tap.PollTimeout),
 
 		//checking existing innerloop and deleting it
 		common_features.VerifyTanzuWorkloadStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
