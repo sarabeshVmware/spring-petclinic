@@ -40,9 +40,15 @@ tap:
   values_schema_file: tap-values.yaml
   version: 1.0.1-build.7
 tanzu-cluster-essentials:
-  bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:ab0a3539da241a6ea59c75c0743e9058511d7c56312ea3906178ec0f3491f51d
-  registry: registry.tanzu.vmware.com
-  filename: install.sh
+  tanzunet_host: https://network.tanzu.vmware.com
+  tanzunet_api_token: <TANZUNET-API-TOKEN>
+  product_file_id: 1191295
+  release_version: 1.1.0-rc.2 
+  product_slug: tanzu-cluster-essentials
+  install_bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:ab0a3539da241a6ea59c75c0743e9058511d7c56312ea3906178ec0f3491f51d
+  install_registry_hostname: registry.tanzu.vmware.com
+  install_registry_username: <TANZUNET-USERNAME>
+  install_registry_password: <TANZUNET-PASSWORD>
 git-credentials:
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
