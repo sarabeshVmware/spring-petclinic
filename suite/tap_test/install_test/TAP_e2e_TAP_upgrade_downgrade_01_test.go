@@ -3,7 +3,9 @@
 package install_tests
 
 import (
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
+	"path/filepath"
 	"testing"
 )
 
