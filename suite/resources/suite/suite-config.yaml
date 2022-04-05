@@ -49,7 +49,5 @@ git-credentials:
 upgrade-versions:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.2
   tap-version: 1.0.2
-  # tap-repository-version-1: 1.0.2
   upgrade-image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.1.0-build.15
   upgrade-tap-version: 1.1.0-build.15
-  # tap-repository-version: 1.1.0-build.15
