@@ -10,9 +10,11 @@ import (
 func TestTapUgradeDowngrade(t *testing.T) {
 	t.Log("************** TestCase START: TestTapUpgradeDowngrade **************")
 
+	tap_1_0_2_values_file := filepath.Join(filepath.Join(utils.GetFileDir(), "../../resources/components"), "tap-values.yaml")
+
 	testenv.Test(t,
 		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.Tap.Namespace),
-		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
+		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, tap_1_0_2_values_file, suiteConfig.Tap.PollTimeout),
 
 		//innerloop before tap update
 		common_features.TanzuDeployWorkload(t, suiteConfig.Innerloop.Workload.YamlFile, suiteConfig.Innerloop.Workload.Namespace),
