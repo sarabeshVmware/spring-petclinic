@@ -55,7 +55,7 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		os.Setenv("INSTALL_REGISTRY_PASSWORD", installRegistryPassword)
 		log.Println("INSTALL_REGISTRY_PASSWORD env set.")
 
-		install_cmd := "./tanzu-cluster-essentials/install.sh --yes"
+		install_cmd := "cd ./tanzu-cluster-essentials; ./install.sh --yes"
 		output, err := linux_util.ExecuteCmdInBashMode(install_cmd)
 
 		if err != nil {
