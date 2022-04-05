@@ -65,7 +65,7 @@ packages:
       - 1.0.1
       - 1.0.2
       - 1.0.3
-      - 1.1.1
+      - 1.1.2
   - name: developer-conventions
     versions:
       - 0.5.0-build.1
@@ -108,7 +108,8 @@ packages:
       - 1.0.0
       - 1.0.1
       - 1.0.2
-      - 1.1.0-build.16
+      - 1.0.3
+      - 1.1.0-build.17
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -124,27 +125,27 @@ packages:
       - 0.1.0
       - 0.2.1
       - 0.2.2
-      - 0.3.0-build.4
+      - 0.3.0
   - name: ootb-templates
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.2
+      - 0.7.0
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.2
+      - 0.7.0
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.2
+      - 0.7.0
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.2
+      - 0.7.0
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -164,7 +165,7 @@ packages:
     versions:
       - 0.5.1
       - 0.6.1
-      - 0.7.0-build.2
+      - 0.7.0
   - name: tap-telemetry
     versions:
       - 0.1.2
