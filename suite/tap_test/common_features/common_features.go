@@ -99,7 +99,7 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 		Assess(fmt.Sprintf("updating-tap-package-%s", tapVersion), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			log.Printf("updating tap- %s ", tapVersion)
 			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, "", pollTimeout)
-			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 5, 30)
+			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 15, 30)
 			if updated {
 				t.Logf("Updated tap version: %s successfully", tapVersion)
 			} else {
