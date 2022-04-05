@@ -29,5 +29,6 @@ spec:
           paths:
           - "-"
           - bundle.yaml
+          - ca-overlay.yaml
       deploy:
       - kapp: {}
