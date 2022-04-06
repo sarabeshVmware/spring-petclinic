@@ -42,7 +42,7 @@ func TestTapUgradeDowngrade(t *testing.T) {
 
 		//tap update
 		common_features.UpdatePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.Tap.Namespace),
-		common_features.UpdateTapVersion(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Namespace, suiteConfig.UpgradeVersions.UpgradeTapVersion, suiteConfig.Tap.PollTimeout),
+		common_features.UpdateTapVersion(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.UpgradeVersions.UpgradeTapVersion, suiteConfig.Tap.PollTimeout),
 
 		//checking existing innerloop and deleting it
 		common_features.VerifyTanzuWorkloadStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),

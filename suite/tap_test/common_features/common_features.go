@@ -94,11 +94,11 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 		Feature()
 }
 
-func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, tapVersion string, pollTimeout string) features.Feature {
+func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, valuesFile string, tapVersion string, pollTimeout string) features.Feature {
 	return features.New(fmt.Sprintf("updating-tap-version-%s", tapVersion)).
 		Assess(fmt.Sprintf("updating-tap-package-%s", tapVersion), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			log.Printf("updating tap- %s ", tapVersion)
-			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, "", pollTimeout)
+			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, valuesFile, pollTimeout)
 			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 30, 60)
 			if updated {
 				t.Logf("Updated tap version: %s successfully", tapVersion)
