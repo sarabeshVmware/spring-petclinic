@@ -526,3 +526,81 @@ var verifyTanzuJavaWebAppRevisionStatusAfterUpdate = features.New("verify-revisi
 		return ctx
 	}).
 	Feature()
+
+var generateAcceleratorProject = features.New("generate-acc-project-and-unzip").
+	Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		service, accNamespace := "acc-server", "accelerator-system"
+		t.Logf("getting external ip for %s (namespace %s)", service, accNamespace)
+		serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig(), 2, 30)
+		if err != nil {
+			t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
+			t.FailNow()
+		}
+		t.Logf("external ip for %s (namespace %s): %s", "server", accNamespace, serviceExternalIp)
+		t.Logf("sleeping for 1 minute before generating project")
+		t.Logf("generating tanzu java web app accelerator project")
+		tapValuesSchema, err := getTapValuesSchema()
+		if err != nil {
+			t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
+		}
+		// generate project
+		repositoryPrefix := tapValuesSchema.OotbSupplyChainBasic.Registry.Server + "/" + tapValuesSchema.OotbSupplyChainBasic.Registry.Repository
+		err = tanzuCmds.TanzuGenerateAccelerator("tanzu-java-web-app", "tanzu-java-web-app", repositoryPrefix, serviceExternalIp, suiteConfig.Tap.Namespace, 4, 30)
+		if err != nil {
+			t.Error("error while generating accelerator project")
+			t.FailNow()
+		} else {
+			t.Log("accelerator project generated")
+		}
+
+		return ctx
+	}).
+	Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		project := "tanzu-java-web-app"
+		zipFile := project + ".zip"
+
+		t.Logf("listing existing project files if exists")
+		output, err := linux_util.ExecuteCmd(fmt.Sprintf("ls -lt %s", project))
+		t.Logf("command executed: ls -lt %s. output %s", project, output)
+		if err == nil {
+			t.Logf("deleting %s folder", project)
+			output, err := linux_util.ExecuteCmd(fmt.Sprintf("rm -rf %s", project))
+			t.Logf("command executed: rm -rf %s. output %s", project, output)
+			if err != nil {
+				t.Error(fmt.Errorf("error while deleting project files %s: %w: %s", project, err, output))
+				t.FailNow()
+			}
+		}
+
+		t.Logf("unzipping file %s", zipFile)
+		output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s", zipFile))
+		t.Logf("command executed: unzip %s. output %s", zipFile, output)
+		if err != nil {
+			t.Error(fmt.Errorf("error while unzip accelerator project zip file %s: %w: %s", zipFile, err, output))
+			t.FailNow()
+		}
+		t.Logf("Accelerator project zip files %s unzipped successfully", zipFile)
+
+		return ctx
+	}).
+	Feature()
+
+var updateTiltFile = features.New("update-allow-context-tilt").
+	Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		newLine := "allow_k8s_contexts(k8s_context())"
+		t.Logf("Appending Line %s in tilt file %s", newLine, tiltFile)
+		file, err := os.OpenFile(tiltFile, os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			t.Error(fmt.Errorf("error while opening tilt file: %w", err))
+			t.FailNow()
+		}
+		defer file.Close()
+		_, err = file.WriteString(newLine)
+		if err != nil {
+			t.Error(fmt.Errorf("error while updating tilt file: %w", err))
+			t.FailNow()
+		}
+		return ctx
+	}).
+	Feature()
+
