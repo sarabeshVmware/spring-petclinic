@@ -112,10 +112,12 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 				if installed {
 					t.Logf("Installed package : %s, version: %s successfully", pkg.NAME, pkg.PACKAGE_VERSION)
 				} else {
-					t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.NAME, pkg.PACKAGE_VERSION))
+					t.Errorf("Installation FAILED for package : %s, version: %s, status: %s", pkg.NAME, pkg.PACKAGE_VERSION, pkg.STATUS)
 					t.Fail()
 				}
 			}
+			log.Printf("final packages version after tap update...")
+			tanzu_libs.ListInstalledPackages(namespace)
 			return ctx
 		}).
 		Feature()
