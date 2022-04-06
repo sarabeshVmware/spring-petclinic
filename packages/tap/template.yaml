@@ -9,7 +9,7 @@ spec:
   refName: tap.tanzu.vmware.com
   version: #@ data.values.version
   releaseNotes: #@ "Release of {} Tanzu Application Platform. This package allows to select which set of packages to install via profile data value.".format(data.values.version)
-  releasedAt: "2022-03-10T00:00:00Z"
+  releasedAt: #@ "{}T00:00:00Z".format(data.values.releasedAt)
   template:
     spec:
       fetch:
