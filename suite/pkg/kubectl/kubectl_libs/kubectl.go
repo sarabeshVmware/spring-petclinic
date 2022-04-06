@@ -32,7 +32,19 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	}
 
 	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+
 	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return builds
+	}
+
+	header_index := 0
+
+	if !strings.HasPrefix(temp[1], " ") {
+		header_index = 1
+	}
+
+	if len(temp) <= header_index+1 {
 		log.Printf("Output : %s", temp[0])
 		return builds
 	}

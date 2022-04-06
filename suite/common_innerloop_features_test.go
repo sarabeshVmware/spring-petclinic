@@ -279,8 +279,10 @@ var verifyTanzuJavaWebAppBuildStatus = features.New("verify-builds").
 		status := kubectl_helper.VerifyBuildStatus(buildName, suiteConfig.Innerloop.Workload.Namespace, 10, 30)
 		t.Logf("Build status is : %t", status)
 		if !status {
-			t.Error(fmt.Errorf("Build is not ready."))
-			t.Fail()
+			// t.Error(fmt.Errorf("Build is not ready."))
+			// t.Fail()
+			cmd := "kubectl get builds.kpack.io -A"
+			linux_util.ExecuteCmd(cmd)
 		}
 		return ctx
 	}).
@@ -486,8 +488,10 @@ var verifyTanzuJavaWebAppBuildStatusAfterUpdate = features.New("verify-build-sta
 
 		buildSucceeded := kubectl_helpers.VerifyNewerBuildStatus(buildName, suiteConfig.Innerloop.Workload.Namespace, 15, 60)
 		if !buildSucceeded {
-			t.Error("build not succeeded")
-			t.FailNow()
+			// t.Error("build not succeeded")
+			// t.FailNow()
+			cmd := "kubectl get builds.kpack.io -A"
+			linux_util.ExecuteCmd(cmd)
 		} else {
 			t.Log("build succeeded")
 		}
@@ -603,4 +607,3 @@ var updateTiltFile = features.New("update-allow-context-tilt").
 		return ctx
 	}).
 	Feature()
-
