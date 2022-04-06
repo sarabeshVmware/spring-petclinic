@@ -62,9 +62,16 @@ var suiteConfig = struct {
 		Version          string `yaml:"version"`
 	} `yaml:"tap"`
 	TanzuClusterEssentials struct {
-		Bundle   string `yaml:"bundle"`
-		Registry string `yaml:"registry"`
-		Filename string `yaml:"filename"`
+		TanzunetHost            string `yaml:"tanzunet_host"`
+		TanzunetApiToken        string `yaml:"tanzunet_api_token"`
+		ProductFileId           int    `yaml:"product_file_id"`
+		ReleaseVersion          string `yaml:"release_version"`
+		ProductSlug             string `yaml:"product_slug"`
+		DownloadBundle          string `yaml:"download_bundle"`
+		InstallBundle           string `yaml:"install_bundle"`
+		InstallRegistryHostname string `yaml:"install_registry_hostname"`
+		InstallRegistryUsername string `yaml:"install_registry_username"`
+		InstallRegistryPassword string `yaml:"install_registry_password"`
 	} `yaml:"tanzu-cluster-essentials"`
 	GitCredentials struct {
 		Username string `yaml:"username"`
@@ -199,11 +206,16 @@ func TestMain(m *testing.M) {
 
 	// setup
 	testenv.Setup(
-		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle,
-			suiteConfig.TanzuClusterEssentials.Registry,
-			suiteConfig.TapRegistrySecret.Username,
-			suiteConfig.TapRegistrySecret.Password,
-			suiteConfig.TanzuClusterEssentials.Filename),
+		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.TanzunetHost,
+			suiteConfig.TanzuClusterEssentials.TanzunetApiToken,
+			suiteConfig.TanzuClusterEssentials.ProductFileId,
+			suiteConfig.TanzuClusterEssentials.ReleaseVersion,
+			suiteConfig.TanzuClusterEssentials.ProductSlug,
+			suiteConfig.TanzuClusterEssentials.DownloadBundle,
+			suiteConfig.TanzuClusterEssentials.InstallBundle,
+			suiteConfig.TanzuClusterEssentials.InstallRegistryHostname,
+			suiteConfig.TanzuClusterEssentials.InstallRegistryUsername,
+			suiteConfig.TanzuClusterEssentials.InstallRegistryPassword),
 		envfuncs.AddFinalizersToKappControllerClusterRole(),
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
