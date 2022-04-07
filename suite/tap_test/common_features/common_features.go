@@ -22,6 +22,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
@@ -42,16 +43,16 @@ func compile(filepath string) {
 	fmt.Println(string(stdout))
 }
 
-func UpdatePackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
+func UpdatePackageRepository(t *testing.T, name string, registry string, namespace string) features.Feature {
 	return features.New("updating package repository").
 		Assess(fmt.Sprintf("updating-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			log.Printf("updating pacakage repository %s", name)
-			tanzu_libs.TanzuUpdatePackageRepository(name, registry, version, namespace)
+			tanzu_libs.TanzuUpdatePackageRepository(name, registry, namespace)
 			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
 			if updated {
-				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
+				t.Logf("Updated repository : %s, image: %s successfully", name, registry)
 			} else {
-				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s", name, registry))
 				t.Fail()
 			}
 			return ctx
@@ -93,12 +94,12 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 		Feature()
 }
 
-func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, tapVersion string, pollTimeout string) features.Feature {
+func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, valuesFile string, tapVersion string, pollTimeout string) features.Feature {
 	return features.New(fmt.Sprintf("updating-tap-version-%s", tapVersion)).
 		Assess(fmt.Sprintf("updating-tap-package-%s", tapVersion), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			log.Printf("updating tap- %s ", tapVersion)
-			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, "", pollTimeout)
-			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 5, 30)
+			tanzu_libs.UpdateInstalledPackage(name, tapPackageName, tapVersion, namespace, valuesFile, pollTimeout)
+			updated := tanzu_helpers.ValidateInstalledPackageVersion(name, namespace, tapVersion, 30, 60)
 			if updated {
 				t.Logf("Updated tap version: %s successfully", tapVersion)
 			} else {
@@ -111,10 +112,12 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 				if installed {
 					t.Logf("Installed package : %s, version: %s successfully", pkg.NAME, pkg.PACKAGE_VERSION)
 				} else {
-					t.Error(fmt.Errorf("Installation FAILED for package : %s, version: %s", pkg.NAME, pkg.PACKAGE_VERSION))
+					t.Errorf("Installation FAILED for package : %s, version: %s, status: %s", pkg.NAME, pkg.PACKAGE_VERSION, pkg.STATUS)
 					t.Fail()
 				}
 			}
+			log.Printf("final packages version after tap update...")
+			tanzu_libs.ListInstalledPackages(namespace)
 			return ctx
 		}).
 		Feature()
