@@ -1518,17 +1518,12 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 	}
 
 	//getting metadata store app loadbalancer external ip
-	// externalIP, err := client.GetServiceExternalIP("metadata-store-app", "metadata-store", cfg.Client().RESTConfig(), 2, 30)
-	// if err != nil {
-	// 	t.Error("error while getting external IP")
-	// 	t.FailNow()
-	// } else {
-	// 	t.Log("external IP retrieved")
-	// }
-	externalIP = kubectl_helpers.GetServiceExternalIP("metadata-store-app", "metadata-store", 2, 30)
-	if externalIP == "" {
-		t.Error("External IP not found")
+	externalIP, err := client.GetServiceExternalIP("metadata-store-app", "metadata-store", cfg.Client().RESTConfig(), 2, 30)
+	if err != nil {
+		t.Error("error while getting external IP")
 		t.FailNow()
+	} else {
+		t.Log("external IP retrieved")
 	}
 
 	//appending ip mapping for metadata service to /etc/hosts
