@@ -6,8 +6,8 @@ package client
 import (
 	"context"
 	"fmt"
-	"time"
 	"log"
+	"time"
 
 	apiv1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -63,96 +63,43 @@ func GetServiceExternalIP(service string, namespace string, c *rest.Config, time
 	}
 
 	finalTimeout := timeoutInMins * 60
-    for finalTimeout > 0 {
-    // get services list
-        svcList, err := clientset.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{FieldSelector: "metadata.name=" + service})
-        if err != nil {
-            log.Printf("error while getting service list for service %s in namespace %s", service, namespace)
-            log.Printf("error: %s", err)
-            return externalIP, err
-        }
-
-        // get external IP
-        found := false
-        for _, svc := range svcList.Items {
-            if len(svc.Status.LoadBalancer.Ingress) != 0 {
-                externalIP = svc.Status.LoadBalancer.Ingress[0].IP
-                if externalIP != "" {
-                    found = true
-                    break
-                }
-                externalIP = svc.Status.LoadBalancer.Ingress[0].Hostname
-                if externalIP != "" {
-                    found = true
-                    break
-                }
-            }
-        }
-        if found {
-            log.Printf("found external IP: %s", externalIP)
-            return externalIP, nil
-        } else {
-            err := fmt.Errorf("external IP not found for service %s in namespace %s", service, namespace)
-            log.Printf("error: %s", err)
-            log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
-            time.Sleep(time.Duration(intervalInSeconds) * time.Second)
-            finalTimeout -= intervalInSeconds
-        }
-    
-    }
-    log.Printf("error while getting external IP for service %s in namespace %s", service, namespace)
-    return externalIP, err
-}
-
-func GetServicePort(service string, namespace string, c *rest.Config, timeoutInMins int, intervalInSeconds int) (int32, error) {
-	log.Printf("getting external IP for service %s in namespace %s", service, namespace)
-
-	port := int32(-1)
-
-	// create new clientset
-	clientset, err := kubernetes.NewForConfig(c)
-	if err != nil {
-		log.Printf("error while creating clientset")
-		log.Printf("error: %s", err)
-		return port, err
-	} else {
-		log.Print("created new clientset")
-	}
-
-	finalTimeout := timeoutInMins * 60
-    for finalTimeout > 0 {
-
-	// get services list
+	for finalTimeout > 0 {
+		// get services list
 		svcList, err := clientset.CoreV1().Services(namespace).List(context.TODO(), metav1.ListOptions{FieldSelector: "metadata.name=" + service})
 		if err != nil {
 			log.Printf("error while getting service list for service %s in namespace %s", service, namespace)
 			log.Printf("error: %s", err)
-			return port, err
+			return externalIP, err
 		}
 
-		// get service port
+		// get external IP
 		found := false
 		for _, svc := range svcList.Items {
-			if len(svc.Spec.Ports) != 0 {
-				port = svc.Spec.Ports[0].Port
-				if port >= 0 {
+			if len(svc.Status.LoadBalancer.Ingress) != 0 {
+				externalIP = svc.Status.LoadBalancer.Ingress[0].IP
+				if externalIP != "" {
+					found = true
+					break
+				}
+				externalIP = svc.Status.LoadBalancer.Ingress[0].Hostname
+				if externalIP != "" {
 					found = true
 					break
 				}
 			}
 		}
 		if found {
-			log.Printf("found port: %d", port)
-			return port, nil
+			log.Printf("found external IP: %s", externalIP)
+			return externalIP, nil
 		} else {
-			err := fmt.Errorf("port not found for service %s in namespace %s", service, namespace)
+			err := fmt.Errorf("external IP not found for service %s in namespace %s", service, namespace)
 			log.Printf("error: %s", err)
 			log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
-            time.Sleep(time.Duration(intervalInSeconds) * time.Second)
-            finalTimeout -= intervalInSeconds
-			
+			time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+			finalTimeout -= intervalInSeconds
 		}
+
 	}
-	log.Printf("error while getting port for service %s in namespace %s", service, namespace)
-	return port, err
+	log.Printf("error while getting external IP for service %s in namespace %s", service, namespace)
+	return externalIP, err
 }
