@@ -17,7 +17,7 @@ type GetBuildsOutput struct {
 
 func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	builds := []GetBuildsOutput{}
-	cmd := "kubectl get builds"
+	cmd := "kubectl get builds.kpack.io"
 	if buildName != "" {
 		cmd += fmt.Sprintf(" %s", buildName)
 	}
