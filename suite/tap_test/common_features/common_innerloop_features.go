@@ -12,6 +12,7 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )

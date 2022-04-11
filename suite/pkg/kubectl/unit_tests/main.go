@@ -28,7 +28,7 @@ func main() {
 	kubectl_helper.ValidateTrainingPortalStatus("learning-center-guided", 5, 30)
 	kubectl_helper.ValidateLearningCenter("learningcenter-portal", "learning-center-guided-ui")
 	kubectl_helper.VerifyImageRepositoryStatus("spring-petclinic-delivery", "tap-install", 15, 30)
-	kubectl_helper.VerifyKsvcStatus("spring-petclinic", "tap-install", 5, 30)
+	kubectl_helper.VerifyKsvcStatus("spring-petclinic", "tap-install", "spring-petclinic-00002", 5, 30)
 
 	/// Testing kubectl helper methods
 	kubectl_lib.GetPodintent("tanzu-java-web-app-git", "tap-install")

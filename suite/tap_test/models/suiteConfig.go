@@ -74,11 +74,10 @@ type SuiteConfig struct {
 		Email    string `yaml:"email"`
 	} `yaml:"git-credentials"`
 	UpgradeVersions struct {
-		Image                 string `yaml:"image"`
-		TapVersion1           string `yaml:"tap-version-1"`
-		TapRepositoryVersion1 string `yaml:"tap-repository-version-1"`
-		TapVersion2           string `yaml:"tap-version-2"`
-		TapRepositoryVersion2 string `yaml:"tap-repository-version-2"`
+		Image             string `yaml:"image"`
+		TapVersion        string `yaml:"tap-version"`
+		UpgradeImage      string `yaml:"upgrade-image"`
+		UpgradeTapVersion string `yaml:"upgrade-tap-version"`
 	} `yaml:"upgrade-versions"`
 }
 
