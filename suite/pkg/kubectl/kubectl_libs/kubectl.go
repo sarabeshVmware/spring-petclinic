@@ -39,8 +39,7 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 	}
 
 	header_index := 0
-
-	if strings.HasPrefix(temp[0], " ") {
+	if strings.HasPrefix(temp[0], "I0412") {
 		header_index = 1
 	}
 
@@ -49,9 +48,9 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 		return builds
 	}
 
-	ss := linux_util.FieldIndices(temp[0])
-	headers := linux_util.GetFields(temp[0], ss)
-	for _, element := range temp[1:] {
+	ss := linux_util.FieldIndices(temp[header_index])
+	headers := linux_util.GetFields(temp[header_index], ss)
+	for _, element := range temp[header_index+1:] {
 		words := linux_util.GetFields(element, ss)
 		var build GetBuildsOutput
 		for index, value := range words {
