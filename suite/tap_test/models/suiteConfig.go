@@ -28,11 +28,19 @@ type SuiteConfig struct {
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
-		Image     string `yaml:"image"`
-		Name      string `yaml:"name"`
-		Namespace string `yaml:"namespace"`
-		Registry  string `yaml:"registry"`
+		Image              string `yaml:"image"`
+		Version            string `yaml:"version"`
+		Name               string `yaml:"name"`
+		Namespace          string `yaml:"namespace"`
+		Registry           string `yaml:"registry"`
+		NonTanzuRepository string `yaml:"non-tanzu-repository"`
 	} `yaml:"package_repository"`
+	NonTanzuRepository struct {
+		Repository string `yaml:"repository"`
+		Username   string `yaml:"username"`
+		Password   string `yaml:"password"`
+		Server     string `yaml:"server"`
+	} `yaml:"non-tanzu-repository"`
 	TapRegistrySecret struct {
 		Export    bool   `yaml:"export"`
 		Name      string `yaml:"name"`

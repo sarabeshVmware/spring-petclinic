@@ -11,8 +11,10 @@ import (
 	"strings"
 	"testing"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/gcloud"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
@@ -52,6 +54,45 @@ func UpdatePackageRepository(t *testing.T, name string, registry string, version
 				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
 			} else {
 				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
+func AddPackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
+	return features.New("adding package repository").
+		Assess(fmt.Sprintf("adding-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			log.Printf("adding package repository %s (%s) in namespace %s", name, registry, namespace)
+			registryWithVersion := fmt.Sprintf("%s:%s", registry, version)
+			// add repo
+			err := tanzuCmds.TanzuAddPackageRepository(name, registryWithVersion, namespace)
+			if err != nil {
+				t.Logf("Installed repository : %s, image: %s:%s successfully", name, registry, version)
+			} else {
+				t.Error(fmt.Errorf("install FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
+			if updated {
+				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
+			} else {
+				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
+func DeletePackageRepository(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("deleting package repository").
+		Assess(fmt.Sprintf("deleting-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("deleting package repository %s in namespace %s", name, namespace)
+
+			// delete repo
+			err := tanzuCmds.TanzuDeletePackageRepository(name, namespace)
+			if err != nil {
+				t.Errorf("error while deleting package repository %s in namespace %s", name, namespace)
 				t.Fail()
 			}
 			return ctx
@@ -363,4 +404,56 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 			return ctx
 		}).
 		Feature()
+}
+
+func ImgPkgCopyToRepo(t *testing.T, sourceBundle string, targetRepo string) features.Feature {
+	return features.New("imgpkg copy").
+		Assess(fmt.Sprintf("copying image bundles from %s to %s", sourceBundle, targetRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("copying image bundles from %s to %s", sourceBundle, targetRepo)
+
+			// deploy app
+			err := imgpkg.ImgpkgCopy(sourceBundle, targetRepo)
+			if err != nil {
+				t.Errorf("error while copying image bundles from %s to %s", sourceBundle, targetRepo)
+				t.FailNow()
+			} else {
+				t.Logf("copied image bundles from %s to %s", sourceBundle, targetRepo)
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func CreateSecret(t *testing.T, name string, registry string, username string, password string, namespace string, export bool) features.Feature {
+	return features.New(fmt.Sprintf("creating secret %s", name)).
+		Assess(fmt.Sprintf("creating secret %s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
+
+			// create secret
+			err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, namespace, export)
+			if err != nil {
+				t.Errorf("error while creating secret %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("created secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
+}
+
+func DeleteGCRImageRepository(t *testing.T, name string) features.Feature {
+	return features.New(fmt.Sprintf("Deleting gcr repo %s", name)).
+		Assess(fmt.Sprintf("deleting repo %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			err := gcloud.DeleteImageContainer(name)
+			if err != nil {
+				t.Errorf("error while creating secret %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("created secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
 }
