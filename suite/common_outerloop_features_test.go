@@ -774,7 +774,19 @@ var deleteWorkload = features.New("delete-workload").
 		} else {
 			t.Log("deleted workload")
 		}
-
+		return ctx
+	}).
+	Assess(fmt.Sprintf("validate-%s-deletion", outerloopConfig.Workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		workloadDeleted := tanzu_helpers.ValidateWorkloadDeleted(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
+		if !workloadDeleted {
+			t.Errorf("error while validating workload %s deletion", outerloopConfig.Workload.Name)
+			t.Fail()
+		} else {
+			t.Logf("validated workload %s deletion", outerloopConfig.Workload.Name)
+		}
+		// workaround for kapp-controller issue: https://github.com/vmware-tanzu/carvel-kapp-controller/issues/416
+		t.Logf("Waiting for 2 mins after workload deletion to avoid ns getting stuck at deletion")
+		time.Sleep(time.Duration(120) * time.Second)
 		return ctx
 	}).
 	Feature()

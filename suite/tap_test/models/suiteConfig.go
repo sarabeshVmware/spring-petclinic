@@ -66,20 +66,26 @@ type SuiteConfig struct {
 		Version          string `yaml:"version"`
 	} `yaml:"tap"`
 	TanzuClusterEssentials struct {
-		Bundle   string `yaml:"bundle"`
-		Registry string `yaml:"registry"`
-		Filename string `yaml:"filename"`
+		TanzunetHost            string `yaml:"tanzunet_host"`
+		TanzunetApiToken        string `yaml:"tanzunet_api_token"`
+		ProductFileId           int    `yaml:"product_file_id"`
+		ReleaseVersion          string `yaml:"release_version"`
+		ProductSlug             string `yaml:"product_slug"`
+		DownloadBundle          string `yaml:"download_bundle"`
+		InstallBundle           string `yaml:"install_bundle"`
+		InstallRegistryHostname string `yaml:"install_registry_hostname"`
+		InstallRegistryUsername string `yaml:"install_registry_username"`
+		InstallRegistryPassword string `yaml:"install_registry_password"`
 	} `yaml:"tanzu-cluster-essentials"`
 	GitCredentials struct {
 		Username string `yaml:"username"`
 		Email    string `yaml:"email"`
 	} `yaml:"git-credentials"`
 	UpgradeVersions struct {
-		Image                 string `yaml:"image"`
-		TapVersion1           string `yaml:"tap-version-1"`
-		TapRepositoryVersion1 string `yaml:"tap-repository-version-1"`
-		TapVersion2           string `yaml:"tap-version-2"`
-		TapRepositoryVersion2 string `yaml:"tap-repository-version-2"`
+		Image             string `yaml:"image"`
+		TapVersion        string `yaml:"tap-version"`
+		UpgradeImage      string `yaml:"upgrade-image"`
+		UpgradeTapVersion string `yaml:"upgrade-tap-version"`
 	} `yaml:"upgrade-versions"`
 }
 
@@ -99,7 +105,6 @@ func GetSuiteConfig() SuiteConfig {
 
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
-	suiteConfig.TanzuClusterEssentials.Filename = fmt.Sprintf("../../%s", suiteConfig.TanzuClusterEssentials.Filename)
 	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
 
 	return suiteConfig

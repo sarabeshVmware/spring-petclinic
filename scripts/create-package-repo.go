@@ -90,7 +90,7 @@ func main() {
 		}
 
 		for _, version := range p.Versions {
-			packageFilepath := filepath.Join(PackagesDirectoryPath, p.Name, version, "package.yaml")
+			packageFilepath := filepath.Join(PackagesDirectoryPath, p.Name, fmt.Sprintf("%s.yaml", version))
 			copyYaml(packageFilepath, outputFile)
 		}
 	}

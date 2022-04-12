@@ -46,3 +46,13 @@ func AddProductFile(productFileId int, productSlug string, releaseVersion string
 	}
 	return true
 }
+
+func DownloadProductFile(productFileId int, productSlug string, releaseVersion string) bool {
+	log.Println("Executing AddProductFile")
+	cmd := fmt.Sprintf("pivnet-cli download-product-files --product-file-id %d --product-slug %s  --release-version %s", productFileId, productSlug, releaseVersion)
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil && response != "" {
+		return false
+	}
+	return true
+}
