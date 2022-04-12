@@ -40,7 +40,7 @@ func GetBuilds(buildName string, namespace string) []GetBuildsOutput {
 
 	header_index := 0
 
-	if !strings.HasPrefix(temp[1], " ") {
+	if strings.HasPrefix(temp[0], " ") {
 		header_index = 1
 	}
 
