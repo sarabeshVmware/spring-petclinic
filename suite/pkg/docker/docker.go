@@ -29,7 +29,7 @@ func DockerLogin(regirstryServer string, username string, password string) error
 	}
 
 	// execute cmd
-	cmd := fmt.Sprintf("docker login %s --username %s --password-stdin < %s", regirstryServer, username, tempFile.Name())
+	cmd := fmt.Sprintf("docker login %s -u %s --password-stdin < %s", regirstryServer, username, tempFile.Name())
 	output, err := linux_util.ExecuteCmdInBashMode(cmd)
 	if err != nil {
 		log.Printf("docker login to %s successfull", regirstryServer)
