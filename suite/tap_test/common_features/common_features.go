@@ -11,6 +11,7 @@ import (
 	"strings"
 	"testing"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/gcloud"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
@@ -455,6 +456,21 @@ func DeleteGCRImageRepository(t *testing.T, name string) features.Feature {
 				t.FailNow()
 			} else {
 				t.Logf("created secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
+}
+
+func DockerLoginServer(t *testing.T, server string, username string, password string) features.Feature {
+	return features.New(fmt.Sprintf("Docker login server")).
+		Assess(fmt.Sprintf("Logging in server %s", server), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			err := docker.DockerLogin(server, username, password)
+			if err != nil {
+				t.Errorf("error while loging in server %s", server)
+				t.FailNow()
+			} else {
+				t.Logf("docker login success for %s", server)
 			}
 
 			return ctx

@@ -21,9 +21,9 @@ package_repository:
   namespace: tap-install
 non-tanzu-repository:
   repository: gcr.io/tap-ci/tap-packages-test
-  username: _json_key
+  username: <GCR-SA-USERNAME>
   password: <GCR-SA-PASSWORD>
-  server: dev.registry.tanzu.vmware.com
+  server: gcr.io
 tap_registry_secret:
   export: true
   name: tap-registry
