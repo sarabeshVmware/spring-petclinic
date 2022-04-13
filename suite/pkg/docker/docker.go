@@ -13,7 +13,7 @@ func DockerLogin(regirstryServer string, username string, password string) error
 	log.Printf("executing docker login to  %s", regirstryServer)
 
 	// create temporary file for password
-	tempFile, err := ioutil.TempFile("", "password.json")
+	tempFile, err := ioutil.TempFile("", "password*.json")
 	if err != nil {
 		log.Printf("error while creating tempfile for tap values schema")
 	} else {
@@ -26,6 +26,12 @@ func DockerLogin(regirstryServer string, username string, password string) error
 		log.Printf("error: %s", err)
 	} else {
 		log.Printf("file %s written", tempFile.Name())
+	}
+
+	catCmd := fmt.Sprintf("cat %s", tempFile.Name())
+	_, err2 := linux_util.ExecuteCmd(catCmd)
+	if err2 != nil {
+		log.Println("error")
 	}
 
 	// execute cmd
