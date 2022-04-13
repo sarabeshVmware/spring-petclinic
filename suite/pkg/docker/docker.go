@@ -28,12 +28,6 @@ func DockerLogin(regirstryServer string, username string, password string) error
 		log.Printf("file %s written", tempFile.Name())
 	}
 
-	catCmd := fmt.Sprintf("cat %s", tempFile.Name())
-	_, err2 := linux_util.ExecuteCmd(catCmd)
-	if err2 != nil {
-		log.Println("error")
-	}
-
 	// execute cmd
 	cmd := fmt.Sprintf("docker login %s -u %s --password-stdin < %s", regirstryServer, username, tempFile.Name())
 	output, err := linux_util.ExecuteCmdInBashMode(cmd)
@@ -49,11 +43,11 @@ func DockerLogin(regirstryServer string, username string, password string) error
 	return err
 }
 
-func DockerLoginWithPasswordFile(regirstryServer string, username string, password []byte) error {
-	log.Printf("executing docker login to  %s", regirstryServer)
+func DockerLoginWithPasswordFile(registryServer string, username string, password []byte) error {
+	log.Printf("executing docker login to  %s", registryServer)
 
 	// create temporary file for password
-	tempFile, err := ioutil.TempFile("", "password.json")
+	tempFile, err := ioutil.TempFile("", "password*.json")
 	if err != nil {
 		log.Printf("error while creating tempfile for tap values schema")
 	} else {
@@ -69,14 +63,14 @@ func DockerLoginWithPasswordFile(regirstryServer string, username string, passwo
 	}
 
 	// execute cmd
-	cmd := fmt.Sprintf("docker login %s -u %s --password-stdin < %s", regirstryServer, username, tempFile.Name())
+	cmd := fmt.Sprintf("cat %s | docker login %s -u %s --password-stdin", tempFile.Name(), registryServer, username)
 	output, err := linux_util.ExecuteCmdInBashMode(cmd)
 	if err != nil {
-		log.Printf("docker login to %s successfull", regirstryServer)
+		log.Printf("error while executing docker login to %s", registryServer)
 		log.Printf("error: %s", err)
 		log.Printf("output: %s", output)
 	} else {
-		log.Printf("error while executing docker login to %s", regirstryServer)
+		log.Printf("docker login to %s successfull", registryServer)
 		log.Printf("output: %s", output)
 	}
 

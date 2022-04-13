@@ -24,6 +24,7 @@ non-tanzu-repository:
   username: <GCR-SA-USERNAME>
   password: <GCR-SA-PASSWORD>
   server: gcr.io
+  server: https://gcr.io
 tap_registry_secret:
   export: true
   name: tap-registry
