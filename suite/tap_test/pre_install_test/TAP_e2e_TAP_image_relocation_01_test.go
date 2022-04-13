@@ -11,7 +11,7 @@ func TestTapImageRelocation(t *testing.T) {
 
 	t.Log("************** TestCase START: TestTapImageRelocation **************")
 	testenv.Test(t,
-		common_features.DockerLoginServer(t, suiteConfig.NonTanzuRepository.Server, suiteConfig.NonTanzuRepository.Username, suiteConfig.NonTanzuRepository.Password),
+		common_features.DockerLoginGCP(t, suiteConfig.NonTanzuRepository.Server, suiteConfig.NonTanzuRepository.Username, suiteConfig.NonTanzuRepository.Password),
 		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, suiteConfig.NonTanzuRepository.Repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, suiteConfig.NonTanzuRepository.Server, suiteConfig.NonTanzuRepository.Username, suiteConfig.NonTanzuRepository.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.NonTanzuRepository.Repository, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
