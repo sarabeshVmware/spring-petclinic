@@ -65,28 +65,3 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		return ctx, nil
 	}
 }
-
-func AddFinalizersToKappControllerClusterRole() env.Func {
-	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		cmd := "kubectl get clusterrole kapp-controller-cluster-role -o yaml | yq '.rules[3].resources[2]=\"packageinstalls/finalizers\"' | kubectl apply -f -"
-		output, err := linux_util.ExecuteCmdInBashMode(cmd)
-		if err != nil {
-			return ctx, fmt.Errorf("error while editing kapp-controller: %w: %s", err, output)
-		}
-		log.Printf("Modifying the clusterrole kapp-controller-cluster-role to add packageinstalls/finalizers in the packaging.carvel.dev apiGroup successful")
-		return ctx, nil
-	}
-}
-
-func CreateClusterRoleBinding() env.Func {
-	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		cmd := "kubectl create clusterrolebinding apps-admin --clusterrole=cluster-admin --serviceaccount=my-apps:default"
-		output, err := linux_util.ExecuteCmdInBashMode(cmd)
-		if err != nil {
-			return ctx, fmt.Errorf("error while creating cluster role binding: %w: %s", err, output)
-		}
-		log.Printf("Creating cluster role binding successful")
-
-		return ctx, nil
-	}
-}

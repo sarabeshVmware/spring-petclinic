@@ -355,3 +355,13 @@ func RestartScanLinkController() (string, error) {
 	}
 	return res, err
 }
+
+func GetCurrentContext() string {
+	clusterName := ""
+	cmd := "kubectl config current-context"
+	clusterName, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while fetching config current context")
+	}
+	return clusterName
+}
