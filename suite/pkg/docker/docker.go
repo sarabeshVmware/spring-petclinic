@@ -43,7 +43,7 @@ func DockerLogin(regirstryServer string, username string, password string) error
 	return err
 }
 
-func DockerLoginWithPasswordFile(registryServer string, username string, password []byte) error {
+func DockerLoginWithPasswordFile(registryServer string, username string, password string) error {
 	log.Printf("executing docker login to  %s", registryServer)
 
 	// create temporary file for password
