@@ -7,16 +7,18 @@ import (
 	"testing"
 )
 
+func function(params) feature.Fea
+
 func TestTapImageRelocation(t *testing.T) {
 
 	t.Log("************** TestCase START: TestTapImageRelocation **************")
-	testenv.Test(t)
+	testenv.Test(t,
 	common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, suiteConfig.NonTanzuRepository.Repository),
 	common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, suiteConfig.NonTanzuRepository.Server, suiteConfig.NonTanzuRepository.Username, suiteConfig.NonTanzuRepository.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 	common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.NonTanzuRepository.Repository, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
 	common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion1, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 
-	//outerloop before tap update
+	//outerloop 
 	// common_features.CreateGithubRepo(t, outerloopConfig.Project.Name, outerloopConfig.Project.RepoTemplate, outerloopConfig.Project.AccessToken),
 	// common_features.ApplyKubectlConfigurationFile(t, outerloopConfig.Mysql.YamlFile, outerloopConfig.Namespace),
 	// common_features.TanzuDeployWorkload(t, outerloopConfig.Workload.YamlFile, outerloopConfig.Namespace),
@@ -31,6 +33,6 @@ func TestTapImageRelocation(t *testing.T) {
 	common_features.DeletePackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
 	common_feature.DeletePackageRepository(t,suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace)
 	common_feature.DeleteGCRImageRepository(t, suiteConfig.NonTanzuRepository.Repository)
-
+	)
 	t.Log("************** TestCase END: TestTapImageRelocation **************")
 }
