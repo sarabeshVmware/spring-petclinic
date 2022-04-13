@@ -34,7 +34,7 @@ func TestMain(m *testing.M) {
 
 	// setup
 	testenv.Setup(
-		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.Bundle, suiteConfig.TanzuClusterEssentials.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TanzuClusterEssentials.Filename),
+		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.TanzunetHost, suiteConfig.TanzuClusterEssentials.TanzunetApiToken, suiteConfig.TanzuClusterEssentials.ProductFileId, suiteConfig.TanzuClusterEssentials.ReleaseVersion, suiteConfig.TanzuClusterEssentials.ProductSlug, suiteConfig.TanzuClusterEssentials.DownloadBundle, suiteConfig.TanzuClusterEssentials.InstallBundle, suiteConfig.TanzuClusterEssentials.InstallRegistryHostname, suiteConfig.TanzuClusterEssentials.InstallRegistryUsername, suiteConfig.TanzuClusterEssentials.InstallRegistryPassword),
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 	)
 
