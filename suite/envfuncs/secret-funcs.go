@@ -18,7 +18,7 @@ func CreateSecret(name string, registry string, username string, password string
 		log.Printf("creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
 
 		// create secret
-		err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, namespace, export)
+		err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, namespace, export, false)
 		if err != nil {
 			return ctx, fmt.Errorf("error while creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
 		}
