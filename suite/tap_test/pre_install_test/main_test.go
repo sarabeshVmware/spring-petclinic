@@ -16,6 +16,7 @@ import (
 
 var testenv env.Environment
 var suiteConfig = models.SuiteConfig{}
+var outerloopConfig = models.OuterloopConfig{}
 
 func TestMain(m *testing.M) {
 	// set logger
@@ -31,6 +32,7 @@ func TestMain(m *testing.M) {
 
 	// read suite config
 	suiteConfig = models.GetSuiteConfig()
+	outerloopConfig, err = models.GetOuterloopConfig()
 
 	// setup
 	testenv.Setup(

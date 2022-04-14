@@ -35,7 +35,7 @@ type SuiteConfig struct {
 		Registry           string `yaml:"registry"`
 		NonTanzuRepository string `yaml:"non-tanzu-repository"`
 	} `yaml:"package_repository"`
-	NonTanzuRepository struct {
+	NonTanzuRepository []struct {
 		Repository string `yaml:"repository"`
 		Username   string `yaml:"username"`
 		Password   string `yaml:"password"`

@@ -4,7 +4,6 @@
 package tanzuCmds
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -223,21 +222,13 @@ func TanzuGetPackageRepositoryStatus(name string, namespace string) (string, err
 	return packageRepository[0].Status, nil
 }
 
-func TanzuCreateSecret(name string, registry string, username string, password string, namespace string, export bool, encodedPassword bool) error {
+func TanzuCreateSecret(name string, registry string, username string, password string, namespace string, export bool) error {
 	log.Printf("creating secret %s (registry %s, username %s, export %t) in namespace %s", name, registry, username, export, namespace)
+
 	// execute cmd
-	cmd := fmt.Sprintf("tanzu secret registry add %s --server %s --username %s -n %s -y", name, registry, username, namespace)
+	cmd := fmt.Sprintf("tanzu secret registry add %s --server %s --username %s --password %s -n %s -y", name, registry, username, password, namespace)
 	if export {
 		cmd += " --export-to-all-namespaces"
-	}
-	if encodedPassword {
-		decodedPassword, err := base64.StdEncoding.DecodeString(password)
-		if err != nil {
-			log.Printf("error while decoding password")
-		}
-		cmd += fmt.Sprintf(" --password %s", decodedPassword)
-	} else {
-		cmd += fmt.Sprintf(" --password %s", password)
 	}
 	output, err := linux_util.ExecuteCmdNoLog(cmd)
 	if err != nil {

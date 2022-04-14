@@ -429,13 +429,13 @@ func ImgPkgCopyToRepo(t *testing.T, sourceBundle string, targetRepo string) feat
 		Feature()
 }
 
-func CreateSecret(t *testing.T, name string, registry string, username string, password string, namespace string, export bool, encodedPassword bool) features.Feature {
+func CreateSecret(t *testing.T, name string, registry string, username string, password string, namespace string, export bool) features.Feature {
 	return features.New(fmt.Sprintf("creating secret %s", name)).
 		Assess(fmt.Sprintf("creating secret %s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			log.Printf("creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
 
 			// create secret
-			err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, namespace, export, encodedPassword)
+			err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, namespace, export)
 			if err != nil {
 				t.Errorf("error while creating secret %s", name)
 				t.FailNow()
