@@ -22,8 +22,7 @@ package_repository:
 non-tanzu-repository:
   repository: gcr.io/tap-ci/tap-packages-test
   username: <GCR-SA-USERNAME>
-  password: <GCR-SA-PASSWORD>
-  server: gcr.io
+  password: '<GCR-SA-PASSWORD>'
   server: https://gcr.io
 tap_registry_secret:
   export: true

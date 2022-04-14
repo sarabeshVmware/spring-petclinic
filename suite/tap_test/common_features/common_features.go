@@ -2,7 +2,6 @@ package common_features
 
 import (
 	"context"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -463,18 +462,12 @@ func DeleteGCRImageRepository(t *testing.T, name string) features.Feature {
 		}).Feature()
 }
 
-func DockerLoginGCP(t *testing.T, server string, username string, password string) features.Feature {
+func DockerLogin(t *testing.T, server string, username string, password string) features.Feature {
 	return features.New(fmt.Sprintf("Docker login server")).
 		Assess(fmt.Sprintf("Logging in server %s", server), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 
-			decodedSAfile, err := base64.StdEncoding.DecodeString(password)
+			err := docker.DockerLogin(server, username, password)
 			if err != nil {
-				t.Error("error while decoding token")
-				t.FailNow()
-			}
-
-			err2 := docker.DockerLoginWithPasswordFile(server, username, string(decodedSAfile))
-			if err2 != nil {
 				t.Errorf("error while loging in server %s", server)
 				t.FailNow()
 			} else {
