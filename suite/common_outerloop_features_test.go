@@ -12,7 +12,7 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+	"net"
 	"encoding/base64"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
@@ -1524,6 +1524,15 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 		t.FailNow()
 	} else {
 		t.Log("external IP retrieved")
+	}
+	//Check for valid ip or not
+	if net.ParseIP(externalIP) == nil {
+		fmt.Printf("IP Address: %s - Invalid\n. Fetching IP address via nslookup", externalIP)
+		cmd := fmt.Sprintf("dig +short '%s' | tail -1", externalIP)
+		externalIP, err = linux_util.ExecuteCmdInBashMode(cmd)
+		externalIP = strings.TrimSpace(externalIP)
+	} else {
+		fmt.Printf("IP Address: %s - Valid\n", externalIP)
 	}
 
 	//appending ip mapping for metadata service to /etc/hosts
