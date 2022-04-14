@@ -235,9 +235,9 @@ func TanzuCreateSecret(name string, registry string, username string, password s
 		if err != nil {
 			log.Printf("error while decoding password")
 		}
-		cmd += fmt.Sprintf("--password %s", decodedPassword)
+		cmd += fmt.Sprintf(" --password %s", decodedPassword)
 	} else {
-		cmd += fmt.Sprintf("--password %s", password)
+		cmd += fmt.Sprintf(" --password %s", password)
 	}
 	output, err := linux_util.ExecuteCmdNoLog(cmd)
 	if err != nil {
