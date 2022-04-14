@@ -4,16 +4,8 @@ package suite
 
 import (
 	"context"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
-	"path/filepath"
-	"strings"
-	"testing"
-	"time"
-
 	"encoding/base64"
+	"fmt"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
@@ -27,9 +19,17 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"log"
+	"net"
+	"os"
+	"path/filepath"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
+	"strings"
+	"testing"
+	"time"
 )
 
 type outerloopConfiguration struct {
@@ -1524,6 +1524,15 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 		t.FailNow()
 	} else {
 		t.Log("external IP retrieved")
+	}
+	//Check for valid ip or not
+	if net.ParseIP(externalIP) == nil {
+		fmt.Printf("Invalid IP Address format: %s\n. Fetching IP address via dig command", externalIP)
+		cmd := fmt.Sprintf("dig +short '%s' | tail -1", externalIP)
+		externalIP, err = linux_util.ExecuteCmdInBashMode(cmd)
+		externalIP = strings.TrimSpace(externalIP)
+	} else {
+		fmt.Printf("IP Address: %s - Valid\n", externalIP)
 	}
 
 	//appending ip mapping for metadata service to /etc/hosts
