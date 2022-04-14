@@ -28,12 +28,11 @@ type SuiteConfig struct {
 		} `yaml:"workload"`
 	} `yaml:"innerloop"`
 	PackageRepository struct {
-		Image              string `yaml:"image"`
-		Version            string `yaml:"version"`
-		Name               string `yaml:"name"`
-		Namespace          string `yaml:"namespace"`
-		Registry           string `yaml:"registry"`
-		NonTanzuRepository string `yaml:"non-tanzu-repository"`
+		Image     string `yaml:"image"`
+		Version   string `yaml:"version"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Registry  string `yaml:"registry"`
 	} `yaml:"package_repository"`
 	NonTanzuRepository []struct {
 		Repository string `yaml:"repository"`
