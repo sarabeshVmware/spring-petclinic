@@ -32,7 +32,7 @@ func TestMain(m *testing.M) {
 
 	// read suite config
 	suiteConfig = models.GetSuiteConfig()
-	outerloopConfig, err = models.GetOuterloopConfig()
+	outerloopConfig, _ = models.GetOuterloopConfig()
 
 	// setup
 	testenv.Setup(
