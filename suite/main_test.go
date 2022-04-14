@@ -217,6 +217,7 @@ func TestMain(m *testing.M) {
 			suiteConfig.TanzuClusterEssentials.InstallRegistryHostname,
 			suiteConfig.TanzuClusterEssentials.InstallRegistryUsername,
 			suiteConfig.TanzuClusterEssentials.InstallRegistryPassword),
+		envfuncs.AddFinalizersToKappControllerClusterRole(),
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
@@ -226,6 +227,7 @@ func TestMain(m *testing.M) {
 		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
+		envfuncs.CreateClusterRoleBinding(),
 	)
 
 	// finish
