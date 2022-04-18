@@ -10,11 +10,11 @@ import (
 	"testing"
 )
 
-func InstallRegistryFeature(t *testing.T, server string, username string, password string, repository string) {
+func InstallRegistryFeature(t *testing.T, server string, username string, password string, passwordType string, repository string) {
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
 		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
-		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
+		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
 		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 	)
@@ -52,9 +52,9 @@ func TestTapImageRelocation(t *testing.T) {
 	test := features.New("TestTapImageRelocation").
 		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			for _, repository := range suiteConfig.NonTanzuRepository {
-				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.Repository)
 				OuterloopTestFeature(t)
 				DeleteRegistryFeature(t)
+				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
 			}
 			return ctx
 		}).Feature()

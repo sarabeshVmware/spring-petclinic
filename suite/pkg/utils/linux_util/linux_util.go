@@ -36,7 +36,7 @@ func ExecuteCmd(command string) (string, error) {
 	log.Printf("Command executed: %s %s", commandName, strings.Join(arguments, " "))
 	if err != nil {
 		log.Printf("ERROR : %s", err.Error())
-		log.Printf("OUTPUT : %s", stdoutStderr)
+		log.Printf("OUTPUT : %s ", string(stdoutStderr))
 	} else {
 		log.Printf("Output: %s", string(stdoutStderr))
 	}
