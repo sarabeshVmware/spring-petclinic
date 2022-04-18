@@ -41,6 +41,7 @@ func DeleteRegistryFeature(t *testing.T) {
 	testenv.Test(t,
 		common_features.DeletePackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
 		common_features.DeletePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
+		common_features.DeleteSecret(t, suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
 		//common_features.DeleteImageRepository(t, repository),
 	)
 }
@@ -52,9 +53,9 @@ func TestTapImageRelocation(t *testing.T) {
 	test := features.New("TestTapImageRelocation").
 		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			for _, repository := range suiteConfig.NonTanzuRepository {
+				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
 				OuterloopTestFeature(t)
 				DeleteRegistryFeature(t)
-				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
 			}
 			return ctx
 		}).Feature()

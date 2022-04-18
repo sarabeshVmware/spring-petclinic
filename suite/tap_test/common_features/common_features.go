@@ -447,6 +447,24 @@ func CreateSecret(t *testing.T, name string, registry string, username string, p
 		}).Feature()
 }
 
+func DeleteSecret(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("deleting secret %s", name)).
+		Assess(fmt.Sprintf("deleting secret %s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("deleting secret %s in namespace %s", name, namespace)
+
+			// create secret
+			err := tanzuCmds.TanzuDeleteSecret(name, namespace)
+			if err != nil {
+				t.Errorf("error while deleting secret %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("deleted secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
+}
+
 func DeleteGCRImageRepository(t *testing.T, name string) features.Feature {
 	return features.New(fmt.Sprintf("Deleting gcr repo %s", name)).
 		Assess(fmt.Sprintf("deleting repo %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {

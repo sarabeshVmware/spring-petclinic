@@ -254,7 +254,7 @@ func TanzuCreateSecret(name string, registry string, username string, password s
 	if export {
 		cmd += " --export-to-all-namespaces"
 	}
-	output, err := linux_util.ExecuteCmd(cmd)
+	output, err := linux_util.ExecuteCmdNoLog(cmd)
 	if err != nil {
 		log.Printf("error while creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
 		log.Printf("error: %s", err)
