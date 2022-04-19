@@ -16,7 +16,6 @@ innerloop:
     image_delivery_suffix: -delivery
 package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
-  version: 1.1.0-build.17
   name: tanzu-tap-repository
   namespace: tap-install
 non-tanzu-repository:

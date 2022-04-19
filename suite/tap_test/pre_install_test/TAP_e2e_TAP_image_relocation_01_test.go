@@ -7,15 +7,17 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 	"sigs.k8s.io/e2e-framework/pkg/features"
+	"strings"
 	"testing"
 )
 
 func InstallRegistryFeature(t *testing.T, server string, username string, password string, passwordType string, repository string) {
+	tapPackageVersion := strings.Split(suiteConfig.PackageRepository.Image, ":")[1]
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
 		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
-		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
+		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
 		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 	)
 }
