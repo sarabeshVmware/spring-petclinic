@@ -17,6 +17,7 @@ import (
 var testenv env.Environment
 var suiteConfig = models.SuiteConfig{}
 var outerloopConfig = models.OuterloopConfig{}
+var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
 
 func TestMain(m *testing.M) {
 	// set logger
@@ -34,10 +35,12 @@ func TestMain(m *testing.M) {
 	suiteConfig = models.GetSuiteConfig()
 	outerloopConfig, _ = models.GetOuterloopConfig()
 
+	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
 	// setup
 	testenv.Setup(
 		envfuncs.InstallClusterEssentials(suiteConfig.TanzuClusterEssentials.TanzunetHost, suiteConfig.TanzuClusterEssentials.TanzunetApiToken, suiteConfig.TanzuClusterEssentials.ProductFileId, suiteConfig.TanzuClusterEssentials.ReleaseVersion, suiteConfig.TanzuClusterEssentials.ProductSlug, suiteConfig.TanzuClusterEssentials.DownloadBundle, suiteConfig.TanzuClusterEssentials.InstallBundle, suiteConfig.TanzuClusterEssentials.InstallRegistryHostname, suiteConfig.TanzuClusterEssentials.InstallRegistryUsername, suiteConfig.TanzuClusterEssentials.InstallRegistryPassword),
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
+		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
 	)
 
 	// finish

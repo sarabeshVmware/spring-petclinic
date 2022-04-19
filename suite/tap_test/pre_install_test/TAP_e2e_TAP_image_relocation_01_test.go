@@ -17,6 +17,7 @@ func InstallRegistryFeature(t *testing.T, server string, username string, passwo
 		common_features.DockerLogin(t, server, username, password),
 		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
+		common_features.CreateSecret(t, suiteConfig.RegistryCredentialsSecret.Name, server, username, password, passwordType, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
 		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 	)
@@ -44,6 +45,7 @@ func DeleteRegistryFeature(t *testing.T) {
 		common_features.DeletePackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
 		common_features.DeletePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
 		common_features.DeleteSecret(t, suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
+		common_features.DeleteSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Namespace),
 		//common_features.DeleteImageRepository(t, repository),
 	)
 }
