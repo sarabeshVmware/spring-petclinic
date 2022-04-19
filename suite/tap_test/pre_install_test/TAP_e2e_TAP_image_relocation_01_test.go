@@ -20,6 +20,7 @@ func InstallRegistryFeature(t *testing.T, server string, username string, passwo
 		common_features.CreateSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, "string", suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
 		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
+		common_features.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 	)
 }
 

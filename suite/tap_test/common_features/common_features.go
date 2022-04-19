@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/gcloud"
@@ -134,6 +135,39 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 			return ctx
 		}).
 		Feature()
+}
+
+func CheckIfPackageInstalled(name string, namespace string, recursiveCount int, secondsGap int) features.Feature {
+	return features.New("checking package").
+		Assess(fmt.Sprintf("checking-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("checking package %s installation status", name)
+
+			for ; recursiveCount >= 0; recursiveCount-- {
+				// get status
+				packageInstalledStatus, err := tanzuCmds.TanzuGetPackageInstalledStatus(name, namespace)
+				if err != nil {
+					t.Errorf("error while getting package %s in namespace %s installation status", name, namespace)
+					t.Fail()
+				}
+
+				// check
+				if packageInstalledStatus == "Reconciling" || packageInstalledStatus == "" {
+					log.Printf("package %s is getting installed", name)
+					log.Printf("sleeping for %d seconds", secondsGap)
+					time.Sleep(time.Duration(secondsGap) * time.Second)
+				} else if packageInstalledStatus == "Reconcile succeeded" {
+					log.Printf("package %s is installed", name)
+				} else if packageInstalledStatus == "Reconcile Failed" {
+					t.Errorf("package %s installation failed", name)
+					t.Fail()
+				} else {
+					t.Errorf("package %s installation unknown", name)
+					t.Fail()
+				}
+			}
+
+			return ctx
+		}).Feature()
 }
 
 func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, valuesFile string, tapVersion string, pollTimeout string) features.Feature {
