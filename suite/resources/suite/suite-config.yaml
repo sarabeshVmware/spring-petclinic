@@ -28,7 +28,7 @@ non-tanzu-repository:
     username: <ACR-ID>
     password: <ACR-PASSWORD>
     server: https://tappackagestest.azurecr.io
-  - repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages
+  - repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-ci-test/tap-packages
     username: <DEV-TANZU-USERNAME>
     password: <DEV-TANZU-PASSWORD>
     server: https://dev.registry.tanzu.vmware.com
