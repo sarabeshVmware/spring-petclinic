@@ -82,7 +82,7 @@ func installUnistallPackage(t *testing.T, packageName string) {
 				Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
 					if pkg.Name == "scan-controller" && pkgVersion.VERSION == 1.0.0{
-						// Skip the installation due to bug : https://jira.eng.vmware.com/browse/VSEE-517
+						t.Logf("Skip the installation due to bug : https://jira.eng.vmware.com/browse/VSEE-517")
 						return ctx
 					}
 					
