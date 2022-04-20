@@ -1,4 +1,4 @@
-//go:build all || upgrade
+//go:build upgrade
 
 package install_tests
 
