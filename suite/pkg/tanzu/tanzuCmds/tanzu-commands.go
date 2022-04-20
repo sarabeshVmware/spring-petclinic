@@ -267,44 +267,6 @@ func TanzuCreateSecret(name string, registry string, username string, password s
 	return err
 }
 
-func TanzuCreateSecretWithJson(name string, registry string, username string, password string, namespace string, export bool) error {
-	log.Printf("creating secret %s (registry %s, username %s, export %t) in namespace %s", name, registry, username, export, namespace)
-
-	// create temporary file for cert
-	log.Printf("creating tempfile for key")
-	tempFile, err := ioutil.TempFile("", "password*.json")
-	if err != nil {
-		log.Print("error while creating tempfile")
-	} else {
-		log.Print("created tempfile")
-	}
-	defer os.Remove(tempFile.Name())
-	err = os.WriteFile(tempFile.Name(), []byte(password), 0677)
-	if err != nil {
-		log.Printf("error while writing to file %s", tempFile.Name())
-		log.Printf("error: %s", err)
-	} else {
-		log.Printf("file %s written", tempFile.Name())
-	}
-
-	// execute cmd
-	cmd := fmt.Sprintf("tanzu secret registry add %s --server %s --username %s --password-file %s -n %s -y", name, registry, username, tempFile.Name(), namespace)
-	if export {
-		cmd += " --export-to-all-namespaces"
-	}
-	output, err := linux_util.ExecuteCmd(cmd)
-	if err != nil {
-		log.Printf("error while creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
-		log.Printf("error: %s", err)
-		log.Printf("output: %s", output)
-	} else {
-		log.Printf("secret %s (registry %s, username %s) created in namespace %s", name, registry, username, namespace)
-		log.Printf("output: %s", output)
-	}
-
-	return err
-}
-
 func TanzuDeleteSecret(name string, namespace string) error {
 	log.Printf("deleting secret %s from namespace %s", name, namespace)
 

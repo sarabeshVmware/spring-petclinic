@@ -29,7 +29,6 @@ type SuiteConfig struct {
 	} `yaml:"innerloop"`
 	PackageRepository struct {
 		Image     string `yaml:"image"`
-		Version   string `yaml:"version"`
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
 		Registry  string `yaml:"registry"`
