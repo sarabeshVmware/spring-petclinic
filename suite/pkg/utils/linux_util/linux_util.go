@@ -65,6 +65,12 @@ func ExecuteCmdNoLog(command string) (string, error) {
 	} else {
 		log.Printf("output: %s", string(stdoutStderr))
 	}
+	// if stdoutStderr contains throttling msg, then remove that line before return
+	if strings.Contains(string(stdoutStderr), "due to client-side throttling, not priority and fairness") {
+		index := strings.Index(string(stdoutStderr), "\n")
+		result := string(stdoutStderr)[index+1 : len(string(stdoutStderr))]
+		return result, err
+	}
 
 	return string(stdoutStderr), err
 }

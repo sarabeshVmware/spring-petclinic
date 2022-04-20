@@ -35,19 +35,9 @@ func GetTaskruns(taskrunName string, namespace string) []GetTaskrunsOutput {
 		return taskruns
 	}
 
-	header_index := 0
-	if strings.HasPrefix(temp[0], "I04") {
-		header_index = 1
-	}
-
-	if len(temp) <= header_index+1 {
-		log.Printf("Output : %s", temp[0])
-		return taskruns
-	}
-
-	ss := linux_util.FieldIndices(temp[header_index])
-	headers := linux_util.GetFields(temp[header_index], ss)
-	for _, element := range temp[header_index+1:] {
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for _, element := range temp[1:] {
 		words := linux_util.GetFields(element, ss)
 		var taskrun GetTaskrunsOutput
 		for index, value := range words {
