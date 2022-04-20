@@ -35,12 +35,21 @@ func GetPkgi(pkgName string, namespace string) []GetPkgiOutput {
 		return pkgsi
 	}
 
-	ss := linux_util.FieldIndicesWithSingleSpace(temp[0])
-	headers := linux_util.GetFields(temp[0], ss)
+	header_index := 0
+	if strings.HasPrefix(temp[0], "I04") {
+		header_index = 1
+	}
+
+	if len(temp) <= header_index+1 {
+		log.Printf("Output : %s", temp[0])
+		return pkgsi
+	}
+	ss := linux_util.FieldIndicesWithSingleSpace(temp[header_index])
+	headers := linux_util.GetFields(temp[header_index], ss)
 	for index, ele := range headers {
 		headers[index] = strings.ReplaceAll(ele, " ", "_")
 	}
-	for _, element := range temp[1:] {
+	for _, element := range temp[header_index+1:] {
 		words := linux_util.GetFields(element, ss)
 		var pkg GetPkgiOutput
 		for index, value := range words {
