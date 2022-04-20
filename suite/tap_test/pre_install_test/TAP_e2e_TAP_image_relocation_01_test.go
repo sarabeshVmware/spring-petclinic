@@ -15,7 +15,7 @@ func InstallRegistryFeature(t *testing.T, server string, username string, passwo
 	tapPackageVersion := strings.Split(suiteConfig.PackageRepository.Image, ":")[1]
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
-		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
+		//common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		common_features.CreateSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, "string", suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
@@ -40,13 +40,14 @@ func OuterloopTestFeature(t *testing.T) {
 	)
 }
 
-func DeleteRegistryFeature(t *testing.T) {
+func CleanupResourcesFeature(t *testing.T) {
 
 	testenv.Test(t,
 		common_features.DeletePackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.Namespace),
 		common_features.DeletePackageRepository(t, suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace),
 		common_features.DeleteSecret(t, suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Namespace),
 		common_features.DeleteSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Namespace),
+		// cleanup of image repositories is tracked in https://jira.eng.vmware.com/browse/DAPEO-132
 		//common_features.DeleteImageRepository(t, repository),
 	)
 }
@@ -58,9 +59,10 @@ func TestTapImageRelocation(t *testing.T) {
 	test := features.New("TestTapImageRelocation").
 		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			for _, repository := range suiteConfig.NonTanzuRepository {
+				t.Log("testing imgpkg copy for %s", repository.Server)
 				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
 				OuterloopTestFeature(t)
-				DeleteRegistryFeature(t)
+				CleanupResourcesFeature(t)
 			}
 			return ctx
 		}).Feature()
