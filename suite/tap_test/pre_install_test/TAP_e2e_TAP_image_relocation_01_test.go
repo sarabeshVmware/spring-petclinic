@@ -11,7 +11,7 @@ import (
 	"testing"
 )
 
-func InstallRegistryFeature(t *testing.T, server string, username string, password string, passwordType string, repository string) {
+func RelocateImageAndInstallTapPackage(t *testing.T, server string, username string, password string, passwordType string, repository string) {
 	tapPackageVersion := strings.Split(suiteConfig.PackageRepository.Image, ":")[1]
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
@@ -59,8 +59,8 @@ func TestTapImageRelocation(t *testing.T) {
 	test := features.New("TestTapImageRelocation").
 		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			for _, repository := range suiteConfig.NonTanzuRepository {
-				t.Log("testing imgpkg copy for %s", repository.Server)
-				InstallRegistryFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
+				t.Logf("testing imgpkg copy for %s", repository.Server)
+				RelocateImageAndInstallTapPackage(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
 				OuterloopTestFeature(t)
 				CleanupResourcesFeature(t)
 			}

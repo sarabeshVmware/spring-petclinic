@@ -23,15 +23,15 @@ non-tanzu-repository:
     username: <GCR-SA-USERNAME>
     passwordType: key
     password: <GCR-SA-PASSWORD>
-    server: https://gcr.io
+    server: gcr.io
   - repository: tappackagestest.azurecr.io/tap-packages
     username: <ACR-ID>
     password: <ACR-PASSWORD>
-    server: https://tappackagestest.azurecr.io
   - repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-ci-test/tap-packages
+    server: tappackagestest.azurecr.io
     username: <DEV-TANZU-USERNAME>
     password: <DEV-TANZU-PASSWORD>
-    server: https://dev.registry.tanzu.vmware.com
+    server: dev.registry.tanzu.vmware.com
 tap_registry_secret:
   export: true
   name: tap-registry

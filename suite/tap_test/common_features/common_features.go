@@ -13,7 +13,6 @@ import (
 	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/gcloud"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
@@ -493,21 +492,6 @@ func DeleteSecret(t *testing.T, name string, namespace string) features.Feature 
 				t.FailNow()
 			} else {
 				t.Logf("deleted secret %s", name)
-			}
-
-			return ctx
-		}).Feature()
-}
-
-func DeleteGCRImageRepository(t *testing.T, name string) features.Feature {
-	return features.New(fmt.Sprintf("Deleting gcr repo %s", name)).
-		Assess(fmt.Sprintf("deleting repo %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
-			err := gcloud.DeleteImageContainer(name)
-			if err != nil {
-				t.Errorf("error while creating secret %s", name)
-				t.FailNow()
-			} else {
-				t.Logf("created secret %s", name)
 			}
 
 			return ctx
