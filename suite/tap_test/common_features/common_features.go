@@ -10,9 +10,12 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
@@ -59,6 +62,45 @@ func UpdatePackageRepository(t *testing.T, name string, registry string, namespa
 		}).Feature()
 }
 
+func AddPackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
+	return features.New("adding package repository").
+		Assess(fmt.Sprintf("adding-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			log.Printf("adding package repository %s (%s) in namespace %s", name, registry, namespace)
+			registryWithVersion := fmt.Sprintf("%s:%s", registry, version)
+			// add repo
+			err := tanzuCmds.TanzuAddPackageRepository(name, registryWithVersion, namespace)
+			if err == nil {
+				t.Logf("Installed repository : %s, image: %s:%s successfully", name, registry, version)
+			} else {
+				t.Error(fmt.Errorf("install FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
+			if updated {
+				t.Logf("Updated repository : %s, image: %s:%s successfully", name, registry, version)
+			} else {
+				t.Error(fmt.Errorf("update FAILED for repository : %s, image: %s:%s", name, registry, version))
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
+func DeletePackageRepository(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("deleting package repository").
+		Assess(fmt.Sprintf("deleting-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("deleting package repository %s in namespace %s", name, namespace)
+
+			// delete repo
+			err := tanzuCmds.TanzuDeletePackageRepository(name, namespace)
+			if err != nil {
+				t.Errorf("error while deleting package repository %s in namespace %s", name, namespace)
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
 func InstallPackage(t *testing.T, name string, packageRepository string, version string, namespace string, valuesFile string, pollTimeout string) features.Feature {
 	return features.New("installing package").
 		Assess(fmt.Sprintf("installing-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -92,6 +134,39 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 			return ctx
 		}).
 		Feature()
+}
+
+func CheckIfPackageInstalled(name string, namespace string, recursiveCount int, secondsGap int) features.Feature {
+	return features.New("checking package").
+		Assess(fmt.Sprintf("checking-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("checking package %s installation status", name)
+
+			for ; recursiveCount >= 0; recursiveCount-- {
+				// get status
+				packageInstalledStatus, err := tanzuCmds.TanzuGetPackageInstalledStatus(name, namespace)
+				if err != nil {
+					t.Errorf("error while getting package %s in namespace %s installation status", name, namespace)
+					t.Fail()
+				}
+
+				// check
+				if packageInstalledStatus == "Reconciling" || packageInstalledStatus == "" {
+					log.Printf("package %s is getting installed", name)
+					log.Printf("sleeping for %d seconds", secondsGap)
+					time.Sleep(time.Duration(secondsGap) * time.Second)
+				} else if packageInstalledStatus == "Reconcile succeeded" {
+					log.Printf("package %s is installed", name)
+				} else if packageInstalledStatus == "Reconcile Failed" {
+					t.Errorf("package %s installation failed", name)
+					t.Fail()
+				} else {
+					t.Errorf("package %s installation unknown", name)
+					t.Fail()
+				}
+			}
+
+			return ctx
+		}).Feature()
 }
 
 func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespace string, valuesFile string, tapVersion string, pollTimeout string) features.Feature {
@@ -366,4 +441,75 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 			return ctx
 		}).
 		Feature()
+}
+
+func ImgPkgCopyToRepo(t *testing.T, sourceBundle string, targetRepo string) features.Feature {
+	return features.New("imgpkg copy").
+		Assess(fmt.Sprintf("copying image bundles from %s to %s", sourceBundle, targetRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("copying image bundles from %s to %s", sourceBundle, targetRepo)
+
+			// deploy app
+			err := imgpkg.ImgpkgCopy(sourceBundle, targetRepo)
+			if err != nil {
+				t.Errorf("error while copying image bundles from %s to %s", sourceBundle, targetRepo)
+				t.FailNow()
+			} else {
+				t.Logf("copied image bundles from %s to %s", sourceBundle, targetRepo)
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func CreateSecret(t *testing.T, name string, registry string, username string, password string, passwordType string, namespace string, export bool) features.Feature {
+	return features.New(fmt.Sprintf("creating secret %s", name)).
+		Assess(fmt.Sprintf("creating secret %s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("creating secret %s (registry %s, username %s) in namespace %s", name, registry, username, namespace)
+
+			// create secret
+			err := tanzuCmds.TanzuCreateSecret(name, registry, username, password, passwordType, namespace, export)
+			if err != nil {
+				t.Errorf("error while creating secret %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("created secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
+}
+
+func DeleteSecret(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("deleting secret %s", name)).
+		Assess(fmt.Sprintf("deleting secret %s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			log.Printf("deleting secret %s in namespace %s", name, namespace)
+
+			// create secret
+			err := tanzuCmds.TanzuDeleteSecret(name, namespace)
+			if err != nil {
+				t.Errorf("error while deleting secret %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("deleted secret %s", name)
+			}
+
+			return ctx
+		}).Feature()
+}
+
+func DockerLogin(t *testing.T, server string, username string, password string) features.Feature {
+	return features.New(fmt.Sprintf("Docker login server")).
+		Assess(fmt.Sprintf("Logging in server %s", server), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+
+			err := docker.DockerLogin(server, username, password)
+			if err != nil {
+				t.Errorf("error while loging in server %s", server)
+				t.FailNow()
+			} else {
+				t.Logf("docker login success for %s", server)
+			}
+
+			return ctx
+		}).Feature()
 }

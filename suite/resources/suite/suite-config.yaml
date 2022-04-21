@@ -18,6 +18,20 @@ package_repository:
   image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
   name: tanzu-tap-repository
   namespace: tap-install
+non-tanzu-repository:
+  - repository: gcr.io/tap-ci/tap-packages-test/tap-packages
+    username: <GCR-SA-USERNAME>
+    passwordType: key
+    password: <GCR-SA-PASSWORD>
+    server: gcr.io
+  - repository: tappackagestest.azurecr.io/tap-packages
+    username: <ACR-ID>
+    password: <ACR-PASSWORD>
+  - repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-ci-test/tap-packages
+    server: tappackagestest.azurecr.io
+    username: <DEV-TANZU-USERNAME>
+    password: <DEV-TANZU-PASSWORD>
+    server: dev.registry.tanzu.vmware.com
 tap_registry_secret:
   export: true
   name: tap-registry

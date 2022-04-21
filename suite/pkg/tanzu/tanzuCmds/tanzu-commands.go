@@ -6,7 +6,9 @@ package tanzuCmds
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -222,11 +224,33 @@ func TanzuGetPackageRepositoryStatus(name string, namespace string) (string, err
 	return packageRepository[0].Status, nil
 }
 
-func TanzuCreateSecret(name string, registry string, username string, password string, namespace string, export bool) error {
+func TanzuCreateSecret(name string, registry string, username string, password string, passwordType string, namespace string, export bool) error {
 	log.Printf("creating secret %s (registry %s, username %s, export %t) in namespace %s", name, registry, username, export, namespace)
 
 	// execute cmd
-	cmd := fmt.Sprintf("tanzu secret registry add %s --server %s --username %s --password %s -n %s -y", name, registry, username, password, namespace)
+	cmd := fmt.Sprintf("tanzu secret registry add %s --server %s --username %s -n %s -y", name, registry, username, namespace)
+	if passwordType == "key" {
+		// create temporary file for cert
+		log.Printf("creating tempfile for key")
+		tempFile, err := ioutil.TempFile("", "password*.json")
+		if err != nil {
+			log.Print("error while creating tempfile")
+		} else {
+			log.Print("created tempfile")
+		}
+		defer os.Remove(tempFile.Name())
+		err = os.WriteFile(tempFile.Name(), []byte(password), 0677)
+		if err != nil {
+			log.Printf("error while writing to file %s", tempFile.Name())
+			log.Printf("error: %s", err)
+		} else {
+			log.Printf("file %s written", tempFile.Name())
+		}
+
+		cmd += fmt.Sprintf(" --password-file %s", tempFile.Name())
+	} else {
+		cmd += fmt.Sprintf(" --password %s", password)
+	}
 	if export {
 		cmd += " --export-to-all-namespaces"
 	}

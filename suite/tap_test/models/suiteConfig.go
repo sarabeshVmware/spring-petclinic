@@ -33,6 +33,13 @@ type SuiteConfig struct {
 		Namespace string `yaml:"namespace"`
 		Registry  string `yaml:"registry"`
 	} `yaml:"package_repository"`
+	NonTanzuRepository []struct {
+		Repository   string `yaml:"repository"`
+		Username     string `yaml:"username"`
+		Password     string `yaml:"password"`
+		PasswordType string `yaml:"passwordType"`
+		Server       string `yaml:"server"`
+	} `yaml:"non-tanzu-repository"`
 	TapRegistrySecret struct {
 		Export    bool   `yaml:"export"`
 		Name      string `yaml:"name"`
