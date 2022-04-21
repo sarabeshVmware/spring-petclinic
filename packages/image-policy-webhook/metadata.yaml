@@ -17,10 +17,6 @@ spec:
   - name: Andrés Torres
   - name: Denny Hoang
   - name: Der Wei Chan
-  - name: Jackline Mutua
-  - name: Kavitha Krishnan
-  - name: Mauren Berti
-  - name: Robert Szumlakowski
   providerName: VMware
   shortDescription: Image Policy Webhook enables defining of a policy to restrict
     unsigned container images.
