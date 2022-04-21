@@ -56,7 +56,7 @@ func TestTapImageRelocation(t *testing.T) {
 
 	t.Log("************** TestCase START: TestTapImageRelocation **************")
 
-	test := features.New so("TestTapImageRelocation").
+	test := features.New("TestTapImageRelocation").
 		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			for _, repository := range suiteConfig.NonTanzuRepository {
 				t.Logf("testing imgpkg copy for %s", repository.Server)
