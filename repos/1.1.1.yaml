@@ -115,7 +115,7 @@ packages:
       - 1.0.2
       - 1.0.3
       - 1.1.0
-      - 1.1.1-build.1
+      - 1.1.1-build.2
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -137,21 +137,25 @@ packages:
       - 0.5.1
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -167,11 +171,13 @@ packages:
       - 0.30.0
       - 0.30.1
       - 0.33.2
+      - 0.33.5
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
+      - 0.7.1
   - name: tap-telemetry
     versions:
       - 0.1.2
