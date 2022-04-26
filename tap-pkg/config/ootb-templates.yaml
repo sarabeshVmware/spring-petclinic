@@ -37,7 +37,7 @@ spec:
   packageRef:
     refName: ootb-templates.tanzu.vmware.com
     versionSelection:
-      constraints: 0.7.0
+      constraints: 0.7.1
       prereleases: {}
   values:
   - secretRef:
