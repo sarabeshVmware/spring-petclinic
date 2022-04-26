@@ -73,8 +73,9 @@ type outerloopConfiguration struct {
 		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
 	BuildPacks struct {
-		ScanPolicy string `yaml:"scan_policy"`
-		Workloads  []struct {
+		ScanPolicy   string `yaml:"scan_policy"`
+		PipelineName string `yaml:"pipeline_name"`
+		Workloads    []struct {
 			Name                string `yaml:"name"`
 			GitRepository       string `yaml:"git_repository"`
 			GitBranch           string `yaml:"git_branch"`
@@ -116,6 +117,7 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
+	outerloopConfig.BuildPacks.PipelineName = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.PipelineName)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
 	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)
@@ -321,7 +323,6 @@ var verifyImageScanStatus = features.New("verify-imagescan-status").
 		imageScanCompleted := kubectl_helpers.ValidateImageScans(outerloopConfig.Workload.Name, outerloopConfig.Namespace, 5, 30)
 		if !imageScanCompleted {
 			t.Error("image scan completed")
-			t.FailNow()
 		} else {
 			t.Log("image scan completed successfully")
 		}
@@ -967,7 +968,7 @@ var deployBuildPacksPipeline = features.New("deploy-pipeline-app-via-yaml-config
 		t.Log("deploying buildpacks-test-pipeline")
 
 		// deploy app
-		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.SpringPetclinicPipeline.YamlFile, outerloopConfig.Namespace)
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.BuildPacks.PipelineName, outerloopConfig.Namespace)
 		if err != nil {
 			t.Error("error while deploying buildpacks-test-pipeline")
 			t.FailNow()
