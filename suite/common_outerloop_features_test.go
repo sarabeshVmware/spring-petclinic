@@ -1422,16 +1422,8 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 func listVulnerabilities(workloadName string, t *testing.T) {
 	verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workloadName)).
 		Assess(fmt.Sprintf("%s", workloadName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-
-			images := kubectl_libs.GetImages(workloadName, outerloopConfig.Namespace)
-			log.Printf("images: %v", images)
-			if len(images) == 0 {
-				t.Errorf("no images is found for %s", workloadName)
-				t.Fail()
-			}
-			imageDigest := strings.Split(images[0].LATESTIMAGE, "@")[1]
-			log.Printf("imageDigests %s :", imageDigest)
-
+			imageDigest := kubectl_helpers.GetImageDigest(workloadName, outerloopConfig.Namespace, 2, 30)
+			log.Printf("imageDigest: %s", imageDigest)
 			_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
 			if err != nil {
 				t.Errorf("error while getting vulnerabilities for %s", workloadName)
