@@ -73,9 +73,9 @@ type outerloopConfiguration struct {
 		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
 	BuildPacks struct {
-		ScanPolicy   string `yaml:"scan_policy"`
-		PipelineName string `yaml:"pipeline_name"`
-		Workloads    []struct {
+		ScanPolicy       string `yaml:"scan_policy"`
+		PipelineYamlFile string `yaml:"pipeline_yaml_file"`
+		Workloads        []struct {
 			Name                string `yaml:"name"`
 			GitRepository       string `yaml:"git_repository"`
 			GitBranch           string `yaml:"git_branch"`
@@ -117,7 +117,7 @@ func getOuterloopConfig() (outerloopConfiguration, error) {
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
-	outerloopConfig.BuildPacks.PipelineName = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.PipelineName)
+	outerloopConfig.BuildPacks.PipelineYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.PipelineYamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
 	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)
@@ -968,7 +968,7 @@ var deployBuildPacksPipeline = features.New("deploy-pipeline-app-via-yaml-config
 		t.Log("deploying buildpacks-test-pipeline")
 
 		// deploy app
-		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.BuildPacks.PipelineName, outerloopConfig.Namespace)
+		err := kubectlCmds.KubectlApplyConfiguration(outerloopConfig.BuildPacks.PipelineYamlFile, outerloopConfig.Namespace)
 		if err != nil {
 			t.Error("error while deploying buildpacks-test-pipeline")
 			t.FailNow()
