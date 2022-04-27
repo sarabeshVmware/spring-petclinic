@@ -1,5 +1,6 @@
 #@ load("_profiles.star", "profiles")
-
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("tekton.tanzu.vmware.com"):
 
