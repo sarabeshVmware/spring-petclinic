@@ -201,4 +201,9 @@ spec:
           additionalProperties: true
           properties: {}
           description: Source Controller configuration
+        tekton_pipelines:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Tekton pipelines configuration
 

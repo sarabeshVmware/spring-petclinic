@@ -86,6 +86,9 @@ convention_controller: {}
 #@schema/type any=True
 source_controller: {}
 
+#@schema/type any=True
+tekton_pipelines: {}
+
 package_overlays:
 - name: ""
   secrets:
