@@ -748,3 +748,23 @@ func GetNewerRevision(old_revision_name, config_name string, namespace string, t
 	}
 	return revisionName
 }
+
+func GetImageDigest(imageName string, namespace string, timeoutInMins int, intervalInSeconds int) string {
+	log.Printf("Fetch image digest for image %s in namespace: %s", imageName, namespace)
+	finalTimeout := timeoutInMins * 60
+	imageDigest := ""
+	for finalTimeout > 0 {
+		images := kubectl_lib.GetImages(imageName, namespace) // has to be in ready state
+		if images[0].READY == "True" {
+			imageDigest = strings.Split(images[0].LATESTIMAGE, "@")[1]
+			log.Printf("imageDigests %s :", imageDigest)
+			break
+		} else {
+			log.Printf("Image: %s, ready: %s", imageName, images[0].READY)
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	return imageDigest
+}
