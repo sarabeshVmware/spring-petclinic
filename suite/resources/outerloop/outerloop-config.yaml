@@ -37,13 +37,14 @@ buildpacks:
   scan_policy: lenient-scan-policy.yaml
   pipeline_yaml_file: pipeline-buildpacks-test.yaml
   workloads:
-  - name: tanzu-java-web-app
-    git_repository: https://github.com/dapdelivery/tanzu-java-web-app.git
+  - name: java-maven-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-java-maven.git
+    webpage_relative_path: actuator/health
     contains_conventions : true
-  # - name: java-native-image-app
-  #   git_repository: https://github.com/dapdelivery/test-buildpack-java-native-image-sample.git
-  #   webpage_relative_path: actuator/health
-  #   contains_conventions : true
+  - name: java-native-image-app
+    git_repository: https://github.com/dapdelivery/test-buildpack-java-native-image-sample.git
+    webpage_relative_path: actuator/health
+    contains_conventions : true
   - name: python-pip-app
     git_repository: https://github.com/dapdelivery/test-buildpack-python-pip.git
   - name: dotnet-aspnet-app
