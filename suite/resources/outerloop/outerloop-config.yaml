@@ -35,6 +35,7 @@ workload:
   gitssh_secret_yaml_file: git-ssh-secrets.yaml
 buildpacks:
   scan_policy: lenient-scan-policy.yaml
+  pipeline_yaml_file: pipeline-buildpacks-test.yaml
   workloads:
   - name: java-maven-app
     git_repository: https://github.com/dapdelivery/test-buildpack-java-maven.git
