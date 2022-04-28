@@ -1398,27 +1398,27 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
 			if workload.Name == "java-maven-app" || workload.Name == "java-native-image-app" {
 				t.Logf("Skipping the reachability check for java maven and java native image app as it's not working, but it has no problems with tbs")
-				return ctx
+			} else {
+				verifyWorkload := features.New(fmt.Sprintf("verify-workload-reachability-%s", workload.Name)).
+					Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+						url := fmt.Sprintf("%s/%s", externalIP, workload.WebpageRelativePath)
+						if !strings.HasPrefix(url, "http://") {
+							url = "http://" + url
+						}
+						host := fmt.Sprintf("%s.%s.example.com", workload.Name, outerloopConfig.Namespace)
+						t.Logf("sending GET request host: %s, url: %s", host, url)
+						isWebpageReachable, _ := misc.VerifyWebpageReachable(host, url, 10, 30)
+						if !isWebpageReachable {
+							t.Errorf("webpage %s is not reachable", workload.Name)
+							t.Fail()
+						} else {
+							t.Logf("webpage %s is reachable", workload.Name)
+						}
+						return ctx
+					}).
+					Feature()
+				testenv.Test(t, verifyWorkload)
 			}
-			verifyWorkload := features.New(fmt.Sprintf("verify-workload-reachability-%s", workload.Name)).
-				Assess(fmt.Sprintf("%s", workload.Name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-					url := fmt.Sprintf("%s/%s", externalIP, workload.WebpageRelativePath)
-					if !strings.HasPrefix(url, "http://") {
-						url = "http://" + url
-					}
-					host := fmt.Sprintf("%s.%s.example.com", workload.Name, outerloopConfig.Namespace)
-					t.Logf("sending GET request host: %s, url: %s", host, url)
-					isWebpageReachable, _ := misc.VerifyWebpageReachable(host, url, 10, 30)
-					if !isWebpageReachable {
-						t.Errorf("webpage %s is not reachable", workload.Name)
-						t.Fail()
-					} else {
-						t.Logf("webpage %s is reachable", workload.Name)
-					}
-					return ctx
-				}).
-				Feature()
-			testenv.Test(t, verifyWorkload)
 		}
 		return ctx
 	}).
