@@ -16,7 +16,7 @@ spec:
   packageRef:
     refName: conventions.appliveview.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.1-build.1
+      constraints: 1.1.1
       prereleases: {}
 #@ end
 #@ end
