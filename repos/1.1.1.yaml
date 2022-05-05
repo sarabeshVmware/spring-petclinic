@@ -38,11 +38,11 @@ packages:
   - name: application-live-view-backend
     versions:
       - 1.1.0
-      - 1.1.1-build.1
+      - 1.1.1
   - name: application-live-view-connector
     versions:
       - 1.1.0
-      - 1.1.1-build.1
+      - 1.1.1
   - name: app-live-view-conventions
     versions:
       - 1.0.1
@@ -51,7 +51,7 @@ packages:
   - name: application-live-view-conventions
     versions:
       - 1.1.0
-      - 1.1.1-build.1
+      - 1.1.1
   - name: scan-controller
     versions:
       - 1.0.0
@@ -119,7 +119,7 @@ packages:
       - 1.0.2
       - 1.0.3
       - 1.1.0
-      - 1.1.1-build.4
+      - 1.1.1-build.5
   - name: learning-center-workshops
     versions:
       - 0.1.0
