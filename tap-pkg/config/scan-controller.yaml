@@ -19,7 +19,7 @@ spec:
   packageRef:
     refName: scanning.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.1-build.1
+      constraints: 1.1.1
       prereleases: {}
   values:
   - secretRef:
