@@ -1,6 +1,6 @@
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run, profiles.view]):
+#@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run]):
 #@ if profiles.is_pkg_enabled("tap-auth.tanzu.vmware.com"):
 
 apiVersion: packaging.carvel.dev/v1alpha1
