@@ -1,0 +1,35 @@
+profile: iterate
+ceip_policy_disclosed: true
+buildservice:
+  tanzunet_username: svc.dap-delivery@vmware.com
+  tanzunet_password: VMware12345!
+  kp_default_repository: dev.registry.tanzu.vmware.com/tanzu-application-platform/ci-pipeline/build-service
+  kp_default_repository_password: VMware12345!
+  kp_default_repository_username: svc.dap-delivery@vmware.com
+  enable_automatic_dependency_updates: true
+ # descriptor_name: tap-1.1.0-full
+supply_chain: basic
+ootb_supply_chain_basic:
+  registry:
+    server: dev.registry.tanzu.vmware.com
+    repository: tanzu-application-platform/ci-pipeline/apps1
+  gitops:
+    ssh_secret: ""
+grype:
+  namespace: "tap-install"
+  targetImagePullSecret: registry-credentials
+contour:
+  #infrastructure_provider: vsphere
+  envoy:
+    service:
+      type: LoadBalancer
+#cnrs:
+#  domain_name: dapd.net
+#  domain_template: "{{.Name}}.{{.Domain}}"
+#  ingress:
+#    internal:
+#      namespace: ""
+#appliveview_connector:
+#  backend:
+#    host: appliveview.dapd.net
+#    sslDisabled: "true"

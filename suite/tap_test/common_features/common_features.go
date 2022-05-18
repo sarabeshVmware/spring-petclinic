@@ -18,12 +18,15 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
@@ -32,6 +35,9 @@ import (
 
 var tiltprocCmdKey = "tiltprocCmd"
 var rootDir = filepath.Join(utils.GetFileDir(), "../../")
+var buildName = ""
+var ksvcLatestReady = ""
+var revisionName = ""
 
 func compile(filepath string) {
 	app := "./mvnw"
@@ -512,4 +518,306 @@ func DockerLogin(t *testing.T, server string, username string, password string) 
 
 			return ctx
 		}).Feature()
+}
+
+func ChangeContext(t *testing.T, clusterContext string) features.Feature {
+	return features.New("changing cluster context").
+		Assess(fmt.Sprintf("changing cluster context to %s", clusterContext), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+
+			_, err := kubectl_libs.UseContext(clusterContext)
+			if err != nil {
+				t.Errorf("error while loging in server %s", clusterContext)
+				t.FailNow()
+			} else {
+				t.Logf("context change failure for %s", clusterContext)
+			}
+
+			return ctx
+		}).Feature()
+}
+
+func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-image-repositories").
+		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify image-repositories status")
+			status := kubectl_helper.VerifyImageRepositoryStatus(name, namespace, 10, 30)
+			t.Logf("ImageRepository %s status is : %t", name, status)
+			if !status {
+				t.Error(fmt.Errorf("ImageRepository %s is not ready.", name))
+				t.Fail()
+			}
+			return ctx
+		}).Feature()
+}
+
+
+func GenerateAcceleratorProject(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("generate-acc-project-and-unzip").
+		Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			service, accNamespace := "acc-server", "accelerator-system"
+			t.Logf("getting external ip for %s (namespace %s)", service, accNamespace)
+			serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig(), 2, 30)
+			if err != nil {
+				t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
+				t.FailNow()
+			}
+			t.Logf("external ip for %s (namespace %s): %s", "server", accNamespace, serviceExternalIp)
+			t.Logf("sleeping for 1 minute before generating project")
+			t.Logf("generating tanzu java web app accelerator project")
+			tapValuesSchema, err :=models.GetProfileTapValuesSchema("iterate")
+			if err != nil {
+				t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
+			}
+			// generate project
+			repositoryPrefix := tapValuesSchema.OotbSupplyChainBasic.Registry.Server + "/" + tapValuesSchema.OotbSupplyChainBasic.Registry.Repository
+			err = tanzuCmds.TanzuGenerateAccelerator("tanzu-java-web-app", "tanzu-java-web-app", repositoryPrefix, serviceExternalIp, namespace, 4, 30)
+			if err != nil {
+				t.Error("error while generating accelerator project")
+				t.FailNow()
+			} else {
+				t.Log("accelerator project generated")
+			}
+	
+			return ctx
+		}).
+		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			project := "tanzu-java-web-app"
+			zipFile := project + ".zip"
+	
+			t.Logf("listing existing project files if exists")
+			output, err := linux_util.ExecuteCmd(fmt.Sprintf("ls -lt %s", project))
+			t.Logf("command executed: ls -lt %s. output %s", project, output)
+			if err == nil {
+				t.Logf("deleting %s folder", project)
+				output, err := linux_util.ExecuteCmd(fmt.Sprintf("rm -rf %s", project))
+				t.Logf("command executed: rm -rf %s. output %s", project, output)
+				if err != nil {
+					t.Error(fmt.Errorf("error while deleting project files %s: %w: %s", project, err, output))
+					t.FailNow()
+				}
+			}
+	
+			t.Logf("unzipping file %s", zipFile)
+			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s", zipFile))
+			t.Logf("command executed: unzip %s. output %s", zipFile, output)
+			if err != nil {
+				t.Error(fmt.Errorf("error while unzip accelerator project zip file %s: %w: %s", zipFile, err, output))
+				t.FailNow()
+			}
+			t.Logf("Accelerator project zip files %s unzipped successfully", zipFile)
+	
+			return ctx
+		}).
+		Feature()
+}
+		
+func VerifyTanzuJavaWebAppBuildStatus(t *testing.T, name string, buildNameSuffix string, namespace string) features.Feature {
+	return features.New("verify-builds").
+		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify build status")
+			buildName = fmt.Sprintf("%s%s", name, buildNameSuffix)
+			status := kubectl_helper.VerifyBuildStatus(buildName, namespace, 10, 30)
+			t.Logf("Build status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("Build is not ready."))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppImagesKpacStatus(t *testing.T, namespace string) features.Feature {
+	return features.New("verify-images.kpac").
+		Assess("verify-images.kpac-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify latest image status")
+			status := kubectl_helper.GetLatestImageStatus(namespace)
+			t.Logf("Image status is: %s", status)
+			if status != "True" {
+				t.Error(fmt.Errorf("Image is not built/ready."))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppPodIntentStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-podintents-labels-conventions").
+		Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying podintent ready status")
+
+			// check
+			if !kubectl_helpers.VerifyPodIntentStatus(name, namespace, 5, 30) {
+				t.Error("podintent not ready")
+				t.FailNow()
+			} else {
+				t.Log("podintent ready")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying appliveview labels present in podintent")
+
+			// check
+			alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(name, namespace)
+			if !alvLabelsPresent {
+				t.Error("appliveview lables absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("appliveview labels present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying springbootconventions labels present in podintent")
+
+			// check
+			springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(name, namespace)
+			if !springbootconventionsLabelsPresent {
+				t.Error("springbootconventions lables absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("springbootconventions labels present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying appliveview conventions present in podintent")
+
+			// check
+			appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(name, namespace)
+			if !appliveviewConventionsPresent {
+				t.Error("appliveview conventions absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("appliveview conventions present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-pod-intent-devloper-conventions-annotations", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify if devloper-conventions annotations are added to podintent")
+			status := kubectl_helper.ValidateDeveloperConventions(name, namespace)
+			t.Logf("devloper-conventions annotations status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("devloper-conventions annotations are not added to the podintent"))
+				t.FailNow()
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying springbootconventions conventions present in podintent")
+
+			// check
+			springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(name, namespace)
+			if !springbootconventionsConventionsPresent {
+				t.Error("springbootconventions conventions absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("springbootconventions conventions present in podintent")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppImageRepositoryDelivery(t *testing.T, name string, imageDeliverySuffix string, namespace string) features.Feature {
+	return features.New("verify-image-repository-delivery").
+		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify image-repositories-delivery status")
+			imageRepo := name + imageDeliverySuffix
+			status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, namespace, 10, 30)
+			t.Logf("ImageRepository %s status is : %t", imageRepo, status)
+			if !status {
+				t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppRevisionStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-revision-status").
+		Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying revision ready status")
+
+			revisionName = kubectl_helpers.GetLatestRevision(name, namespace, 1, 30)
+			t.Logf("latestRevision set to %s", revisionName)
+			revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, name, namespace, 5, 30)
+
+			if !revisionReady {
+				t.Error("revision not ready")
+				t.FailNow()
+			} else {
+				t.Log("revision ready")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppKsvcStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-ksvc-status").
+		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verifying ksvc ready status %s", ksvcLatestReady)
+
+			ksvcReady := kubectl_helpers.VerifyKsvcStatus(name, namespace, revisionName, 5, 30)
+			if !ksvcReady {
+				t.Error("ksvc not ready")
+				t.FailNow()
+			} else {
+				t.Log("ksvc ready")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppResponseBeforeChange(t *testing.T, workloadUrl string, originalString string, namespace string) features.Feature {
+	return features.New("verify-app-response").
+		Assess("get-externalip-and-check-webpage-for-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("getting external ip and checking for string")
+
+			// get external IP
+			url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
+			if err != nil {
+				t.Error("error while getting external IP")
+				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			} else {
+				t.Log("external IP retrieved")
+			}
+
+			// set url
+			if !strings.HasPrefix(url, "http://") {
+				url = "http://" + url
+			}
+
+			webpageContainsString, _ := misc.VerifyWebpageContainsString(workloadUrl, url, originalString, 10, 10, 30)
+			if !webpageContainsString {
+				t.Error("webpage does not contains string")
+				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			} else {
+				t.Log("webpage contains string")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-deliverables").
+		Assess("verify-deliverables-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying deliverables ready status")
+			if !kubectl_helper.ValidateDeliverables(name, namespace, 5, 30) {
+				t.Error("deliverables not ready")
+				t.FailNow()
+			} else {
+				t.Log("deliverables ready")
+			}
+			return ctx
+		}).
+		Feature()
 }

@@ -86,6 +86,16 @@ type SuiteConfig struct {
 		UpgradeImage      string `yaml:"upgrade-image"`
 		UpgradeTapVersion string `yaml:"upgrade-tap-version"`
 	} `yaml:"upgrade-versions"`
+	Multicluster struct {
+		ViewClusterContext    string `yaml:"view-cluster-context"`
+		ViewTapValuesFile     string `yaml:"view-tap-values-file"`
+		IterateClusterContext string `yaml:"iterate-cluster-context"`
+		IterateTapValuesFile  string `yaml:"iterate-tap-values-file"`
+		BuildClusterContext   string `yaml:"build-cluster-context"`
+		BuildTapValuesFile    string `yaml:"build-tap-values-file"`
+		RunClusterContext     string `yaml:"run-cluster-context"`
+		RunTapValuesFile      string `yaml:"run-tap-values-file"`
+	}
 }
 
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
@@ -104,6 +114,8 @@ func GetSuiteConfig() SuiteConfig {
 
 	// update suite config for full path for values schema
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
+	suiteConfig.Multicluster.ViewTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.ViewTapValuesFile)
+	suiteConfig.Multicluster.IterateTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.IterateTapValuesFile)
 	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
 
 	return suiteConfig

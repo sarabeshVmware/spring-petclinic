@@ -207,6 +207,11 @@ func GetIngress(name string, namespace string) GetIngressOutput {
 
 type GetServiceAccountJsonOutput struct {
 	APIVersion       string `json:"apiVersion"`
+	Data       struct {
+		CaCrt     string `json:"ca.crt"`
+		Namespace string `json:"namespace"`
+		Token     string `json:"token"`
+	} `json:"data"`
 	ImagePullSecrets []struct {
 		Name string `json:"name"`
 	} `json:"imagePullSecrets"`
@@ -354,4 +359,57 @@ func GetCurrentContext() string {
 		log.Printf("error while fetching config current context")
 	}
 	return clusterName
+}
+func UseContext(context string) (string, error) {
+	cmd := fmt.Sprintf("kubectl config use-context %s", context)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while switching context")
+	}
+	return res, err
+}
+
+
+type CurrentConfigViewOutput struct {
+	APIVersion string `yaml:"apiVersion"`
+	Clusters   []struct {
+		Cluster struct {
+			CertificateAuthorityData string `yaml:"certificate-authority-data"`
+			Server                   string `yaml:"server"`
+		} `yaml:"cluster"`
+		Name string `yaml:"name"`
+	} `yaml:"clusters"`
+	Contexts []struct {
+		Context struct {
+			Cluster string `yaml:"cluster"`
+			User    string `yaml:"user"`
+		} `yaml:"context"`
+		Name string `yaml:"name"`
+	} `yaml:"contexts"`
+	CurrentContext string `yaml:"current-context"`
+	Kind           string `yaml:"kind"`
+	Preferences    struct {
+	} `yaml:"preferences"`
+	Users []struct {
+		Name string `yaml:"name"`
+		User struct {
+			ClientCertificateData string `yaml:"client-certificate-data"`
+			ClientKeyData         string `yaml:"client-key-data"`
+			Token                 string `yaml:"token"`
+		} `yaml:"user"`
+	} `yaml:"users"`
+}
+
+func GetCurrentConfigView() *CurrentConfigViewOutput {
+	var raw *CurrentConfigViewOutput
+	cmd := fmt.Sprintf("kubectl config view --minify")
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
 }

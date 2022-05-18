@@ -1,0 +1,31 @@
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:67: getting outerloop config
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:79: read outerloop config file /Users/rkhul/Documents/tap-packages/suite/resources/outerloop/outerloop-config.yaml
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:89: unmarshalled file /Users/rkhul/Documents/tap-packages/suite/resources/outerloop/outerloop-config.yaml
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/tapValuesSchema.go:138: getting tap values schema
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/tapValuesSchema.go:162: read tap values schema file /Users/rkhul/Documents/tap-packages/suite/resources/suite/view-tap-values.yaml
+2022/05/18 14:17:50 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/tapValuesSchema.go:172: unmarshalled file /Users/rkhul/Documents/tap-packages/suite/resources/suite/view-tap-values.yaml
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/kubernetes/client/client.go:51: getting external IP for service server in namespace tap-gui
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/kubernetes/client/client.go:62: created new clientset
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/kubernetes/client/client.go:92: found external IP: 20.237.138.19
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/kubectl/kubectl_helpers/kubectl-helper.go:774: Getting current cluster URL
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/utils/linux_util/linux_util.go:36: Command executed: kubectl config view --minify
+2022/05/18 14:17:53 /Users/rkhul/Documents/tap-packages/suite/pkg/utils/linux_util/linux_util.go:41: Output: apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: DATA+OMITTED
+    server: https://view-cluster-rk-dns-be0ce3f7.hcp.westus.azmk8s.io:443
+  name: view-cluster-rk
+contexts:
+- context:
+    cluster: view-cluster-rk
+    user: clusterUser_test-rk_view-cluster-rk
+  name: view-cluster-rk
+current-context: view-cluster-rk
+kind: Config
+preferences: {}
+users:
+- name: clusterUser_test-rk_view-cluster-rk
+  user:
+    client-certificate-data: REDACTED
+    client-key-data: REDACTED
+    token: REDACTED

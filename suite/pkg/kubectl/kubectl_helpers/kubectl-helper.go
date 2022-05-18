@@ -6,6 +6,7 @@ import (
 	"log"
 	"strings"
 	"time"
+	"encoding/base64"
 
 	kubectl_lib "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
@@ -768,3 +769,22 @@ func GetImageDigest(imageName string, namespace string, timeoutInMins int, inter
 	}
 	return imageDigest
 }
+
+func GetCurrentClusterURL() string {
+	log.Printf("Getting current cluster URL")
+	output := kubectl_lib.GetCurrentConfigView()
+	return output.Clusters[0].Cluster.Server
+}
+
+func GetClusterToken(name string, namespace string) string {
+	serviceAccount := kubectl_lib.GetServiceAccountJson(name, namespace)
+	secretName := serviceAccount.Secrets[0].Name
+	getSecrets := kubectl_lib.GetSecrets(secretName, namespace)
+	clusterencodedToken := getSecrets.Data.Token
+	decodedToken, err := base64.StdEncoding.DecodeString(clusterencodedToken)
+	if err != nil {
+		log.Printf("error while decoding token")
+	}
+	return string(decodedToken)
+}
+

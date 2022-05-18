@@ -15,7 +15,7 @@ innerloop:
     build_name_suffix: -build-1
     image_delivery_suffix: -delivery
 package_repository:
-  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.1-build.7
+  image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.1.1-build.3
   name: tanzu-tap-repository
   namespace: tap-install
 non-tanzu-repository:
@@ -36,23 +36,23 @@ tap_registry_secret:
   export: true
   name: tap-registry
   namespace: tap-install
-  password: <TANZUNET-PASSWORD>
-  username: <TANZUNET-USERNAME>
+  password: VMware12345!
+  username: svc.dap-delivery@vmware.com
   registry: dev.registry.tanzu.vmware.com
 registry_credentials_secret:
   export: false
   name: registry-credentials
   namespace: my-apps
-  password: <TANZUNET-PASSWORD>
+  password: VMware12345!
   registry: dev.registry.tanzu.vmware.com
-  username: <TANZUNET-USERNAME>
+  username: svc.dap-delivery@vmware.com
 tap:
   name: tap
   namespace: tap-install
   package_name: tap.tanzu.vmware.com
   poll_timeout: 30m
   values_schema_file: tap-values.yaml
-  version: 1.0.1-build.7
+  version: 1.1.1-build.3
 tanzu-cluster-essentials:
   tanzunet_host: https://network.tanzu.vmware.com
   tanzunet_api_token: <TANZUNET-API-TOKEN>
@@ -62,8 +62,8 @@ tanzu-cluster-essentials:
   download_bundle: tanzu-cluster-essentials-linux-amd64-1.1.0.tgz
   install_bundle: registry.tanzu.vmware.com/tanzu-cluster-essentials/cluster-essentials-bundle@sha256:ab0a3539da241a6ea59c75c0743e9058511d7c56312ea3906178ec0f3491f51d
   install_registry_hostname: registry.tanzu.vmware.com
-  install_registry_username: <TANZUNET-USERNAME>
-  install_registry_password: <TANZUNET-PASSWORD>
+  install_registry_username: svc.dap-delivery@vmware.com
+  install_registry_password: VMware12345!
 git-credentials:
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
@@ -72,3 +72,12 @@ upgrade-versions:
   tap-version: 1.0.2
   upgrade-image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.1.0-build.15
   upgrade-tap-version: 1.1.0-build.15
+multicluster:
+  view-cluster-context: view-cluster-rk
+  view-tap-values-file: view-tap-values.yaml
+  iterate-cluster-context: iterate-cluster-rk
+  iterate-tap-values-file: iterate-tap-values.yaml
+  # build-cluster-context: build-cluster
+  # build-tap-values-file: build-tap-values.yaml
+  # run-cluster-context: run-cluster
+  # run-tap-values-file: run-tap-values.yaml
