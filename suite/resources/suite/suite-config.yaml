@@ -44,8 +44,8 @@ registry_credentials_secret:
   name: registry-credentials
   namespace: my-apps
   password: <TANZUNET-PASSWORD>
-  registry: <TANZUNET-USERNAME>
-  username: svc.dap-delivery@vmware.com
+  registry: dev.registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
 tap:
   name: tap
   namespace: tap-install
