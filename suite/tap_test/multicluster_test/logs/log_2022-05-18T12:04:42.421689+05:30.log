@@ -1,9 +1,0 @@
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:67: getting outerloop config
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:79: read outerloop config file /Users/rkhul/Documents/tap-packages/suite/resources/outerloop/outerloop-config.yaml
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/tap_test/models/outerloopConfig.go:89: unmarshalled file /Users/rkhul/Documents/tap-packages/suite/resources/outerloop/outerloop-config.yaml
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/envfuncs/config-current-context-func.go:15: changing cluster context to view-cluster
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/pkg/utils/linux_util/linux_util.go:36: Command executed: kubectl config use-context view-cluster
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/pkg/utils/linux_util/linux_util.go:38: ERROR : exit status 1
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/pkg/utils/linux_util/linux_util.go:39: OUTPUT : error: no context exists with the name: "view-cluster"
- 
-2022/05/18 12:04:42 /Users/rkhul/Documents/tap-packages/suite/pkg/kubectl/kubectl_libs/kubectl.go:367: error while switching context
