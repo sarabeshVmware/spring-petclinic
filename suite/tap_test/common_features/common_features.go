@@ -526,10 +526,10 @@ func ChangeContext(t *testing.T, clusterContext string) features.Feature {
 
 			_, err := kubectl_libs.UseContext(clusterContext)
 			if err != nil {
-				t.Errorf("error while loging in server %s", clusterContext)
+				t.Errorf("error while changing context to %s", clusterContext)
 				t.FailNow()
 			} else {
-				t.Logf("context change failure for %s", clusterContext)
+				t.Logf("context changed to %s", clusterContext)
 			}
 
 			return ctx
@@ -551,7 +551,7 @@ func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace s
 }
 
 
-func GenerateAcceleratorProject(t *testing.T, name string, namespace string) features.Feature {
+func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature {
 	return features.New("generate-acc-project-and-unzip").
 		Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, accNamespace := "acc-server", "accelerator-system"
@@ -581,9 +581,8 @@ func GenerateAcceleratorProject(t *testing.T, name string, namespace string) fea
 			return ctx
 		}).
 		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			project := "tanzu-java-web-app"
-			zipFile := project + ".zip"
-	
+			project := filepath.Join(rootDir, "tanzu-java-web-app")
+			zipFile := "tanzu-java-web-app" + ".zip"
 			t.Logf("listing existing project files if exists")
 			output, err := linux_util.ExecuteCmd(fmt.Sprintf("ls -lt %s", project))
 			t.Logf("command executed: ls -lt %s. output %s", project, output)
@@ -598,7 +597,7 @@ func GenerateAcceleratorProject(t *testing.T, name string, namespace string) fea
 			}
 	
 			t.Logf("unzipping file %s", zipFile)
-			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s", zipFile))
+			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s -d %s", zipFile, rootDir))
 			t.Logf("command executed: unzip %s. output %s", zipFile, output)
 			if err != nil {
 				t.Error(fmt.Errorf("error while unzip accelerator project zip file %s: %w: %s", zipFile, err, output))

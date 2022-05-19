@@ -773,6 +773,10 @@ func GetImageDigest(imageName string, namespace string, timeoutInMins int, inter
 func GetCurrentClusterURL() string {
 	log.Printf("Getting current cluster URL")
 	output := kubectl_lib.GetCurrentConfigView()
+	//log.Printf("output: %v", output)
+	log.Printf("output_clusters: %v", output.Clusters[0].Cluster.Server)
+
+	//log.Printf("output_clusters_server: %v", output.Clusters[0].Cluster.Server)
 	return output.Clusters[0].Cluster.Server
 }
 

@@ -11,11 +11,10 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	//"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs"
+	//"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
-	// "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	//"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
 	"sigs.k8s.io/e2e-framework/pkg/features"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
@@ -54,8 +53,8 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 			// switch to iterate cluster
 			kubectl_libs.UseContext(suiteConfig.Multicluster.IterateClusterContext)
 			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].URL = kubectl_helper.GetCurrentClusterURL()
-			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
-			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
+			// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
+			// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
 			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].ServiceAccountToken = kubectl_helper.GetClusterToken("tap-gui-viewer", "tap-gui")
 			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].SkipTLSVerify = true
 			
@@ -69,6 +68,7 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 				t.Log("created tempfile")
 			}
 			defer os.Remove(tempFile.Name())
+			
 
 			// write the updated schema to the temporary file
 			err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
@@ -80,7 +80,7 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 			}
 			// switch to view cluster
 			kubectl_libs.UseContext(suiteConfig.Multicluster.ViewClusterContext)
-			// update tap
+			//update tap
 			err = tanzuCmds.TanzuUpdatePackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, tempFile.Name())
 			if err != nil {
 				t.Error("error while updating tap")
@@ -95,24 +95,25 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 
 	testenv.Test(t,
 		updateTap,
-		// common_features.GenerateAcceleratorProject(t, suiteConfig.Tap.Namespace)
-		// // switch to iterate cluster
-		// common_features.ChangeContext(t, suiteConfig.Multicluster.IterateClusterContext),
-		// common_features.UpdateTanzuJavaWebAppTiltFile(t, suiteConfig.Innerloop.Workload.Name),
-		// common_features.TiltUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
-		// common_features.VerifyTanzuJavaWebAppImageRepository(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
-		// common_features.VerifyTanzuJavaWebAppBuildStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.BuildNameSuffix, suiteConfig.Innerloop.Workload.Namespace)
-		// common_features.VerifyTanzuJavaWebAppImagesKpacStatus(t, suiteConfig.Innerloop.Workload.Namespace)
-		// common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name,  suiteConfig.Innerloop.Workload.Namespace),
-		// common_features.VerifyTanzuJavaWebAppImageRepositoryDelivery(t, uiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.ImageDeliverySuffix, suiteConfig.Innerloop.Workload.Namespace),
-		// common_features.VerifyTanzuJavaWebAppRevisionStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
-		// common_features.VerifyTanzuJavaWebAppKsvcStatus(, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
-		// common_features.VerifyTanzuWorkloadStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
-		// common_features.VerifyWorkloadResponse(t, suiteConfig.Innerloop.Workload.URL, suiteConfig.Innerloop.Workload.OriginalString),
-		// common_features.ReplaceStringInFile(t, suiteConfig.Innerloop.Workload.OriginalString, suiteConfig.Innerloop.Workload.NewString, suiteConfig.Innerloop.Workload.ApplicationFilePath, suiteConfig.Innerloop.Workload.Name),
-		// common_features.VerifyWorkloadResponse(t, suiteConfig.Innerloop.Workload.URL, suiteConfig.Innerloop.Workload.NewString, ""),
-		// common_features.VerifyTanzuJavaWebAppDeliverable(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
-		// cleanup,
+		common_features.ChangeContext(t, suiteConfig.Multicluster.ViewClusterContext),
+		common_features.GenerateAcceleratorProject(t, suiteConfig.Tap.Namespace),
+		// switch to iterate cluster
+		common_features.ChangeContext(t, suiteConfig.Multicluster.IterateClusterContext),
+		common_features.UpdateTanzuJavaWebAppTiltFile(t, suiteConfig.Innerloop.Workload.Name),
+		common_features.TiltUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppImageRepository(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppBuildStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.BuildNameSuffix, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppImagesKpacStatus(t, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name,  suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppImageRepositoryDelivery(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.ImageDeliverySuffix, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppRevisionStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppKsvcStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuWorkloadStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyWorkloadResponse(t, suiteConfig.Innerloop.Workload.URL, suiteConfig.Innerloop.Workload.OriginalString, ""),
+		common_features.ReplaceStringInFile(t, suiteConfig.Innerloop.Workload.OriginalString, suiteConfig.Innerloop.Workload.NewString, suiteConfig.Innerloop.Workload.ApplicationFilePath, suiteConfig.Innerloop.Workload.Name),
+		common_features.VerifyWorkloadResponse(t, suiteConfig.Innerloop.Workload.URL, suiteConfig.Innerloop.Workload.NewString, ""),
+		common_features.VerifyTanzuJavaWebAppDeliverable(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.InnerloopCleanUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
 	)
 	t.Log("************** TestCase END: TestMulticlusterInnerloopBasicSupplychainLocalSource **************")
 }

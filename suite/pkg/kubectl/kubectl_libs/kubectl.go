@@ -370,39 +370,83 @@ func UseContext(context string) (string, error) {
 }
 
 
-type CurrentConfigViewOutput struct {
-	APIVersion string `yaml:"apiVersion"`
-	Clusters   []struct {
+// type CurrentConfigViewOutput struct {
+// 	APIVersion string `yaml:"apiVersion"`
+// 	Clusters   []struct {
+// 		Cluster struct {
+// 			CertificateAuthorityData string `yaml:"certificate-authority-data"`
+// 			Server                   string `yaml:"server"`
+// 		} `yaml:"cluster"`
+// 		Name string `yaml:"name"`
+// 	} `yaml:"clusters"`
+// 	Contexts []struct {
+// 		Context struct {
+// 			Cluster string `yaml:"cluster"`
+// 			User    string `yaml:"user"`
+// 		} `yaml:"context"`
+// 		Name string `yaml:"name"`
+// 	} `yaml:"contexts"`
+// 	CurrentContext string `yaml:"current-context"`
+// 	Kind           string `yaml:"kind"`
+// 	Preferences    struct {
+// 	} `yaml:"preferences"`
+// 	Users []struct {
+// 		Name string `yaml:"name"`
+// 		User struct {
+// 			ClientCertificateData string `yaml:"client-certificate-data"`
+// 			ClientKeyData         string `yaml:"client-key-data"`
+// 			Token                 string `yaml:"token"`
+// 		} `yaml:"user"`
+// 	} `yaml:"users"`
+// }
+
+// func GetCurrentConfigView() *CurrentConfigViewOutput {
+// 	var raw *CurrentConfigViewOutput
+// 	cmd := fmt.Sprintf("kubectl config view --minify")
+// 	res, err := linux_util.ExecuteCmd(cmd)
+// 	if err != nil {
+// 		return raw
+// 	}
+// 	in := []byte(res)
+// 	if err := json.Unmarshal(in, &raw); err != nil {
+// 		panic(err)
+// 	}
+// 	return raw
+// }
+
+type ConfigViewJsonOutput struct {
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Preferences struct {
+	} `json:"preferences"`
+	Clusters []struct {
+		Name    string `json:"name"`
 		Cluster struct {
-			CertificateAuthorityData string `yaml:"certificate-authority-data"`
-			Server                   string `yaml:"server"`
-		} `yaml:"cluster"`
-		Name string `yaml:"name"`
-	} `yaml:"clusters"`
-	Contexts []struct {
-		Context struct {
-			Cluster string `yaml:"cluster"`
-			User    string `yaml:"user"`
-		} `yaml:"context"`
-		Name string `yaml:"name"`
-	} `yaml:"contexts"`
-	CurrentContext string `yaml:"current-context"`
-	Kind           string `yaml:"kind"`
-	Preferences    struct {
-	} `yaml:"preferences"`
+			Server                   string `json:"server"`
+			CertificateAuthorityData string `json:"certificate-authority-data"`
+		} `json:"cluster"`
+	} `json:"clusters"`
 	Users []struct {
-		Name string `yaml:"name"`
+		Name string `json:"name"`
 		User struct {
-			ClientCertificateData string `yaml:"client-certificate-data"`
-			ClientKeyData         string `yaml:"client-key-data"`
-			Token                 string `yaml:"token"`
-		} `yaml:"user"`
-	} `yaml:"users"`
+			ClientCertificateData string `json:"client-certificate-data"`
+			ClientKeyData         string `json:"client-key-data"`
+			Token                 string `json:"token"`
+		} `json:"user"`
+	} `json:"users"`
+	Contexts []struct {
+		Name    string `json:"name"`
+		Context struct {
+			Cluster string `json:"cluster"`
+			User    string `json:"user"`
+		} `json:"context"`
+	} `json:"contexts"`
+	CurrentContext string `json:"current-context"`
 }
 
-func GetCurrentConfigView() *CurrentConfigViewOutput {
-	var raw *CurrentConfigViewOutput
-	cmd := fmt.Sprintf("kubectl config view --minify")
+func GetCurrentConfigView() *ConfigViewJsonOutput {
+	var raw *ConfigViewJsonOutput
+	cmd := "kubectl config view --minify -o json"
 	res, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		return raw
