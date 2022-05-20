@@ -420,13 +420,13 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 			t.Log("getting external ip and checking for string")
 
 			// get external IP
-			url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
-			if err != nil {
-				t.Error("error while getting external IP")
-				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
-			} else {
-				t.Log("external IP retrieved")
-			}
+			url := kubectl_helpers.GetServiceExternalIP("envoy", "tanzu-system-ingress", 2, 30)
+			// if err != nil {
+			// 	t.Error("error while getting external IP")
+			// 	t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			// } else {
+			// 	t.Log("external IP retrieved")
+			// }
 
 			if relativePath != "" {
 				url = fmt.Sprintf("%s/%s", url, relativePath)
@@ -523,7 +523,7 @@ func DockerLogin(t *testing.T, server string, username string, password string) 
 func ChangeContext(t *testing.T, clusterContext string) features.Feature {
 	return features.New("changing cluster context").
 		Assess(fmt.Sprintf("changing cluster context to %s", clusterContext), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
-
+		
 			_, err := kubectl_libs.UseContext(clusterContext)
 			if err != nil {
 				t.Errorf("error while changing context to %s", clusterContext)
@@ -531,7 +531,6 @@ func ChangeContext(t *testing.T, clusterContext string) features.Feature {
 			} else {
 				t.Logf("context changed to %s", clusterContext)
 			}
-
 			return ctx
 		}).Feature()
 }
@@ -556,11 +555,11 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 		Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, accNamespace := "acc-server", "accelerator-system"
 			t.Logf("getting external ip for %s (namespace %s)", service, accNamespace)
-			serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig(), 2, 30)
-			if err != nil {
-				t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
-				t.FailNow()
-			}
+			serviceExternalIp := kubectl_helpers.GetServiceExternalIP(service, accNamespace, 2, 30)
+			// if err != nil {
+			// 	t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
+			// 	t.FailNow()
+			// }
 			t.Logf("external ip for %s (namespace %s): %s", "server", accNamespace, serviceExternalIp)
 			t.Logf("sleeping for 1 minute before generating project")
 			t.Logf("generating tanzu java web app accelerator project")

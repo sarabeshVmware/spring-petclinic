@@ -1,6 +1,10 @@
 profile: view
 ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
 
+accelerator:
+    server:
+        service_type: ClusterIP
+        
 contour:
   envoy:
     service:
@@ -12,24 +16,24 @@ learningcenter:
 tap_gui:
   service_type: LoadBalancer
   ingressEnabled: false
-  app_config:
-    app:
-      baseUrl: 
-    backend:
-      baseUrl: 
-      cors:
-        origin: 
-    kubernetes:
-      serviceLocatorMethod:
-        type: 'multiTenant'
-      clusterLocatorMethods:
-        - type: 'config'
-          clusters:
-            - url: 
-              name: iterate-cluster
-              authProvider: serviceAccount
-              serviceAccountToken: 
-              skipTLSVerify: true
+  # app_config:
+  #   app:
+  #     baseUrl: 
+  #   backend:
+  #     baseUrl: 
+  #     cors:
+  #       origin: 
+  #   kubernetes:
+  #     serviceLocatorMethod:
+  #       type: 'multiTenant'
+  #     clusterLocatorMethods:
+  #       - type: 'config'
+  #         clusters:
+  #           - url: 
+  #             name: iterate-cluster
+  #             authProvider: serviceAccount
+  #             serviceAccountToken: 
+  #             skipTLSVerify: true
 
 metadata_store:
   app_service_type: LoadBalancer # (optional) Defaults to LoadBalancer. Change to NodePort for distributions that don't support LoadBalancer

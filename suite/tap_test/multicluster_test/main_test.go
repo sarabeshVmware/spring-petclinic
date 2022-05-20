@@ -36,7 +36,7 @@ func TestMain(m *testing.M) {
 	outerloopConfig, _ = models.GetOuterloopConfig()
 
 	developerNamespaceFile := filepath.Join(suiteResourcesDir, "developer-namespace.yaml")
-	tapGuiViewerServiceAccountFile := filepath.Join(suiteResourcesDir, "tap-gui-viewer-service-account-rbac.yaml")
+	//tapGuiViewerServiceAccountFile := filepath.Join(suiteResourcesDir, "tap-gui-viewer-service-account-rbac.yaml")
 	// setup
 	testenv.Setup(
 		envfuncs.UseContext(suiteConfig.Multicluster.ViewClusterContext),
@@ -84,7 +84,7 @@ func TestMain(m *testing.M) {
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
 		envfuncs.CreateClusterRoleBinding(),
-		envfuncs.CreateTapGuiViewerServiceAccount(tapGuiViewerServiceAccountFile),
+		//envfuncs.CreateTapGuiViewerServiceAccount(tapGuiViewerServiceAccountFile),
 
 	)
 

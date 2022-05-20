@@ -792,3 +792,24 @@ func GetClusterToken(name string, namespace string) string {
 	return string(decodedToken)
 }
 
+func GetServiceExternalIP(service string, namespace string, timeoutInMins int, intervalInSeconds int) string {
+	log.Printf("Get external IP of service %s in namespace: %s", service, namespace)
+
+	finalTimeout := timeoutInMins * 60
+	externalIP := ""
+	for finalTimeout > 0 {
+		svc := kubectl_lib.GetServices(service, namespace)
+		if svc[0].EXTERNAL_IP == "" || svc[0].EXTERNAL_IP == "<none>" {
+			log.Print("External IP is not found")
+		} else {
+			return svc[0].EXTERNAL_IP
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if externalIP == "" {
+		log.Printf("External IP not generated for service %s in namespace %s", service, namespace)
+	}
+	return externalIP
+}

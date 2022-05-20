@@ -6,17 +6,14 @@ import (
 	"context"
 	"io/ioutil"
 	"os"
-	"fmt"
 	 "testing"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	//"gitlab.eng.vmware.com/tap/tap-packages/suite/envfuncs
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
-	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	//"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
 	"sigs.k8s.io/e2e-framework/pkg/features"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
 )
 
@@ -38,29 +35,22 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 			t.Log("switched cluster")
 			tapValuesSchema.Profile = "view"
 			tapValuesSchema.Accelerator.Server.ServiceType = "LoadBalancer"
-			tapGuiExternalIP, err := client.GetServiceExternalIP("server", "tap-gui", cfg.Client().RESTConfig(), 2, 30)
-			if err != nil {
-				t.Error("error while getting external IP")
-				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
-			} else {
-				t.Log("external IP retrieved")
-			}
-			// tapGuiExternalIP := kubectl_helpers.GetServiceExternalIP("server", "tap-gui", 2, 30)
-			tapGuiUrl := fmt.Sprintf("http://%s:7000", tapGuiExternalIP)
-			tapValuesSchema.TapGui.AppConfig.Backend.BaseURL = tapGuiUrl
-			tapValuesSchema.TapGui.AppConfig.Backend.Cors.Origin = tapGuiUrl
-			tapValuesSchema.TapGui.AppConfig.App.BaseURL = tapGuiUrl
-			// switch to iterate cluster
-			kubectl_libs.UseContext(suiteConfig.Multicluster.IterateClusterContext)
-			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].URL = kubectl_helper.GetCurrentClusterURL()
-			// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
-			// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
-			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].ServiceAccountToken = kubectl_helper.GetClusterToken("tap-gui-viewer", "tap-gui")
-			tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].SkipTLSVerify = true
+	// 		tapGuiExternalIP := kubectl_helpers.GetServiceExternalIP("server", "tap-gui", 2, 30)
+	// 		tapGuiUrl := fmt.Sprintf("http://%s:7000", tapGuiExternalIP)
+	// 		tapValuesSchema.TapGui.AppConfig.Backend.BaseURL = tapGuiUrl
+	// 		tapValuesSchema.TapGui.AppConfig.Backend.Cors.Origin = tapGuiUrl
+	// 		tapValuesSchema.TapGui.AppConfig.App.BaseURL = tapGuiUrls
+	// 		// switch to iterate cluster
+	// 		kubectl_libs.UseContext(suiteConfig.Multicluster.IterateClusterContext)
+	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].URL = kubectl_helper.GetCurrentClusterURL()
+	// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
+	// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
+	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].ServiceAccountToken = kubectl_helper.GetClusterToken("tap-gui-viewer", "tap-gui")
+	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].SkipTLSVerify = true
 			
-			// create temporary file
+	// 		// create temporary file
 			t.Log("creating tempfile for tap values schema")
-			tempFile, err := ioutil.TempFile("", "tap-values*.yaml")
+			tempFile, err := ioutil.TempFile("", "view-tap-values*.yaml")
 			if err != nil {
 				t.Error("error while creating tempfile for tap values schema")
 				t.FailNow()
@@ -95,9 +85,10 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 
 	testenv.Test(t,
 		updateTap,
+		// Switch to View cluster
 		common_features.ChangeContext(t, suiteConfig.Multicluster.ViewClusterContext),
 		common_features.GenerateAcceleratorProject(t, suiteConfig.Tap.Namespace),
-		// switch to iterate cluster
+		// switch to Iterate cluster
 		common_features.ChangeContext(t, suiteConfig.Multicluster.IterateClusterContext),
 		common_features.UpdateTanzuJavaWebAppTiltFile(t, suiteConfig.Innerloop.Workload.Name),
 		common_features.TiltUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
@@ -113,7 +104,7 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 		common_features.ReplaceStringInFile(t, suiteConfig.Innerloop.Workload.OriginalString, suiteConfig.Innerloop.Workload.NewString, suiteConfig.Innerloop.Workload.ApplicationFilePath, suiteConfig.Innerloop.Workload.Name),
 		common_features.VerifyWorkloadResponse(t, suiteConfig.Innerloop.Workload.URL, suiteConfig.Innerloop.Workload.NewString, ""),
 		common_features.VerifyTanzuJavaWebAppDeliverable(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
-		common_features.InnerloopCleanUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace)
+		common_features.InnerloopCleanUp(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 	)
 	t.Log("************** TestCase END: TestMulticlusterInnerloopBasicSupplychainLocalSource **************")
 }

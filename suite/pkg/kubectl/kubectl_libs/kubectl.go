@@ -457,3 +457,50 @@ func GetCurrentConfigView() *ConfigViewJsonOutput {
 	}
 	return raw
 }
+
+type GetServicesOutput struct {
+	NAMESPACE, NAME, TYPE, CLUSTER_IP, EXTERNAL_IP, PORTS, AGE string
+}
+
+func GetServices(name string, namespace string) []GetServicesOutput {
+	services := []GetServicesOutput{}
+	cmd := "kubectl get services"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return services
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return services
+	}
+
+	ss := linux_util.FieldIndicesWithSingleSpace(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, "-", "_")
+		headers[index] = strings.ReplaceAll(headers[index], "(", "")
+		headers[index] = strings.ReplaceAll(headers[index], ")", "")
+	}
+
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var service GetServicesOutput
+		for index, value := range words {
+			reflect.ValueOf(&service).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		services = append(services, service)
+	}
+
+	fmt.Printf("services: %+v\n", services)
+	return services
+}
