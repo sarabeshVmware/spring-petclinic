@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"sigs.k8s.io/e2e-framework/pkg/env"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
@@ -60,6 +61,8 @@ func CheckIfPackageRepositoryReconciled(name string, namespace string, recursive
 				time.Sleep(time.Duration(secondsGap) * time.Second)
 			} else if packageRepositoryStatus == "Reconcile succeeded" {
 				log.Printf("package repository %s reconcilation succeeded", name)
+				log.Printf("listing packages in repo")
+				tanzu_libs.ListAllAvailablePackages(namespace)
 				return ctx, nil
 			} else if packageRepositoryStatus == "Reconcile Failed" {
 				return ctx, fmt.Errorf("package repository %s reconcilation failed", name)
