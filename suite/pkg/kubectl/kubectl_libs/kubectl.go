@@ -369,51 +369,6 @@ func UseContext(context string) (string, error) {
 	return res, err
 }
 
-
-// type CurrentConfigViewOutput struct {
-// 	APIVersion string `yaml:"apiVersion"`
-// 	Clusters   []struct {
-// 		Cluster struct {
-// 			CertificateAuthorityData string `yaml:"certificate-authority-data"`
-// 			Server                   string `yaml:"server"`
-// 		} `yaml:"cluster"`
-// 		Name string `yaml:"name"`
-// 	} `yaml:"clusters"`
-// 	Contexts []struct {
-// 		Context struct {
-// 			Cluster string `yaml:"cluster"`
-// 			User    string `yaml:"user"`
-// 		} `yaml:"context"`
-// 		Name string `yaml:"name"`
-// 	} `yaml:"contexts"`
-// 	CurrentContext string `yaml:"current-context"`
-// 	Kind           string `yaml:"kind"`
-// 	Preferences    struct {
-// 	} `yaml:"preferences"`
-// 	Users []struct {
-// 		Name string `yaml:"name"`
-// 		User struct {
-// 			ClientCertificateData string `yaml:"client-certificate-data"`
-// 			ClientKeyData         string `yaml:"client-key-data"`
-// 			Token                 string `yaml:"token"`
-// 		} `yaml:"user"`
-// 	} `yaml:"users"`
-// }
-
-// func GetCurrentConfigView() *CurrentConfigViewOutput {
-// 	var raw *CurrentConfigViewOutput
-// 	cmd := fmt.Sprintf("kubectl config view --minify")
-// 	res, err := linux_util.ExecuteCmd(cmd)
-// 	if err != nil {
-// 		return raw
-// 	}
-// 	in := []byte(res)
-// 	if err := json.Unmarshal(in, &raw); err != nil {
-// 		panic(err)
-// 	}
-// 	return raw
-// }
-
 type ConfigViewJsonOutput struct {
 	Kind        string `json:"kind"`
 	APIVersion  string `json:"apiVersion"`
