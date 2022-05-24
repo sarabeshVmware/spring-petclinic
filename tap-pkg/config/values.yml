@@ -89,6 +89,9 @@ source_controller: {}
 #@schema/type any=True
 tekton_pipelines: {}
 
+#@schema/type any=True
+appsso: {}
+
 package_overlays:
 - name: ""
   secrets:
