@@ -58,15 +58,15 @@ def _merge_ingress_values(pkg_values, ingress_values):
 end
 
 profiles = struct.make(
-	full=_full_profile,
+  full=_full_profile,
   light=_light_profile,
-	iterate=_iterate_profile,
-	build=_build_profile,
-	run=_run_profile,
+  iterate=_iterate_profile,
+  build=_build_profile,
+  run=_run_profile,
   view=_view_profile,
 
-	is_any_enabled=_is_any_enabled,
-	is_enabled=_is_enabled,
-	is_pkg_enabled=_is_pkg_enabled,
-    merge_ingress_values=_merge_ingress_values,
+  is_any_enabled=_is_any_enabled,
+  is_enabled=_is_enabled,
+  is_pkg_enabled=_is_pkg_enabled,
+  merge_ingress_values=_merge_ingress_values,
 )
