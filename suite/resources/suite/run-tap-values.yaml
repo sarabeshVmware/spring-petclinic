@@ -1,0 +1,9 @@
+profile: run
+ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
+ootb_delivery_basic:
+  service_account: default
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer #NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing

@@ -572,6 +572,29 @@ func ValidateDeliverables(name string, namespace string, timeoutInMins int, inte
 	return result
 }
 
+func ValidateBuildClusterDeliverableStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating deliverable %s in namespace %s", name, namespace)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		deliverables := kubectl_lib.GetDeliverables(name, namespace)
+		if len(deliverables) < 1 {
+			log.Println("Deliverable is not ready yet")
+		} else if deliverables[0].READY == "False" && deliverables[0].REASON == "DeliveryNotFound" {
+			log.Printf("Deliverable %s is %s", deliverables[0].NAME, deliverables[0].READY)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Deliverable is not ready after %d mins", timeoutInMins)
+	}
+	return result
+}
+
 type Secrets struct {
 	Name string `json:"name"`
 }
@@ -767,4 +790,27 @@ func GetImageDigest(imageName string, namespace string, timeoutInMins int, inter
 		finalTimeout -= intervalInSeconds
 	}
 	return imageDigest
+}
+
+func CheckDeploymentExists(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating deployment exists, name: %s, namespace: %s", name, namespace)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		deployment := kubectl_lib.GetDeployments(name, namespace)
+		if len(deployment) <= 0 {
+			log.Println("Deployment not created yet")
+		} else if deployment[0].NAME == name {
+			log.Println("Deployment created successfully")
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("Deployment not created after %d mins", timeoutInMins)
+	}
+	return result
 }

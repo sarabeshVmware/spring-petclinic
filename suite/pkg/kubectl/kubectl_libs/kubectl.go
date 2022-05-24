@@ -355,3 +355,78 @@ func GetCurrentContext() string {
 	}
 	return clusterName
 }
+
+func UseContext(context string) (string, error) {
+	cmd := fmt.Sprintf("kubectl config use-context %s", context)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while switching context")
+	}
+	return res, err
+}
+
+func KubectlApplyConfiguration(file string, namespace string) error {
+	log.Printf("applying configuration %s in namespace %s", file, namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("kubectl apply -f %s", file)
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	}
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while applying configuration %s in namespace %s", file, namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("configuration %s applied in namespace %s", file, namespace)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
+
+type GetDeploymentsOutput struct {
+	NAMESPACE, NAME, READY, UP_TO_DATE, AVAILABLE, AGE string
+}
+
+func GetDeployments(deploymentName string, namespace string) []GetDeploymentsOutput {
+	deployments := []GetDeploymentsOutput{}
+	cmd := "kubectl get deployments"
+	if deploymentName != "" {
+		cmd += fmt.Sprintf(" %s", deploymentName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return deployments
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return deployments
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, "-", "_")
+	}
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var deployment GetDeploymentsOutput
+		for index, value := range words {
+			reflect.ValueOf(&deployment).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		deployments = append(deployments, deployment)
+	}
+
+	fmt.Printf("deployments: %+v\n", deployments)
+	return deployments
+}
