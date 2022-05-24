@@ -1,0 +1,76 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: sso.apps.tanzu.vmware.com.1.0.0-build.3
+spec:
+  version: 1.0.0-build.3
+  licenses:
+    - VMWARE END USER LICENSE AGREEMENT
+  refName: sso.apps.tanzu.vmware.com
+  releasedAt: "2022-05-23T08:35:53Z"
+  template:
+    spec:
+      deploy:
+        - kapp: {}
+      fetch:
+        - imgpkgBundle:
+            image: dev.registry.tanzu.vmware.com/sso-for-kubernetes/sso4k8s-carvel-package@sha256:88b6ddd6cb5e94ce11bf47b05745b12c85569318010a316aedefe3d584a5bd84
+      template:
+        - ytt:
+            paths:
+              - config/
+        - kbld:
+            paths:
+              - '-'
+              - .imgpkg/images.yml
+  valuesSchema:
+    openAPIv3:
+      additionalProperties: false
+      properties:
+        extra:
+          default: {}
+          description: '[ADVANCED] A schema-free extension point for optional, additional configuration'
+          nullable: true
+        replicas:
+          default: 1
+          description: Number of operator replicas to deploy
+          type: integer
+        resources:
+          additionalProperties: false
+          description: Resource requirements the operator deployment
+          properties:
+            limits:
+              additionalProperties: false
+              properties:
+                cpu:
+                  default: 500m
+                  description: CPU limit of the operator
+                  type: string
+                memory:
+                  default: 128Mi
+                  description: Memory limit of the operator
+                  type: string
+              type: object
+            requests:
+              additionalProperties: false
+              properties:
+                cpu:
+                  default: 10m
+                  description: CPU request of the operator
+                  type: string
+                memory:
+                  default: 64Mi
+                  description: Memory request of the operator
+                  type: string
+              type: object
+          type: object
+        resync_period:
+          default: 2h
+          description: '[ADVANCED] Interval at which the operator will re-synchronize applied resources'
+          type: string
+        webhooks_enabled:
+          default: true
+          description: Whether to enable webhooks for CRDs
+          type: boolean
+      type: object
