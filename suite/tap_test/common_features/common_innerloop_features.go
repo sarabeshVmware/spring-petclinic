@@ -90,7 +90,7 @@ func TiltUp(t *testing.T, workloadName string, namespace string) features.Featur
 func UpdateTanzuJavaWebAppTiltFile(t *testing.T, workloadName string) features.Feature {
 	return features.New("update-allow-context-tilt").
 		Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			tiltFile := filepath.Join(rootDir, workloadName, "/Tiltfile")
+			tiltFile := filepath.Join(rootDir, workloadName, "Tiltfile")
 			newLine := "allow_k8s_contexts(k8s_context())"
 			t.Logf("Appending Line %s in tilt file %s", newLine, tiltFile)
 			file, err := os.OpenFile(tiltFile, os.O_APPEND|os.O_WRONLY, 0644)

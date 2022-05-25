@@ -419,13 +419,13 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 			t.Log("getting external ip and checking for string")
 
 			// get external IP
-			url, err := client.GetServiceExternalIP("envoy", "tanzu-system-ingress", cfg.Client().RESTConfig(), 2, 30)
-			if err != nil {
-				t.Error("error while getting external IP")
-				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
-			} else {
-				t.Log("external IP retrieved")
-			}
+			url := kubectl_helpers.GetServiceExternalIP("envoy", "tanzu-system-ingress", 2, 30)
+			// if err != nil {
+			// 	t.Error("error while getting external IP")
+			// 	t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			// } else {
+			// 	t.Log("external IP retrieved")
+			// }
 
 			if relativePath != "" {
 				url = fmt.Sprintf("%s/%s", url, relativePath)
@@ -686,16 +686,16 @@ func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace s
 		}).Feature()
 }
 
-func GenerateAcceleratorProject(t *testing.T, name string, namespace string) features.Feature {
+func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature {
 	return features.New("generate-acc-project-and-unzip").
 		Assess("generate-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			service, accNamespace := "acc-server", "accelerator-system"
 			t.Logf("getting external ip for %s (namespace %s)", service, accNamespace)
-			serviceExternalIp, err := client.GetServiceExternalIP(service, accNamespace, cfg.Client().RESTConfig(), 2, 30)
-			if err != nil {
-				t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
-				t.FailNow()
-			}
+			serviceExternalIp := kubectl_helpers.GetServiceExternalIP(service, accNamespace, 2, 30)
+			// if err != nil {
+			// 	t.Error(fmt.Errorf("error while getting external ip for %s (namespace %s): %w", service, accNamespace, err))
+			// 	t.FailNow()
+			// }
 			t.Logf("external ip for %s (namespace %s): %s", "server", accNamespace, serviceExternalIp)
 			t.Logf("sleeping for 1 minute before generating project")
 			t.Logf("generating tanzu java web app accelerator project")
@@ -733,7 +733,7 @@ func GenerateAcceleratorProject(t *testing.T, name string, namespace string) fea
 			}
 
 			t.Logf("unzipping file %s", zipFile)
-			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s", zipFile))
+			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s -d %s", zipFile, rootDir))
 			t.Logf("command executed: unzip %s. output %s", zipFile, output)
 			if err != nil {
 				t.Error(fmt.Errorf("error while unzip accelerator project zip file %s: %w: %s", zipFile, err, output))

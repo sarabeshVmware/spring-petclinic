@@ -361,58 +361,6 @@ func GetCurrentContext() string {
 	return clusterName
 }
 
-func UseContext(context string) (string, error) {
-	cmd := fmt.Sprintf("kubectl config use-context %s", context)
-	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil {
-		log.Printf("error while switching context")
-	}
-	return res, err
-}
-
-type CurrentConfigViewOutput struct {
-	APIVersion string `yaml:"apiVersion"`
-	Clusters   []struct {
-		Cluster struct {
-			CertificateAuthorityData string `yaml:"certificate-authority-data"`
-			Server                   string `yaml:"server"`
-		} `yaml:"cluster"`
-		Name string `yaml:"name"`
-	} `yaml:"clusters"`
-	Contexts []struct {
-		Context struct {
-			Cluster string `yaml:"cluster"`
-			User    string `yaml:"user"`
-		} `yaml:"context"`
-		Name string `yaml:"name"`
-	} `yaml:"contexts"`
-	CurrentContext string `yaml:"current-context"`
-	Kind           string `yaml:"kind"`
-	Preferences    struct {
-	} `yaml:"preferences"`
-	Users []struct {
-		Name string `yaml:"name"`
-		User struct {
-			ClientCertificateData string `yaml:"client-certificate-data"`
-			ClientKeyData         string `yaml:"client-key-data"`
-			Token                 string `yaml:"token"`
-		} `yaml:"user"`
-	} `yaml:"users"`
-}
-
-func GetCurrentConfigView() *CurrentConfigViewOutput {
-	var raw *CurrentConfigViewOutput
-	cmd := fmt.Sprintf("kubectl config view --minify")
-	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil {
-		return raw
-	}
-	in := []byte(res)
-	if err := json.Unmarshal(in, &raw); err != nil {
-		panic(err)
-	}
-	return raw
-}
 func KubectlApplyConfiguration(file string, namespace string) error {
 	log.Printf("applying configuration %s in namespace %s", file, namespace)
 
@@ -477,4 +425,104 @@ func GetDeployments(deploymentName string, namespace string) []GetDeploymentsOut
 
 	fmt.Printf("deployments: %+v\n", deployments)
 	return deployments
+}
+
+func UseContext(context string) (string, error) {
+	cmd := fmt.Sprintf("kubectl config use-context %s", context)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while switching context")
+	}
+	return res, err
+}
+
+type ConfigViewJsonOutput struct {
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Preferences struct {
+	} `json:"preferences"`
+	Clusters []struct {
+		Name    string `json:"name"`
+		Cluster struct {
+			Server                   string `json:"server"`
+			CertificateAuthorityData string `json:"certificate-authority-data"`
+		} `json:"cluster"`
+	} `json:"clusters"`
+	Users []struct {
+		Name string `json:"name"`
+		User struct {
+			ClientCertificateData string `json:"client-certificate-data"`
+			ClientKeyData         string `json:"client-key-data"`
+			Token                 string `json:"token"`
+		} `json:"user"`
+	} `json:"users"`
+	Contexts []struct {
+		Name    string `json:"name"`
+		Context struct {
+			Cluster string `json:"cluster"`
+			User    string `json:"user"`
+		} `json:"context"`
+	} `json:"contexts"`
+	CurrentContext string `json:"current-context"`
+}
+
+func GetCurrentConfigView() *ConfigViewJsonOutput {
+	var raw *ConfigViewJsonOutput
+	cmd := "kubectl config view --minify -o json"
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
+}
+
+type GetServicesOutput struct {
+	NAMESPACE, NAME, TYPE, CLUSTER_IP, EXTERNAL_IP, PORTS, AGE string
+}
+
+func GetServices(name string, namespace string) []GetServicesOutput {
+	services := []GetServicesOutput{}
+	cmd := "kubectl get services"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return services
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return services
+	}
+
+	ss := linux_util.FieldIndicesWithSingleSpace(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for index, ele := range headers {
+		headers[index] = strings.ReplaceAll(ele, "-", "_")
+		headers[index] = strings.ReplaceAll(headers[index], "(", "")
+		headers[index] = strings.ReplaceAll(headers[index], ")", "")
+	}
+
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var service GetServicesOutput
+		for index, value := range words {
+			reflect.ValueOf(&service).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		services = append(services, service)
+	}
+
+	fmt.Printf("services: %+v\n", services)
+	return services
 }

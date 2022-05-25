@@ -1,6 +1,10 @@
 profile: view
 ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
 
+accelerator:
+    server:
+        service_type: ClusterIP
+        
 contour:
   envoy:
     service:
@@ -14,21 +18,21 @@ tap_gui:
   ingressEnabled: false
   # app_config:
   #   app:
-  #     baseUrl: http://20.228.110.209:7000
+  #     baseUrl: 
   #   backend:
-  #     baseUrl: http://20.228.110.209:7000
+  #     baseUrl: 
   #     cors:
-  #       origin: http://20.228.110.209:7000
+  #       origin: 
   #   kubernetes:
   #     serviceLocatorMethod:
   #       type: 'multiTenant'
   #     clusterLocatorMethods:
   #       - type: 'config'
   #         clusters:
-  #           - url: https://iterate-cluster-rk-dns-6087954b.hcp.westus.azmk8s.io:443
-  #             name: iterate-cluster-rk
+  #           - url: 
+  #             name: iterate-cluster
   #             authProvider: serviceAccount
-  #             serviceAccountToken: eyJhbGciOiJSUzI1NiIsImtpZCI6Ik5aOHl2ZE9DUHdiMnBiZ1VuVTZiX1dFNEFCbF8tMnBxNUhNNDhtWjNYancifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJ0YXAtZ3VpIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6InRhcC1ndWktdmlld2VyLXRva2VuLTdyeDd3Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6InRhcC1ndWktdmlld2VyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNmM0ODg5YzctYmEwYi00YTBkLWJmMjAtZmJiYTU1OGI2ZGUxIiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OnRhcC1ndWk6dGFwLWd1aS12aWV3ZXIifQ.M73oC6C_6MuDw5C5cDpkypTNIGjn7VjXKaJF8qg9KIBksdQYYyQLdH9pfHbeNDKeSO4YJPZD9TCgiazfRST0SUwG59mwOMajkoKmvlwYAzyECw2KI8uXJ_qMvDgE0_hmPM8TF5SN7T4AoDNEzUyYxb4d030gq0RWa1qvQ0-VbUK9NwTTbVMdGHN5UESt0aoeMm3YccCzXwfTXmrTgJ2u05flBMx2RZhSjrdCHLNSvA83muQFSDYcAf96n_xTsP79dGmJPOExj1yrEthLbRPHzFFqJINv4ZHxrACspr1r5tA6GnMbuivj0zbzSekXDiLXKb-XhcBnerqoeIAYe1L5NhUvWntpzOHhjMBMQSaQpvzsNDzbyGxXP_fzSFx4YohRyt1XXENiP9FWvrsspZm-ecue56YJPXk73kc0KmC1afeVfAR-njDLo6j-0bLM8EaDVUI6W5chUGVKcplspVq3xDv7G0ufbFfCuK2oe0loSUlBfZqfO0XOVC0sCu-a35Nf15AEigCcb7JoHGmZEhWjR2QtIXDWQQXFzSHpfvX42vsbIkpADeH4sKBVFZAm2m3u4D6T4VWo-LsSWI4a2AJ_HthlO2Farcdz0MqhZdhDdizleBedMbsuYEh2tF_1FLU99si48ySgFscMUgL-m-IIz0odR5CefOnxTu9lqpChWwg
+  #             serviceAccountToken: 
   #             skipTLSVerify: true
 
 metadata_store:
