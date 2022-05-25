@@ -1,0 +1,26 @@
+profile: build
+ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
+buildservice:
+    kp_default_repository: <KP-DEFAULT-REPOSITORY>
+    kp_default_repository_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
+    kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
+    tanzunet_password: <TANZUNET-PASSWORD>
+    tanzunet_username: <TANZUNET-USERNAME>
+supply_chain: basic
+ootb_supply_chain_basic:
+  gitops:
+    ssh_secret: ""
+  registry:
+    repository: <REPOSITORY>
+    server: <SERVER>
+scanning:
+  metadataStore:
+    url: ""
+    caSecret:
+      name: 
+      importFromNamespace: 
+    authSecret:
+      name: 
+grype:
+  namespace:  # (optional) Defaults to default namespace.
+  targetImagePullSecret: 

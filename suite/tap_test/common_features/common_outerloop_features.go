@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -130,10 +132,133 @@ func UpdateGitRepository(t *testing.T, gitUsername string, gitEmail string, gitR
 }
 
 func OuterloopCleanUp(t *testing.T, workloadName string, projectName string, namespace string) features.Feature {
-	return features.New("innerloop cleanup").
+	return features.New("outerloop cleanup").
 		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("Deleting workload")
 			tanzu_libs.DeleteWorkload(workloadName, namespace)
+			return ctx
+		}).
+		Feature()
+}
+
+func MulticlusterOuterloopCleanup(t *testing.T, workloadName string, projectName string, namespace string, buildContext string, runContext string) features.Feature {
+	return features.New("outerloop cleanup").
+		Assess("delete-deliverable", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			// changing to run cluster
+			_, err := kubectl_libs.UseContext(runContext)
+			if err != nil {
+				t.Errorf("error while changing context to %s", runContext)
+				t.FailNow()
+			} else {
+				t.Logf("context changed to %s", runContext)
+			}
+
+			t.Logf("Deleting deliverable")
+			kubectl_libs.DeleteDeliverable(workloadName, namespace)
+			return ctx
+		}).
+		Assess("delete-workload", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			// changing to build cluster
+			_, err := kubectl_libs.UseContext(buildContext)
+			if err != nil {
+				t.Errorf("error while changing context to %s", buildContext)
+				t.FailNow()
+			} else {
+				t.Logf("context changed to %s", buildContext)
+			}
+
+			t.Logf("Deleting workload")
+			tanzu_libs.DeleteWorkload(workloadName, namespace)
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyRevisionStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-revision-status", name)).
+		Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying revision ready status")
+
+			revisionName = kubectl_helpers.GetLatestRevision(name, namespace, 1, 30)
+			revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, name, namespace, 5, 30)
+			if !revisionReady {
+				t.Error("revision not ready")
+				t.FailNow()
+			} else {
+				t.Log("revision ready")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyRevisionStatusAfterUpdate(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-revision-status", name)).
+		Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying revision ready status")
+
+			revisionName = kubectl_helpers.GetNewerRevision(revisionName, name, namespace, 5, 30)
+			revisionReady := kubectl_helpers.ValidateRevisionStatus(revisionName, name, namespace, 5, 30)
+			if !revisionReady {
+				t.Error("revision not ready")
+				t.FailNow()
+			} else {
+				t.Log("revision ready")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyKsvcStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-ksvc-status", name)).
+		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying ksvc ready status")
+
+			ksvcReady := kubectl_helpers.VerifyKsvcStatus(name, namespace, revisionName, 5, 30)
+			if !ksvcReady {
+				t.Error("ksvc not ready")
+				t.FailNow()
+			} else {
+				t.Log("ksvc ready")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyKsvcStatusAfterUpdate(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-ksvc-status", name)).
+		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying ksvc ready status")
+
+			ksvcReady := kubectl_helpers.VerifyNewerKsvcStatus(name, namespace, revisionName, 5, 30)
+			if !ksvcReady {
+				t.Error("ksvc not ready")
+				t.FailNow()
+			} else {
+				t.Log("ksvc ready")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyServiceBindingsStatus(t *testing.T, name string, serviceBindingsSuffix string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-ksvc-status", name)).
+		Assess("verify-service-bindings-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying service bindings ready status")
+
+			sbname := fmt.Sprintf("%[1]s-%[1]s%[2]s", name, serviceBindingsSuffix)
+			if !kubectl_helpers.ValidateServiceBindings(sbname, namespace, 5, 30) {
+				t.Error("service bindings not ready")
+				t.FailNow()
+			} else {
+				t.Log("service bindings ready")
+			}
+
 			return ctx
 		}).
 		Feature()

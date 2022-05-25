@@ -174,3 +174,42 @@ func GetProfileTapValuesSchema(profile string) (TapValuesSchema, error) {
 
 	return tapValuesSchema, nil
 }
+
+func GetProfileTapValuesSchema(profile string) (TapValuesSchema, error) {
+	log.Printf("getting tap values schema")
+
+	suiteConfig := GetSuiteConfig()
+	tapValuesSchema := TapValuesSchema{}
+	var file string
+	if profile == "build" {
+		file = suiteConfig.Multicluster.BuildTapValuesFile
+	} else if profile == "run" {
+		file = suiteConfig.Multicluster.RunTapValuesFile
+	} else if profile == "view" {
+		file = suiteConfig.Multicluster.ViewTapValuesFile
+	} else {
+		file = suiteConfig.Tap.ValuesSchemaFile
+	}
+
+	// read file
+	tapValuesSchemaBytes, err := os.ReadFile(file)
+	if err != nil {
+		log.Printf("error while reading tap values schema file %s", file)
+		log.Printf("error: %s", err)
+		return tapValuesSchema, err
+	} else {
+		log.Printf("read tap values schema file %s", file)
+	}
+
+	// unmarshal
+	err = yaml.Unmarshal(tapValuesSchemaBytes, &tapValuesSchema)
+	if err != nil {
+		log.Printf("error while unmarshalling tap values schema file %s", file)
+		log.Printf("error: %s", err)
+		return tapValuesSchema, err
+	} else {
+		log.Printf("unmarshalled file %s", file)
+	}
+
+	return tapValuesSchema, nil
+}

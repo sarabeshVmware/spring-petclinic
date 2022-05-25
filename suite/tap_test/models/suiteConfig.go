@@ -116,6 +116,8 @@ func GetSuiteConfig() SuiteConfig {
 	suiteConfig.Tap.ValuesSchemaFile = filepath.Join(suiteResourcesDir, suiteConfig.Tap.ValuesSchemaFile)
 	suiteConfig.Multicluster.ViewTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.ViewTapValuesFile)
 	suiteConfig.Multicluster.IterateTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.IterateTapValuesFile)
+	suiteConfig.Multicluster.BuildTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.BuildTapValuesFile)
+	suiteConfig.Multicluster.RunTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.RunTapValuesFile)
 	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
 
 	return suiteConfig
