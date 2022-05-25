@@ -6,7 +6,7 @@ metadata:
 spec:
   refName: "learningcenter.tanzu.vmware.com"
   version: "0.2.1"
-  releasedAt: "2022-05-17T16:16:02Z"
+  releasedAt: "2022-05-23T21:45:12Z"
   licenses: 
   - "VMware’s End User License Agreement (Underlying OSS license: Apache License 2.0)"
   valuesSchema:
@@ -117,7 +117,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:d3f414a4d198b7a2906d95b59b28909f3e3f2549360e57c9a968646877aede4a"
+          image: "dev.registry.tanzu.vmware.com/learning-center/learning-center-package@sha256:b30df99d26efb1157725b6b918c476683556d78e6b3fd2b195b8edc1b58614f5"
       template:
       - ytt:
           paths:
