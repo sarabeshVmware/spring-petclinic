@@ -58,12 +58,14 @@ packages:
       - 1.0.1
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: grype-scanner
     versions:
       - 1.0.0
       - 1.0.1
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: app-accelerator
     versions:
       - 1.0.0
@@ -119,17 +121,20 @@ packages:
       - 1.0.2
       - 1.0.3
       - 1.1.0
-      - 1.1.2-build.1
+      - 1.1.1
+      - 1.1.2-build.3
   - name: learning-center-workshops
     versions:
       - 0.1.0
       - 0.1.1
       - 0.2.0
+      - 0.2.1
   - name: learning-center
     versions:
       - 0.1.0
       - 0.1.1
       - 0.2.0
+      - 0.2.1
   - name: cartographer
     versions:
       - 0.1.0
