@@ -797,12 +797,19 @@ func CheckDeploymentExists(name string, namespace string, timeoutInMins int, int
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
-		deployment := kubectl_lib.GetDeployments(name, namespace)
+		deployment := kubectl_lib.GetDeployments("", "")
 		if len(deployment) <= 0 {
-			log.Println("Deployment not created yet")
-		} else if deployment[0].NAME == name {
-			log.Println("Deployment created successfully")
-			result = true
+			log.Println("No deployments exist")
+		} else {
+			for _, dep := range deployment {
+				if dep.NAME == name {
+					result = true
+					break
+				}
+			}
+		}
+		if result {
+			log.Println("Deployment exists")
 			break
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
@@ -810,7 +817,7 @@ func CheckDeploymentExists(name string, namespace string, timeoutInMins int, int
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Deployment not created after %d mins", timeoutInMins)
+		log.Printf("Deployment does not exist after %d mins", timeoutInMins)
 	}
 	return result
 }
