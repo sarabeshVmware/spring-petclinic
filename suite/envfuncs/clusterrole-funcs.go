@@ -48,16 +48,3 @@ func CreateClusterRoleBinding() env.Func {
 		return ctx, nil
 	}
 }
-
-func CreateTapGuiViewerServiceAccount(file string) env.Func {
-	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-
-		cmd := fmt.Sprintf("kubectl create -f %s", file)
-			output, err := linux_util.ExecuteCmdInBashMode(cmd)
-			if err != nil {
-				return ctx, fmt.Errorf("error while creating tap-gui-viewer-service-account: %w: %s", err, output)
-			}
-			log.Printf("Creating cluster tap-gui-viewer-service-account successful")
-		return ctx, nil
-	}
-}
