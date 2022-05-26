@@ -190,3 +190,6 @@ packages:
   - name: tap-auth
     versions:
       - 1.0.1
+  - name: appsso
+    versions:
+      - 1.0.0-build.3

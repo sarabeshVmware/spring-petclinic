@@ -1,6 +1,6 @@
 #@data/values-schema
 ---
-#! enum: "full", "light"
+#! enum: "full", "light", "iterate", "build", "run", "view"
 profile: full
 
 #! set to true if CEIP policy has been read.
@@ -88,6 +88,9 @@ source_controller: {}
 
 #@schema/type any=True
 tekton_pipelines: {}
+
+#@schema/type any=True
+appsso: {}
 
 package_overlays:
 - name: ""
