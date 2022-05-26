@@ -1,4 +1,4 @@
-//go:build all || innerloop || innerloop_basic
+//go:build all || multicluster_innerloop || multicluster_innerloop_basic
 
 package multicluster_test
 

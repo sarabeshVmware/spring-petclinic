@@ -420,13 +420,6 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 
 			// get external IP
 			url := kubectl_helpers.GetServiceExternalIP("envoy", "tanzu-system-ingress", 2, 30)
-			// if err != nil {
-			// 	t.Error("error while getting external IP")
-			// 	t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
-			// } else {
-			// 	t.Log("external IP retrieved")
-			// }
-
 			if relativePath != "" {
 				url = fmt.Sprintf("%s/%s", url, relativePath)
 			}

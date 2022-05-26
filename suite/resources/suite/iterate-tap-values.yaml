@@ -23,13 +23,3 @@ contour:
   envoy:
     service:
       type: LoadBalancer
-#cnrs:
-#  domain_name: dapd.net
-#  domain_template: "{{.Name}}.{{.Domain}}"
-#  ingress:
-#    internal:
-#      namespace: ""
-#appliveview_connector:
-#  backend:
-#    host: appliveview.dapd.net
-#    sslDisabled: "true"
