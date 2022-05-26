@@ -1429,14 +1429,9 @@ func listVulnerabilities(workloadName string, t *testing.T) {
 		Assess(fmt.Sprintf("%s", workloadName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			imageDigest := kubectl_helpers.GetImageDigest(workloadName, outerloopConfig.Namespace, 2, 30)
 			log.Printf("imageDigest: %s", imageDigest)
-			vulnerabilitiesData, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
+			_, err := tanzu_libs.ListInsightImagesVulnerabilities(imageDigest)
 			if err != nil {
 				t.Errorf("error while getting vulnerabilities for %s", workloadName)
-				t.Fail()
-			}
-			// Exception only for CVE-2016-1000027, since it can not be fixed at this point: https://github.com/spring-projects/spring-framework/issues/24434
-			if !strings.Contains(vulnerabilitiesData, "CVE-2016-1000027 (Critical)") {
-				t.Error("CVE(s) detected in image scans")
 				t.Fail()
 			}
 			return ctx
