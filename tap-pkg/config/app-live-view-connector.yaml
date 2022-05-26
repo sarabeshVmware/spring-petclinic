@@ -11,14 +11,12 @@ kind: PackageInstall
 metadata:
   name: appliveview-connector
   namespace: tap-install
-  annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting connector"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
     refName: connector.appliveview.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.1
+      constraints: 1.1.2
       prereleases: {}
   values:
   - secretRef:
