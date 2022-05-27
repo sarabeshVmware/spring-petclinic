@@ -1,0 +1,39 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cartographer.tanzu.vmware.com.0.4.0-build.3
+spec:
+  refName: cartographer.tanzu.vmware.com
+  version: 0.4.0-build.3
+  releaseNotes: https://github.com/vmware-tanzu/package-for-cartographer/releases/tag/0.4.0-build.3
+  releasedAt: "2022-05-27T20:24:44Z"
+  valuesSchema:
+    openAPIv3:
+      title: cartographer.tanzu.vmware.com.0.4.0-build.3 values schema
+      properties:
+        ca_cert_data:
+          type: string
+          description: 'Optional: PEM Encoded certificate data for image registries with private CA.'
+          default: ""
+        excluded_components:
+          type: array
+          items:
+            type: string
+          default: []
+          description: 'Optional: List of components to exclude from installation (e.g. [conventions])'
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:2a3c2953cdba858c1b302a240a6b6df14aca2a221214469417f82828a8400e36
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - config
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+      deploy:
+      - kapp: {}
