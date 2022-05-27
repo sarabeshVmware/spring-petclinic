@@ -144,6 +144,8 @@ func GetProfileTapValuesSchema(profile string) (TapValuesSchema, error) {
 		file = suiteConfig.Multicluster.RunTapValuesFile
 	} else if profile == "view" {
 		file = suiteConfig.Multicluster.ViewTapValuesFile
+	} else if profile == "iterate" {
+		file = suiteConfig.Multicluster.IterateTapValuesFile
 	} else {
 		file = suiteConfig.Tap.ValuesSchemaFile
 	}

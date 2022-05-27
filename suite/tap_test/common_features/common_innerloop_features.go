@@ -17,7 +17,7 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
-func UpdateTiltFile(t *testing.T, workloadName string, namespace string) features.Feature {
+func UpdateTiltFile(t *testing.T, workloadName string, namespace string, profile string) features.Feature {
 	return features.New("update-allow-context-tilt").
 		Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			tiltFile := filepath.Join(rootDir, workloadName, "/Tiltfile")
@@ -39,7 +39,8 @@ func UpdateTiltFile(t *testing.T, workloadName string, namespace string) feature
 		Assess("update-source-image", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("updating source image in tiltfile")
 			tiltFile := filepath.Join(rootDir, workloadName, "/Tiltfile")
-			tapValuesSchema, err := models.GetTapValuesSchema()
+			//tapValuesSchema, err := models.GetTapValuesSchema()
+			tapValuesSchema, err :=models.GetProfileTapValuesSchema(profile)
 			if err != nil {
 				t.Error("error while updating tilt file")
 				t.FailNow()
