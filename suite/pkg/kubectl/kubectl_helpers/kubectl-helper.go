@@ -1,6 +1,7 @@
 package kubectl_helpers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -820,4 +821,48 @@ func CheckDeploymentExists(name string, namespace string, timeoutInMins int, int
 		log.Printf("Deployment does not exist after %d mins", timeoutInMins)
 	}
 	return result
+}
+
+func GetCurrentClusterURL() string {
+	log.Printf("Getting current cluster URL")
+	output := kubectl_lib.GetCurrentConfigView()
+	//log.Printf("output: %v", output)
+	log.Printf("output_clusters: %v", output.Clusters[0].Cluster.Server)
+
+	//log.Printf("output_clusters_server: %v", output.Clusters[0].Cluster.Server)
+	return output.Clusters[0].Cluster.Server
+}
+
+func GetClusterToken(name string, namespace string) string {
+	serviceAccount := kubectl_lib.GetServiceAccountJson(name, namespace)
+	secretName := serviceAccount.Secrets[0].Name
+	getSecrets := kubectl_lib.GetSecrets(secretName, namespace)
+	clusterencodedToken := getSecrets.Data.Token
+	decodedToken, err := base64.StdEncoding.DecodeString(clusterencodedToken)
+	if err != nil {
+		log.Printf("error while decoding token")
+	}
+	return string(decodedToken)
+}
+
+func GetServiceExternalIP(service string, namespace string, timeoutInMins int, intervalInSeconds int) string {
+	log.Printf("Get external IP of service %s in namespace: %s", service, namespace)
+
+	finalTimeout := timeoutInMins * 60
+	externalIP := ""
+	for finalTimeout > 0 {
+		svc := kubectl_lib.GetServices(service, namespace)
+		if svc[0].EXTERNAL_IP == "" || svc[0].EXTERNAL_IP == "<none>" {
+			log.Print("External IP is not found")
+		} else {
+			return svc[0].EXTERNAL_IP
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if externalIP == "" {
+		log.Printf("External IP not generated for service %s in namespace %s", service, namespace)
+	}
+	return externalIP
 }

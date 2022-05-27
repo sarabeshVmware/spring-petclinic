@@ -87,6 +87,31 @@ func TiltUp(t *testing.T, workloadName string, namespace string) features.Featur
 		Feature()
 }
 
+func UpdateTanzuJavaWebAppTiltFile(t *testing.T, workloadName string) features.Feature {
+	return features.New("update-allow-context-tilt").
+		Assess("update-tilt-file", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			tiltFile := filepath.Join(rootDir, workloadName, "Tiltfile")
+			newLine := "allow_k8s_contexts(k8s_context())"
+			t.Logf("Appending Line %s in tilt file %s", newLine, tiltFile)
+			file, err := os.OpenFile(tiltFile, os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				t.Error(fmt.Errorf("error while opening tilt file: %w", err))
+				t.FailNow()
+			}
+			defer file.Close()
+			_, err = file.WriteString(newLine)
+			if err != nil {
+				t.Error(fmt.Errorf("error while updating tilt file: %w", err))
+				t.FailNow()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+
+
+
 func InnerloopCleanUp(t *testing.T, workloadName string, namespace string) features.Feature {
 	return features.New("innerloop cleanup").
 		Assess("kill-tilt", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {

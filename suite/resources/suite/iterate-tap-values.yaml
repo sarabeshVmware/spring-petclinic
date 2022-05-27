@@ -1,0 +1,25 @@
+profile: iterate
+ceip_policy_disclosed: true
+buildservice:
+  tanzunet_username: <KP-DEFAULT-REPOSITORY-USERNAME>
+  tanzunet_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
+  kp_default_repository: <KP-DEFAULT-REPOSITORY>
+  kp_default_repository_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
+  kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
+  enable_automatic_dependency_updates: true
+ # descriptor_name: tap-1.1.0-full
+supply_chain: basic
+ootb_supply_chain_basic:
+  registry:
+    server: <SERVER>
+    repository: <REPOSITORY>
+  gitops:
+    ssh_secret: ""
+grype:
+  namespace: "tap-install"
+  targetImagePullSecret: registry-credentials
+contour:
+  #infrastructure_provider: vsphere
+  envoy:
+    service:
+      type: LoadBalancer
