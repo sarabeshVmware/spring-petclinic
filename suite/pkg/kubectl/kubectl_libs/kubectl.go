@@ -206,7 +206,12 @@ func GetIngress(name string, namespace string) GetIngressOutput {
 }
 
 type GetServiceAccountJsonOutput struct {
-	APIVersion       string `json:"apiVersion"`
+	APIVersion string `json:"apiVersion"`
+	Data       struct {
+		CaCrt     string `json:"ca.crt"`
+		Namespace string `json:"namespace"`
+		Token     string `json:"token"`
+	} `json:"data"`
 	ImagePullSecrets []struct {
 		Name string `json:"name"`
 	} `json:"imagePullSecrets"`
@@ -356,15 +361,6 @@ func GetCurrentContext() string {
 	return clusterName
 }
 
-func UseContext(context string) (string, error) {
-	cmd := fmt.Sprintf("kubectl config use-context %s", context)
-	res, err := linux_util.ExecuteCmd(cmd)
-	if err != nil {
-		log.Printf("error while switching context")
-	}
-	return res, err
-}
-
 func KubectlApplyConfiguration(file string, namespace string) error {
 	log.Printf("applying configuration %s in namespace %s", file, namespace)
 
@@ -429,6 +425,59 @@ func GetDeployments(deploymentName string, namespace string) []GetDeploymentsOut
 
 	fmt.Printf("deployments: %+v\n", deployments)
 	return deployments
+}
+
+func UseContext(context string) (string, error) {
+	cmd := fmt.Sprintf("kubectl config use-context %s", context)
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while switching context")
+	}
+	return res, err
+}
+
+type ConfigViewJsonOutput struct {
+	Kind        string `json:"kind"`
+	APIVersion  string `json:"apiVersion"`
+	Preferences struct {
+	} `json:"preferences"`
+	Clusters []struct {
+		Name    string `json:"name"`
+		Cluster struct {
+			Server                   string `json:"server"`
+			CertificateAuthorityData string `json:"certificate-authority-data"`
+		} `json:"cluster"`
+	} `json:"clusters"`
+	Users []struct {
+		Name string `json:"name"`
+		User struct {
+			ClientCertificateData string `json:"client-certificate-data"`
+			ClientKeyData         string `json:"client-key-data"`
+			Token                 string `json:"token"`
+		} `json:"user"`
+	} `json:"users"`
+	Contexts []struct {
+		Name    string `json:"name"`
+		Context struct {
+			Cluster string `json:"cluster"`
+			User    string `json:"user"`
+		} `json:"context"`
+	} `json:"contexts"`
+	CurrentContext string `json:"current-context"`
+}
+
+func GetCurrentConfigView() *ConfigViewJsonOutput {
+	var raw *ConfigViewJsonOutput
+	cmd := "kubectl config view --minify -o json"
+	res, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return raw
+	}
+	in := []byte(res)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw
 }
 
 type GetServicesOutput struct {

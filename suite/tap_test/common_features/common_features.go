@@ -18,7 +18,6 @@ import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectlCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
-	kubectl_helper "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubernetes/client"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/misc"
@@ -516,7 +515,7 @@ func DockerLogin(t *testing.T, server string, username string, password string) 
 func ChangeContext(t *testing.T, clusterContext string) features.Feature {
 	return features.New("changing cluster context").
 		Assess(fmt.Sprintf("changing cluster context to %s", clusterContext), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
-		
+
 			_, err := kubectl_libs.UseContext(clusterContext)
 			if err != nil {
 				t.Errorf("error while changing context to %s", clusterContext)
@@ -532,7 +531,7 @@ func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace s
 	return features.New("verify-image-repositories").
 		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify image-repositories status")
-			status := kubectl_helper.VerifyImageRepositoryStatus(name, namespace, 10, 30)
+			status := kubectl_helpers.VerifyImageRepositoryStatus(name, namespace, 10, 30)
 			t.Logf("ImageRepository %s status is : %t", name, status)
 			if !status {
 				t.Error(fmt.Errorf("ImageRepository %s is not ready.", name))
@@ -541,7 +540,6 @@ func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace s
 			return ctx
 		}).Feature()
 }
-
 
 func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature {
 	return features.New("generate-acc-project-and-unzip").
@@ -556,7 +554,7 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 			t.Logf("external ip for %s (namespace %s): %s", "server", accNamespace, serviceExternalIp)
 			t.Logf("sleeping for 1 minute before generating project")
 			t.Logf("generating tanzu java web app accelerator project")
-			tapValuesSchema, err :=models.GetProfileTapValuesSchema("iterate")
+			tapValuesSchema, err := models.GetProfileTapValuesSchema("iterate")
 			if err != nil {
 				t.Error(fmt.Errorf("error while getting tap values schema: %w", err))
 			}
@@ -569,7 +567,7 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 			} else {
 				t.Log("accelerator project generated")
 			}
-	
+
 			return ctx
 		}).
 		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -587,7 +585,7 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 					t.FailNow()
 				}
 			}
-	
+
 			t.Logf("unzipping file %s", zipFile)
 			output, err = linux_util.ExecuteCmd(fmt.Sprintf("unzip %s -d %s", zipFile, rootDir))
 			t.Logf("command executed: unzip %s. output %s", zipFile, output)
@@ -596,18 +594,18 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 				t.FailNow()
 			}
 			t.Logf("Accelerator project zip files %s unzipped successfully", zipFile)
-	
+
 			return ctx
 		}).
 		Feature()
 }
-		
+
 func VerifyTanzuJavaWebAppBuildStatus(t *testing.T, name string, buildNameSuffix string, namespace string) features.Feature {
 	return features.New("verify-builds").
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
 			buildName = fmt.Sprintf("%s%s", name, buildNameSuffix)
-			status := kubectl_helper.VerifyBuildStatus(buildName, namespace, 10, 30)
+			status := kubectl_helpers.VerifyBuildStatus(buildName, namespace, 10, 30)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("Build is not ready."))
@@ -622,7 +620,7 @@ func VerifyTanzuJavaWebAppImagesKpacStatus(t *testing.T, namespace string) featu
 	return features.New("verify-images.kpac").
 		Assess("verify-images.kpac-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify latest image status")
-			status := kubectl_helper.GetLatestImageStatus(namespace)
+			status := kubectl_helpers.GetLatestImageStatus(namespace)
 			t.Logf("Image status is: %s", status)
 			if status != "True" {
 				t.Error(fmt.Errorf("Image is not built/ready."))
@@ -688,7 +686,7 @@ func VerifyTanzuJavaWebAppPodIntentStatus(t *testing.T, name string, namespace s
 		}).
 		Assess("verify-pod-intent-devloper-conventions-annotations", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify if devloper-conventions annotations are added to podintent")
-			status := kubectl_helper.ValidateDeveloperConventions(name, namespace)
+			status := kubectl_helpers.ValidateDeveloperConventions(name, namespace)
 			t.Logf("devloper-conventions annotations status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("devloper-conventions annotations are not added to the podintent"))
@@ -717,7 +715,7 @@ func VerifyTanzuJavaWebAppImageRepositoryDelivery(t *testing.T, name string, ima
 		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify image-repositories-delivery status")
 			imageRepo := name + imageDeliverySuffix
-			status := kubectl_helper.VerifyImageRepositoryStatus(imageRepo, namespace, 10, 30)
+			status := kubectl_helpers.VerifyImageRepositoryStatus(imageRepo, namespace, 10, 30)
 			t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 			if !status {
 				t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
@@ -802,7 +800,7 @@ func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace strin
 	return features.New("verify-deliverables").
 		Assess("verify-deliverables-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("verifying deliverables ready status")
-			if !kubectl_helper.ValidateDeliverables(name, namespace, 5, 30) {
+			if !kubectl_helpers.ValidateDeliverables(name, namespace, 5, 30) {
 				t.Error("deliverables not ready")
 				t.FailNow()
 			} else {
@@ -817,7 +815,7 @@ func VerifyTanzuJavaWebAppGitRepository(t *testing.T, name string, namespace str
 	return features.New("verify-image-repositories").
 		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify image-repositories status")
-			status := kubectl_helper.VerifyGitRepoStatus(name, namespace, 10, 30)
+			status := kubectl_helpers.VerifyGitRepoStatus(name, namespace, 10, 30)
 			t.Logf("ImageRepository %s status is : %t", name, status)
 			if !status {
 				t.Error(fmt.Errorf("ImageRepository %s is not ready.", name))
@@ -827,4 +825,3 @@ func VerifyTanzuJavaWebAppGitRepository(t *testing.T, name string, namespace str
 		}).
 		Feature()
 }
-

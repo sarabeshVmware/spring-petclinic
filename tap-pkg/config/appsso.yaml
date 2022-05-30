@@ -2,36 +2,36 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
-#@ if profiles.is_any_enabled([profiles.full, profiles.view]):
-#@ if profiles.is_pkg_enabled("learningcenter.tanzu.vmware.com"):
+#@ if profiles.is_any_enabled([profiles.iterate, profiles.run, profiles.full]):
+#@ if profiles.is_pkg_enabled("sso.apps.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
 metadata:
-  name: learningcenter
+  name: appsso
   namespace: tap-install
   annotations:
-    kapp.k14s.io/change-group: learningcenter
+    kapp.k14s.io/change-rule.cert-manager: "upsert after upserting cert-manager"
     kapp.k14s.io/change-rule.serviceaccount: "delete before deleting serviceaccount"
-    kapp.k14s.io/change-rule.contour: "upsert after upserting contour"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: learningcenter.tanzu.vmware.com
+    refName: sso.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.2.0
+      constraints: 1.0.0-build.3
+      prereleases: {}
   values:
   - secretRef:
-      name: learningcenter-values
+      name: appsso-values
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: learningcenter-values
+  name: appsso-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(data.values.learningcenter)
+  values.yaml: #@ yaml.encode(data.values.appsso)
 
 #@ end
 #@ end

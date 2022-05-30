@@ -18,16 +18,8 @@ import (
 
 func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, productFileId int, releaseVersion string, productSlug string, downloadBundle string, installBundle string, installRegistryHostname string, InstallRegistryUsername string, installRegistryPassword string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
-		// kappControllerDeployed, err := client.CheckDeploymentExists("kapp-controller", cfg.Client().RESTConfig())
-		// if err != nil {
-		// 	return ctx, fmt.Errorf("error while checking for kapp-controller deployment: %w", err)
-		// }
-		kappControllerDeployed := kubectl_helpers.CheckDeploymentExists("kapp-controller", "kapp-controller", 1, 30)
-		// secGenControllerDeployed, err := client.CheckDeploymentExists("secretgen-controller", cfg.Client().RESTConfig())
-		// if err != nil {
-		// 	return ctx, fmt.Errorf("error while checking for secretgen-controller deployment: %w", err)
-		// }
-		secGenControllerDeployed := kubectl_helpers.CheckDeploymentExists("secretgen-controller", "secretgen-controller", 1, 30)
+		kappControllerDeployed := kubectl_helpers.CheckDeploymentExists("kapp-controller", "", 1, 30)
+		secGenControllerDeployed := kubectl_helpers.CheckDeploymentExists("secretgen-controller", "", 1, 30)
 		if kappControllerDeployed || secGenControllerDeployed {
 			log.Println("kapp-controller or secretgen-controller deployment exists.")
 			return ctx, nil

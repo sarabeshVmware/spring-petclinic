@@ -100,6 +100,18 @@ type TapValuesSchema struct {
 			} `yaml:"kubernetes"`
 		} `yaml:"app_config"`
 	} `yaml:"tap_gui"`
+	Scanning struct {
+		MetadataStore struct {
+			URL      string `yaml:"url"`
+			CaSecret struct {
+				Name                string `yaml:"name"`
+				ImportFromNamespace string `yaml:"importFromNamespace"`
+			} `yaml:"caSecret"`
+			AuthSecret struct {
+				Name string `yaml:"name"`
+			} `yaml:"authSecret"`
+		} `yaml:"metadataStore"`
+	} `yaml:"scanning"`
 }
 
 func GetTapValuesSchema() (TapValuesSchema, error) {
@@ -130,6 +142,7 @@ func GetTapValuesSchema() (TapValuesSchema, error) {
 	}
 
 	return tapValuesSchema, nil
+
 }
 
 func GetProfileTapValuesSchema(profile string) (TapValuesSchema, error) {
@@ -140,6 +153,8 @@ func GetProfileTapValuesSchema(profile string) (TapValuesSchema, error) {
 	var file string
 	if profile == "build" {
 		file = suiteConfig.Multicluster.BuildTapValuesFile
+	} else if profile == "iterate" {
+		file = suiteConfig.Multicluster.IterateTapValuesFile
 	} else if profile == "run" {
 		file = suiteConfig.Multicluster.RunTapValuesFile
 	} else if profile == "view" {

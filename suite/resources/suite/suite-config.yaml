@@ -79,3 +79,5 @@ multicluster:
   build-tap-values-file: build-tap-values.yaml
   run-cluster-context: <RUN-CLUSTER-CONTEXT>
   run-tap-values-file: run-tap-values.yaml
+  iterate-cluster-context: <ITERATE-CLUSTER-CONTEXT>
+  iterate-tap-values-file: iterate-tap-values.yaml

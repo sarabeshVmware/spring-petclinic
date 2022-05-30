@@ -39,10 +39,12 @@ packages:
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: application-live-view-connector
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: app-live-view-conventions
     versions:
       - 1.0.1
@@ -52,18 +54,21 @@ packages:
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: scan-controller
     versions:
       - 1.0.0
       - 1.0.1
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: grype-scanner
     versions:
       - 1.0.0
       - 1.0.1
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: app-accelerator
     versions:
       - 1.0.0
@@ -100,18 +105,21 @@ packages:
       - 1.1.0
       - 1.1.1
       - 1.2.0
+      - 1.2.1
   - name: build-service
     versions:
       - 1.4.2
       - 1.4.3
       - 1.5.0
       - 1.5.1
+      - 1.5.2
   - name: tap-gui
     versions:
       - 1.0.1
       - 1.0.2
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: tap
     versions:
       - 1.0.0
@@ -120,17 +128,19 @@ packages:
       - 1.0.3
       - 1.1.0
       - 1.1.1
-      - 1.2.0-build.1
+      - 1.1.2-build.4
   - name: learning-center-workshops
     versions:
       - 0.1.0
       - 0.1.1
       - 0.2.0
+      - 0.2.1
   - name: learning-center
     versions:
       - 0.1.0
       - 0.1.1
       - 0.2.0
+      - 0.2.1
   - name: cartographer
     versions:
       - 0.1.0
@@ -191,6 +201,3 @@ packages:
   - name: tap-auth
     versions:
       - 1.0.1
-  - name: appsso
-    versions:
-      - 1.0.0-build.3

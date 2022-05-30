@@ -1,6 +1,7 @@
 package kubectl_helpers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -797,12 +798,19 @@ func CheckDeploymentExists(name string, namespace string, timeoutInMins int, int
 	finalTimeout := timeoutInMins * 60
 	result := false
 	for finalTimeout > 0 {
-		deployment := kubectl_lib.GetDeployments(name, namespace)
+		deployment := kubectl_lib.GetDeployments("", "")
 		if len(deployment) <= 0 {
-			log.Println("Deployment not created yet")
-		} else if deployment[0].NAME == name {
-			log.Println("Deployment created successfully")
-			result = true
+			log.Println("No deployments exist")
+		} else {
+			for _, dep := range deployment {
+				if dep.NAME == name {
+					result = true
+					break
+				}
+			}
+		}
+		if result {
+			log.Println("Deployment exists")
 			break
 		}
 		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
@@ -810,9 +818,31 @@ func CheckDeploymentExists(name string, namespace string, timeoutInMins int, int
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Deployment not created after %d mins", timeoutInMins)
+		log.Printf("Deployment does not exist after %d mins", timeoutInMins)
 	}
 	return result
+}
+
+func GetCurrentClusterURL() string {
+	log.Printf("Getting current cluster URL")
+	output := kubectl_lib.GetCurrentConfigView()
+	//log.Printf("output: %v", output)
+	log.Printf("output_clusters: %v", output.Clusters[0].Cluster.Server)
+
+	//log.Printf("output_clusters_server: %v", output.Clusters[0].Cluster.Server)
+	return output.Clusters[0].Cluster.Server
+}
+
+func GetClusterToken(name string, namespace string) string {
+	serviceAccount := kubectl_lib.GetServiceAccountJson(name, namespace)
+	secretName := serviceAccount.Secrets[0].Name
+	getSecrets := kubectl_lib.GetSecrets(secretName, namespace)
+	clusterencodedToken := getSecrets.Data.Token
+	decodedToken, err := base64.StdEncoding.DecodeString(clusterencodedToken)
+	if err != nil {
+		log.Printf("error while decoding token")
+	}
+	return string(decodedToken)
 }
 
 func GetServiceExternalIP(service string, namespace string, timeoutInMins int, intervalInSeconds int) string {

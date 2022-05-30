@@ -11,8 +11,6 @@ kind: PackageInstall
 metadata:
   name: appliveview-connector
   namespace: tap-install
-  annotations:
-    kapp.k14s.io/change-rule: "upsert after upserting connector"
 spec:
   serviceAccountName: tap-install-sa
   packageRef:

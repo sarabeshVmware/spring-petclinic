@@ -1,4 +1,4 @@
-package multicluster
+package multicluster_test
 
 import (
 	"fmt"
@@ -84,7 +84,7 @@ func TestMain(m *testing.M) {
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
 		envfuncs.CreateClusterRoleBinding(),
-		envfuncs.CreateTapGuiViewerServiceAccount(tapGuiViewerServiceAccountFile),
+		//envfuncs.CreateTapGuiViewerServiceAccount(tapGuiViewerServiceAccountFile),
 
 	)
 
