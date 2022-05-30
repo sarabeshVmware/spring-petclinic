@@ -1,20 +1,20 @@
 //go:build all || multicluster_innerloop || multicluster_innerloop_basic
 
-package multicluster_test
+package multicluster_innerloop_test
 
 import (
 	"context"
-	"io/ioutil"
-	"os"
-	 "testing"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+	"io/ioutil"
+	"os"
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
+	"testing"
 	//"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
-	"sigs.k8s.io/e2e-framework/pkg/features"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
+	"sigs.k8s.io/e2e-framework/pkg/features"
 )
 
 func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
@@ -35,20 +35,20 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 			t.Log("switched cluster")
 			tapValuesSchema.Profile = "view"
 			tapValuesSchema.Accelerator.Server.ServiceType = "LoadBalancer"
-	// 		tapGuiExternalIP := kubectl_helpers.GetServiceExternalIP("server", "tap-gui", 2, 30)
-	// 		tapGuiUrl := fmt.Sprintf("http://%s:7000", tapGuiExternalIP)
-	// 		tapValuesSchema.TapGui.AppConfig.Backend.BaseURL = tapGuiUrl
-	// 		tapValuesSchema.TapGui.AppConfig.Backend.Cors.Origin = tapGuiUrl
-	// 		tapValuesSchema.TapGui.AppConfig.App.BaseURL = tapGuiUrls
-	// 		// switch to iterate cluster
-	// 		kubectl_libs.UseContext(suiteConfig.Multicluster.IterateClusterContext)
-	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].URL = kubectl_helper.GetCurrentClusterURL()
-	// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
-	// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
-	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].ServiceAccountToken = kubectl_helper.GetClusterToken("tap-gui-viewer", "tap-gui")
-	// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].SkipTLSVerify = true
-			
-	// 		// create temporary file
+			// 		tapGuiExternalIP := kubectl_helpers.GetServiceExternalIP("server", "tap-gui", 2, 30)
+			// 		tapGuiUrl := fmt.Sprintf("http://%s:7000", tapGuiExternalIP)
+			// 		tapValuesSchema.TapGui.AppConfig.Backend.BaseURL = tapGuiUrl
+			// 		tapValuesSchema.TapGui.AppConfig.Backend.Cors.Origin = tapGuiUrl
+			// 		tapValuesSchema.TapGui.AppConfig.App.BaseURL = tapGuiUrls
+			// 		// switch to iterate cluster
+			// 		kubectl_libs.UseContext(suiteConfig.Multicluster.IterateClusterContext)
+			// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].URL = kubectl_helper.GetCurrentClusterURL()
+			// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].Name = "iterate-cluster"
+			// 		// tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].AuthProvider = "serviceAccount"
+			// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].ServiceAccountToken = kubectl_helper.GetClusterToken("tap-gui-viewer", "tap-gui")
+			// 		tapValuesSchema.TapGui.AppConfig.Kubernetes.ClusterLocatorMethods[0].Clusters[0].SkipTLSVerify = true
+
+			// 		// create temporary file
 			t.Log("creating tempfile for tap values schema")
 			tempFile, err := ioutil.TempFile("", "view-tap-values*.yaml")
 			if err != nil {
@@ -58,7 +58,6 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 				t.Log("created tempfile")
 			}
 			defer os.Remove(tempFile.Name())
-			
 
 			// write the updated schema to the temporary file
 			err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
@@ -95,7 +94,7 @@ func TestMulticlusterInnerloopBasicSupplychainLocalSource(t *testing.T) {
 		common_features.VerifyTanzuJavaWebAppImageRepository(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppBuildStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.BuildNameSuffix, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppImagesKpacStatus(t, suiteConfig.Innerloop.Workload.Namespace),
-		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name,  suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppImageRepositoryDelivery(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.ImageDeliverySuffix, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppRevisionStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppKsvcStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),

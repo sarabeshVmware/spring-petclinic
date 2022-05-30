@@ -1,8 +1,10 @@
 //go:build all || multicluster_innerloop || multicluster_innerloop_basic_git_source
-package multicluster
+
+package multicluster_innerloop_test
 
 import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
 	"testing"
 )
 
@@ -15,7 +17,7 @@ func TestInnerloopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
 		common_features.VerifyTanzuJavaWebAppGitRepository(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppBuildStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.BuildNameSuffix, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppImagesKpacStatus(t, suiteConfig.Innerloop.Workload.Namespace),
-		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name,  suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppImageRepositoryDelivery(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.ImageDeliverySuffix, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppDeliverable(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppRevisionStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
