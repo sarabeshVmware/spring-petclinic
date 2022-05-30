@@ -203,49 +203,76 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 		Feature()
 }
 
-func UpdateTapProfileSupplyChain(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, namespace string) features.Feature {
+func UpdateTapProfileSupplyChain(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, namespace string, pollTimeout string) features.Feature {
 	return features.New("update-tap-profile-supplychain").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
+			var tapValuesSchema models.TapValuesSchema
+			var err error
 			// get schema and update values
-			tapValuesSchema, err := models.GetTapValuesSchema()
-			if err != nil {
-				t.Error("error while getting tap values schema")
-				t.FailNow()
-			}
-			tapValuesSchema.Profile = profile
-			tapValuesSchema.SupplyChain = supplyChain
-
-			// create temporary file
-			t.Log("creating tempfile for tap values schema")
-			tempFile, err := ioutil.TempFile("", "tap-values*.yaml")
-			if err != nil {
-				t.Error("error while creating tempfile for tap values schema")
-				t.FailNow()
+			if profile == "" {
+				tapValuesSchema, err = models.GetTapValuesSchema()
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
 			} else {
-				t.Log("created tempfile")
+				tapValuesSchema, err = models.GetProfileTapValuesSchema(profile)
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
+				tapValuesSchema.Profile = profile
 			}
-			defer os.Remove(tempFile.Name())
+			t.Log(tapValuesSchema)
+			if supplyChain != "" {
+				tapValuesSchema.SupplyChain = supplyChain
+			}
 
-			// write the updated schema to the temporary file
-			err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
-			if err != nil {
-				t.Error("error while writing updated tap values schema to YAML file")
+			err2 := tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
+			if err2 != nil {
+				t.Error("error while updating tap values")
 				t.FailNow()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func UpdateTapProfileGitopsSsh(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, gitopsSecret string, namespace string, pollTimeout string) features.Feature {
+	return features.New("update-tap-profile-supplychain").
+		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tap package")
+
+			var tapValuesSchema models.TapValuesSchema
+			var err error
+			// get schema and update values
+			if profile == "" {
+				tapValuesSchema, err = models.GetTapValuesSchema()
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
 			} else {
-				t.Log("wrote tap values schema to file")
+				tapValuesSchema, err = models.GetProfileTapValuesSchema(profile)
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
+				tapValuesSchema.Profile = profile
+			}
+			t.Log(tapValuesSchema)
+			if supplyChain != "" {
+				tapValuesSchema.SupplyChain = supplyChain
 			}
 
-			// update tap
-			err = tanzuCmds.TanzuUpdatePackage(name, tapPackageName, tapVersion, namespace, tempFile.Name())
-			if err != nil {
-				t.Error("error while updating tap")
+			tapValuesSchema.OotbSupplyChainBasic.Gitops.SSHSecret = gitopsSecret
+			err2 := tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
+			if err2 != nil {
+				t.Error("error while updating tap values")
 				t.FailNow()
-			} else {
-				t.Log("updated tap")
 			}
-
 			return ctx
 		}).
 		Feature()
@@ -436,6 +463,144 @@ func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString
 				t.Log("webpage contains string")
 			}
 
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyGitRepoStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-gitrepo-status", name)).
+		Assess("verify-gitrepo-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying gitrepo ready status")
+
+			// check
+			gitrepoReady := kubectl_helpers.VerifyGitRepoStatus(name, namespace, 5, 30)
+			if !gitrepoReady {
+				t.Error("gitrepo not ready")
+				t.FailNow()
+			} else {
+				t.Log("gitrepo ready")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyBuildStatus(t *testing.T, name string, buildNameSuffix string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-build-status", name)).
+		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verify build status")
+			buildName = fmt.Sprintf("%s%s", name, buildNameSuffix)
+			status := kubectl_helpers.VerifyBuildStatus(buildName, namespace, 15, 30)
+			t.Logf("Build status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("build is not ready"))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyBuildStatusAfterUpdate(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-build-status", name)).
+		Assess("verify-build-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying build succeeded status")
+
+			buildSucceeded := kubectl_helpers.VerifyNewerBuildStatus(buildName, namespace, 15, 60)
+			if !buildSucceeded {
+				t.Error("build not succeeded")
+				t.FailNow()
+			} else {
+				t.Log("build succeeded")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyPodIntentStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-podintents-labels-conventions").
+		Assess("verify-podintent-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying podintent ready status")
+
+			// check
+			if !kubectl_helpers.VerifyPodIntentStatus(name, namespace, 5, 30) {
+				t.Error("podintent not ready")
+				t.FailNow()
+			} else {
+				t.Log("podintent ready")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-alv-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying appliveview labels present in podintent")
+
+			// check
+			alvLabelsPresent := kubectl_helpers.ValidateAppLiveViewLabels(name, namespace)
+			if !alvLabelsPresent {
+				t.Error("appliveview lables absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("appliveview labels present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-springbootconventions-lables", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying springbootconventions labels present in podintent")
+
+			// check
+			springbootconventionsLabelsPresent := kubectl_helpers.ValidateSpringBootLabels(name, namespace)
+			if !springbootconventionsLabelsPresent {
+				t.Error("springbootconventions lables absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("springbootconventions labels present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-alv-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying appliveview conventions present in podintent")
+
+			// check
+			appliveviewConventionsPresent := kubectl_helpers.ValidateAppLiveViewConventions(name, namespace)
+			if !appliveviewConventionsPresent {
+				t.Error("appliveview conventions absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("appliveview conventions present in podintent")
+			}
+			return ctx
+		}).
+		Assess("verify-podintent-springbootconventions-conventions", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying springbootconventions conventions present in podintent")
+
+			// check
+			springbootconventionsConventionsPresent := kubectl_helpers.ValidateSpringBootConventions(name, namespace)
+			if !springbootconventionsConventionsPresent {
+				t.Error("springbootconventions conventions absent in podintent")
+				t.FailNow()
+			} else {
+				t.Log("springbootconventions conventions present in podintent")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyTaskRunStatus(t *testing.T, name string, taskRunInfix string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-taskrun-status", name)).
+		Assess("verify-taskrun-succeeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying taskrun succeeded status")
+
+			taskRunPrefix := fmt.Sprintf("%s%s", name, taskRunInfix)
+			taskrunSucceeded := kubectl_helpers.VerifyTaskrunStatus(taskRunPrefix, namespace, 5, 30)
+			if !taskrunSucceeded {
+				t.Error("taskrun not succeeded")
+				t.FailNow()
+			} else {
+				t.Log("taskrun succeeded")
+			}
 			return ctx
 		}).
 		Feature()
@@ -809,6 +974,72 @@ func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace strin
 			return ctx
 		}).
 		Feature()
+}
+
+func ProcessDeliverable(t *testing.T, name string, namespace string, buildContext string, runContext string) features.Feature {
+	return features.New("getting deliverable and changing file").
+		Assess(fmt.Sprintf("getting deliverable file %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
+			// changing to build cluster
+			_, err := kubectl_libs.UseContext(buildContext)
+			if err != nil {
+				t.Errorf("error while changing context to %s", buildContext)
+				t.FailNow()
+			} else {
+				t.Logf("context changed to %s", buildContext)
+			}
+
+			valid := kubectl_helpers.ValidateBuildClusterDeliverableStatus(name, namespace, 5, 5)
+			if !valid {
+				t.Errorf("error while getting deliverable %s", name)
+				t.FailNow()
+			} else {
+				t.Logf("validated deliverable %s success", name)
+				deliverable := kubectl_libs.GetDeliverablesYaml(name, namespace)
+				deliverable.Status = kubectl_libs.Status{}
+				deliverable.Metadata.OwnerReferences = kubectl_libs.OwnerReferences{}
+				// create temporary deliverable file
+				t.Log("creating tempfile for deliverable manifest")
+				tempFile, err := ioutil.TempFile("", "deliverable*.yaml")
+				if err != nil {
+					t.Error("error while creating tempfile for deliverable manifest")
+					t.FailNow()
+				} else {
+					t.Log("created tempfile")
+				}
+				defer os.Remove(tempFile.Name())
+
+				// write the updated manifest to the temporary file
+				err = utils.WriteYAMLFile(tempFile.Name(), deliverable)
+				if err != nil {
+					t.Error("error while writing updated deliverable manifest to YAML file")
+					t.FailNow()
+				} else {
+					t.Log("wrote deliverable manifest to file")
+				}
+
+				// changing to run cluster
+				_, err = kubectl_libs.UseContext(runContext)
+				if err != nil {
+					t.Errorf("error while changing context to %s", runContext)
+					t.FailNow()
+				} else {
+					t.Logf("context changed to %s", runContext)
+				}
+
+				t.Log("generated deliverable.yaml to be applied :")
+				linux_util.ExecuteCmd(fmt.Sprintf("cat %s", tempFile.Name()))
+
+				//deploying deliverable
+				err = kubectl_libs.KubectlApplyConfiguration(tempFile.Name(), namespace)
+				if err != nil {
+					t.Error("error deploying deliverable")
+					t.FailNow()
+				} else {
+					t.Log("deployed deliverable")
+				}
+			}
+			return ctx
+		}).Feature()
 }
 
 func VerifyTanzuJavaWebAppGitRepository(t *testing.T, name string, namespace string) features.Feature {
