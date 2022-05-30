@@ -16,7 +16,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:63da333863911143297bda85a7f180025b6ba4ada25f558c0eefd23dd4f6fd8c
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-conventions-bundle@sha256:fde2115ba42ed610853413f1702aaa37f1e484fa1a92d5ef1e2c6f8f67589bb3
       template:
       - ytt:
           paths:
