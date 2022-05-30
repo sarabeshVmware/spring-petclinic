@@ -203,49 +203,76 @@ func UpdateTapVersion(t *testing.T, name string, tapPackageName string, namespac
 		Feature()
 }
 
-func UpdateTapProfileSupplyChain(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, namespace string) features.Feature {
+func UpdateTapProfileSupplyChain(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, namespace string, pollTimeout string) features.Feature {
 	return features.New("update-tap-profile-supplychain").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
+			var tapValuesSchema models.TapValuesSchema
+			var err error
 			// get schema and update values
-			tapValuesSchema, err := models.GetTapValuesSchema()
-			if err != nil {
-				t.Error("error while getting tap values schema")
-				t.FailNow()
-			}
-			tapValuesSchema.Profile = profile
-			tapValuesSchema.SupplyChain = supplyChain
-
-			// create temporary file
-			t.Log("creating tempfile for tap values schema")
-			tempFile, err := ioutil.TempFile("", "tap-values*.yaml")
-			if err != nil {
-				t.Error("error while creating tempfile for tap values schema")
-				t.FailNow()
+			if profile == "" {
+				tapValuesSchema, err = models.GetTapValuesSchema()
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
 			} else {
-				t.Log("created tempfile")
+				tapValuesSchema, err = models.GetProfileTapValuesSchema(profile)
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
+				tapValuesSchema.Profile = profile
 			}
-			defer os.Remove(tempFile.Name())
+			t.Log(tapValuesSchema)
+			if supplyChain != "" {
+				tapValuesSchema.SupplyChain = supplyChain
+			}
 
-			// write the updated schema to the temporary file
-			err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
-			if err != nil {
-				t.Error("error while writing updated tap values schema to YAML file")
+			err2 := tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
+			if err2 != nil {
+				t.Error("error while updating tap values")
 				t.FailNow()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func UpdateTapProfileGitopsSsh(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, gitopsSecret string, namespace string, pollTimeout string) features.Feature {
+	return features.New("update-tap-profile-supplychain").
+		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tap package")
+
+			var tapValuesSchema models.TapValuesSchema
+			var err error
+			// get schema and update values
+			if profile == "" {
+				tapValuesSchema, err = models.GetTapValuesSchema()
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
 			} else {
-				t.Log("wrote tap values schema to file")
+				tapValuesSchema, err = models.GetProfileTapValuesSchema(profile)
+				if err != nil {
+					t.Error("error while getting tap values schema")
+					t.FailNow()
+				}
+				tapValuesSchema.Profile = profile
+			}
+			t.Log(tapValuesSchema)
+			if supplyChain != "" {
+				tapValuesSchema.SupplyChain = supplyChain
 			}
 
-			// update tap
-			err = tanzuCmds.TanzuUpdatePackage(name, tapPackageName, tapVersion, namespace, tempFile.Name())
-			if err != nil {
-				t.Error("error while updating tap")
+			tapValuesSchema.OotbSupplyChainBasic.Gitops.SSHSecret = gitopsSecret
+			err2 := tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
+			if err2 != nil {
+				t.Error("error while updating tap values")
 				t.FailNow()
-			} else {
-				t.Log("updated tap")
 			}
-
 			return ctx
 		}).
 		Feature()
@@ -998,6 +1025,9 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 				} else {
 					t.Logf("context changed to %s", runContext)
 				}
+
+				t.Log("generated deliverable.yaml to be applied :")
+				linux_util.ExecuteCmd(fmt.Sprintf("cat %s", tempFile.Name()))
 
 				//deploying deliverable
 				err = kubectl_libs.KubectlApplyConfiguration(tempFile.Name(), namespace)

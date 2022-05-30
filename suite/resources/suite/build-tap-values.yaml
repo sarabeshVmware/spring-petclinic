@@ -13,6 +13,12 @@ ootb_supply_chain_basic:
   registry:
     repository: <REPOSITORY>
     server: <SERVER>
+ootb_supply_chain_testing:
+  gitops:
+    ssh_secret: ""
+  registry:
+    repository: <REPOSITORY>
+    server: <SERVER>
 scanning:
   metadataStore:
     url: ""

@@ -100,7 +100,18 @@ type TapValuesSchema struct {
 			} `yaml:"kubernetes"`
 		} `yaml:"app_config"`
 	} `yaml:"tap_gui"`
-	
+	Scanning struct {
+		MetadataStore struct {
+			URL      string `yaml:"url"`
+			CaSecret struct {
+				Name                string `yaml:"name"`
+				ImportFromNamespace string `yaml:"importFromNamespace"`
+			} `yaml:"caSecret"`
+			AuthSecret struct {
+				Name string `yaml:"name"`
+			} `yaml:"authSecret"`
+		} `yaml:"metadataStore"`
+	} `yaml:"scanning"`
 }
 
 func GetTapValuesSchema() (TapValuesSchema, error) {

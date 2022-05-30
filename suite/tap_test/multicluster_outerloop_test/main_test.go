@@ -1,4 +1,4 @@
-package multicluster_test
+package multicluster_outerloop_test
 
 import (
 	"fmt"
