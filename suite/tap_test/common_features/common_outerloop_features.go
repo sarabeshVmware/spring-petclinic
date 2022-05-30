@@ -263,3 +263,56 @@ func VerifyServiceBindingsStatus(t *testing.T, name string, serviceBindingsSuffi
 		}).
 		Feature()
 }
+
+func VerifyPipelineRunStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("verify-%s-pipeline-status", name)).
+		Assess("verify-pipeline-runs-succeded", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying pipeline runs status")
+
+			// check
+			pipelineRunSucceeded := kubectl_helpers.ValidatePipelineRuns(name, namespace, 5, 30)
+			if !pipelineRunSucceeded {
+				t.Error("pipeline runs not succeeded")
+				t.FailNow()
+			} else {
+				t.Log("pipeline runs succeeded")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func PatchServiceAccountSecrets(t *testing.T, sa string, namespace string, secret string) features.Feature {
+	return features.New("patch-sa-secret").
+		Assess("patch-sa-secret", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("Patching default sa secrets")
+			res := kubectl_helpers.PatchServiceAccountWithNewSecret(sa, namespace, secret)
+			if !res {
+				t.Error("error while patching sa secret")
+				t.Fail()
+			} else {
+				t.Log("patched sa secret")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyImageskpac(t *testing.T, namespace string) features.Feature {
+	return features.New("verify-images.kpac-status").
+		Assess("verify-images.kpac-true", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verifying latest image status")
+
+			// check
+			if !kubectl_helpers.ValidateLatestImageStatus(namespace, 15, 60) {
+				t.Error("image status is not true")
+				t.FailNow()
+			} else {
+				t.Log("image status is true")
+			}
+
+			return ctx
+		}).
+		Feature()
+}

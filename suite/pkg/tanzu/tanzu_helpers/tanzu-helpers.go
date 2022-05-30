@@ -1,11 +1,15 @@
 package tanzu_helpers
 
 import (
+	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzuCmds"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
 )
 
 func IsGrypeInstalled(namespace string) bool {
@@ -133,4 +137,35 @@ func CheckIfPackageRepositoryReconciled(name string, namespace string, recursive
 	}
 	log.Printf(`package repository %s is not getting in "Reconcile succeeded" state`, name)
 	return false
+}
+
+func UpdateTapValues(tapValuesSchema models.TapValuesSchema, tapName string, tapPackageName string, tapVersion string, tapNamespace string) error {
+	log.Print("creating tempfile for tap values schema")
+	tempFile, err := ioutil.TempFile("", "tap-values*.yaml")
+	if err != nil {
+		log.Printf("error while creating tempfile for tap values schema")
+		return err
+	} else {
+		log.Print("created tempfile")
+	}
+	defer os.Remove(tempFile.Name())
+
+	// write the updated schema to the temporary file
+	err = utils.WriteYAMLFile(tempFile.Name(), tapValuesSchema)
+	if err != nil {
+		log.Print("error while writing updated tap values schema to YAML file")
+		return err
+	} else {
+		log.Print("wrote tap values schema to file")
+	}
+
+	// update tap
+	err = tanzu_libs.UpdateInstalledPackage(tapName, tapPackageName, tapVersion, tapNamespace, tempFile.Name(), "")
+	if err != nil {
+		log.Print("error while updating tap")
+		return err
+	} else {
+		log.Print("updated tap")
+	}
+	return err
 }

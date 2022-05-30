@@ -85,8 +85,18 @@ type GetDeliverablesYamlOutput struct {
 		UID             string `yaml:"uid"`
 	} `yaml:"metadata"`
 	Spec struct {
+		Params []struct {
+			Name  string `yaml:"name"`
+			Value string `yaml:"value"`
+		} `yaml:"params"`
 		Source struct {
-			Image string `yaml:"image"`
+			Image string `yaml:"image,omitempty"`
+			Git   struct {
+				Ref struct {
+					Branch string `yaml:"branch"`
+				} `yaml:"ref"`
+				URL string `yaml:"url"`
+			} `yaml:"git,omitempty"`
 		} `yaml:"source"`
 	} `yaml:"spec"`
 	Status struct {
