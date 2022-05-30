@@ -39,10 +39,12 @@ packages:
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: application-live-view-connector
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: app-live-view-conventions
     versions:
       - 1.0.1
@@ -52,6 +54,7 @@ packages:
     versions:
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: scan-controller
     versions:
       - 1.0.0
@@ -102,6 +105,7 @@ packages:
       - 1.1.0
       - 1.1.1
       - 1.2.0
+      - 1.2.1
   - name: build-service
     versions:
       - 1.4.2
@@ -115,6 +119,7 @@ packages:
       - 1.0.2
       - 1.1.0
       - 1.1.1
+      - 1.1.2
   - name: tap
     versions:
       - 1.0.0
@@ -123,7 +128,7 @@ packages:
       - 1.0.3
       - 1.1.0
       - 1.1.1
-      - 1.1.2-build.3
+      - 1.1.2-build.4
   - name: learning-center-workshops
     versions:
       - 0.1.0
