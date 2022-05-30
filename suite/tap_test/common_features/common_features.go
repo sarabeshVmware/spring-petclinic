@@ -662,7 +662,7 @@ func DeleteSecret(t *testing.T, name string, namespace string) features.Feature 
 }
 
 func DockerLogin(t *testing.T, server string, username string, password string) features.Feature {
-	return features.New(fmt.Sprintf("Docker login server")).
+	return features.New("Docker login server").
 		Assess(fmt.Sprintf("Logging in server %s", server), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 
 			err := docker.DockerLogin(server, username, password)
