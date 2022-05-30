@@ -1,0 +1,207 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tekton.tanzu.vmware.com.0.35.1
+spec:
+  refName: tekton.tanzu.vmware.com
+  version: 0.35.1
+  releasedAt: "2022-05-12T21:31:55Z"
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        defaults:
+          type: object
+          additionalProperties: false
+          properties:
+            timeout_minutes:
+              type: string
+              description: Number of minutes to use if none is specified in the TaskRun and PipelineRun.
+              x-example-description: Timeout of 1 hour
+              example: "60"
+              default: "60"
+            service_account:
+              type: string
+              description: Service account name to use if none is specified in the TaskRun and PipelineRun.
+              x-example-description: Use the 'default' service account
+              example: default
+              default: default
+            managed_by_label_value:
+              type: string
+              description: Value given to the "app.kubernetes.io/managed-by" label applied to all Pods created if none is specified in the TaskRun.
+              x-example-description: Mark all Pods as managed by 'tekton-pipelines'
+              example: tekton-pipelines
+              default: tekton-pipelines
+            pod_template:
+              type: string
+              description: Pod template to use if none is specified in the TaskRun and PipelineRun.
+              x-example-description: Add the imagePullSecret `reg-cred` to all Pods
+              example: |
+                imagePullSecrets:
+                - name: reg-cred
+              default: ""
+            cloud_events_sink:
+              type: string
+              description: CloudEvents sink to be used for TaskRun and PipelineRun, no CloudEvent is generated if this is left empty.
+              default: ""
+            task_run_workspace_binding:
+              type: string
+              description: Workspace configuration for any Workspaces that a Task declares but does not explicitly provide.
+              x-example-description: Use the emptyDir volume for any Workspace that is not explicitly provided
+              example: |
+                emptyDir: {}
+              default: ""
+        observability:
+          type: object
+          additionalProperties: false
+          properties:
+            metrics:
+              type: object
+              additionalProperties: false
+              properties:
+                backend_destination:
+                  type: string
+                  description: The system metrics destination. Valid options is either prometheus (default) or stackdriver.
+                  x-example-description: Use the prometheus driver
+                  example: prometheus
+                  default: prometheus
+                stackdriver_project_id:
+                  type: string
+                  description: The Stackdriver project ID. When running on GCE, application default credentials will be used and metrics will be sent to the cluster's project if this field is not provided.
+                  default: ""
+                allow_stackdriver_custom_metrics:
+                  type: string
+                  description: Whether it is allowed to send metrics to Stackdriver using "global" resource type and custom metric type.
+                  x-example-description: Do not send custom metrics
+                  example: "false"
+                  default: ""
+                taskrun:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    level:
+                      type: string
+                      description: 'Level for TaskRun metrics. Valid options are: `taskrun`: task, taskrun, and namespace labels; `task`: task and namespace labels; `namespace`: only namespace labels.'
+                      x-example-description: Annotate the TaskRun metrics with `taskrun`, `task`, and `namespace` labels
+                      example: taskrun
+                      default: task
+                    duration_type:
+                      type: string
+                      description: Type of the TaskRun metrics. Valid options is either histogram or lastvalue.
+                      x-example-description: Set the metric type to be histogram
+                      example: histogram
+                      default: histogram
+                pipelinerun:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    level:
+                      type: string
+                      description: 'Level for PipelineRun metrics. Valid options is: `pipelinerun`: pipeline, pipelinerun, and namespace labels; `pipeline`: pipeline and namespace labels; `namespace`: only namespace labels.'
+                      x-example-description: Annotate the PipelineRun metrics with `pipelinerun`, `pipeline`, and `namespace` labels
+                      example: pipelinerun
+                      default: pipeline
+                    duration_type:
+                      type: string
+                      description: Set the type of the PipelineRun metrics. Valid options is either histogram or lastvalue.
+                      x-example-description: Set the metric type to be histogram
+                      example: histogram
+                      default: histogram
+        logging:
+          type: object
+          additionalProperties: false
+          properties:
+            zap_logger_config:
+              type: string
+              description: Configuration for the uber-go/zap logger
+              default: |
+                {
+                  "level": "info",
+                  "development": false,
+                  "sampling": {
+                    "initial": 100,
+                    "thereafter": 100
+                  },
+                  "outputPaths": ["stdout"],
+                  "errorOutputPaths": ["stderr"],
+                  "encoding": "json",
+                  "encoderConfig": {
+                    "timeKey": "ts",
+                    "levelKey": "level",
+                    "nameKey": "logger",
+                    "callerKey": "caller",
+                    "messageKey": "msg",
+                    "stacktraceKey": "stacktrace",
+                    "lineEnding": "",
+                    "levelEncoder": "",
+                    "timeEncoder": "iso8601",
+                    "durationEncoder": "",
+                    "callerEncoder": ""
+                  }
+                }
+            loglevel:
+              type: object
+              additionalProperties: false
+              properties:
+                controller:
+                  type: string
+                  description: Log level for the tekton-pipelines controller
+                  default: info
+                webhook:
+                  type: string
+                  description: Log level for the tekton-pipelines webhook
+                  default: info
+        feature_flags:
+          type: object
+          additionalProperties: false
+          properties:
+            disable_affinity_assistant:
+              type: string
+              description: Set to "true" to prevent Tekton from creating an Affinity Assistant for every TaskRun sharing a PVC workspace. See https://github.com/tektoncd/pipeline/blob/main/docs/workspaces.md#affinity-assistant-and-specifying-workspace-order-in-a-pipeline or https://github.com/tektoncd/pipeline/pull/2630 for more info.
+              default: "false"
+            disable_creds_init:
+              type: string
+              description: 'Set to "true" to prevent Tekton from scanning service accounts for secrets matching a specified format and injecting credentials into Steps. Note: setting this to "true" will prevent PipelineResources from working. See https://github.com/tektoncd/pipeline/issues/2791 for more info.'
+              default: "false"
+            running_in_environment_with_injected_sidecars:
+              type: string
+              description: Set to "false" when running in a cluster that does not use injected sidecars such as Istio. Setting it to false should decrease the time it takes for a TaskRun to start running. For clusters that use injected sidecars, setting this option to false can lead to unexpected behavior. See https://github.com/tektoncd/pipeline/issues/2080 for more info.
+              default: "true"
+            require_git_ssh_secret_known_hosts:
+              type: string
+              default: "false"
+            enable_tekton_oci_bundles:
+              type: string
+              description: Set to "true" to enable the use of Tekton OCI bundle.  This is an experimental feature and thus should still be considered an alpha feature.
+              default: "false"
+            enable_custom_tasks:
+              type: string
+              description: Set to "true" to enable the use of custom tasks from within pipelines.  This is an experimental feature and thus should still be considered an alpha feature.
+              default: "false"
+            enable_api_fields:
+              type: string
+              description: Set to "stable" or "alpha" to determine which gated features are enabled.
+              default: stable
+            scope_when_expressions_to_task:
+              type: string
+              description: Set to "false" to scope when expressions to guard a Task and its dependent Tasks. See https://github.com/tektoncd/community/blob/main/teps/0059-skipping-strategies.md#scoped-whenexpressions for more details.
+              default: "true"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tektoncd/bundle@sha256:a4fc6747814a13da31934769e0d0327b5ad20c10112b49f6dcf43e6ba1a44fbb
+      template:
+      - ytt:
+          paths:
+          - overlays/
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+          - kbld.yaml
+          - kapp.yaml
+      deploy:
+      - kapp: {}

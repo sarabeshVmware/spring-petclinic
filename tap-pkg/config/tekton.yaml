@@ -17,7 +17,7 @@ spec:
   packageRef:
     refName: tekton.tanzu.vmware.com
     versionSelection:
-      constraints: 0.33.5
+      constraints: 0.35.1
   values:
   - secretRef:
       name: tekton-pipelines-values
