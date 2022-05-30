@@ -4,7 +4,6 @@ package multicluster_innerloop_test
 
 import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
-	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/models"
 	"testing"
 )
 
