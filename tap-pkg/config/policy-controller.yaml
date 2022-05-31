@@ -3,7 +3,7 @@
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.iterate, profiles.run]):
-#@ if profiles.is_pkg_enabled("policy.signing.apps.tanzu.vmware.com"):
+#@ if profiles.is_pkg_enabled("policy.apps.tanzu.vmware.com"):
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -17,7 +17,7 @@ metadata:
 spec:
   serviceAccountName: tap-install-sa
   packageRef:
-    refName: policy.signing.apps.tanzu.vmware.com
+    refName: policy.apps.tanzu.vmware.com
     versionSelection:
       constraints: 0.1.0-beta.11
       prereleases:
