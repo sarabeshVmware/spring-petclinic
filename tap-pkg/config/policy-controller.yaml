@@ -20,7 +20,8 @@ spec:
     refName: policy.signing.apps.tanzu.vmware.com
     versionSelection:
       constraints: 0.1.0-beta.11
-      prereleases: {}
+      prereleases:
+        identifiers: [beta]
   values:
   - secretRef:
       name: policy-values
