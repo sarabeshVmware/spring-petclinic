@@ -736,9 +736,8 @@ func GenerateAcceleratorProject(t *testing.T, namespace string) features.Feature
 			return ctx
 		}).
 		Assess("unzip-project", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			project := "tanzu-java-web-app"
-			zipFile := project + ".zip"
-
+			project := filepath.Join(rootDir, "tanzu-java-web-app")
+			zipFile := "tanzu-java-web-app" + ".zip"
 			t.Logf("listing existing project files if exists")
 			output, err := linux_util.ExecuteCmd(fmt.Sprintf("ls -lt %s", project))
 			t.Logf("command executed: ls -lt %s. output %s", project, output)
@@ -976,6 +975,7 @@ func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace strin
 		}).
 		Feature()
 }
+
 func ProcessDeliverable(t *testing.T, name string, namespace string, buildContext string, runContext string) features.Feature {
 	return features.New("getting deliverable and changing file").
 		Assess(fmt.Sprintf("getting deliverable file %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
