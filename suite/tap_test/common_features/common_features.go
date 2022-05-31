@@ -1041,18 +1041,3 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 			return ctx
 		}).Feature()
 }
-
-func VerifyTanzuJavaWebAppGitRepository(t *testing.T, name string, namespace string) features.Feature {
-	return features.New("verify-image-repositories").
-		Assess("verify-image-repositories", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			t.Logf("verify image-repositories status")
-			status := kubectl_helpers.VerifyGitRepoStatus(name, namespace, 10, 30)
-			t.Logf("ImageRepository %s status is : %t", name, status)
-			if !status {
-				t.Error(fmt.Errorf("ImageRepository %s is not ready.", name))
-				t.Fail()
-			}
-			return ctx
-		}).
-		Feature()
-}

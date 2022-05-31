@@ -13,7 +13,7 @@ func TestInnerloopBasicSupplychainGitSourceLiveUpdate(t *testing.T) {
 		// switch to Iterate cluster
 		common_features.ChangeContext(t, suiteConfig.Multicluster.IterateClusterContext),
 		common_features.TanzuDeployWorkload(t, suiteConfig.Innerloop.Workload.YamlFile, suiteConfig.Innerloop.Workload.Namespace),
-		common_features.VerifyTanzuJavaWebAppGitRepository(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
+		common_features.VerifyGitRepoStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppBuildStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.BuildNameSuffix, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppImagesKpacStatus(t, suiteConfig.Innerloop.Workload.Namespace),
 		common_features.VerifyTanzuJavaWebAppPodIntentStatus(t, suiteConfig.Innerloop.Workload.Name, suiteConfig.Innerloop.Workload.Namespace),
