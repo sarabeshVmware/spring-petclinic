@@ -90,8 +90,7 @@ packages:
       - 1.1.1
       - 1.1.2
   - name: policy-controller
-    versions:
-      - 0.1.0-beta.11
+    versions: []
   - name: api-portal
     versions:
       - 1.0.8
