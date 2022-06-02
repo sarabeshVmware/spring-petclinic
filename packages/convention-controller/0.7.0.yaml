@@ -18,7 +18,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.pivotal.io/tanzu-convention-service/convention-controller-bundle@sha256:55fbb03250f8293963af108c52bea2f4beb16115ca816b4c5dd00807febc08d8
+          image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:55fbb03250f8293963af108c52bea2f4beb16115ca816b4c5dd00807febc08d8
       template:
       - kbld:
           paths:
