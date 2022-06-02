@@ -24,3 +24,25 @@ ifeq ($(origin PACKAGEFILE),undefined)
 else
 	go run scripts/package.go $(PACKAGEFILE)
 endif
+
+check-ytt : ## Check if ytt tool is installed
+ifneq (,$(shell command -v ytt &> /dev/null))
+	$(error "No `ytt` found, install it to proceed: https://carvel.dev/ytt")
+endif
+
+TAP_VALUES_TEST := tap-values-test
+$(TAP_VALUES_TEST)/% : %
+	@mkdir -p $(@D)
+
+test-tap-values : $(TAP_VALUES_TEST)/*
+	make check-ytt
+	mkdir -p out
+	for file in $^; do \
+  		time=$$(date +'%Y%m%d-%H%M%S') && \
+		ytt -f tap-pkg/config --data-values-file $${file} > out/result-$$time.yaml; \
+	done
+
+unit-tests-yaml :
+	make check-ytt
+	mkdir -p tap-packaging-tests/tap-tests/yaml-unit-tests/out
+	./tap-packaging-tests/tap-tests/yaml-unit-tests/run_tests.sh
