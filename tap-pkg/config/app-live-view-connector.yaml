@@ -1,10 +1,25 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("connector.appliveview.tanzu.vmware.com"):
 
+#@ def collect_values(data_values):
+#@  values = {
+#@    "backend": {"host": ""}
+#@  }
+#@  if hasattr(data_values, "appliveview_connector") and data_values.appliveview_connector:
+#@    values.update(struct.decode(data_values.appliveview_connector))
+#@  end
+#@  if hasattr(data_values.shared, "ingress_domain") and data_values.shared.ingress_domain:
+#@    if not hasattr(data_values, "appliveview_connector") or not hasattr(data_values.appliveview_connector, "backend") or not hasattr(data_values.appliveview_connector.backend, "host"):
+#@      values["backend"]["host"] = "appliveview." + data_values.shared.ingress_domain
+#@    end
+#@  end
+#@  return struct.encode(values)
+#@ end
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
@@ -28,6 +43,6 @@ metadata:
   name: appliveview-connector-values
   namespace: tap-install
 stringData:
-  values.yml: #@ yaml.encode(data.values.appliveview_connector)
+  values.yml: #@ yaml.encode(collect_values(data.values))
 #@ end
 #@ end

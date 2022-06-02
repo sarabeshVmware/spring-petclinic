@@ -1,26 +1,42 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:struct", "struct")
 #@ load("@ytt:overlay", "overlay")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("cnrs.tanzu.vmware.com"):
 
-#@ def cnrsOverlay():
+#@ def cnrsOverlay(data_values):
 ingress:
   external:
-    #@ if/end data.values.cnrs.ingress.external.namespace == "tanzu-system-ingress":
-    namespace: #@ data.values.contour.namespace
+    #@ if/end data_values.cnrs.ingress.external.namespace == "tanzu-system-ingress":
+    namespace: #@ data_values.contour.namespace
   internal:
-    #@ if/end data.values.cnrs.ingress.internal.namespace == "tanzu-system-ingress":
-    namespace: #@ data.values.contour.namespace
+    #@ if/end data_values.cnrs.ingress.internal.namespace == "tanzu-system-ingress":
+    namespace: #@ data_values.contour.namespace
 #@ end
 
-#@ def cnrsValues():
-#@ if hasattr(data.values.contour, "namespace"):
-#@ return overlay.apply(data.values.cnrs, cnrsOverlay())
+#@ def cnrsValues(data_values):
+#@  if hasattr(data_values, "contour") and hasattr(data_values.contour, "namespace"):
+#@    return overlay.apply(data_values.cnrs, cnrsOverlay(data_values))
+#@  end
+#@  return collect_values(data_values)
 #@ end
-#@ return data.values.cnrs
+
+#@ def collect_values(data_values):
+#@  values = {
+#@    "domain_name": ""
+#@  }
+#@  if hasattr(data_values, "cnrs") and data_values.cnrs:
+#@    values.update(struct.decode(data_values.cnrs))
+#@  end
+#@  if hasattr(data_values.shared, "ingress_domain") and data_values.shared.ingress_domain:
+#@    if not hasattr(data_values, "cnrs") or not hasattr(data_values.cnrs, "domain_name") or not data_values.cnrs.domain_name:
+#@      values["domain_name"] = data_values.shared.ingress_domain
+#@    end
+#@  end
+#@  return struct.encode(values)
 #@ end
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -47,7 +63,7 @@ metadata:
   name: cnrs-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(cnrsValues())
+  values.yaml: #@ yaml.encode(cnrsValues(data.values))
 
 #@ end
 #@ end

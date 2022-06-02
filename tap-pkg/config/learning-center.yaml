@@ -1,10 +1,25 @@
 #@ load("@ytt:data", "data")
 #@ load("@ytt:yaml", "yaml")
+#@ load("@ytt:struct", "struct")
 #@ load("_profiles.star", "profiles")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.view]):
 #@ if profiles.is_pkg_enabled("learningcenter.tanzu.vmware.com"):
 
+#@ def collect_values(data_values):
+#@  values = {
+#@    "ingressDomain": ""
+#@  }
+#@  if hasattr(data_values, "learningcenter") and data_values.learningcenter:
+#@    values.update(struct.decode(data_values.learningcenter))
+#@  end
+#@  if hasattr(data_values.shared, "ingress_domain") and data_values.shared.ingress_domain:
+#@    if not hasattr(data_values, "learningcenter") or not hasattr(data_values.learningcenter, "ingressDomain") or not data_values.learningcenter.ingressDomain:
+#@      values["ingressDomain"] = "learningcenter." + data_values.shared.ingress_domain
+#@    end
+#@  end
+#@  return struct.encode(values)
+#@ end
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
@@ -31,7 +46,7 @@ metadata:
   name: learningcenter-values
   namespace: tap-install
 stringData:
-  values.yaml: #@ yaml.encode(data.values.learningcenter)
+  values.yaml: #@ yaml.encode(collect_values(data.values))
 
 #@ end
 #@ end
