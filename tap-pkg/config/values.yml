@@ -60,9 +60,6 @@ ootb_templates: {}
 image_policy_webhook: {}
 
 #@schema/type any=True
-policy: {}
-
-#@schema/type any=True
 scanning: {}
 
 #@schema/type any=True
