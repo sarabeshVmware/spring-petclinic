@@ -5,22 +5,6 @@
 #@ if profiles.is_any_enabled([profiles.full, profiles.build]) and data.values.supply_chain == "testing_scanning":
 #@ if profiles.is_pkg_enabled("ootb-supply-chain-testing-scanning.tanzu.vmware.com"):
 
-#@ def collect_values():
-#@  values = {}
-#@  if hasattr(data.values, "ootb_supply_chain_testing_scanning"):
-#@    values.update(data.values.ootb_supply_chain_testing_scanning)
-#@  end
-#@
-#@  registry_values = {}
-#@  registry_values.update(data.values.ootb_supply_chain_testing_scanning["registry"])
-#@  if data.values.shared.ca_cert_data:
-#@      registry_values["ca_cert_data"] = data.values.shared.ca_cert_data
-#@  end
-#@
-#@  values["registry"] = registry_values
-#@  return values
-#@ end
-
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
 kind: PackageInstall
@@ -36,7 +20,7 @@ spec:
   packageRef:
     refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
     versionSelection:
-      constraints: 0.8.0-build.1
+      constraints: 0.7.1
       prereleases: {}
   values:
   - secretRef:
@@ -49,7 +33,7 @@ metadata:
   namespace: tap-install
 type: Opaque
 stringData:
-  values.yml: #@ yaml.encode(collect_values())
+  values.yml: #@ yaml.encode(data.values.ootb_supply_chain_testing_scanning)
 
 #@ end
 #@ end
