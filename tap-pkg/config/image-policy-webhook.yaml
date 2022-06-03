@@ -34,4 +34,5 @@ stringData:
   values.yaml: #@ yaml.encode(data.values.image_policy_webhook)
 
 #@ end
+
 #@ end
