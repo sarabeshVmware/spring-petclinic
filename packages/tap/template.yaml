@@ -51,6 +51,10 @@ spec:
               type: string
               default: ""
               description: 'Optional: PEM Encoded certificate data to trust TLS connections with a private CA.'
+            ingress_domain:
+              type: string
+              default: ""
+              description: "Optional: Domain name to be used in service routes and hostnames for instances of TAP components."
           description: Common properties shared across multiple components
         api_portal:
           type: object
