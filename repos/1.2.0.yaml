@@ -98,9 +98,6 @@ packages:
       - 1.0.2
       - 1.1.1
       - 1.1.2
-  - name: policy-controller
-    versions:
-      - 0.1.0-beta.11
   - name: api-portal
     versions:
       - 1.0.8
@@ -136,7 +133,7 @@ packages:
       - 1.1.0
       - 1.1.1
       - 1.1.2-build.4
-      - 1.2.0-build.6
+      - 1.2.0-build.7
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -195,7 +192,6 @@ packages:
       - 0.30.1
       - 0.33.2
       - 0.33.5
-      - 0.35.1
   - name: ootb-delivery-basic
     versions:
       - 0.5.1
