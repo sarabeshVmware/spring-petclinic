@@ -1,6 +1,5 @@
 # Ignore Jetbrains IDE files
 .idea
 repos/generated
-/tap-values-test/
 /out/
 /tap-packaging-tests/tap-tests/yaml-unit-tests/out/
