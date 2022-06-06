@@ -133,7 +133,7 @@ packages:
       - 1.1.0
       - 1.1.1
       - 1.1.2-build.4
-      - 1.2.0-build.8
+      - 1.2.0-build.9
   - name: learning-center-workshops
     versions:
       - 0.1.0
