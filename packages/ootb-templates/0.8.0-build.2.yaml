@@ -5,7 +5,7 @@ metadata:
 spec:
   refName: ootb-templates.tanzu.vmware.com
   version: 0.8.0-build.2
-  releasedAt: "2022-06-06T14:46:48Z"
+  releasedAt: "2022-06-06T20:43:41Z"
   valuesSchema:
     openAPIv3:
       title: ootb-templates
@@ -16,11 +16,15 @@ spec:
             type: string
           default: []
           description: List of templates to exclude from the installation (e.g. ['git-writer'])
+        iaas_auth:
+          type: boolean
+          default: false
+          description: Enable the use of IAAS based authentication for imgpkg
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:855d730228a72a3299ebb804a1398ad888046a758555ea4bbcd4843020d34166
+          image: dev.registry.tanzu.vmware.com/ootb-templates/ootb-templates@sha256:17be608382541f234ec32b98ab45754d58d4bb035088852bf80c68b6982a8d6c
       template:
       - ytt:
           ignoreUnknownComments: true
