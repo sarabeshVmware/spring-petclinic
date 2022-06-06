@@ -1,0 +1,198 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: ootb-supply-chain-testing.tanzu.vmware.com.0.8.0-build.1
+spec:
+  refName: ootb-supply-chain-testing.tanzu.vmware.com
+  version: 0.8.0-build.1
+  releasedAt: "2022-06-03T13:04:05Z"
+  valuesSchema:
+    openAPIv3:
+      title: ootb-supply-chain-testing
+      properties:
+        cluster_builder:
+          type: string
+          description: Name of the Tanzu Build Service (TBS) ClusterBuilder to use by default on image objects managed by the supply chain.
+          default: default
+          examples:
+          - default
+        service_account:
+          type: string
+          description: Name of the service account in the namespace where the Workload is submitted to utilize for providing registry credentials to Tanzu Build Service (TBS) Image objects as well as deploying the application.
+          default: default
+          examples:
+          - default
+        git_implementation:
+          type: string
+          description: Determines which git client library to use. Valid options are go-git or libgit2.
+          default: go-git
+          examples:
+          - go-git
+        maven:
+          type: object
+          properties:
+            repository:
+              type: object
+              properties:
+                url:
+                  type: string
+                  default: https://repo.maven.apache.org/maven2
+                  description: |
+                    URL is the HTTPS address of the repository. HTTP is not supported.
+                credentials_secret_name:
+                  type: string
+                  default: ""
+                  description: |
+                    Name of the Secret object in the same namespace as the Workload to use for providing credentials to the fetching of maven artifacts.
+                ca_cert_secret_name:
+                  type: string
+                  default: ""
+                  description: |
+                    Name of the Secret object in the same namespace as the Workload to use for providing CA certificate data for fetching of maven artifacts.
+        registry:
+          type: object
+          properties:
+            ca_cert_data:
+              type: string
+              default: ""
+              description: |
+                PEM encoded certificate data for the image registry where the files will be pushed to.
+            server:
+              type: string
+              description: Name of the registry server where application images should be pushed to (required).
+              default: index.docker.io
+              examples:
+              - index.docker.io
+              - gcr.io
+            repository:
+              type: string
+              description: Name of the repository in the image registry server where the application images from the workloads should be pushed to (required).
+              examples:
+              - web-team
+        gitops:
+          type: object
+          properties:
+            server_address:
+              type: string
+              description: |
+                Default server address to be used for forming Git URLs for pushing Kubernetes configuration produced by the supply chain.
+              examples:
+              - https://github.com/
+              - https://internal.gitlab.company.com/
+            repository_owner:
+              type: string
+              description: |
+                Default project or user of the repository. Used to create URLs for pushing Kubernetes configuration produced by the supply chain.
+              examples:
+              - vmware-tanzu
+              - group
+            repository_name:
+              type: string
+              description: |
+                Default repository name used for forming Git URLs for pushing Kubernetes configuration produced by the supply chain.
+              examples:
+              - cartographer
+              - react
+            repository_prefix:
+              type: string
+              description: |
+                DEPRECATED: Use server_address and repository_owner instead Default prefix to be used for forming Git SSH URLs for pushing Kubernetes configuration produced by the supply chain.
+              examples:
+              - git@github.com:vmware-tanzu
+              - git@internal.gitlab.company.com:/group
+            branch:
+              type: string
+              description: |
+                Default branch to use for pushing Kubernetes configuration files produced by the supply chain.
+              default: main
+              examples:
+              - staging
+            commit_strategy:
+              type: string
+              description: |
+                Specification of how commits are made to the branch; directly or through a pull request.
+              default: direct
+              examples:
+              - direct
+              - pull_request
+            commit_message:
+              type: string
+              description: |
+                Default git commit message to write when publishing Kubernetes configuration files produces by the supply chain to git.
+              default: bump configuration
+              examples:
+              - alice
+              - bob
+            username:
+              type: string
+              description: |
+                Default user name to be used for the commits produced by the supply chain.
+              default: supplychain
+              examples:
+              - alice
+              - bob
+            email:
+              type: string
+              description: |
+                Default user email to be used for the commits produced by the supply chain.
+              default: supplychain@cluster.local
+              examples:
+              - alice@users.noreply.github.com
+            ssh_secret:
+              type: string
+              description: |
+                Name of the default Secret containing SSH credentials to lookup in the developer namespace for the supply chain to fetch source code from and push configuration to.
+              default: git-ssh
+              examples:
+              - credentials
+            pull_request:
+              type: object
+              description: |
+                Values leveraged if the commit_strategy is 'pull_request'.
+              properties:
+                server_kind:
+                  type: string
+                  description: |
+                    The git source control platform used
+                  examples:
+                  - github
+                  - gitlab
+                  - gitea
+                commit_branch:
+                  type: string
+                  description: |
+                    The branch to which commits will be made, before opening a pull request to the branch specified in .gitops.branch If the string "" is specified, an essentially random string will be used for the branch name, in order to prevent collisions.
+                  examples:
+                  - ""
+                  - pr_branch
+                  default: ""
+                pull_request_title:
+                  type: string
+                  description: |
+                    The title for the pull request
+                  examples:
+                  - Ready for review
+                  - Approval required
+                pull_request_body:
+                  type: string
+                  description: |
+                    Any further information to add to the pull request
+                  examples:
+                  - The changes here are a result of the TAP supply chain.
+                  - ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:50923df76fe98bccbfbb6842584945a087a3354792284414ad9dac9f855e9f4c
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp:
+          rawOptions:
+          - --wait-timeout=5m
