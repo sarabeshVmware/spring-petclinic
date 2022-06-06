@@ -1,0 +1,32 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.source.apps.tanzu.vmware.com.0.4.0-build.2
+spec:
+  refName: controller.source.apps.tanzu.vmware.com
+  version: 0.4.0-build.2
+  releasedAt: 2022-06-03T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties:
+        ca_cert_data:
+          type: string
+          description: "Optional: PEM Encoded certificate data for image registries with private CA."
+          default: ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-source-controller/source-controller-bundle@sha256:192b3608d7965b6909cc6e362ec44ab9dd0bc110bbb59be95eb3a1c26e844134
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/source-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
