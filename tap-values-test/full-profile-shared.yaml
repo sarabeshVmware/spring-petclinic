@@ -1,0 +1,44 @@
+profile: full
+ceip_policy_disclosed: true
+
+shared:
+  ingress_domain: example.com
+
+buildservice:
+  kp_default_repository: registry.example.com
+  kp_default_repository_username: user
+  kp_default_repository_password: SECRET
+  tanzunet_username: me
+  tanzunet_password: SHARED
+  descriptor_name: full
+
+supply_chain: basic
+
+ootb_supply_chain_basic:
+  registry:
+    server: registry.example.com
+    repository: builds
+  gitops:
+    ssh_secret: git-secret
+
+tap_gui:
+  service_type: ClusterIP
+  ingressEnabled: "true"
+  app_config:
+    app:
+      baseUrl: http://tap-gui.example.com
+    catalog:
+      locations:
+        - type: url
+          target: https://git.example.com/catalog-info.yaml
+    backend:
+      baseUrl: http://tap-gui.example.com
+      cors:
+        origin: http://tap-gui.example.com
+
+metadata_store:
+  app_service_type: LoadBalancer # (optional) Defaults to LoadBalancer. Change to NodePort for distributions that don't support LoadBalancer
+
+grype:
+  namespace: default
+  targetImagePullSecret: repo-secret

@@ -14,6 +14,7 @@ excluded_packages:
 
 shared:
   ca_cert_data: ""
+  ingress_domain: ""
 
 #@schema/type any=True
 api_portal: {}

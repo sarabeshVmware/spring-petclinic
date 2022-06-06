@@ -1,0 +1,44 @@
+profile: view
+ceip_policy_disclosed: true
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer #NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing
+
+learningcenter:
+  ingressDomain: learningcenter.view.example.com
+
+tap_gui:
+  service_type: ClusterIP
+  ingressEnabled: "true"
+  ingressDomain: view.example.com
+  app_config:
+    app:
+      baseUrl: http://tap-gui.view.example.com
+    catalog:
+      locations:
+        - type: url
+          target: https://git.example.com/catalog-info.yaml
+    backend:
+      baseUrl: http://tap-gui.view.example.com
+      cors:
+        origin: http://tap-gui.view.example.com
+    kubernetes:
+      serviceLocatorMethod:
+        type: 'multiTenant'
+      clusterLocatorMethods:
+        - type: 'config'
+          clusters:
+            - url: mycluster.svc.local
+              name: mycluster
+              authProvider: serviceAccount
+              serviceAccountToken: token
+              skipTLSVerify: true
+
+metadata_store:
+  app_service_type: LoadBalancer # (optional) Defaults to LoadBalancer. Change to NodePort for distributions that don't support LoadBalancer
+
+appliveview:
+  ingressEnabled: true
+  ingressDomain: appliveview.view.example.com
