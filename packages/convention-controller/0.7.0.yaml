@@ -1,0 +1,34 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: controller.conventions.apps.tanzu.vmware.com.0.7.0
+spec:
+  refName: controller.conventions.apps.tanzu.vmware.com
+  version: 0.7.0
+  releasedAt: 2022-06-02T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties:
+        ca_cert_data:
+          type: string
+          description: "Optional: PEM Encoded certificate data for image registries with private CA."
+          default: ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-convention-service/convention-controller-bundle@sha256:55fbb03250f8293963af108c52bea2f4beb16115ca816b4c5dd00807febc08d8
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/namespace.yaml
+          - config/convention-controller.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+          - ca-overlay.yaml
+      deploy:
+      - kapp: {}
