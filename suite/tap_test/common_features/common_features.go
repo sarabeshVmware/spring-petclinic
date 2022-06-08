@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+	"sort"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
@@ -1047,4 +1047,42 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 			}
 			return ctx
 		}).Feature()
+}
+
+func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList []string) features.Feature {
+	return features.New("validation-of-installed-package").
+		Assess(fmt.Sprintf("validation-of-installed-packages-in-%s", namespace), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			var installedPackagesList []string	
+			installedPackages := tanzu_libs.ListInstalledPackages(namespace)
+			for index, _ := range installedPackages {
+				installedPackagesList = append(installedPackagesList, installedPackages[index].NAME)
+			}
+			fmt.Printf("installedPackagesList: %+v\n", installedPackagesList)
+			sort.Strings(expectedList)
+			sort.Strings(installedPackagesList)
+			fmt.Println("Expected Packages List : ", expectedList)
+			fmt.Println("Installed Packages List : ", installedPackagesList)
+			same := true
+			if len(expectedList) != len(installedPackagesList) {
+				same = false
+				fmt.Println("Expected list and installedPackagesList are not same")
+			} else {
+
+				for index, value := range expectedList {
+					if value != installedPackagesList[index] {
+						same = false
+						break
+					}
+				}
+				fmt.Println(same)
+			}
+			if !same {
+				fmt.Printf("Extra packages in validation list: %+v\n", linux_util.ArrayDifference(expectedList, installedPackagesList))
+				fmt.Printf("Missing packages from validation list: %+v\n", linux_util.ArrayDifference(installedPackagesList, expectedList))
+				t.FailNow()
+			}	
+			log.Println("Validation passed")
+			return ctx
+		}).
+		Feature()
 }

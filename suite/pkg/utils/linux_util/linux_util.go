@@ -206,3 +206,24 @@ func GetFields(s string, spans []span) []string {
 	}
 	return a
 }
+
+//returns elements in slice1 missing in slice2
+func ArrayDifference(slice1 []string, slice2 []string) []string {
+	var diff []string
+
+	for _, s1 := range slice1 {
+		found := false
+		for _, s2 := range slice2 {
+			if s1 == s2 {
+				found = true
+				break
+			}
+		}
+		// String not found. We add it to return slice
+		if !found {
+			diff = append(diff, s1)
+		}
+	}
+
+	return diff
+}
