@@ -22,6 +22,7 @@ scan_policy:
   yaml_file: scan-policy.yaml
 spring_petclinic_pipeline:
   yaml_file: spring-petclinic-tests-pipeline.yaml
+test_target_repo: tappackagestest.azurecr.io/spring-petclinic
 workload:
   name: spring-petclinic
   yaml_file: workload.yaml
