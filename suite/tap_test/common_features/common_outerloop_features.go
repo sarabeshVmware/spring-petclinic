@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/tanzu/tanzu_libs"
@@ -315,4 +316,28 @@ func VerifyImageskpac(t *testing.T, namespace string) features.Feature {
 			return ctx
 		}).
 		Feature()
+}
+
+func ImageCopyFromDeliverableToRepo(t *testing.T, name string, namespace string, target string) features.Feature {
+	return features.New("image package copy to another repo").
+		Assess("getting deliverable source image package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			valid := kubectl_helpers.ValidateBuildClusterDeliverableStatus(name, namespace, 10, 30)
+			if !valid {
+				t.Errorf("error while getting deliverable %s", name)
+				t.FailNow()
+			} else {
+				sourceRepo = kubectl_libs.GetDeliverables(name, namespace)[0].SOURCE
+			}
+			return ctx
+		}).
+		Assess("imgpkg copy to different registry", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			err := imgpkg.ImgpkgCopy(sourceRepo, target)
+			if err != nil {
+				t.Errorf("error while copying image bundles from %s to %s", sourceRepo, target)
+				t.FailNow()
+			} else {
+				t.Logf("copied image bundles from %s to %s", sourceRepo, target)
+			}
+			return ctx
+		}).Feature()
 }
