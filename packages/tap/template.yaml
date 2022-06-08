@@ -117,6 +117,11 @@ spec:
           additionalProperties: true
           properties: {}
           description: Image Policy Webhook configuration
+        policy:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Policy Controller configuration
         buildservice:
           type: object
           description: Build Service configuration
