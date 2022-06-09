@@ -174,7 +174,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 	output, err := pkg.ExecuteCmd(cmd)
 	status := false
 	if err != nil {
-		log.Printf("error while running imgpkg describe %s ", Image)
+		log.Printf("error while running imgpkg describe %s command. Please ensure you are using imgpkg version 0.29.0 or later.", Image)
 		log.Printf("error: %s", err)
 		log.Printf("output: %s", output)
 		return status, err
@@ -193,7 +193,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 		cmd := fmt.Sprintf("crane manifest %s", v.Image)
 		output, err = pkg.ExecuteCmd(cmd)
 		if err != nil {
-			log.Printf("error while running crane manifest %s ", v.Image)
+			log.Printf("error while running crane manifest %s command. Please ensure you are using crane version 0.7.0 or later.", v.Image)
 			log.Printf("error: %s", err)
 			log.Printf("output: %s", output)
 		} 
