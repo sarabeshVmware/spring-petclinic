@@ -854,7 +854,9 @@ func GetServiceExternalIP(service string, namespace string, timeoutInMins int, i
 	externalIP := ""
 	for finalTimeout > 0 {
 		svc := kubectl_lib.GetServices(service, namespace)
-		if svc[0].EXTERNAL_IP == "" || svc[0].EXTERNAL_IP == "<none>" {
+		if len(svc) < 1 {
+			log.Printf("%s service not yet created", service)
+		} else if svc[0].EXTERNAL_IP == "" || svc[0].EXTERNAL_IP == "<none>" {
 			log.Print("External IP is not found")
 		} else {
 			return svc[0].EXTERNAL_IP
