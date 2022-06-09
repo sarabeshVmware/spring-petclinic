@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -43,6 +44,40 @@ type PackageCR struct {
 			} `yaml:"spec"`
 		} `yaml:"template" validate:"required"`
 	} `yaml:"spec"`
+}
+
+type CraneManifestsOutput struct {
+	SchemaVersion int    `yaml:"schemaVersion"`
+	MediaType     string `yaml:"mediaType"`
+	Config        struct {
+		MediaType string `yaml:"mediaType"`
+		Size      int    `yaml:"size"`
+		Digest    string `yaml:"digest"`
+	} `yaml:"config"`
+	Layers []struct {
+		MediaType string `yaml:"mediaType"`
+		Size      int    `yaml:"size"`
+		Digest    string `yaml:"digest"`
+	} `yaml:"layers"`
+	Manifests []struct {
+		MediaType string `yaml:"mediaType"`
+		Digest    string `yaml:"digest"`
+		Size      int    `yaml:"size"`
+		Platform  struct {
+			Architecture string `yaml:"architecture"`
+			Os           string `yaml:"os"`
+		} `yaml:"platform"`
+	} `yaml:"manifests"`
+}
+
+type Imagesha struct {
+	Image string `yaml:"image"`
+}
+type ImgPkgDescribeOutput struct {
+	Sha     string `yaml:"sha"`
+	Content struct {
+		Images map[string]Imagesha `yaml:"images"`
+	} `yaml:"content"`
 }
 
 func GetPackageFile(fpath string) PackageCR {
@@ -93,19 +128,22 @@ func main() {
 }
 
 func ValidateImage(Image string) {
-	log.Println("Validating Image" , Image)
+	log.Println("Validating Image", Image)
 	InValidImage := strings.Contains(Image, "pivotal.io")
 	DevImage := strings.Contains(Image, "dev.registry.tanzu.vmware.com")
 	ShaImage := strings.Contains(Image, "@sha256:")
+	ImageIndex, _ := ValidateImageIndex(Image)
 	if InValidImage || !DevImage {
 		log.Fatalln("Please provide image reference which points to dev.registry.tanzu.vmware.com")
 	}
-	if !ShaImage{
+	if !ShaImage {
 		log.Fatalln("Please provide bundle image in digested form instead of tag")
+	}
+	if ImageIndex {
+		log.Fatalln("Image index referring to multiple arch images is not supported by tanzunet. Please provide single arch image reference")
 	}
 	log.Println("Image reference in package CR is validated successfully")
 }
-
 
 func ValidateTemplateSection(packageFile PackageCR) {
 	isKbldPresent, isPathPresentInKbldPath := false, false
@@ -127,4 +165,62 @@ func ValidateTemplateSection(packageFile PackageCR) {
 		log.Fatal(`".imgpkg/images.yml" entry is absent in the kbld, in the template section.`)
 	}
 	log.Print("template section validated successfully.")
+}
+
+func ValidateImageIndex(Image string) (bool, error) {
+	imgpkgDescribeInfo := ImgPkgDescribeOutput{}
+	log.Println("Executing imgpkg describe command...")
+	cmd := fmt.Sprintf("imgpkg describe -b %s -o yaml", Image)
+	output, err := pkg.ExecuteCmd(cmd)
+	status := false
+	if err != nil {
+		log.Printf("error while running imgpkg describe %s command. Please ensure you are using imgpkg version 0.29.0 or later.", Image)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+		return status, err
+	} 
+	resb := []byte(output)
+	err = yaml.Unmarshal(resb, &imgpkgDescribeInfo)
+	if err != nil {
+		log.Printf("error while unmarshal imgpkg describe output %s ", Image)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+		return status, err
+	}
+	var multiple []string
+	for _,v := range(imgpkgDescribeInfo.Content.Images){
+		craneManifestsInfo := CraneManifestsOutput{}
+		cmd := fmt.Sprintf("crane manifest %s", v.Image)
+		output, err = pkg.ExecuteCmd(cmd)
+		if err != nil {
+			log.Printf("error while running crane manifest %s command. Please ensure you are using crane version 0.7.0 or later.", v.Image)
+			log.Printf("error: %s", err)
+			log.Printf("output: %s", output)
+		} 
+		resb2 := []byte(output)
+		err = yaml.Unmarshal(resb2, &craneManifestsInfo)
+		if err != nil {
+			log.Printf("error while unmarshal crane manifest output %s ", v.Image)
+			log.Printf("error: %s", err)
+			log.Printf("output: %s", output)
+			return status, err
+		}
+		if len(craneManifestsInfo.Manifests) > 0{
+			for _, manifests := range(craneManifestsInfo.Manifests){
+				log.Printf("Manifest Digest: %s", manifests.Digest)
+				log.Printf("Manifest Platform Architecture: %s", manifests.Platform.Architecture)
+				log.Printf("Manifest Platform Os: %s", manifests.Platform.Os)
+				log.Printf("Imgpkg bundle %s, image index %s referring to multiple arch images is not supported by tanzunet", Image, v.Image)
+				status = true
+			}
+			multiple = append(multiple, v.Image)
+		} else {
+			log.Printf("Manifests list is not found for image %s. Image does not contain any multiple image indexs", v.Image)
+		}
+	}
+	if status{
+		log.Printf("Multiple image index found for images : %+v\n", multiple)
+	}
+	
+	return status, err
 }

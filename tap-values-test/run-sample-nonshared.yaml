@@ -1,0 +1,14 @@
+profile: run
+ceip_policy_disclosed: true
+supply_chain: basic
+cnrs:
+  domain_name: run-us-west1.example.com
+
+contour:
+  envoy:
+    service:
+      type: LoadBalancer #NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing
+appliveview_connector:
+  backend:
+    sslDisabled: true
+    host: appliveview.view.example.com

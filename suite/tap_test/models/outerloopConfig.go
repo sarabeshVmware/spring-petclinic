@@ -37,7 +37,8 @@ type OuterloopConfig struct {
 	SpringPetclinicPipeline struct {
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"spring_petclinic_pipeline"`
-	Workload struct {
+	TestTargetRepo string `yaml:"test_target_repo"`
+	Workload       struct {
 		Name                 string `yaml:"name"`
 		YamlFile             string `yaml:"yaml_file"`
 		TestYamlFile         string `yaml:"test_yaml_file"`

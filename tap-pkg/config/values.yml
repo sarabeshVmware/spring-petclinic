@@ -14,6 +14,7 @@ excluded_packages:
 
 shared:
   ca_cert_data: ""
+  ingress_domain: ""
 
 #@schema/type any=True
 api_portal: {}
@@ -58,6 +59,9 @@ ootb_templates: {}
 
 #@schema/type any=True
 image_policy_webhook: {}
+
+#@schema/type any=True
+policy: {}
 
 #@schema/type any=True
 scanning: {}

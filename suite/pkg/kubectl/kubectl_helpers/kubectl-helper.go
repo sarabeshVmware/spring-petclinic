@@ -779,7 +779,9 @@ func GetImageDigest(imageName string, namespace string, timeoutInMins int, inter
 	imageDigest := ""
 	for finalTimeout > 0 {
 		images := kubectl_lib.GetImages(imageName, namespace) // has to be in ready state
-		if images[0].READY == "True" {
+		if len(images) < 1 {
+			log.Println("Images are not generated yet")
+		} else if images[0].READY == "True" {
 			imageDigest = strings.Split(images[0].LATESTIMAGE, "@")[1]
 			log.Printf("imageDigests %s :", imageDigest)
 			break

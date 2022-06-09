@@ -32,7 +32,7 @@ func TestOuterloopBasicSupplychainGitopsDelivery(t *testing.T) {
 		common_features.ApplyKubectlConfigurationFile(t, outerloopConfig.Workload.GitSSHSecretYamlFile, outerloopConfig.Namespace),
 
 		//copying deliverable from build to run context
-		common_features.ProcessDeliverable(t, outerloopConfig.Workload.Name, outerloopConfig.Namespace, suiteConfig.Multicluster.BuildClusterContext, suiteConfig.Multicluster.RunClusterContext),
+		common_features.ProcessDeliverable(t, outerloopConfig.Workload.Name, outerloopConfig.Namespace, suiteConfig.Multicluster.BuildClusterContext, suiteConfig.Multicluster.RunClusterContext, ""),
 
 		//run context
 		common_features.VerifyRevisionStatus(t, outerloopConfig.Workload.Name, outerloopConfig.Namespace),

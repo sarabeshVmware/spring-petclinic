@@ -1,7 +1,23 @@
 #@ load("_profiles.star", "profiles")
+#@ load("@ytt:data", "data")
+#@ load("@ytt:yaml", "yaml")
 
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build, profiles.run]):
 #@ if profiles.is_pkg_enabled("cartographer.tanzu.vmware.com"):
+
+#@ def collect_values():
+#@  values = {
+#@    "ca_cert_data": ""
+#@  }
+#@  if hasattr(data.values, "cartographer"):
+#@    values.update(data.values.cartographer)
+#@  end
+#@  if data.values.shared.ca_cert_data :
+#@    # append shared ca_cert_data to component specific ca_cert_data
+#@    values["ca_cert_data"] = values["ca_cert_data"] + data.values.shared.ca_cert_data
+#@  end
+#@  return values
+#@ end
 
 ---
 apiVersion: packaging.carvel.dev/v1alpha1
@@ -18,8 +34,18 @@ spec:
   packageRef:
     refName: cartographer.tanzu.vmware.com
     versionSelection:
-      constraints: 0.3.0
+      constraints: 0.4.0-build.3
       prereleases: {}
-
+  values:
+  - secretRef:
+      name: cartographer-values
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: cartographer-values
+  namespace: tap-install
+stringData:
+  values.yaml: #@ yaml.encode(collect_values())
 #@ end
 #@ end

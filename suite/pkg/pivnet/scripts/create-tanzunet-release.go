@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"path/filepath"
@@ -9,8 +10,10 @@ import (
 
 	"gopkg.in/yaml.v3"
 
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	pivnet_helpers "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_helpers"
 	pivnet_libs "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/pivnet/pivnet_libs"
+	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
 type ConfigData struct {
@@ -54,6 +57,7 @@ func main() {
 			}
 		}
 	}
+
 	if createRelease {
 		log.Println("Create release in tanzunet")
 		rel_det := pivnet_libs.CreateRelease(config.ProductSlug, config.ReleaseVersion, config.ReleaseType, config.EulaSlug)
@@ -138,6 +142,22 @@ func main() {
 				}
 			}
 		}
+		log.Printf("Release created in tanzunet: %s", config.ReleaseVersion)
+
+		log.Printf("Copying release to tar")
+		sourceBundle := fmt.Sprintf("registry.tanzu.vmware.com/tanzu-application-platform/%s", config.ArtifactPath)
+		targetTar := fmt.Sprintf("%s.tar", config.ReleaseVersion)
+		imgpkgCopyError := imgpkg.ImgpkgCopyToTar(sourceBundle, targetTar)
+		if imgpkgCopyError != nil {
+			//Set availability only to admins in case of failure
+			log.Println("Updating release availability to 'Admins Only'")
+			pivnet_libs.UpdateRelease(config.ProductSlug, config.ReleaseVersion, "admins")
+			log.Println("Release availability updated to 'Admins Only'")
+			log.Fatalln(fmt.Sprintf("error while copying image bundles from %s to %s", sourceBundle, targetTar))
+
+		} else {
+			log.Printf("copied image bundles from %s to %s", sourceBundle, targetTar)
+			linux_util.ExecuteCmd(fmt.Sprintf("rm %s", targetTar))
+		}
 	}
-	log.Printf("Release created in tanzunet: %s", config.ReleaseVersion)
 }

@@ -38,4 +38,4 @@ shared:
 
 ### Inherit a TLK into your package ###
 
-There are two examples of methods to inherit TLK data into your package. You can see the TBS team's implemention [here](./config/tbs.yaml). You can also see the Convention Controller's implementation [here](./config/convention-controller.yaml)
+There are two examples of methods to inherit TLK data into your package. You can see the TBS team's implementation [here](./config/tbs.yaml). You can also see the Convention Controller's implementation [here](./config/convention-controller.yaml)
