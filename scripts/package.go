@@ -140,7 +140,7 @@ func ValidateImage(Image string) {
 		log.Fatalln("Please provide bundle image in digested form instead of tag")
 	}
 	if ImageIndex {
-		log.Fatalln("Please provide bundle image which does not refer to multiple image indexes")
+		log.Fatalln("Image index referring to multiple arch images is not supported by tanzunet. Please provide single arch image reference")
 	}
 	log.Println("Image reference in package CR is validated successfully")
 }
@@ -210,7 +210,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 				log.Printf("Manifest Digest: %s", manifests.Digest)
 				log.Printf("Manifest Platform Architecture: %s", manifests.Platform.Architecture)
 				log.Printf("Manifest Platform Os: %s", manifests.Platform.Os)
-				log.Printf("Imgpkg bundle %s, image %s contains multiple image index which is not supported by Tanzunet.", Image, v.Image)
+				log.Printf("Imgpkg bundle %s, image index %s referring to multiple arch images is not supported by tanzunet", Image, v.Image)
 				status = true
 			}
 			multiple = append(multiple, v.Image)
