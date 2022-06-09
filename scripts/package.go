@@ -70,37 +70,8 @@ type CraneManifestsOutput struct {
 	} `yaml:"manifests"`
 }
 
-// type ImgPkgDescribeOutput struct {
-// 	Images []struct {
-// 		Image       string `yaml:"Image"`
-// 		Type        string `yaml:"Type"`
-// 		Origin      string `yaml:"Origin"`
-// 		// Annotations struct {
-// 		// 	KbldCarvelDevID string `yaml:"kbld.carvel.dev/id"`
-// 		// } `yaml:"Annotations"`
-// 		// Tag string `yaml:"tag,omitempty"`
-// 		// URL string `yaml:"url,omitempty"`
-// 	} `yaml:"Images"`
-// }
-// type ImgPkgDescribeOutput struct {
-// 	Sha     string `yaml:"sha"`
-// 	Content struct {
-// 		Images []struct {
-// 		   sha256 struct {
-// 		   	  Image     string `yaml:"image"`
-// 		   }`yaml:"sha256"`
-
-// 		} `yaml:"images"`
-// 	} `yaml:"content"`
-// }
 type Imagesha struct {
-	// Annotations struct {
-	// 	KbldCarvelDevID      string `yaml:"kbld.carvel.dev/id"`
-	// 	KbldCarvelDevOrigins string `yaml:"kbld.carvel.dev/origins"`
-	// } `yaml:"annotations"`
 	Image string `yaml:"image"`
-	// ImageType string `yaml:"imageType"`
-	// Origin    string `yaml:"origin"`
 }
 type ImgPkgDescribeOutput struct {
 	Sha     string `yaml:"sha"`
