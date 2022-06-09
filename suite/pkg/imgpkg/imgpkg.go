@@ -24,3 +24,21 @@ func ImgpkgCopy(sourceBundle string, targetRepo string) error {
 
 	return err
 }
+
+func ImgpkgCopyToTar(sourceBundle string, targetTar string) error {
+	log.Printf("copying images from %s to %s", sourceBundle, targetTar)
+
+	// execute cmd
+	cmd := fmt.Sprintf("imgpkg copy --bundle %s --to-tar %s", sourceBundle, targetTar)
+	output, err := linux_util.ExecuteCmdInBashMode(cmd)
+	if err != nil {
+		log.Printf("error while copying images from %s to %s", sourceBundle, targetTar)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("copied images from %s to %s", sourceBundle, targetTar)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
