@@ -140,6 +140,9 @@ type tapValuesSchemaStruct struct {
 	TapGui      struct {
 		ServiceType string `yaml:"service_type"`
 	} `yaml:"tap_gui"`
+	MetadataStore struct {
+		NsForExportAppCert string `yaml:"ns_for_export_app_cert"`
+	} `yaml:"metadata_store"`
 }
 
 func getTapValuesSchema() (tapValuesSchemaStruct, error) {

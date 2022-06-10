@@ -43,3 +43,5 @@ convention_controller:
     ca-cert-data:
 source_controller:
     ca-cert-data:
+metadata_store:
+    ns_for_export_app_cert: "*"
