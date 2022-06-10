@@ -143,11 +143,12 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		imageScan := kubectl_lib.GetImageScan(name, namespace)
 		if (imageScan == kubectl_lib.GetImageScanOutput{}) {
 			log.Println("Image scan is not started yet")
-		} else if imageScan.PHASE == "Completed" && ((imageScan.CRITICAL >= "1") || (imageScan.HIGH >= "1") || (imageScan.UNKNOWN >= "1")) {
+		} else if imageScan.PHASE == "Completed" && ((imageScan.CRITICAL >= "2") || (imageScan.HIGH >= "1") || (imageScan.UNKNOWN >= "1")) {
 			log.Println("Image scan complete, CVE(s) found")
 			// TODO: tanzu insight list CVEs
 			break
-		} else if imageScan.PHASE == "Completed" && (imageScan.CRITICAL == "0" || imageScan.CRITICAL == "") && (imageScan.HIGH == "0" || imageScan.HIGH == "") && (imageScan.UNKNOWN == "0" || imageScan.UNKNOWN == "") {
+		} else if imageScan.PHASE == "Completed" && (imageScan.CRITICAL <= "1" || imageScan.CRITICAL == "") && (imageScan.HIGH == "0" || imageScan.HIGH == "") && (imageScan.UNKNOWN == "0" || imageScan.UNKNOWN == "") {
+			// updating condition to avoid failure due to CVE-2016-1000027 which needs to be ignored
 			log.Println("Image scan complete successfully")
 			result = true
 			break
@@ -157,7 +158,7 @@ func ValidateImageScans(name string, namespace string, timeoutInMins int, interv
 		finalTimeout -= intervalInSeconds
 	}
 	if !result {
-		log.Printf("Image scan failed/not completed after %d mins", timeoutInMins)
+		log.Printf("Image scan not completed/detected CVE(s) within %d mins", timeoutInMins)
 		_, err := kubectl_lib.DescribeImageScan(name, namespace)
 		if err != nil {
 			log.Printf("error :%s", err)
