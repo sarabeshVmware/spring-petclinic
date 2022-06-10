@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 	"time"
-
+	"sort"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
@@ -37,6 +37,7 @@ var rootDir = filepath.Join(utils.GetFileDir(), "../../")
 var buildName = ""
 var ksvcLatestReady = ""
 var revisionName = ""
+var sourceRepo = ""
 
 func compile(filepath string) {
 	app := "./mvnw"
@@ -133,7 +134,7 @@ func DeletePackage(t *testing.T, name string, namespace string) features.Feature
 		Assess(fmt.Sprintf("deleting-package-%s", name), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			err := tanzu_libs.DeleteInstalledPackage(name, namespace)
 			if err != nil {
-				t.Error(fmt.Errorf("Uninstallation FAILED for package : %s", name))
+				t.Error(fmt.Errorf("uninstallation failed for package : %s", name))
 				t.Fail()
 			}
 			return ctx
@@ -377,7 +378,7 @@ func VerifyTanzuWorkloadStatus(t *testing.T, name string, namespace string) feat
 			status := kubectl_helpers.ValidateWorkloadStatus(name, namespace, 10, 10)
 			t.Logf("workload %s validation status : %v", name, status)
 			if !status {
-				t.Error(fmt.Errorf("workload %s is not ready.", name))
+				t.Error(fmt.Errorf("workload %s is not ready", name))
 				t.Fail()
 			}
 			return ctx
@@ -699,7 +700,7 @@ func VerifyTanzuJavaWebAppImageRepository(t *testing.T, name string, namespace s
 			status := kubectl_helpers.VerifyImageRepositoryStatus(name, namespace, 10, 30)
 			t.Logf("ImageRepository %s status is : %t", name, status)
 			if !status {
-				t.Error(fmt.Errorf("ImageRepository %s is not ready.", name))
+				t.Error(fmt.Errorf("image repository %s is not ready", name))
 				t.Fail()
 			}
 			return ctx
@@ -773,7 +774,7 @@ func VerifyTanzuJavaWebAppBuildStatus(t *testing.T, name string, buildNameSuffix
 			status := kubectl_helpers.VerifyBuildStatus(buildName, namespace, 10, 30)
 			t.Logf("Build status is : %t", status)
 			if !status {
-				t.Error(fmt.Errorf("Build is not ready."))
+				t.Error(fmt.Errorf("build is not ready"))
 				t.Fail()
 			}
 			return ctx
@@ -788,7 +789,7 @@ func VerifyTanzuJavaWebAppImagesKpacStatus(t *testing.T, namespace string) featu
 			status := kubectl_helpers.GetLatestImageStatus(namespace)
 			t.Logf("Image status is: %s", status)
 			if status != "True" {
-				t.Error(fmt.Errorf("Image is not built/ready."))
+				t.Error(fmt.Errorf("image is not built/ready"))
 				t.Fail()
 			}
 			return ctx
@@ -883,7 +884,7 @@ func VerifyTanzuJavaWebAppImageRepositoryDelivery(t *testing.T, name string, ima
 			status := kubectl_helpers.VerifyImageRepositoryStatus(imageRepo, namespace, 10, 30)
 			t.Logf("ImageRepository %s status is : %t", imageRepo, status)
 			if !status {
-				t.Error(fmt.Errorf("ImageRepository %s is not ready.", imageRepo))
+				t.Error(fmt.Errorf("imageRepository %s is not ready", imageRepo))
 				t.Fail()
 			}
 			return ctx
@@ -976,7 +977,7 @@ func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace strin
 		Feature()
 }
 
-func ProcessDeliverable(t *testing.T, name string, namespace string, buildContext string, runContext string) features.Feature {
+func ProcessDeliverable(t *testing.T, name string, namespace string, buildContext string, runContext string, targetRepo string) features.Feature {
 	return features.New("getting deliverable and changing file").
 		Assess(fmt.Sprintf("getting deliverable file %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			// changing to build cluster
@@ -995,6 +996,12 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 			} else {
 				t.Logf("validated deliverable %s success", name)
 				deliverable := kubectl_libs.GetDeliverablesYaml(name, namespace)
+				if targetRepo != "" {
+					sourceImage := kubectl_libs.GetDeliverables(name, namespace)[0].SOURCE
+					imageTag := strings.Split(sourceImage, ":")[1]
+					newSourceImage := fmt.Sprintf("%s:%s", targetRepo, imageTag)
+					deliverable.Spec.Source.Image = newSourceImage
+				}
 				deliverable.Status = kubectl_libs.Status{}
 				deliverable.Metadata.OwnerReferences = kubectl_libs.OwnerReferences{}
 				// create temporary deliverable file
@@ -1040,4 +1047,42 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 			}
 			return ctx
 		}).Feature()
+}
+
+func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList []string) features.Feature {
+	return features.New("validation-of-installed-package").
+		Assess(fmt.Sprintf("validation-of-installed-packages-in-%s", namespace), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			var installedPackagesList []string	
+			installedPackages := tanzu_libs.ListInstalledPackages(namespace)
+			for index, _ := range installedPackages {
+				installedPackagesList = append(installedPackagesList, installedPackages[index].NAME)
+			}
+			fmt.Printf("installedPackagesList: %+v\n", installedPackagesList)
+			sort.Strings(expectedList)
+			sort.Strings(installedPackagesList)
+			fmt.Println("Expected Packages List : ", expectedList)
+			fmt.Println("Installed Packages List : ", installedPackagesList)
+			same := true
+			if len(expectedList) != len(installedPackagesList) {
+				same = false
+				fmt.Println("Expected list and installedPackagesList are not same")
+			} else {
+
+				for index, value := range expectedList {
+					if value != installedPackagesList[index] {
+						same = false
+						break
+					}
+				}
+				fmt.Println(same)
+			}
+			if !same {
+				fmt.Printf("Extra packages in validation list: %+v\n", linux_util.ArrayDifference(expectedList, installedPackagesList))
+				fmt.Printf("Missing packages from validation list: %+v\n", linux_util.ArrayDifference(installedPackagesList, expectedList))
+				t.FailNow()
+			}	
+			log.Println("Validation passed")
+			return ctx
+		}).
+		Feature()
 }

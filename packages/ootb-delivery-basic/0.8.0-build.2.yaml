@@ -1,11 +1,11 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: ootb-delivery-basic.tanzu.vmware.com.0.8.0-build.1
+  name: ootb-delivery-basic.tanzu.vmware.com.0.8.0-build.2
 spec:
   refName: ootb-delivery-basic.tanzu.vmware.com
-  version: 0.8.0-build.1
-  releasedAt: "2022-06-03T13:04:19Z"
+  version: 0.8.0-build.2
+  releasedAt: "2022-06-06T14:46:41Z"
   valuesSchema:
     openAPIv3:
       title: ootb-delivery-basic

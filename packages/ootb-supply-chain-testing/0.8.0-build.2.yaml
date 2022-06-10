@@ -1,14 +1,14 @@
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: ootb-supply-chain-testing-scanning.tanzu.vmware.com.0.8.0-build.1
+  name: ootb-supply-chain-testing.tanzu.vmware.com.0.8.0-build.2
 spec:
-  refName: ootb-supply-chain-testing-scanning.tanzu.vmware.com
-  version: 0.8.0-build.1
-  releasedAt: "2022-06-03T13:04:12Z"
+  refName: ootb-supply-chain-testing.tanzu.vmware.com
+  version: 0.8.0-build.2
+  releasedAt: "2022-06-06T14:46:27Z"
   valuesSchema:
     openAPIv3:
-      title: ootb-supply-chain-testing-scanning
+      title: ootb-supply-chain-testing
       properties:
         cluster_builder:
           type: string
@@ -49,35 +49,6 @@ spec:
                   default: ""
                   description: |
                     Name of the Secret object in the same namespace as the Workload to use for providing CA certificate data for fetching of maven artifacts.
-        scanning:
-          type: object
-          properties:
-            source:
-              type: object
-              properties:
-                policy:
-                  type: string
-                  default: scan-policy
-                  description: |
-                    Name of the default ScanPolicy object to use to evaluate the results of scanning source code.
-                template:
-                  type: string
-                  default: blob-source-scan-template
-                  description: |
-                    Name of the default ScanTemplate object to use to scan source code.
-            image:
-              type: object
-              properties:
-                policy:
-                  type: string
-                  default: scan-policy
-                  description: |
-                    Name of the default ScanPolicy object to use to evaluate the results of scanning a container image.
-                template:
-                  type: string
-                  default: private-image-scan-template
-                  description: |
-                    Name of the default ScanTemplate object to use to scan a container image.
         registry:
           type: object
           properties:
@@ -213,7 +184,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing-scanning/ootb-supply-chain-testing-scanning@sha256:260334766a0846a8fa776504ac3cd7b07fbf34655b69f0da8e58916b66001db0
+          image: dev.registry.tanzu.vmware.com/ootb-supply-chain-testing/ootb-supply-chain-testing@sha256:50923df76fe98bccbfbb6842584945a087a3354792284414ad9dac9f855e9f4c
       template:
       - ytt:
           ignoreUnknownComments: true

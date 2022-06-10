@@ -1,20 +1,17 @@
-#@ load("@ytt:data", "data")
-
----
 apiVersion: data.packaging.carvel.dev/v1alpha1
 kind: Package
 metadata:
-  name: #@ "tap.tanzu.vmware.com." + data.values.version
+  name: tap.tanzu.vmware.com.1.2.0-build.10
 spec:
   refName: tap.tanzu.vmware.com
-  version: #@ data.values.version
-  releaseNotes: #@ "Release of {} Tanzu Application Platform. This package allows to select which set of packages to install via profile data value.".format(data.values.version)
-  releasedAt: #@ "{}T00:00:00Z".format(data.values.releasedAt)
+  version: 1.2.0-build.10
+  releaseNotes: Release of 1.2.0-build.10 Tanzu Application Platform. This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2022-06-08T00:00:00Z"
   template:
     spec:
       fetch:
       - imgpkgBundle:
-          image: #@ data.values.image
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:95b38acb0322cab2535e7c536e4d28f4c5aed29ad15202366328a2f9878e2710
       template:
       - ytt:
           paths:
@@ -54,7 +51,7 @@ spec:
             ingress_domain:
               type: string
               default: ""
-              description: "Optional: Domain name to be used in service routes and hostnames for instances of TAP components."
+              description: 'Optional: Domain name to be used in service routes and hostnames for instances of TAP components.'
           description: Common properties shared across multiple components
         api_portal:
           type: object
@@ -74,7 +71,7 @@ spec:
         cnrs:
           type: object
           additionalProperties: true
-          description: "Cloud Native Runtimes configuration"
+          description: Cloud Native Runtimes configuration
           properties:
             ingress:
               type: object
@@ -142,12 +139,10 @@ spec:
               examples:
               - password
             kp_default_repository_secret.name:
-              description: Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson.
-                Mutually exclusive with kp_default_repository_username/password.
+              description: Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with kp_default_repository_username/password.
               type: string
             kp_default_repository_secret.namespace:
-              description: Secret namespace for kp_default_repository credentials. Mutually
-                exclusive with kp_default_repository_username/password.
+              description: Secret namespace for kp_default_repository credentials. Mutually exclusive with kp_default_repository_username/password.
               type: string
             tanzunet_username:
               type: string
@@ -160,30 +155,25 @@ spec:
               examples:
               - password
             tanzunet_secret.name:
-              description: 'Optional: Secret name for tanzu network registry credentials
-                        of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password.'
+              description: 'Optional: Secret name for tanzu network registry credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password.'
               type: string
             tanzunet_secret.namespace:
-              description: 'Optional: Secret namespace for tanzu network registry credentials.
-                        Mutually exclusive with tanzunet_username/password.'
+              description: 'Optional: Secret namespace for tanzu network registry credentials. Mutually exclusive with tanzunet_username/password.'
               type: string
             ca_cert_data:
               type: string
               description: tbs registry ca certificate (used for self signed registry)
             descriptor_name:
-              description: Name of descriptor to import (required for dependency updater
-                feature)
+              description: Name of descriptor to import (required for dependency updater feature)
               examples:
-                - lite
-                - full
+              - lite
+              - full
               type: string
             descriptor_version:
-              description: 'Optional: Version of descriptor to use during install. This
-                        will override the version installed by default.'
+              description: 'Optional: Version of descriptor to use during install. This will override the version installed by default.'
               type: string
             enable_automatic_dependency_updates:
-              description: 'Optional: Allow automatic import of new dependency updates
-                        from Tanzunet'
+              description: 'Optional: Allow automatic import of new dependency updates from Tanzunet'
               type: bool
         tap_gui:
           type: object
@@ -215,4 +205,3 @@ spec:
           additionalProperties: true
           properties: {}
           description: Tekton pipelines configuration
-

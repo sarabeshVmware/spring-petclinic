@@ -14,6 +14,7 @@ packages:
       - 0.5.1
       - 0.5.2
       - 0.6.3
+      - 0.7.0
   - name: service-binding
     versions:
       - 0.6.0
@@ -99,6 +100,9 @@ packages:
       - 1.0.2
       - 1.1.1
       - 1.1.2
+  - name: policy-controller
+    versions:
+      - 1.0.0
   - name: api-portal
     versions:
       - 1.0.8
@@ -134,7 +138,7 @@ packages:
       - 1.1.0
       - 1.1.1
       - 1.1.2-build.4
-      - 1.2.0-build.7
+      - 1.2.0-build.10
   - name: learning-center-workshops
     versions:
       - 0.1.0
@@ -160,28 +164,28 @@ packages:
       - 0.6.1
       - 0.7.0
       - 0.7.1
-      - 0.8.0-build.1
+      - 0.8.0-build.2
   - name: ootb-supply-chain-basic
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
       - 0.7.1
-      - 0.8.0-build.1
+      - 0.8.0-build.2
   - name: ootb-supply-chain-testing
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
       - 0.7.1
-      - 0.8.0-build.1
+      - 0.8.0-build.2
   - name: ootb-supply-chain-testing-scanning
     versions:
       - 0.5.1
       - 0.6.1
       - 0.7.0
       - 0.7.1
-      - 0.8.0-build.1
+      - 0.8.0-build.2
   - name: spring-boot-conventions
     versions:
       - 0.3.0
@@ -204,7 +208,7 @@ packages:
       - 0.6.1
       - 0.7.0
       - 0.7.1
-      - 0.8.0-build.1
+      - 0.8.0-build.2
   - name: tap-telemetry
     versions:
       - 0.1.2
