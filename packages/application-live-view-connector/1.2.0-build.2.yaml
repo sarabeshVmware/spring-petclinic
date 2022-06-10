@@ -8,7 +8,7 @@ spec:
   version: 1.2.0-build.2
   releaseNotes: |
         Release 1.2.0-build.2 of the App Live View Connector package
-  releasedAt: 2022-06-09T00:00:00Z
+  releasedAt: 2022-06-10T00:00:00Z
   valuesSchema:
     openAPIv3:
       title: connector.appliveview.tanzu.vmware.com values schema
@@ -34,7 +34,7 @@ spec:
     spec:
       fetch:
       - imgpkgBundle:
-          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:442c87d592dc623bae802a86064a125daa1f8b4036bf17947d71c8f6b0b7a93e
+          image: dev.registry.tanzu.vmware.com/app-live-view/application-live-view-connector-bundle@sha256:2e891bf1c3cab0a04e0db6540691251ebb9a3e40f89a8b408575d8d710151848
 
       template:
       - ytt:
