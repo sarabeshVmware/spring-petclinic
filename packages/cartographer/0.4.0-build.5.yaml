@@ -1,0 +1,43 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: cartographer.tanzu.vmware.com.0.4.0-build.5
+spec:
+  refName: cartographer.tanzu.vmware.com
+  version: 0.4.0-build.5
+  releaseNotes: https://github.com/vmware-tanzu/package-for-cartographer/releases/tag/0.4.0-build.5
+  releasedAt: "2022-06-10T19:59:06Z"
+  valuesSchema:
+    openAPIv3:
+      title: cartographer.tanzu.vmware.com.0.4.0-build.5 values schema
+      properties:
+        ca_cert_data:
+          type: string
+          description: 'Optional: PEM Encoded certificate data for image registries with private CA.'
+          default: ""
+        excluded_components:
+          type: array
+          items:
+            type: string
+          default: []
+          description: 'Optional: List of components to exclude from installation (e.g. [conventions])'
+        aws_iam_role_arn:
+          type: string
+          description: 'Optional: Arn role that has access to pull images from ECR container registry'
+          default: ""
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-choreographer/cartographer@sha256:b3ea692a3d3856bf0f5ced2e9c02c3fb25bbaa7cab0fdb84e107275b95ffc12d
+      template:
+      - ytt:
+          ignoreUnknownComments: true
+          paths:
+          - config
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - '-'
+      deploy:
+      - kapp: {}
