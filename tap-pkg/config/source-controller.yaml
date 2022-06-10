@@ -33,7 +33,7 @@ spec:
   packageRef:
     refName: controller.source.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 0.4.0-build.2
+      constraints: 0.4.1
       prereleases: {}
   values:
   - secretRef:
