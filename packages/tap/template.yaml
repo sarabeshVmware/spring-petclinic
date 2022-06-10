@@ -128,63 +128,75 @@ spec:
           properties:
             kp_default_repository:
               type: string
-              description: docker repository (required)
+              description: "Docker repository used for builder images and dependencies"
               examples:
-              - registry.io/build-service
+                - registry.io/build-service
             kp_default_repository_username:
               type: string
-              description: registry username (required)
+              description: "Username for kp_default_repository"
               examples:
-              - janedoe@vmware.com
+                - janedoe@vmware.com
+                - "_json_key"
             kp_default_repository_password:
               type: string
-              description: registry password (required)
+              description: "Password for kp_default_repository"
               examples:
-              - password
+                - password
             kp_default_repository_secret.name:
-              description: Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson.
-                Mutually exclusive with kp_default_repository_username/password.
               type: string
+              description: "Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with kp_default_repository_username/password."
             kp_default_repository_secret.namespace:
-              description: Secret namespace for kp_default_repository credentials. Mutually
-                exclusive with kp_default_repository_username/password.
               type: string
+              description: "Secret namespace for kp_default_repository credentials. Mutually exclusive with kp_default_repository_username/password."
+            kp_default_repository_aws_iam_role_arn:
+              type: string
+              description: "AWS IAM role ARN to authenticate to ECR on EKS for kp_default_repository. Mutually exclusive with kp_default_repository_username/password."
+            exclude_dependencies:
+              type: bool
+              description: "Optional: Exclude dependencies from automatically being imported, allowing dependencies to be installed separately."
+            enable_automatic_dependency_updates:
+              type: bool
+              description: "Optional: Allow automatic import of new dependency updates from Tanzunet."
             tanzunet_username:
               type: string
-              description: tanzunet registry username (required for dependency updater feature)
+              description: "Optional: Tanzunet registry username required for enabling automatic updates."
               examples:
-              - janedoe@vmware.com
+                - janedoe@vmware.com
             tanzunet_password:
               type: string
-              description: tanzunet registry password (required for dependency updater feature)
+              description: "Optional: Tanzunet registry password required for enabling automatic updates."
               examples:
-              - password
+                - password
             tanzunet_secret.name:
-              description: 'Optional: Secret name for tanzu network registry credentials
-                        of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password.'
               type: string
+              description: "Optional: Secret name for Tanzunet registry credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password."
             tanzunet_secret.namespace:
-              description: 'Optional: Secret namespace for tanzu network registry credentials.
-                        Mutually exclusive with tanzunet_username/password.'
               type: string
+              description: "Optional: Secret namespace for Tanzunet registry credentials. Mutually exclusive with tanzunet_username/password."
             ca_cert_data:
               type: string
-              description: tbs registry ca certificate (used for self signed registry)
+              description: "Optional: TBS registry ca certificate"
+            http_proxy:
+              type: string
+              description: "Optional: the HTTP proxy to use for network traffic."
+            https_proxy:
+              type: string
+              description: "Optional: the HTTPS proxy to use for network traffic."
+            no_proxy:
+              type: string
+              description: "Optional: A comma-separated list of hostnames, IP addresses, or IP ranges in CIDR format that should not use a proxy."
+            descriptor_version:
+              type: string
+              description: "Optional: Version of descriptor to use during install. This will override the version installed by default."
             descriptor_name:
-              description: Name of descriptor to import (required for dependency updater
-                feature)
+              type: string
+              description: "Optional: Name of descriptor to use for for automatic updates (required for dependency updater feature)"
               examples:
                 - lite
                 - full
-              type: string
-            descriptor_version:
-              description: 'Optional: Version of descriptor to use during install. This
-                        will override the version installed by default.'
-              type: string
-            enable_automatic_dependency_updates:
-              description: 'Optional: Allow automatic import of new dependency updates
-                        from Tanzunet'
+            enable_synced_secrets:
               type: bool
+              description: "Optional: Enable secret syncing functionality to provide credentials to automatically pull builder and run images."
         tap_gui:
           type: object
           additionalProperties: true
