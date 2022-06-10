@@ -70,37 +70,8 @@ type CraneManifestsOutput struct {
 	} `yaml:"manifests"`
 }
 
-// type ImgPkgDescribeOutput struct {
-// 	Images []struct {
-// 		Image       string `yaml:"Image"`
-// 		Type        string `yaml:"Type"`
-// 		Origin      string `yaml:"Origin"`
-// 		// Annotations struct {
-// 		// 	KbldCarvelDevID string `yaml:"kbld.carvel.dev/id"`
-// 		// } `yaml:"Annotations"`
-// 		// Tag string `yaml:"tag,omitempty"`
-// 		// URL string `yaml:"url,omitempty"`
-// 	} `yaml:"Images"`
-// }
-// type ImgPkgDescribeOutput struct {
-// 	Sha     string `yaml:"sha"`
-// 	Content struct {
-// 		Images []struct {
-// 		   sha256 struct {
-// 		   	  Image     string `yaml:"image"`
-// 		   }`yaml:"sha256"`
-
-// 		} `yaml:"images"`
-// 	} `yaml:"content"`
-// }
 type Imagesha struct {
-	// Annotations struct {
-	// 	KbldCarvelDevID      string `yaml:"kbld.carvel.dev/id"`
-	// 	KbldCarvelDevOrigins string `yaml:"kbld.carvel.dev/origins"`
-	// } `yaml:"annotations"`
 	Image string `yaml:"image"`
-	// ImageType string `yaml:"imageType"`
-	// Origin    string `yaml:"origin"`
 }
 type ImgPkgDescribeOutput struct {
 	Sha     string `yaml:"sha"`
@@ -169,7 +140,7 @@ func ValidateImage(Image string) {
 		log.Fatalln("Please provide bundle image in digested form instead of tag")
 	}
 	if ImageIndex {
-		log.Fatalln("Please provide bundle image which does not refer to multiple image indexes")
+		log.Fatalln("Image index referring to multiple arch images is not supported by tanzunet. Please provide single arch image reference")
 	}
 	log.Println("Image reference in package CR is validated successfully")
 }
@@ -203,7 +174,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 	output, err := pkg.ExecuteCmd(cmd)
 	status := false
 	if err != nil {
-		log.Printf("error while running imgpkg describe %s ", Image)
+		log.Printf("error while running imgpkg describe %s command. Please ensure you are using imgpkg version 0.29.0 or later.", Image)
 		log.Printf("error: %s", err)
 		log.Printf("output: %s", output)
 		return status, err
@@ -222,7 +193,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 		cmd := fmt.Sprintf("crane manifest %s", v.Image)
 		output, err = pkg.ExecuteCmd(cmd)
 		if err != nil {
-			log.Printf("error while running crane manifest %s ", v.Image)
+			log.Printf("error while running crane manifest %s command. Please ensure you are using crane version 0.7.0 or later.", v.Image)
 			log.Printf("error: %s", err)
 			log.Printf("output: %s", output)
 		} 
@@ -239,7 +210,7 @@ func ValidateImageIndex(Image string) (bool, error) {
 				log.Printf("Manifest Digest: %s", manifests.Digest)
 				log.Printf("Manifest Platform Architecture: %s", manifests.Platform.Architecture)
 				log.Printf("Manifest Platform Os: %s", manifests.Platform.Os)
-				log.Printf("Imgpkg bundle %s, image %s contains multiple image index which is not supported by Tanzunet.", Image, v.Image)
+				log.Printf("Imgpkg bundle %s, image index %s referring to multiple arch images is not supported by tanzunet", Image, v.Image)
 				status = true
 			}
 			multiple = append(multiple, v.Image)
