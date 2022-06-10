@@ -19,7 +19,7 @@ spec:
   packageRef:
     refName: grype.scanning.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 1.2.0-build.1
+      constraints: 1.2.0
       prereleases: {}
   values:
   - secretRef:
