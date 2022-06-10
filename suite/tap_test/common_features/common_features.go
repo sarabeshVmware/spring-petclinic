@@ -608,8 +608,8 @@ func VerifyTaskRunStatus(t *testing.T, name string, taskRunInfix string, namespa
 }
 
 func ImgPkgCopyToRepo(t *testing.T, sourceBundle string, targetRepo string) features.Feature {
-	return features.New("imgpkg copy").
-		Assess(fmt.Sprintf("copying image bundles from %s to %s", sourceBundle, targetRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+	return features.New("imgpkg-copy").
+		Assess(fmt.Sprintf("%s --> %s", sourceBundle, targetRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("copying image bundles from %s to %s", sourceBundle, targetRepo)
 
 			// deploy app
