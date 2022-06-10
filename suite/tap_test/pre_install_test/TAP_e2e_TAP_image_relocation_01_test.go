@@ -3,10 +3,7 @@
 package pre_install_test
 
 import (
-	"context"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/tap_test/common_features"
-	"sigs.k8s.io/e2e-framework/pkg/envconf"
-	"sigs.k8s.io/e2e-framework/pkg/features"
 	"strings"
 	"testing"
 )
@@ -15,7 +12,7 @@ func RelocateImagesAndInstallTapPackageFeature(t *testing.T, server string, user
 	tapPackageVersion := strings.Split(suiteConfig.PackageRepository.Image, ":")[1]
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
-		//common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
+		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		common_features.CreateSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, "string", suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
 		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
@@ -56,17 +53,12 @@ func TestTapImageRelocation(t *testing.T) {
 
 	t.Log("************** TestCase START: TestTapImageRelocation **************")
 
-	test := features.New("TestTapImageRelocation").
-		Assess("test TestTapImageRelocation", func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
-			for _, repository := range suiteConfig.NonTanzuRepository {
-				t.Logf("testing imgpkg copy for %s", repository.Server)
-				RelocateImagesAndInstallTapPackageFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
-				OuterloopTestFeature(t)
-				CleanupResourcesFeature(t)
-			}
-			return ctx
-		}).Feature()
-	testenv.Test(t, test)
+	for _, repository := range suiteConfig.NonTanzuRepository {
+		t.Logf("testing imgpkg copy for %s", repository.Server)
+		RelocateImagesAndInstallTapPackageFeature(t, repository.Server, repository.Username, repository.Password, repository.PasswordType, repository.Repository)
+		OuterloopTestFeature(t)
+		CleanupResourcesFeature(t)
+	}
 
 	t.Log("************** TestCase END: TestTapImageRelocation **************")
 }
