@@ -1434,6 +1434,11 @@ func listVulnerabilities(workloadName string, t *testing.T) {
 				t.Errorf("error while getting vulnerabilities for %s", workloadName)
 				t.Fail()
 			}
+			// Exception only for CVE-2016-1000027, since it can not be fixed at this point: https://github.com/spring-projects/spring-framework/issues/24434
+			if !strings.Contains(vulnerabilitiesData, "CVE-2016-1000027 (Critical)") {
+				t.Error("CVE(s) detected in image scans")
+				t.Fail()
+			}
 			return ctx
 		}).
 		Feature()
