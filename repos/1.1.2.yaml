@@ -100,6 +100,7 @@ packages:
       - 1.0.9
       - 1.0.9+sr.1
       - 1.0.15
+      - 1.0.21
   - name: cloud-native-runtimes
     versions:
       - 1.1.0
