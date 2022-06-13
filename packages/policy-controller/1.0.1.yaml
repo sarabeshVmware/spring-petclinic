@@ -1,0 +1,139 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: policy.apps.tanzu.vmware.com.1.0.1
+spec:
+  refName: policy.apps.tanzu.vmware.com
+  version: 1.0.1
+  releaseNotes: |
+    Initial release of Policy Controller which uses Sigstore Policy Controller
+  releasedAt: 2022-06-09T00:00:00Z
+  template:
+    spec:
+      deploy:
+      - kapp: {}
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/policy-bundle@sha256:17e8861fa290e7b66e961bcddd574e89de62379ae641db050647ada07fa12666
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+  valuesSchema:
+    openAPIv3:
+      examples:
+      - replicas: 3
+      properties:
+        custom_ca_secrets:
+          description: |
+            List of custom CA secrets that should be included in the application container for registry communication.
+            An array of secret references each containing a secret_name field with the secret name to be referenced
+            and a namespace field with the name of the namespace where the referred secret resides.
+          items:
+            properties:
+              namespace:
+                description: |
+                  Namespace where the secret resides.
+                type: string
+              secret_name:
+                description: |
+                  Name of the secret to be referred to.
+                type: string
+            required:
+            - secret_name
+            - namespace
+            type: object
+          type: array
+        custom_cas:
+          description: |
+            List of custom CA contents that should be included in the application container for registry communication.
+            An array of items containing a ca_content field with the PEM-encoded contents of a certificate authority.
+          items:
+            properties:
+              ca_content:
+                description: |
+                  Certificate Authority (CA) certificate content in PEM-encoded format.
+                type: string
+            required:
+            - ca_content
+            type: object
+          type: array
+        deployment_namespace:
+          default: cosign-system
+          description: |
+            Deployment namespace specifies the namespace where this component should be deployed to.
+            If not specified, "cosign-system" is assumed.
+          examples:
+          - scst-sign-policy-system
+          - verification-system
+          type: string
+        limits_cpu:
+          default: 200m
+          description: |
+            The CPU limit defines a hard ceiling on how much CPU time that the
+            Policy Controller manager container can use.
+            https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+          examples:
+          - '"1.0" or "1000m"'
+          - '"0.5" or "500m"'
+          type: string
+        limits_memory:
+          default: 200Mi
+          description: |
+            The memory limit defines a hard ceiling on how much memory that the
+            Policy Controller manager container can use.
+            https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+          examples:
+          - '"200Mi"(200 mebibytes)'
+          - '"200M" (200 megabytes)'
+          - '"200m" (0.2 bytes)'
+          type: string
+        quota:
+          description: |
+            Contains configuration for ResourceQuotas.
+          properties:
+            pod_number:
+              default: "6"
+              description: |
+                The maximum number of Policy Controller Pods allowed to be created with the priority class
+                system-cluster-critical. This value must be enclosed in quotes ("").
+                If this value is not specified then a default value of 6 is used.
+              examples:
+              - "10"
+              type: string
+          type: object
+        replicas:
+          default: 1
+          description: |
+            The number of replicas to be created for the Policy Controller. This value must not be enclosed
+            in quotes.
+            If this value is not specified then a default value of 1 is used.
+          examples:
+          - 6
+          type: integer
+        requests_cpu:
+          default: 20m
+          description: |
+            The CPU request defines the minimum CPU time for the Policy Controller manager.
+            During CPU contention, CPU request is used as a weighting where higher CPU requests are
+            allocated more CPU time.
+            https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu
+          examples:
+          - '"1.0" or "1000m"'
+          - '"0.5" or "500m"'
+          type: string
+        requests_memory:
+          default: 20Mi
+          description: |
+            The memory request defines the minium memory amount for the Policy Controller manager.
+            https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-memory
+          examples:
+          - '"200Mi"(200 mebibytes)'
+          - '"200M" (200 megabytes)'
+          - '"200m" (0.2 bytes)'
+          type: string
+      title: policy.apps.tanzu.vmware.com.1.0.1 values schema

@@ -103,6 +103,7 @@ packages:
   - name: policy-controller
     versions:
       - 1.0.0
+      - 1.0.1
   - name: api-portal
     versions:
       - 1.0.8
