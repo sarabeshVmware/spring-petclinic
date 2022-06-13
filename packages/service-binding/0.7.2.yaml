@@ -1,0 +1,28 @@
+---
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: service-bindings.labs.vmware.com.0.7.2
+spec:
+  refName: service-bindings.labs.vmware.com
+  version: 0.7.2
+  releasedAt: 2022-06-09T00:00:00Z
+  valuesSchema:
+    openAPIv3:
+      properties: {}
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/service-bindings-for-kubernetes/service-bindings-bundle@sha256:26ae6e135b253836e7798243281914d75c3eb75cf229e1cfe92bcc89bfd5d570
+      template:
+      - kbld:
+          paths:
+          - .imgpkg/images.yml
+          - config/service-bindings.yaml
+      - ytt:
+          paths:
+          - "-"
+          - bundle.yaml
+      deploy:
+      - kapp: {}
