@@ -1,0 +1,109 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: scanning.apps.tanzu.vmware.com.1.2.0
+spec:
+  refName: scanning.apps.tanzu.vmware.com
+  version: 1.2.0
+  releaseNotes: Supply Chain Security Tools - Scan (Scan Controller) v1.2.0
+  releasedAt: "2022-06-09T00:41:29Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/supply-chain-security-tools/scan-controller:v1.2.0-build.2@sha256:32f7e7eb310db3093cd8e277c155ece077a9d64623b7b49be30d37bc886e55db
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      title: scanning.apps.tanzu.vmware.com.1.2.0 values schema
+      properties:
+        namespace:
+          type: string
+          description: Deployment namespace for the Scan Controller
+          default: scan-link-system
+        metadataStore:
+          type: object
+          description: Configure integration with an Insight Metadata Store deployed in the cluster
+          properties:
+            url:
+              type: string
+              description: Url of the Insight Metadata Store
+              default: https://metadata-store-app.metadata-store.svc.cluster.local:8443
+            caSecret:
+              type: object
+              description: CA Cert of the Insight Metadata Store deployed in the cluster
+              properties:
+                name:
+                  type: string
+                  description: Name of deployed Secret with key ca.crt holding the CA Cert of the Insight Metadata Store
+                  default: app-tls-cert
+                importFromNamespace:
+                  type: string
+                  description: Namespace from which to import the Insight Metadata Store CA Cert
+                  default: metadata-store
+            authSecret:
+              type: object
+              description: Auth Token for the Insight Metadata Store deployed in a remote cluster
+              properties:
+                name:
+                  type: string
+                  description: Name of deployed Secret with key auth_token
+                  default: ""
+                importFromNamespace:
+                  type: string
+                  description: Namespace from which to import the Insight Metadata Store auth_token
+                  default: ""
+            clusterRole:
+              type: string
+              description: Name of the deployed ClusterRole for read/write access to the Insight Metadata Store deployed in the same cluster
+              default: metadata-store-read-write
+        resources:
+          type: object
+          properties:
+            limits:
+              type: object
+              properties:
+                cpu:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                  description: Limits describes the maximum amount of cpu resources allowed.
+                  default: 250m
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                  description: Limits describes the maximum amount of memory resources allowed.
+                  default: 256Mi
+            requests:
+              type: object
+              properties:
+                cpu:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                  description: Requests describes the minimum amount of cpu resources required.
+                  default: 100m
+                memory:
+                  anyOf:
+                  - type: integer
+                  - type: string
+                  pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                  x-kubernetes-int-or-string: true
+                  description: Requests describes the minimum amount of memory resources required.
+                  default: 128Mi
