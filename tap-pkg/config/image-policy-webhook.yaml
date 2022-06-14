@@ -2,6 +2,7 @@
 #@ load("@ytt:yaml", "yaml")
 #@ load("_profiles.star", "profiles")
 
+#@ if profiles.is_any_enabled([profiles.full, profiles.iterate, profiles.run]):
 #@ if profiles.is_pkg_enabled("image-policy-webhook.signing.apps.tanzu.vmware.com"):
 
 ---
@@ -18,7 +19,7 @@ spec:
   packageRef:
     refName: image-policy-webhook.signing.apps.tanzu.vmware.com
     versionSelection:
-      constraints: 1.1.2
+      constraints: 1.1.3
       prereleases: {}
   values:
   - secretRef:
@@ -32,4 +33,5 @@ metadata:
 stringData:
   values.yaml: #@ yaml.encode(data.values.image_policy_webhook)
 
+#@ end
 #@ end
