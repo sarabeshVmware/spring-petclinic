@@ -479,8 +479,7 @@ func TestInstallPackages(t *testing.T) {
 		installConventionsControllerPackages,
 		installImageWebhookPolicyPackages,
 		installMetadataStorePackages,
-		installCartographerPackages,
-		installGrypeScannerPackages)
+		installCartographerPackages)
 	testenv.TestInParallel(t,
 		installAppLiveViewPackages,
 		installAppLiveViewConventionsPackages,
@@ -493,6 +492,7 @@ func TestInstallPackages(t *testing.T) {
 		installSpringBootConventionsPackages,
 		installScanControllerPackages)
 	testenv.TestInParallel(t,
+		installGrypeScannerPackages,
 		installLearningCenterWorkshopsPackages,
 		installOotbSupplyChainBasicPackages,
 		installOotbSupplyChainTestingPackages,
