@@ -1424,7 +1424,7 @@ var verifyBuildPackWorkloadsReachability = features.New("verify-buildpacks-webpa
 	}).
 	Feature()
 
-func listVulnerabilities(workloadName string, t *testing.T) {
+func listVulnerabilities(workloadName string, skipVulnerabilityCheck bool, t *testing.T) {
 	verifyVulnerability := features.New(fmt.Sprintf("list-cve-%s", workloadName)).
 		Assess(fmt.Sprintf("%s", workloadName), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			imageDigest := kubectl_helpers.GetImageDigest(workloadName, outerloopConfig.Namespace, 2, 30)
@@ -1434,10 +1434,12 @@ func listVulnerabilities(workloadName string, t *testing.T) {
 				t.Errorf("error while getting vulnerabilities for %s", workloadName)
 				t.Fail()
 			}
-			// Exception only for CVE-2016-1000027, since it can not be fixed at this point: https://github.com/spring-projects/spring-framework/issues/24434
-			if !strings.Contains(vulnerabilitiesData, "CVE-2016-1000027 (Critical)") {
-				t.Error("CVE(s) detected in image scans")
-				t.Fail()
+			if !skipVulnerabilityCheck {
+				// Exception only for CVE-2016-1000027, since it can not be fixed at this point: https://github.com/spring-projects/spring-framework/issues/24434
+				if !strings.Contains(vulnerabilitiesData, "CVE-2016-1000027 (Critical)") {
+					t.Error("CVE(s) detected in image scans")
+					t.Fail()
+				}
 			}
 			return ctx
 		}).
@@ -1454,7 +1456,7 @@ var listBuildPackWorkloadsVulnerabilities = features.New("list-buildpacks-vulner
 	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("listing vulnerabilities")
 		for _, workload := range outerloopConfig.BuildPacks.Workloads {
-			listVulnerabilities(workload.Name, t)
+			listVulnerabilities(workload.Name, true, t)
 		}
 		return ctx
 	}).
@@ -1593,7 +1595,23 @@ var listSpringPetclinicVulnerabilities = features.New("list-vulnerabilities").
 	}).
 	Assess("list vulnerabilities", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 		t.Log("listing vulnerabilities")
-		listVulnerabilities(outerloopConfig.Workload.Name, t)
+		listVulnerabilities(outerloopConfig.Workload.Name, false, t)
+		return ctx
+	}).
+	Feature()
+
+var deletePipeline = features.New("delete-pipeline").
+	Assess("delete-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+		t.Log("deleting pipeline")
+
+		// delete pipeline
+		_, err := kubectl_libs.DeletePipeline(outerloopConfig.Workload.PipelineName, outerloopConfig.Namespace)
+		if err != nil {
+			t.Error("error while deleting pipeline")
+			t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+		} else {
+			t.Log("deleted pipeline")
+		}
 		return ctx
 	}).
 	Feature()

@@ -98,6 +98,7 @@ func TestOuterloopScanSupplychainGitSource(t *testing.T) {
 		verifyKsvcStatusAfterUpdate,
 		verifyWebpageNew,
 		removeProjectDir,
+		deletePipeline,
 		deleteWorkload,
 		deleteGithubRepo,
 	)

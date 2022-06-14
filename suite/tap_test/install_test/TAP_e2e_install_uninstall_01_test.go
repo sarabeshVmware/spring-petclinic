@@ -81,11 +81,11 @@ func installUnistallPackage(t *testing.T, packageName string) {
 			installIndividualPackages := features.New(fmt.Sprintf("install-uninstall-%s", packageName)).
 				Assess(fmt.Sprintf("version-%s", pkgVersion.VERSION), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 					t.Logf("package name: %s, version: %s", pkg.Name, pkgVersion.VERSION)
-					if pkg.Name == "scan-controller" && pkgVersion.VERSION == "1.0.0"{
+					if pkg.Name == "scan-controller" && pkgVersion.VERSION == "1.0.0" {
 						t.Logf("Skip the installation due to bug : https://jira.eng.vmware.com/browse/VSEE-517")
 						return ctx
 					}
-					
+
 					tanzu_libs.InstallPackage(pkg.Name, pkg.Package, pkgVersion.VERSION, suiteConfig.PackageRepository.Namespace, pkg.ValuesFile, pkg.PollTimout)
 					installed := tanzu_helpers.ValidateInstalledPackageStatus(pkg.Name, suiteConfig.PackageRepository.Namespace, 5, 30)
 					if installed {
@@ -469,7 +469,6 @@ func TestInstallPackages(t *testing.T) {
 		installServiceBindingsPackages,
 		installSourceControllerPackages,
 		installServicesToolkitPackages,
-		installScanControllerPackages,
 		installApiPortalPackages,
 		installBuildServicePackages,
 		installFluxcdSourceControllerPackages,
@@ -491,7 +490,8 @@ func TestInstallPackages(t *testing.T) {
 		installTapGuiPackages,
 		installLearningCenterPackages,
 		installOotbTemplatesPackages,
-		installSpringBootConventionsPackages)
+		installSpringBootConventionsPackages,
+		installScanControllerPackages)
 	testenv.TestInParallel(t,
 		installLearningCenterWorkshopsPackages,
 		installOotbSupplyChainBasicPackages,
