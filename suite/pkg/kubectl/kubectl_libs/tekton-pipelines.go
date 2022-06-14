@@ -44,3 +44,9 @@ func GetPipeline(name string, namespace string) GetPipelineOutput {
 	fmt.Printf("pipeline: %+v\n", pipeline)
 	return pipeline
 }
+
+func DeletePipeline(name string, namespace string) (string, error) {
+	cmd := fmt.Sprintf("kubectl delete pipeline %s -n %s", name, namespace)
+	res, err := linux_util.ExecuteCmd(cmd)
+	return res, err
+}
