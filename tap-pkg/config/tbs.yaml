@@ -9,7 +9,6 @@
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
 #@ def values():
-#@   validate()
 #@   return overlay.apply(default_values(), user_values())
 #@ end
 
