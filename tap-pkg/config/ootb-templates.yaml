@@ -19,6 +19,8 @@
 #@
 #@   pkg_values_dict['excluded_templates'].append('git-writer')
 #@   pkg_values_dict['excluded_templates'].append('image-writer')
+#@   pkg_values_dict['excluded_templates'].append('commit-and-pr')
+#@   pkg_values_dict['excluded_templates'].append('kaniko-build')
 #@   return pkg_values_dict
 #@ end
 
