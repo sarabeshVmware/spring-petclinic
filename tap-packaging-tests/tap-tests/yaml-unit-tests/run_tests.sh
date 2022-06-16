@@ -23,6 +23,7 @@ COMPONENTS=(
   "cloud-native-runtimes"
   "learning-center"
   "tap-gui"
+  "metadata-store"
 )
 
 for c in "${COMPONENTS[@]}"; do
