@@ -56,6 +56,14 @@ type SuiteConfig struct {
 		Registry  string `yaml:"registry"`
 		Username  string `yaml:"username"`
 	} `yaml:"registry_credentials_secret"`
+	TanzuNetCredentialsSecret struct {
+		Export    bool   `yaml:"export"`
+		Name      string `yaml:"name"`
+		Namespace string `yaml:"namespace"`
+		Password  string `yaml:"password"`
+		Registry  string `yaml:"registry"`
+		Username  string `yaml:"username"`
+	} `yaml:"tanzunet_credentials_secret"`
 	Tap struct {
 		Name             string `yaml:"name"`
 		Namespace        string `yaml:"namespace"`
@@ -95,6 +103,7 @@ type SuiteConfig struct {
 		BuildTapValuesFile    string `yaml:"build-tap-values-file"`
 		RunClusterContext     string `yaml:"run-cluster-context"`
 		RunTapValuesFile      string `yaml:"run-tap-values-file"`
+		FullProfilewithTbsSecretFile string `yaml:"full-tap-values-with-tbs-secret-file"`
 	}
 }
 
@@ -118,6 +127,7 @@ func GetSuiteConfig() SuiteConfig {
 	suiteConfig.Multicluster.IterateTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.IterateTapValuesFile)
 	suiteConfig.Multicluster.BuildTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.BuildTapValuesFile)
 	suiteConfig.Multicluster.RunTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.RunTapValuesFile)
+	suiteConfig.Multicluster.FullProfilewithTbsSecretFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.FullProfilewithTbsSecretFile)
 	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
 
 	return suiteConfig

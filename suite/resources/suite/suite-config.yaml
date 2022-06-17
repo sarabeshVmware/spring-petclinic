@@ -39,6 +39,13 @@ tap_registry_secret:
   password: <TANZUNET-PASSWORD>
   username: <TANZUNET-USERNAME>
   registry: dev.registry.tanzu.vmware.com
+tanzunet_credentials_secret:
+  export: true
+  name: tanzunet-cred
+  namespace: tap-install
+  password: <TANZUNET-PASSWORD>
+  registry: registry.tanzu.vmware.com
+  username: <TANZUNET-USERNAME>
 registry_credentials_secret:
   export: false
   name: registry-credentials
@@ -81,3 +88,4 @@ multicluster:
   run-tap-values-file: run-tap-values.yaml
   iterate-cluster-context: <ITERATE-CLUSTER-CONTEXT>
   iterate-tap-values-file: iterate-tap-values.yaml
+  full-tap-values-with-tbs-secret-file: tap-values-with-tbs-secret.yaml
