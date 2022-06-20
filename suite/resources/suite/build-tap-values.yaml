@@ -28,5 +28,5 @@ scanning:
     authSecret:
       name: 
 grype:
-  namespace:  # (optional) Defaults to default namespace.
-  targetImagePullSecret: 
+    namespace: my-apps
+    targetImagePullSecret: registry-credentials
