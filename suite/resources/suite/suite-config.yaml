@@ -76,9 +76,11 @@ git-credentials:
   username: dapdelivery
   email: svc.dapdelivery@gmail.com
 upgrade-versions:
-  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.0.2
+  image: registry.tanzu.vmware.com/tanzu-application-platform/tap-packages
+  tap-repo-version : 1.0.2
   tap-version: 1.0.2
-  upgrade-image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages:1.1.0-build.15
+  upgrade-image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap-packages
+  upgrade-tap-repo-version: 1.1.0-build.15
   upgrade-tap-version: 1.1.0-build.15
 multicluster:
   view-cluster-context: <VIEW-CLUSTER-CONTEXT>

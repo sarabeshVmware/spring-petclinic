@@ -1,6 +1,6 @@
 //go:build upgrade
 
-package install_tests
+package multicluster_upgrade
 
 import (
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils"

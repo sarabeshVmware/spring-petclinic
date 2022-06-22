@@ -1,4 +1,4 @@
-package multicluster_outerloop_test
+package multicluster_upgrade
 
 import (
 	"fmt"
@@ -53,9 +53,9 @@ func TestMain(m *testing.M) {
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
-		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
+		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.UpgradeVersions.TapRepoVersion, suiteConfig.PackageRepository.Namespace),
 		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10, 60),
-		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.ViewTapValuesFile, suiteConfig.Tap.PollTimeout),
+		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.ViewTapValuesFile, suiteConfig.Tap.PollTimeout),
 		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 
@@ -74,9 +74,9 @@ func TestMain(m *testing.M) {
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
-		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
+		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.UpgradeVersions.TapRepoVersion, suiteConfig.PackageRepository.Namespace),
 		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10, 60),
-		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.BuildTapValuesFile, suiteConfig.Tap.PollTimeout),
+		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.BuildTapValuesFile, suiteConfig.Tap.PollTimeout),
 		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),
@@ -97,9 +97,9 @@ func TestMain(m *testing.M) {
 		envfuncs.CreateNamespaces(suiteConfig.CreateNamespaces),
 		envfuncs.CreateSecret(suiteConfig.TapRegistrySecret.Name, suiteConfig.TapRegistrySecret.Registry, suiteConfig.TapRegistrySecret.Username, suiteConfig.TapRegistrySecret.Password, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		envfuncs.CreateSecret(suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
-		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
+		envfuncs.AddPackageRepository(suiteConfig.PackageRepository.Name, suiteConfig.UpgradeVersions.Image, suiteConfig.UpgradeVersions.TapRepoVersion, suiteConfig.PackageRepository.Namespace),
 		envfuncs.CheckIfPackageRepositoryReconciled(suiteConfig.PackageRepository.Name, suiteConfig.PackageRepository.Namespace, 10, 60),
-		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.RunTapValuesFile, suiteConfig.Tap.PollTimeout),
+		envfuncs.InstallPackage(suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.UpgradeVersions.TapVersion, suiteConfig.Tap.Namespace, suiteConfig.Multicluster.RunTapValuesFile, suiteConfig.Tap.PollTimeout),
 		envfuncs.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 		envfuncs.ListInstalledPackages(suiteConfig.Tap.Namespace),
 		envfuncs.SetupDeveloperNamespace(developerNamespaceFile, suiteConfig.CreateNamespaces[0]),

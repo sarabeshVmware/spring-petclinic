@@ -90,10 +90,12 @@ type SuiteConfig struct {
 		Email    string `yaml:"email"`
 	} `yaml:"git-credentials"`
 	UpgradeVersions struct {
-		Image             string `yaml:"image"`
-		TapVersion        string `yaml:"tap-version"`
-		UpgradeImage      string `yaml:"upgrade-image"`
-		UpgradeTapVersion string `yaml:"upgrade-tap-version"`
+		Image                 string `yaml:"image"`
+		TapVersion            string `yaml:"tap-version"`
+		TapRepoVersion        string `yaml:"tap-repo-version"`
+		UpgradeImage          string `yaml:"upgrade-image"`
+		UpgradeTapVersion     string `yaml:"upgrade-tap-version"`
+		UpgradeTapRepoVersion string `yaml:"upgrade-tap-repo-version"`
 	} `yaml:"upgrade-versions"`
 	Multicluster struct {
 		ViewClusterContext           string `yaml:"view-cluster-context"`
