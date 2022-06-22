@@ -15,14 +15,14 @@ import (
 	"sigs.k8s.io/e2e-framework/pkg/envconf"
 )
 
-func AddPackageRepository(name string, image string, namespace string) env.Func {
+func AddPackageRepository(name string, image string, version string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("adding package repository %s (%s) in namespace %s", name, image, namespace)
 
 		// add repo
 		err := tanzuCmds.TanzuAddPackageRepository(name, image, namespace)
 		if err != nil {
-			return ctx, fmt.Errorf("error while adding package repository %s (%s) in namespace %s", name, image, namespace)
+			return ctx, fmt.Errorf("error while adding package repository %s (%s:%s) in namespace %s", name, image, version, namespace)
 		}
 
 		return ctx, nil

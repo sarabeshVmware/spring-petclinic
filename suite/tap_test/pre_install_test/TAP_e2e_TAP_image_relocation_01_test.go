@@ -9,13 +9,13 @@ import (
 )
 
 func RelocateImagesAndInstallTapPackageFeature(t *testing.T, server string, username string, password string, passwordType string, repository string) {
-	tapPackageVersion := strings.Split(suiteConfig.PackageRepository.Image, ":")[1]
+	tapPackageSourceBundle := fmt.Sprintf("%s:%s", suiteConfig.PackageRepository.Image, suiteConfig.PackageRepository.Version)
 	testenv.Test(t,
 		common_features.DockerLogin(t, server, username, password),
-		common_features.ImgPkgCopyToRepo(t, suiteConfig.PackageRepository.Image, repository),
+		common_features.ImgPkgCopyToRepo(t, tapPackageSourceBundle, repository),
 		common_features.CreateSecret(t, suiteConfig.TapRegistrySecret.Name, server, username, password, passwordType, suiteConfig.TapRegistrySecret.Namespace, suiteConfig.TapRegistrySecret.Export),
 		common_features.CreateSecret(t, suiteConfig.RegistryCredentialsSecret.Name, suiteConfig.RegistryCredentialsSecret.Registry, suiteConfig.RegistryCredentialsSecret.Username, suiteConfig.RegistryCredentialsSecret.Password, "string", suiteConfig.RegistryCredentialsSecret.Namespace, suiteConfig.RegistryCredentialsSecret.Export),
-		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, tapPackageVersion, suiteConfig.PackageRepository.Namespace),
+		common_features.AddPackageRepository(t, suiteConfig.PackageRepository.Name, repository, suiteConfig.PackageRepository.Version, suiteConfig.PackageRepository.Namespace),
 		common_features.InstallPackage(t, suiteConfig.Tap.Name, suiteConfig.Tap.PackageName, suiteConfig.Tap.Version, suiteConfig.Tap.Namespace, suiteConfig.Tap.ValuesSchemaFile, suiteConfig.Tap.PollTimeout),
 		common_features.CheckIfPackageInstalled(suiteConfig.Tap.Name, suiteConfig.Tap.Namespace, 10, 60),
 	)

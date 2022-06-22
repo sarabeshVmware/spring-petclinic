@@ -32,6 +32,7 @@ type SuiteConfig struct {
 		Name      string `yaml:"name"`
 		Namespace string `yaml:"namespace"`
 		Registry  string `yaml:"registry"`
+		Version   string `yaml:"version"`
 	} `yaml:"package_repository"`
 	NonTanzuRepository []struct {
 		Repository   string `yaml:"repository"`
@@ -95,14 +96,14 @@ type SuiteConfig struct {
 		UpgradeTapVersion string `yaml:"upgrade-tap-version"`
 	} `yaml:"upgrade-versions"`
 	Multicluster struct {
-		ViewClusterContext    string `yaml:"view-cluster-context"`
-		ViewTapValuesFile     string `yaml:"view-tap-values-file"`
-		IterateClusterContext string `yaml:"iterate-cluster-context"`
-		IterateTapValuesFile  string `yaml:"iterate-tap-values-file"`
-		BuildClusterContext   string `yaml:"build-cluster-context"`
-		BuildTapValuesFile    string `yaml:"build-tap-values-file"`
-		RunClusterContext     string `yaml:"run-cluster-context"`
-		RunTapValuesFile      string `yaml:"run-tap-values-file"`
+		ViewClusterContext           string `yaml:"view-cluster-context"`
+		ViewTapValuesFile            string `yaml:"view-tap-values-file"`
+		IterateClusterContext        string `yaml:"iterate-cluster-context"`
+		IterateTapValuesFile         string `yaml:"iterate-tap-values-file"`
+		BuildClusterContext          string `yaml:"build-cluster-context"`
+		BuildTapValuesFile           string `yaml:"build-tap-values-file"`
+		RunClusterContext            string `yaml:"run-cluster-context"`
+		RunTapValuesFile             string `yaml:"run-tap-values-file"`
 		FullProfilewithTbsSecretFile string `yaml:"full-tap-values-with-tbs-secret-file"`
 	}
 }

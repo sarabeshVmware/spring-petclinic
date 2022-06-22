@@ -8,10 +8,11 @@ import (
 	"os"
 	exec2 "os/exec"
 	"path/filepath"
+	"sort"
 	"strings"
 	"testing"
 	"time"
-	"sort"
+
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/docker"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/github"
@@ -52,11 +53,11 @@ func compile(filepath string) {
 	fmt.Println(string(stdout))
 }
 
-func UpdatePackageRepository(t *testing.T, name string, registry string, namespace string) features.Feature {
+func UpdatePackageRepository(t *testing.T, name string, registry string, version string, namespace string) features.Feature {
 	return features.New("updating package repository").
 		Assess(fmt.Sprintf("updating-packaging-repository-%s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
 			log.Printf("updating pacakage repository %s", name)
-			tanzu_libs.TanzuUpdatePackageRepository(name, registry, namespace)
+			tanzu_libs.TanzuUpdatePackageRepository(name, fmt.Sprintf("%s:%s", registry, version), namespace)
 			updated := tanzu_helpers.CheckIfPackageRepositoryReconciled(name, namespace, 5, 30)
 			if updated {
 				t.Logf("Updated repository : %s, image: %s successfully", name, registry)
@@ -1052,7 +1053,7 @@ func ProcessDeliverable(t *testing.T, name string, namespace string, buildContex
 func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList []string) features.Feature {
 	return features.New("validation-of-installed-package").
 		Assess(fmt.Sprintf("validation-of-installed-packages-in-%s", namespace), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
-			var installedPackagesList []string	
+			var installedPackagesList []string
 			installedPackages := tanzu_libs.ListInstalledPackages(namespace)
 			for index, _ := range installedPackages {
 				installedPackagesList = append(installedPackagesList, installedPackages[index].NAME)
@@ -1080,7 +1081,7 @@ func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList
 				fmt.Printf("Extra packages in validation list: %+v\n", linux_util.ArrayDifference(expectedList, installedPackagesList))
 				fmt.Printf("Missing packages from validation list: %+v\n", linux_util.ArrayDifference(installedPackagesList, expectedList))
 				t.FailNow()
-			}	
+			}
 			log.Println("Validation passed")
 			return ctx
 		}).
