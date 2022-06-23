@@ -175,6 +175,24 @@ func MulticlusterOuterloopCleanup(t *testing.T, workloadName string, projectName
 		Feature()
 }
 
+func DeletePipeline(t *testing.T, pipeline string, namespace string) features.Feature {
+	return features.New("delete-pipeline").
+		Assess("delete-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("deleting pipeline")
+
+			// delete pipeline
+			_, err := kubectl_libs.DeletePipeline(pipeline, namespace)
+			if err != nil {
+				t.Error("error while deleting pipeline")
+				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			} else {
+				t.Log("deleted pipeline")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
 func VerifyRevisionStatus(t *testing.T, name string, namespace string) features.Feature {
 	return features.New(fmt.Sprintf("verify-%s-revision-status", name)).
 		Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {

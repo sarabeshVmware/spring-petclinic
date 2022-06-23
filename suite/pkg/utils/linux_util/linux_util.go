@@ -74,6 +74,28 @@ func ExecuteCmdNoLog(command string) (string, error) {
 	return string(stdoutStderr), err
 }
 
+func ExecuteCmdNoLogNoOutput(command string) (string, error) {
+	commandName := strings.Split(command, " ")[0]
+	arguments := strings.Split(command, " ")[1:]
+	// If argument values have spaces in them and passed within single quotes
+	for i, value := range arguments {
+		if strings.Contains(value, "'") {
+			arguments[i] = value + " " + arguments[i+1]
+			arguments = append(arguments[:i+1], arguments[i+2:]...)
+		}
+	}
+	// Bypassing single quotes during execution
+	for i, value := range arguments {
+		arguments[i] = strings.Replace(value, "'", "", -1)
+	}
+	cmd := exec.Command(commandName, arguments...)
+	stdoutStderr, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("error: %s", err.Error())
+	}
+	return string(stdoutStderr), err
+}
+
 func ExecuteCmdInBashMode(command string) (string, error) {
 	cmd := exec.Command("bash", "-c", command)
 	stdoutStderr, err := cmd.CombinedOutput()

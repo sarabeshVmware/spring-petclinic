@@ -112,6 +112,10 @@ type TapValuesSchema struct {
 			} `yaml:"authSecret"`
 		} `yaml:"metadataStore"`
 	} `yaml:"scanning"`
+	MetadataStore struct {
+		IngressEnabled string `yaml:"ingress_enabled"`
+		IngressDomain  string `yaml:"ingress_domain"`
+	} `yaml:"metadata_store,omitempty"`
 }
 
 func GetTapValuesSchema() (TapValuesSchema, error) {

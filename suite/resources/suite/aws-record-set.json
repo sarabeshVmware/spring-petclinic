@@ -1,0 +1,18 @@
+{
+    "Comment": "CREATE a record for the tapdemo.vmware.com ",
+    "Changes": [
+        {
+            "Action": "UPSERT",
+            "ResourceRecordSet": {
+                "Name": "*.<CLUSTER_NAME>.tapdemo.vmware.com",
+                "Type": "<TYPE>",
+                "TTL": 300,
+                "ResourceRecords": [
+                    {
+                        "Value": "<ENVOY-LB-IP>"
+                    }
+                ]
+            }
+        }
+    ]
+}

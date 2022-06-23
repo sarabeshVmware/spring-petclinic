@@ -82,6 +82,7 @@ upgrade-versions:
 multicluster:
   view-cluster-context: <VIEW-CLUSTER-CONTEXT>
   view-tap-values-file: view-tap-values.yaml
+  view-with-metadata-store-tap-values-file: view-with-metadata-store-tap-values.yaml
   build-cluster-context: <BUILD-CLUSTER-CONTEXT>
   build-tap-values-file: build-tap-values.yaml
   run-cluster-context: <RUN-CLUSTER-CONTEXT>
