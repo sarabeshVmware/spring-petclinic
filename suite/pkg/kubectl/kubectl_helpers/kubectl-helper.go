@@ -839,7 +839,7 @@ func GetCurrentClusterURL() string {
 func GetClusterToken(name string, namespace string) string {
 	serviceAccount := kubectl_lib.GetServiceAccountJson(name, namespace)
 	secretName := serviceAccount.Secrets[0].Name
-	getSecrets := kubectl_lib.GetSecrets(secretName, namespace)
+	getSecrets := kubectl_lib.GetSecret(secretName, namespace)
 	clusterencodedToken := getSecrets.Data.Token
 	decodedToken, err := base64.StdEncoding.DecodeString(clusterencodedToken)
 	if err != nil {

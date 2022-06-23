@@ -19,6 +19,12 @@ ootb_supply_chain_testing:
   registry:
     repository: <REPOSITORY>
     server: <SERVER>
+ootb_supply_chain_testing_scanning:
+  registry:
+    repository: <REPOSITORY>
+    server: <SERVER>
+  gitops:
+    ssh_secret: ""
 scanning:
   metadataStore:
     url: ""
@@ -28,5 +34,5 @@ scanning:
     authSecret:
       name: 
 grype:
-    namespace: my-apps
-    targetImagePullSecret: registry-credentials
+  namespace:  my-apps
+  targetImagePullSecret: registry-credentials

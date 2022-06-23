@@ -21,6 +21,7 @@ project:
 scan_policy:
   yaml_file: scan-policy.yaml
 spring_petclinic_pipeline:
+  name: developer-defined-tekton-pipeline
   yaml_file: spring-petclinic-tests-pipeline.yaml
 test_target_repo: tappackagestest.azurecr.io/spring-petclinic
 workload:
@@ -79,3 +80,7 @@ buildpacks:
   #   git_repository: https://github.com/dapdelivery/test-buildpack-git-sample.git
   #   git_branch:
   #   webpage_relative_path: 
+domain : "<CLUSTER_NAME>.<DOMAIN-NAME>"
+metadata_store:
+  domain: "metadata-store.<CLUSTER_NAME>.<DOMAIN-NAME>"
+  namespace: "metadata-store-secrets"

@@ -1,0 +1,23 @@
+profile: view
+ceip_policy_disclosed: true # Installation fails if this is not set to true. Not a string.
+
+accelerator:
+    server:
+        service_type: ClusterIP
+        
+contour:
+  envoy:
+    service:
+      type: LoadBalancer #NodePort can be used if your Kubernetes cluster doesn't support LoadBalancing
+
+learningcenter:
+  ingressDomain: educates.tanzu.vmwware.com
+
+tap_gui:
+  service_type: LoadBalancer
+  ingress_enabled: "false"
+
+metadata_store:
+  ingress_enabled: "true"
+  ingress_domain: "<CLUSTER_NAME>.<DOMAIN-NAME>"
+  

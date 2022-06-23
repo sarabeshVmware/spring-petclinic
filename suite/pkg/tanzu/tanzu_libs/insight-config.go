@@ -16,11 +16,15 @@ import (
 	linux_util "gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/utils/linux_util"
 )
 
-func TanzuConfigureInsight(caFilePath string, accessToken string) error {
+func TanzuConfigureInsight(caFilePath string, accessToken string, metadataStoreDomain string) error {
 	log.Print("setting insight cli config")
 
+	if metadataStoreDomain == "" {
+		metadataStoreDomain = "https://metadata-store-app.metadata-store.svc.cluster.local:8443"
+	}
 	//configuring tanzu
-	cmd := fmt.Sprintf("tanzu insight config set-target https://metadata-store-app.metadata-store.svc.cluster.local:8443 --ca-cert %s --access-token %s", caFilePath, accessToken)
+	cmd := fmt.Sprintf("tanzu insight config set-target %s --ca-cert %s --access-token %s", metadataStoreDomain, caFilePath, accessToken)
+
 	output, err := linux_util.ExecuteCmd(cmd)
 	if err != nil {
 		log.Printf("error while configuring insight ")
