@@ -6,7 +6,6 @@ buildservice:
   kp_default_repository: <KP-DEFAULT-REPOSITORY>
   kp_default_repository_password: <KP-DEFAULT-REPOSITORY-PASSWORD>
   kp_default_repository_username: <KP-DEFAULT-REPOSITORY-USERNAME>
-  enable_automatic_dependency_updates: true
  # descriptor_name: tap-1.1.0-full
 supply_chain: basic
 ootb_supply_chain_basic:
