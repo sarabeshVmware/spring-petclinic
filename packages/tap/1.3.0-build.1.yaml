@@ -1,0 +1,226 @@
+apiVersion: data.packaging.carvel.dev/v1alpha1
+kind: Package
+metadata:
+  name: tap.tanzu.vmware.com.1.3.0-build.1
+spec:
+  refName: tap.tanzu.vmware.com
+  version: 1.3.0-build.1
+  releaseNotes: Release of 1.3.0-build.1 Tanzu Application Platform. This package allows to select which set of packages to install via profile data value.
+  releasedAt: "2022-06-29T00:00:00Z"
+  template:
+    spec:
+      fetch:
+      - imgpkgBundle:
+          image: dev.registry.tanzu.vmware.com/tanzu-application-platform/tap@sha256:92a50c0a86b1ae084d9a04b4bdf708dc0669cdac84a41962d112a3ebb4302c97
+      template:
+      - ytt:
+          paths:
+          - config/
+      - kbld:
+          paths:
+          - '-'
+          - .imgpkg/images.yml
+      deploy:
+      - kapp: {}
+  valuesSchema:
+    openAPIv3:
+      type: object
+      additionalProperties: false
+      properties:
+        profile:
+          type: string
+          default: full
+          description: 'Profile to install. Valid values: full, light, iterate, build, run, view'
+        supply_chain:
+          type: string
+          default: basic
+          description: 'Supply chain to install. Valid values: basic, testing, testing_scanning'
+        excluded_packages:
+          type: array
+          items:
+            type: string
+          default: []
+          description: List of packages to exclude from installation (e.g. [tap-gui.tanzu.vmware.com])
+        shared:
+          type: object
+          properties:
+            ca_cert_data:
+              type: string
+              default: ""
+              description: 'Optional: PEM Encoded certificate data to trust TLS connections with a private CA.'
+            ingress_domain:
+              type: string
+              default: ""
+              description: 'Optional: Domain name to be used in service routes and hostnames for instances of TAP components.'
+          description: Common properties shared across multiple components
+        api_portal:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: API Portal configuration
+        accelerator:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Accelerator configuration
+        appliveview:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: App Live View configuration
+        cnrs:
+          type: object
+          additionalProperties: true
+          description: Cloud Native Runtimes configuration
+          properties:
+            ingress:
+              type: object
+              properties:
+                reuse_crds:
+                  type: boolean
+                  description: 'Optional: Only valid if a Contour instance already present in the cluster. Set to "true" if you want CNR to re-use the cluster''s existing Contour CRDs.'
+                  default: true
+                external:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: 'Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for external services) if you want CNR to use your Contour instance.'
+                      default: tanzu-system-ingress
+                internal:
+                  type: object
+                  properties:
+                    namespace:
+                      type: string
+                      description: 'Optional: Only valid if a Contour instance already present in the cluster. Specify a namespace where an existing Contour is installed on your cluster (for internal services) if you want CNR to use your Contour instance.'
+                      default: tanzu-system-ingress
+        ootb_supply_chain_basic:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: OOTB Supply Chain Basic configuration
+        ootb_supply_chain_testing:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: OOTB Supply Chain Testing configuration
+        ootb_supply_chain_testing_scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: OOTB Supply Chain Testing Scanning configuration
+        image_policy_webhook:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Image Policy Webhook configuration
+        policy:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Policy Controller configuration
+        buildservice:
+          type: object
+          description: Build Service configuration
+          properties:
+            kp_default_repository:
+              type: string
+              description: Docker repository used for builder images and dependencies.
+              examples:
+              - registry.io/build-service
+            kp_default_repository_username:
+              type: string
+              description: Username for kp_default_repository.
+              examples:
+              - janedoe@vmware.com
+              - _json_key
+            kp_default_repository_password:
+              type: string
+              description: Password for kp_default_repository.
+              examples:
+              - password
+            kp_default_repository_secret.name:
+              type: string
+              description: Secret name for kp_default_repository credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with kp_default_repository_username/password.
+            kp_default_repository_secret.namespace:
+              type: string
+              description: Secret namespace for kp_default_repository credentials. Mutually exclusive with kp_default_repository_username/password.
+            kp_default_repository_aws_iam_role_arn:
+              type: string
+              description: AWS IAM role ARN to authenticate to ECR on EKS for kp_default_repository. Mutually exclusive with kp_default_repository_username/password.
+            exclude_dependencies:
+              type: bool
+              description: 'Optional: Exclude dependencies from automatically being imported, allowing dependencies to be installed separately.'
+            enable_automatic_dependency_updates:
+              type: bool
+              description: 'Optional: Allow automatic import of new dependency updates from Tanzunet.'
+            tanzunet_username:
+              type: string
+              description: 'Optional: Tanzunet registry username required for enabling automatic updates.'
+              examples:
+              - janedoe@vmware.com
+            tanzunet_password:
+              type: string
+              description: 'Optional: Tanzunet registry password required for enabling automatic updates.'
+              examples:
+              - password
+            tanzunet_secret.name:
+              type: string
+              description: 'Optional: Secret name for Tanzunet registry credentials of type kubernetes.io/dockerconfigjson. Mutually exclusive with tanzunet_username/password.'
+            tanzunet_secret.namespace:
+              type: string
+              description: 'Optional: Secret namespace for Tanzunet registry credentials. Mutually exclusive with tanzunet_username/password.'
+            ca_cert_data:
+              type: string
+              description: 'Optional: TBS registry CA certificate.'
+            http_proxy:
+              type: string
+              description: 'Optional: The HTTP proxy to use for network traffic.'
+            https_proxy:
+              type: string
+              description: 'Optional: The HTTPS proxy to use for network traffic.'
+            no_proxy:
+              type: string
+              description: 'Optional: A comma-separated list of hostnames, IP addresses, or IP ranges in CIDR notation that should not use a proxy.'
+            descriptor_version:
+              type: string
+              description: 'Optional: Version of descriptor to use during install. This will override the version installed by default.'
+            descriptor_name:
+              type: string
+              description: 'Optional: Name of descriptor to use for automatic updates. Required for enabling automatic updates.'
+              examples:
+              - lite
+              - full
+            enable_synced_secrets:
+              type: bool
+              description: 'Optional: Enable secret syncing functionality to provide credentials to automatically pull builder and run images.'
+        tap_gui:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: TAP GUI configuration
+        learningcenter:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Learning Center configuration
+        scanning:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Scan controller configuration
+        convention_controller:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Convention Controller configuration
+        source_controller:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Source Controller configuration
+        tekton_pipelines:
+          type: object
+          additionalProperties: true
+          properties: {}
+          description: Tekton pipelines configuration
