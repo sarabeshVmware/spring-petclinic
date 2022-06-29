@@ -68,7 +68,7 @@ packages:
   - 1.1.0
   - 1.1.1
   - 1.1.2
-  - 1.2.0
+  - 1.2.1
 - name: grype-scanner
   versions:
   - 1.0.0
@@ -150,7 +150,7 @@ packages:
   - 1.1.0
   - 1.1.1
   - 1.1.2
-  - 1.2.0-build.15
+  - 1.2.0-build.16
 - name: learning-center-workshops
   versions:
   - 0.1.0
