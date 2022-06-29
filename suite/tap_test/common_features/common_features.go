@@ -42,6 +42,7 @@ var buildName = ""
 var ksvcLatestReady = ""
 var revisionName = ""
 var sourceRepo = ""
+var service_ref = ""
 
 func compile(filepath string) {
 	app := "./mvnw"
@@ -540,6 +541,27 @@ func ApplyKubectlConfigurationFile(t *testing.T, configurationFile string, names
 		}).
 		Feature()
 }
+
+func InstallAndDeployRmqOperator(t *testing.T, name string, configurationFile string) features.Feature {
+	return features.New("install-and-deploy-rmq-yaml").
+		Assess(fmt.Sprintf("deploy-%s", configurationFile), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("deploying %s", configurationFile)
+
+			// deploy app
+			err := kubectl_libs.DeployApp(name, configurationFile)
+			if err != nil {
+				t.Errorf("error while deploying RabbitMQ operator app")
+				t.FailNow()
+			} else {
+				t.Logf("deployed RabbitMQ operator app %s", configurationFile)
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+
 
 func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString string, relativePath string) features.Feature {
 	return features.New("verify-workload-response").
@@ -1220,6 +1242,54 @@ func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList
 				t.FailNow()
 			}
 			log.Println("Validation passed")
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyRabbitmqClustersStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-rabbitmqclusters").
+		Assess("verify-rabbitmq-cluster-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verifying rabbitmq-cluster-status")
+			status := kubectl_helpers.VerifyRabbitmqClustersStatus(name, namespace, 10, 30)
+			t.Logf("Rabbitmq Cluster status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("Rabbitmq Cluster is not ready"))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func ServiceInstanceList(t *testing.T, namespace string)  features.Feature {
+	return features.New("service-instance-list").
+		Assess("service-instance-list", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("service-instance-list")
+			listofServiceInstances := tanzu_libs.ListServiceInstances(namespace)
+			fmt.Printf("listofServiceInstances: %+v\n", listofServiceInstances)
+			service_ref = listofServiceInstances[0].SERVICE_REF
+			t.Logf("service_ref is : %s", service_ref)
+			return ctx
+		}).
+		Feature()
+}
+
+func TanzuCreateWorkloadWithGitRepo(t *testing.T, workloadName string, workloadGitRepo string, namespace string) features.Feature {
+	return features.New("create-tanzu-workload-via-gitrepo").
+		Assess(fmt.Sprintf("create-tanzu-workload-via-gitrepo-from-%s", workloadGitRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("deploying workload %s in namespace %s", workloadName, namespace)
+			//workloadFilePath := filepath.Join(rootDir, workloadYamlFile)
+			// deploy app
+			service_ref = "rmq=" + service_ref
+			err := tanzu_libs.TanzuCreateWorkloadWithGitRepo(workloadName, workloadGitRepo, "main", "tap-1.0", service_ref, namespace)
+			if err != nil {
+				t.Errorf("error while deploying workload %s", workloadName)
+				t.FailNow()
+			} else {
+				t.Logf("deployed workload %s in %s", workloadName, namespace)
+			}
+
 			return ctx
 		}).
 		Feature()
