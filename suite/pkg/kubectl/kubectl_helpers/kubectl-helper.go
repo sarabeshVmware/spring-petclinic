@@ -871,3 +871,37 @@ func GetServiceExternalIP(service string, namespace string, timeoutInMins int, i
 	}
 	return externalIP
 }
+
+func VerifyRabbitmqClustersStatus(name string, namespace string, timeoutInMins int, intervalInSeconds int) bool {
+	log.Printf("Validating RabbitmqClustersStatus, name: %s, namespace: %s", name, namespace)
+	finalTimeout := timeoutInMins * 60
+	result := false
+	for finalTimeout > 0 {
+		rabbitmqclusters := kubectl_lib.GetRabbitmqClusters(name, namespace)
+		if len(rabbitmqclusters) < 1 {
+			log.Println("RabbitmqClusters are not generated yet")
+		} else if rabbitmqclusters[0].RECONCILESUCCESS == "True" {
+			log.Printf("RabbitmqCluster %s status is verified successfully. Status is %s", rabbitmqclusters[0].NAME, rabbitmqclusters[0].RECONCILESUCCESS)
+			result = true
+			break
+		}
+		log.Printf("Waiting for %d seconds before retry", intervalInSeconds)
+		time.Sleep(time.Duration(intervalInSeconds) * time.Second)
+		finalTimeout -= intervalInSeconds
+	}
+	if !result {
+		log.Printf("RabbitmqCluster is not succefull after %d mins", timeoutInMins)
+	}
+	return result
+}
+
+func GetKsvcUrl(name string, namespace string) string {
+	log.Printf("Get ksvc url for name: %s, namespace: %s", name, namespace)
+	ksvc := kubectl_lib.GetKsvc(name, namespace)
+	if len(ksvc) < 1 {
+		log.Println("Knative services are not generated yet")
+		return "None"
+	}
+	log.Printf("ksvc url is : %s", ksvc[0].URL)
+	return ksvc[0].URL
+}

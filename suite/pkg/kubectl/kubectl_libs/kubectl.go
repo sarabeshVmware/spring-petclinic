@@ -420,6 +420,23 @@ func KubectlApplyConfiguration(file string, namespace string) error {
 	return err
 }
 
+func DeployApp(name string, file string) error {
+	log.Printf("Deploying app: %s", name)
+	command := fmt.Sprintf("kapp deploy --app %s --file %s -y", name, file)
+	output, err := linux_util.ExecuteCmdInBashMode(command)
+	if err != nil {
+		log.Printf("error while deploying app %s in names %s", file, name)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("Deployed app %s ", name)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+
+}
+
 type GetDeploymentsOutput struct {
 	NAMESPACE, NAME, READY, UP_TO_DATE, AVAILABLE, AGE string
 }
@@ -563,6 +580,47 @@ func GetServices(name string, namespace string) []GetServicesOutput {
 
 	fmt.Printf("services: %+v\n", services)
 	return services
+}
+
+type GetRabbitmqClustersOutput struct {
+	NAME, ALLREPLICASREADY, RECONCILESUCCESS, AGE string
+}
+
+func GetRabbitmqClusters(name string, namespace string) []GetRabbitmqClustersOutput {
+	rabbitmqclusters := []GetRabbitmqClustersOutput{}
+	cmd := "kubectl get rabbitmqclusters"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return rabbitmqclusters
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return rabbitmqclusters
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var rabbitmqcluster GetRabbitmqClustersOutput
+		for index, value := range words {
+			reflect.ValueOf(&rabbitmqcluster).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		rabbitmqclusters = append(rabbitmqclusters, rabbitmqcluster)
+	}
+
+	fmt.Printf("rabbitmqcluster: %+v\n", rabbitmqclusters)
+	return rabbitmqclusters
 }
 
 func KubectlCreateNamespace(namespace string) error {

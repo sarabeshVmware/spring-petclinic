@@ -106,6 +106,15 @@ type SuiteConfig struct {
 		RunTapValuesFile                   string `yaml:"run-tap-values-file"`
 		FullProfilewithTbsSecretFile       string `yaml:"full-tap-values-with-tbs-secret-file"`
 	}
+	ServiceToolkit struct {
+		Name                string `yaml:"name"`
+		Gitrepository       string `yaml:"gitrepository"`
+		WorkloadName        string `yaml:"workload-name"`
+		WorkloadURL         string `yaml:"workload-url"`
+		BuildNameSuffix     string `yaml:"build_name_suffix"`
+		Message           string `yaml:"message"`
+		WorkloadRepository  string `yaml:"workload-repository"`
+	} `yaml:"service-toolkit"`
 }
 
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
