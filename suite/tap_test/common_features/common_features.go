@@ -364,11 +364,11 @@ func UpdateMetadataStoreScanning(t *testing.T, name string, tapPackageName strin
 
 			tapValuesSchema.Profile = profile
 			tapValuesSchema.SupplyChain = supplyChain
-			tapValuesSchema.Scanning.MetadataStore.URL = metadataDomain
-			tapValuesSchema.Scanning.MetadataStore.CaSecret.Name = "store-ca-cert"
-			tapValuesSchema.Scanning.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
-			tapValuesSchema.Scanning.MetadataStore.AuthSecret.Name = "store-auth-token"
-			tapValuesSchema.Scanning.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
+			tapValuesSchema.Grype.MetadataStore.URL = metadataDomain
+			tapValuesSchema.Grype.MetadataStore.CaSecret.Name = "store-ca-cert"
+			tapValuesSchema.Grype.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
+			tapValuesSchema.Grype.MetadataStore.AuthSecret.Name = "store-auth-token"
+			tapValuesSchema.Grype.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
 			err = tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
 			if err != nil {
 				t.Error("error while updating tap values")

@@ -25,6 +25,9 @@ ootb_supply_chain_testing_scanning:
     server: <SERVER>
   gitops:
     ssh_secret: ""
+grype:
+  namespace:  my-apps
+  targetImagePullSecret: registry-credentials
 scanning:
   metadataStore:
     url: ""
@@ -33,6 +36,3 @@ scanning:
       importFromNamespace: 
     authSecret:
       name: 
-grype:
-  namespace:  my-apps
-  targetImagePullSecret: registry-credentials
