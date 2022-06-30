@@ -31,6 +31,16 @@ type TapValuesSchema struct {
 	Grype struct {
 		Namespace             string `yaml:"namespace"`
 		TargetImagePullSecret string `yaml:"targetImagePullSecret"`
+		MetadataStore         struct {
+			URL      string `yaml:"url"`
+			CaSecret struct {
+				Name                string `yaml:"name"`
+				ImportFromNamespace string `yaml:"importFromNamespace"`
+			} `yaml:"caSecret"`
+			AuthSecret struct {
+				Name string `yaml:"name"`
+			} `yaml:"authSecret"`
+		} `yaml:"metadataStore"`
 	} `yaml:"grype"`
 	Learningcenter struct {
 		IngressDomain string `yaml:"ingressDomain"`

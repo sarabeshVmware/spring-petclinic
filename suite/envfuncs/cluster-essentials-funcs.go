@@ -5,8 +5,10 @@ package envfuncs
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_libs"
@@ -47,12 +49,21 @@ func InstallClusterEssentials(tanzunetHost string, tanzunetApiToken string, prod
 		// os.Setenv("INSTALL_REGISTRY_PASSWORD", installRegistryPassword)
 		// log.Println("INSTALL_REGISTRY_PASSWORD env set.")
 
-		err := kubectl_libs.KubectlApplyConfiguration("resources/suite/kapp-controller.yml", "")
+		kappControllerFile := "resources/suite/kapp-controller.yml"
+		secretGenControllerFile := "resources/suite/secretgen-controller.yml"
+		if _, error1 := os.Stat(kappControllerFile); errors.Is(error1, os.ErrNotExist) {
+			kappControllerFile = "../../resources/suite/kapp-controller.yml"
+		}
+		if _, error2 := os.Stat(secretGenControllerFile); errors.Is(error2, os.ErrNotExist) {
+			secretGenControllerFile = "../../resources/suite/secretgen-controller.yml"
+		}
+
+		err := kubectl_libs.KubectlApplyConfiguration(kappControllerFile, "")
 		if err != nil {
 			return ctx, fmt.Errorf("error while setting up developer namespace %s", "kapp-controller")
 		}
 
-		err1 := kubectl_libs.KubectlApplyConfiguration("resources/suite/secretgen-controller.yml", "")
+		err1 := kubectl_libs.KubectlApplyConfiguration(secretGenControllerFile, "")
 		if err1 != nil {
 			return ctx, fmt.Errorf("error while setting up developer namespace %s", "secretgen-controller")
 		}
