@@ -31,6 +31,16 @@ type TapValuesSchema struct {
 	Grype struct {
 		Namespace             string `yaml:"namespace"`
 		TargetImagePullSecret string `yaml:"targetImagePullSecret"`
+		MetadataStore         struct {
+			URL      string `yaml:"url"`
+			CaSecret struct {
+				Name                string `yaml:"name"`
+				ImportFromNamespace string `yaml:"importFromNamespace"`
+			} `yaml:"caSecret"`
+			AuthSecret struct {
+				Name string `yaml:"name"`
+			} `yaml:"authSecret"`
+		} `yaml:"metadataStore"`
 	} `yaml:"grype"`
 	Learningcenter struct {
 		IngressDomain string `yaml:"ingressDomain"`
@@ -112,6 +122,10 @@ type TapValuesSchema struct {
 			} `yaml:"authSecret"`
 		} `yaml:"metadataStore"`
 	} `yaml:"scanning"`
+	MetadataStore struct {
+		IngressEnabled string `yaml:"ingress_enabled"`
+		IngressDomain  string `yaml:"ingress_domain"`
+	} `yaml:"metadata_store,omitempty"`
 }
 
 func GetTapValuesSchema() (TapValuesSchema, error) {

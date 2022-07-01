@@ -8,11 +8,8 @@
 #@ if profiles.is_any_enabled([profiles.full, profiles.light, profiles.iterate, profiles.build]):
 #@ if profiles.is_pkg_enabled("buildservice.tanzu.vmware.com"):
 
-#@ descriptor_mapping = {"lite":"tap-1.1-lite", "full":"tap-1.1-full"}
-
 #@ def values():
-#@   validate()
-#@   return overlay.apply(default_values(), user_values(), sanitized_values())
+#@   return overlay.apply(default_values(), user_values())
 #@ end
 
 #@ def user_values():
@@ -36,27 +33,8 @@
 
 #@ def default_values():
 ---
-descriptor_name: tap-1.1-lite
-enable_automatic_dependency_updates: true
 #@ if/end profiles.is_any_enabled([profiles.light]):
 disable_smart_warmer: true
-#@ end
-
-#@ def sanitized_values():
-#@overlay/match by=overlay.all
-#@overlay/match-child-defaults missing_ok=True
----
-#@ if/end hasattr(data.values.buildservice, "descriptor_name"):
-descriptor_name: #@ descriptor_mapping[data.values.buildservice.descriptor_name]
-#@ end
-
-#@ def validate():
-#@   if hasattr(data.values.buildservice, "descriptor_name"):
-#@     valid_descriptors = descriptor_mapping.keys()
-#@     if not data.values.buildservice.descriptor_name in valid_descriptors:
-#@       assert.fail("Expected descriptor_name to be one of: {}".format(valid_descriptors))
-#@     end
-#@   end
 #@ end
 
 ---
@@ -72,7 +50,7 @@ spec:
   packageRef:
     refName: buildservice.tanzu.vmware.com
     versionSelection:
-      constraints: 1.5.2
+      constraints: 1.6.0
   values:
   - secretRef:
       name: buildservice-values

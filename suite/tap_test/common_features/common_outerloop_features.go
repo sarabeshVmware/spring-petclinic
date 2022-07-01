@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
-
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/git"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/imgpkg"
 	"gitlab.eng.vmware.com/tap/tap-packages/suite/pkg/kubectl/kubectl_helpers"
@@ -175,6 +174,24 @@ func MulticlusterOuterloopCleanup(t *testing.T, workloadName string, projectName
 		Feature()
 }
 
+func DeletePipeline(t *testing.T, pipeline string, namespace string) features.Feature {
+	return features.New("delete-pipeline").
+		Assess("delete-pipeline", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("deleting pipeline")
+
+			// delete pipeline
+			_, err := kubectl_libs.DeletePipeline(pipeline, namespace)
+			if err != nil {
+				t.Error("error while deleting pipeline")
+				t.Fail() // DON'T DO t.FailNow() AS WE WANT TO CLEAN UP REGARDLESS OF THE STATE OF THE TEST
+			} else {
+				t.Log("deleted pipeline")
+			}
+			return ctx
+		}).
+		Feature()
+}
+
 func VerifyRevisionStatus(t *testing.T, name string, namespace string) features.Feature {
 	return features.New(fmt.Sprintf("verify-%s-revision-status", name)).
 		Assess("verify-revision-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -229,6 +246,16 @@ func VerifyKsvcStatus(t *testing.T, name string, namespace string) features.Feat
 		Feature()
 }
 
+func GetKsvcUrl(t *testing.T, name string, namespace string) features.Feature {
+	return features.New(fmt.Sprintf("get ksvc url for %s", name)).
+		Assess("get-ksvc-url", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("getting ksvc url")
+			ksvcURL := kubectl_helpers.GetKsvcUrl(name, namespace)
+			t.Logf("ksvcURL is : %s", ksvcURL)
+			return ctx
+		}).
+		Feature()
+}
 func VerifyKsvcStatusAfterUpdate(t *testing.T, name string, namespace string) features.Feature {
 	return features.New(fmt.Sprintf("verify-%s-ksvc-status", name)).
 		Assess("verify-ksvc-ready", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -341,3 +368,4 @@ func ImageCopyFromDeliverableToRepo(t *testing.T, name string, namespace string,
 			return ctx
 		}).Feature()
 }
+

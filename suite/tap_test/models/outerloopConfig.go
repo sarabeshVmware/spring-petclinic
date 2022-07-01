@@ -35,6 +35,7 @@ type OuterloopConfig struct {
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"scan_policy"`
 	SpringPetclinicPipeline struct {
+		Name     string `yaml:"name"`
 		YamlFile string `yaml:"yaml_file"`
 	} `yaml:"spring_petclinic_pipeline"`
 	TestTargetRepo string `yaml:"test_target_repo"`
@@ -51,8 +52,9 @@ type OuterloopConfig struct {
 		GitSSHSecretYamlFile string `yaml:"gitssh_secret_yaml_file"`
 	} `yaml:"workload"`
 	BuildPacks struct {
-		ScanPolicy string `yaml:"scan_policy"`
-		Workloads  []struct {
+		ScanPolicy       string `yaml:"scan_policy"`
+		PipelineYamlFile string `yaml:"pipeline_yaml_file"`
+		Workloads        []struct {
 			Name                string `yaml:"name"`
 			GitRepository       string `yaml:"git_repository"`
 			GitBranch           string `yaml:"git_branch"`
@@ -60,6 +62,11 @@ type OuterloopConfig struct {
 			ContainsConventions bool   `yanl:"contains_conventions"`
 		} `yaml:"workloads"`
 	} `yaml:"buildpacks"`
+	Domain        string `yaml:"domain"`
+	MetadataStore struct {
+		Domain    string `yaml:"domain"`
+		Namespace string `yaml:"namespace"`
+	} `yaml:"metadata_store"`
 }
 
 var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/outerloop")
@@ -94,6 +101,7 @@ func GetOuterloopConfig() (OuterloopConfig, error) {
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
+	outerloopConfig.BuildPacks.PipelineYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.PipelineYamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)
 	outerloopConfig.Workload.TestYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.TestYamlFile)
 	outerloopConfig.Workload.GitopsYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.GitopsYamlFile)

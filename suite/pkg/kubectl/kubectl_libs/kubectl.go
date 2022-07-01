@@ -306,7 +306,7 @@ func GetRevisions(name string, namespace string) []GetRevisionsOutput {
 	return revisions
 }
 
-type GetSecretsOutput struct {
+type GetSecretJsonOutput struct {
 	APIVersion string `json:"apiVersion"`
 	Data       struct {
 		CaCrt     string `json:"ca.crt"`
@@ -328,18 +328,56 @@ type GetSecretsOutput struct {
 	Type string `json:"type"`
 }
 
-func GetSecrets(name string, namespace string) *GetSecretsOutput {
-	var raw *GetSecretsOutput
-	cmd := fmt.Sprintf("kubectl get secrets %s -n %s -o json", name, namespace)
-	res, err := linux_util.ExecuteCmd(cmd)
+type GetSecretsJsonOutput struct {
+	APIVersion string                `json:"apiVersion"`
+	Items      []GetSecretJsonOutput `json:"items"`
+	Kind       string                `json:"kind"`
+	Metadata   struct {
+		ResourceVersion string `json:"resourceVersion"`
+		SelfLink        string `json:"selfLink"`
+	} `json:"metadata"`
+}
+
+func GetSecret(secretName string, namespace string) *GetSecretJsonOutput {
+	var raw *GetSecretJsonOutput
+	cmd := fmt.Sprintf("kubectl get secrets %s -o json", secretName)
+	if namespace != " " {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmdNoLogNoOutput(cmd)
 	if err != nil {
 		return raw
 	}
-	in := []byte(res)
+	in := []byte(response)
 	if err := json.Unmarshal(in, &raw); err != nil {
 		panic(err)
 	}
 	return raw
+}
+
+func GetSecrets(secretName string, namespace string) []GetSecretJsonOutput {
+	var raw *GetSecretsJsonOutput
+	//secrets := []GetSecretsOutput{}
+	cmd := "kubectl get secrets -o json"
+	if secretName != "" {
+		cmd += fmt.Sprintf(" %s", secretName)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmdNoLogNoOutput(cmd)
+	if err != nil {
+		return raw.Items
+	}
+	in := []byte(response)
+	if err := json.Unmarshal(in, &raw); err != nil {
+		panic(err)
+	}
+	return raw.Items
 }
 
 func RestartScanLinkController() (string, error) {
@@ -380,6 +418,23 @@ func KubectlApplyConfiguration(file string, namespace string) error {
 	}
 
 	return err
+}
+
+func DeployApp(name string, file string) error {
+	log.Printf("Deploying app: %s", name)
+	command := fmt.Sprintf("kapp deploy --app %s --file %s -y", name, file)
+	output, err := linux_util.ExecuteCmdInBashMode(command)
+	if err != nil {
+		log.Printf("error while deploying app %s in names %s", file, name)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("Deployed app %s ", name)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+
 }
 
 type GetDeploymentsOutput struct {
@@ -525,4 +580,105 @@ func GetServices(name string, namespace string) []GetServicesOutput {
 
 	fmt.Printf("services: %+v\n", services)
 	return services
+}
+
+type GetRabbitmqClustersOutput struct {
+	NAME, ALLREPLICASREADY, RECONCILESUCCESS, AGE string
+}
+
+func GetRabbitmqClusters(name string, namespace string) []GetRabbitmqClustersOutput {
+	rabbitmqclusters := []GetRabbitmqClustersOutput{}
+	cmd := "kubectl get rabbitmqclusters"
+	if name != "" {
+		cmd += fmt.Sprintf(" %s", name)
+	}
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	} else {
+		cmd += " -A"
+	}
+	response, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		return rabbitmqclusters
+	}
+
+	temp := strings.Split(strings.TrimSuffix(response, "\n"), "\n")
+	if len(temp) <= 1 {
+		log.Printf("Output : %s", temp[0])
+		return rabbitmqclusters
+	}
+
+	ss := linux_util.FieldIndices(temp[0])
+	headers := linux_util.GetFields(temp[0], ss)
+	for _, element := range temp[1:] {
+		words := linux_util.GetFields(element, ss)
+		var rabbitmqcluster GetRabbitmqClustersOutput
+		for index, value := range words {
+			reflect.ValueOf(&rabbitmqcluster).Elem().FieldByName(headers[index]).SetString(value)
+		}
+		rabbitmqclusters = append(rabbitmqclusters, rabbitmqcluster)
+	}
+
+	fmt.Printf("rabbitmqcluster: %+v\n", rabbitmqclusters)
+	return rabbitmqclusters
+}
+
+func KubectlCreateNamespace(namespace string) error {
+	log.Printf("creating namespace %s", namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("kubectl create ns %s", namespace)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while creating namespace %s", namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("namespace %s created", namespace)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
+
+func KubectlDeleteNamespace(namespace string) error {
+	log.Printf("deleting namespace %s", namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("kubectl get namespace %[1]s -o json | tr -d \"\n\" | sed 's/\"finalizers\": [[^]]+]/\"finalizers\": []/' | kubectl replace --raw /api/v1/namespaces/%[1]s/finalize -f -; kubectl delete ns %[1]s", namespace)
+	output, err := linux_util.ExecuteCmdInBashMode(cmd)
+	if err != nil {
+		log.Printf("error while deleting namespace %s", namespace)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("namespace %s deleted", namespace)
+		log.Printf("output: %s", output)
+	}
+
+	return err
+}
+
+func KubectlCreateSecret(namespace string, name string, secret string, secretType string) error {
+	log.Printf("creating secret %s", namespace)
+
+	// execute cmd
+	cmd := fmt.Sprintf("kubectl create secret %s %s", secretType, name)
+	if namespace != "" {
+		cmd += fmt.Sprintf(" -n %s", namespace)
+	}
+	if secret != "" {
+		cmd += fmt.Sprintf(" --from-literal=%s", secret)
+	}
+	output, err := linux_util.ExecuteCmdNoLog(cmd)
+	if err != nil {
+		log.Printf("error while creating secret %s", name)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("secret %s created", name)
+		log.Printf("output: %s", output)
+	}
+
+	return err
 }

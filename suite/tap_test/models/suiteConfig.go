@@ -98,16 +98,26 @@ type SuiteConfig struct {
 		UpgradeTapRepoVersion string `yaml:"upgrade-tap-repo-version"`
 	} `yaml:"upgrade-versions"`
 	Multicluster struct {
-		ViewClusterContext           string `yaml:"view-cluster-context"`
-		ViewTapValuesFile            string `yaml:"view-tap-values-file"`
-		IterateClusterContext        string `yaml:"iterate-cluster-context"`
-		IterateTapValuesFile         string `yaml:"iterate-tap-values-file"`
-		BuildClusterContext          string `yaml:"build-cluster-context"`
-		BuildTapValuesFile           string `yaml:"build-tap-values-file"`
-		RunClusterContext            string `yaml:"run-cluster-context"`
-		RunTapValuesFile             string `yaml:"run-tap-values-file"`
-		FullProfilewithTbsSecretFile string `yaml:"full-tap-values-with-tbs-secret-file"`
+		ViewClusterContext                 string `yaml:"view-cluster-context"`
+		ViewTapValuesFile                  string `yaml:"view-tap-values-file"`
+		ViewWithMetadataStoreTapValuesFile string `yaml:"view-with-metadata-store-tap-values-file"`
+		IterateClusterContext              string `yaml:"iterate-cluster-context"`
+		IterateTapValuesFile               string `yaml:"iterate-tap-values-file"`
+		BuildClusterContext                string `yaml:"build-cluster-context"`
+		BuildTapValuesFile                 string `yaml:"build-tap-values-file"`
+		RunClusterContext                  string `yaml:"run-cluster-context"`
+		RunTapValuesFile                   string `yaml:"run-tap-values-file"`
+		FullProfilewithTbsSecretFile       string `yaml:"full-tap-values-with-tbs-secret-file"`
 	}
+	ServiceToolkit struct {
+		Name               string `yaml:"name"`
+		Gitrepository      string `yaml:"gitrepository"`
+		WorkloadName       string `yaml:"workload-name"`
+		WorkloadURL        string `yaml:"workload-url"`
+		BuildNameSuffix    string `yaml:"build_name_suffix"`
+		Message            string `yaml:"message"`
+		WorkloadRepository string `yaml:"workload-repository"`
+	} `yaml:"service-toolkit"`
 }
 
 var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
@@ -132,6 +142,7 @@ func GetSuiteConfig() SuiteConfig {
 	suiteConfig.Multicluster.RunTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.RunTapValuesFile)
 	suiteConfig.Multicluster.FullProfilewithTbsSecretFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.FullProfilewithTbsSecretFile)
 	suiteConfig.Innerloop.Workload.YamlFile = filepath.Join(suiteDir, suiteConfig.Innerloop.Workload.YamlFile)
+	suiteConfig.Multicluster.ViewWithMetadataStoreTapValuesFile = filepath.Join(suiteResourcesDir, suiteConfig.Multicluster.ViewWithMetadataStoreTapValuesFile)
 
 	return suiteConfig
 }

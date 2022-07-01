@@ -2,6 +2,7 @@ package common_features
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -35,10 +36,13 @@ import (
 
 var tiltprocCmdKey = "tiltprocCmd"
 var rootDir = filepath.Join(utils.GetFileDir(), "../../")
+var suiteResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/suite")
+var outerloopResourcesDir = filepath.Join(utils.GetFileDir(), "../../resources/outerloop")
 var buildName = ""
 var ksvcLatestReady = ""
 var revisionName = ""
 var sourceRepo = ""
+var service_ref = ""
 
 func compile(filepath string) {
 	app := "./mvnw"
@@ -243,7 +247,7 @@ func UpdateTapProfileSupplyChain(t *testing.T, name string, tapPackageName strin
 }
 
 func UpdateTapProfileGitopsSsh(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, gitopsSecret string, namespace string, pollTimeout string) features.Feature {
-	return features.New("update-tap-profile-supplychain").
+	return features.New("update-tap-profile-gitops-ssh").
 		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Log("updating tap package")
 
@@ -275,6 +279,102 @@ func UpdateTapProfileGitopsSsh(t *testing.T, name string, tapPackageName string,
 				t.Error("error while updating tap values")
 				t.FailNow()
 			}
+			return ctx
+		}).
+		Feature()
+}
+
+func UpdateMetadataStoreScanning(t *testing.T, name string, tapPackageName string, tapVersion string, profile string, supplyChain string, namespace string, pollTimeout string, metadataDomain string, viewContext string, buildContext string, metadataStoreSecretsNamespace string) features.Feature {
+	return features.New("update-tap-profile-metadata-store-scanning").
+		Assess("update-package", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("updating tap package")
+
+			// changing to view cluster
+			_, err := kubectl_libs.UseContext(viewContext)
+			if err != nil {
+				t.Errorf("error while changing context to %s", viewContext)
+				t.FailNow()
+			} else {
+				t.Logf("context changed to %s", viewContext)
+			}
+
+			//getting ingresss ca cert and adding as tls secret
+			CA_cert := kubectl_libs.GetSecret("ingress-cert", "metadata-store").Data.CaCrt
+			storeCaCertPath := filepath.Join(outerloopResourcesDir, "store-ca.yaml")
+			utils.ReplaceStringInFile(storeCaCertPath, "<CA_CERT>", CA_cert)
+
+			//getting store-auth-token
+			secrets := kubectl_libs.GetSecrets("", "metadata-store")
+			var secretToken string
+			for _, secret := range secrets {
+				if secret.Metadata.Annotations.KubernetesIoServiceAccountName == "metadata-store-read-write-client" {
+					log.Printf("found matching secret %s", secret.Metadata.Name)
+					secretToken = secret.Data.Token
+				}
+			}
+			authToken, err := base64.StdEncoding.DecodeString(secretToken)
+			if err != nil {
+				t.Error("error while decoding token")
+				t.FailNow()
+			}
+
+			// changing to build cluster
+			_, err = kubectl_libs.UseContext(buildContext)
+			if err != nil {
+				t.Errorf("error while changing context to %s", buildContext)
+				t.FailNow()
+			} else {
+				t.Logf("context changed to %s", buildContext)
+			}
+
+			err = kubectl_libs.KubectlCreateNamespace(metadataStoreSecretsNamespace)
+			if err != nil {
+				t.Errorf("error while creating namespace %s", metadataStoreSecretsNamespace)
+				t.FailNow()
+			}
+			err = kubectl_libs.KubectlApplyConfiguration(storeCaCertPath, "")
+			if err != nil {
+				t.Error("error while creating secret store-ca-cert secret")
+				t.FailNow()
+			}
+			literal_source := fmt.Sprintf("auth_token=%s", string(authToken))
+			err = kubectl_libs.KubectlCreateSecret(metadataStoreSecretsNamespace, "store-auth-token", literal_source, "generic")
+			if err != nil {
+				t.Error("error while creating secret store-auth-token")
+				t.FailNow()
+			}
+
+			//creating secret export and secret import
+			secretExportImportManifestPath := filepath.Join(outerloopResourcesDir, "store-secrets-exports-imports.yaml")
+			kubectl_libs.KubectlApplyConfiguration(secretExportImportManifestPath, "")
+
+			//update scanning in tap
+			var tapValuesSchema models.TapValuesSchema
+			tapValuesSchema, err = models.GetProfileTapValuesSchema("build")
+			if err != nil {
+				t.Error("error while getting tap values schema")
+				t.FailNow()
+			}
+			t.Log(tapValuesSchema)
+
+			// set url
+			if !strings.HasPrefix(metadataDomain, "https://") {
+				metadataDomain = "https://" + metadataDomain
+			}
+
+			tapValuesSchema.Profile = profile
+			tapValuesSchema.SupplyChain = supplyChain
+			tapValuesSchema.Grype.MetadataStore.URL = metadataDomain
+			tapValuesSchema.Grype.MetadataStore.CaSecret.Name = "store-ca-cert"
+			tapValuesSchema.Grype.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
+			tapValuesSchema.Grype.MetadataStore.AuthSecret.Name = "store-auth-token"
+			tapValuesSchema.Grype.MetadataStore.CaSecret.ImportFromNamespace = metadataStoreSecretsNamespace
+			err = tanzu_helpers.UpdateTapValues(tapValuesSchema, name, tapPackageName, tapVersion, namespace)
+			if err != nil {
+				t.Error("error while updating tap values")
+				t.FailNow()
+			}
+
 			return ctx
 		}).
 		Feature()
@@ -442,6 +542,25 @@ func ApplyKubectlConfigurationFile(t *testing.T, configurationFile string, names
 		Feature()
 }
 
+func InstallAndDeployRmqOperator(t *testing.T, name string, configurationFile string) features.Feature {
+	return features.New("install-and-deploy-rmq-yaml").
+		Assess(fmt.Sprintf("deploy-%s", configurationFile), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("deploying %s", configurationFile)
+
+			// deploy app
+			err := kubectl_libs.DeployApp(name, configurationFile)
+			if err != nil {
+				t.Errorf("error while deploying RabbitMQ operator app")
+				t.FailNow()
+			} else {
+				t.Logf("deployed RabbitMQ operator app %s", configurationFile)
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
 func VerifyWorkloadResponse(t *testing.T, workloadUrl string, verificationString string, relativePath string) features.Feature {
 	return features.New("verify-workload-response").
 		Assess("get-externalip-and-check-webpage-for-string", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
@@ -493,7 +612,7 @@ func VerifyBuildStatus(t *testing.T, name string, buildNameSuffix string, namesp
 		Assess("verify-build-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
 			t.Logf("verify build status")
 			buildName = fmt.Sprintf("%s%s", name, buildNameSuffix)
-			status := kubectl_helpers.VerifyBuildStatus(buildName, namespace, 15, 30)
+			status := kubectl_helpers.VerifyBuildStatus(buildName, namespace, 30, 60)
 			t.Logf("Build status is : %t", status)
 			if !status {
 				t.Error(fmt.Errorf("build is not ready"))
@@ -978,6 +1097,44 @@ func VerifyTanzuJavaWebAppDeliverable(t *testing.T, name string, namespace strin
 		Feature()
 }
 
+func VerifySourceScanStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-source-scan-status").
+		Assess("verify-source-scan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying source scan status")
+
+			// check
+			sourceScanCompleted := kubectl_helpers.ValidateSourceScans(name, namespace, 5, 30)
+			if !sourceScanCompleted {
+				t.Error("source scan completed")
+				t.FailNow()
+			} else {
+				t.Log("source scan completed successfully")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func VerifyImageScanStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-imagescan-status").
+		Assess("verify-imagescan-completed", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Log("verifying image scan status")
+
+			// check
+			imageScanCompleted := kubectl_helpers.ValidateImageScans(name, namespace, 5, 30)
+			if !imageScanCompleted {
+				t.Error("image scan failed")
+				t.FailNow()
+			} else {
+				t.Log("image scan completed successfully")
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
 func ProcessDeliverable(t *testing.T, name string, namespace string, buildContext string, runContext string, targetRepo string) features.Feature {
 	return features.New("getting deliverable and changing file").
 		Assess(fmt.Sprintf("getting deliverable file %s", name), func(ctx context.Context, t *testing.T, c *envconf.Config) context.Context {
@@ -1086,4 +1243,109 @@ func ValidateListofInstalledPackage(t *testing.T, namespace string, expectedList
 			return ctx
 		}).
 		Feature()
+}
+
+func VerifyRabbitmqClustersStatus(t *testing.T, name string, namespace string) features.Feature {
+	return features.New("verify-rabbitmqclusters").
+		Assess("verify-rabbitmq-cluster-status", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("verifying rabbitmq-cluster-status")
+			status := kubectl_helpers.VerifyRabbitmqClustersStatus(name, namespace, 10, 30)
+			t.Logf("Rabbitmq Cluster status is : %t", status)
+			if !status {
+				t.Error(fmt.Errorf("Rabbitmq Cluster is not ready"))
+				t.Fail()
+			}
+			return ctx
+		}).
+		Feature()
+}
+
+func ServiceInstanceList(t *testing.T, namespace string) features.Feature {
+	return features.New("service-instance-list").
+		Assess("service-instance-list", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("service-instance-list")
+			listofServiceInstances := tanzu_libs.ListServiceInstances(namespace)
+			fmt.Printf("listofServiceInstances: %+v\n", listofServiceInstances)
+			service_ref = listofServiceInstances[0].SERVICE_REF
+			t.Logf("service_ref is : %s", service_ref)
+			return ctx
+		}).
+		Feature()
+}
+
+func TanzuCreateWorkloadWithGitRepo(t *testing.T, workloadName string, workloadGitRepo string, namespace string) features.Feature {
+	return features.New("create-tanzu-workload-via-gitrepo").
+		Assess(fmt.Sprintf("create-tanzu-workload-via-gitrepo-from-%s", workloadGitRepo), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			t.Logf("deploying workload %s in namespace %s", workloadName, namespace)
+			//workloadFilePath := filepath.Join(rootDir, workloadYamlFile)
+			// deploy app
+			service_ref = "rmq=" + service_ref
+			err := tanzu_libs.TanzuCreateWorkloadWithGitRepo(workloadName, workloadGitRepo, "main", "tap-1.0", service_ref, namespace)
+			if err != nil {
+				t.Errorf("error while deploying workload %s", workloadName)
+				t.FailNow()
+			} else {
+				t.Logf("deployed workload %s in %s", workloadName, namespace)
+			}
+
+			return ctx
+		}).
+		Feature()
+}
+
+func UpdateDomainRecords(t *testing.T) features.Feature {
+
+	return features.New("update-domain-records").
+		Assess("update-domain-records", func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+
+			envoyExternalIP := kubectl_helpers.GetServiceExternalIP("envoy", "tanzu-system-ingress", 2, 30)
+			clusterConfig := kubectl_libs.GetCurrentContext()
+			// route 53 related changes - only for public clouds (AKS,EKS,GKE,ARO)
+			val, present := os.LookupEnv("TKGM")
+			if !present {
+				route53File := filepath.Join(suiteResourcesDir, "aws-record-set.json")
+				utils.ReplaceStringInFile(route53File, "<ENVOY-LB-IP>", envoyExternalIP)
+				if strings.Contains(clusterConfig, "aws:eks") {
+					utils.ReplaceStringInFile(route53File, "<TYPE>", "CNAME")
+				} else {
+					utils.ReplaceStringInFile(route53File, "<TYPE>", "A")
+				}
+				cmd := fmt.Sprintf("aws route53 change-resource-record-sets --hosted-zone-id Z01910001Y8J4230PVYZQ --change-batch file://%s --profile svc.tapdemo-user-concourse-assume-role", route53File)
+				linux_util.ExecuteCmdInBashMode(cmd)
+			}
+
+			// domain entry for TKGM cluster
+			if present && val == "true" {
+				clusterName := strings.Split(clusterConfig, "@")[1]
+				dnsServerKeyFile := filepath.Join(suiteResourcesDir, "dns-server.key")
+				cmd := fmt.Sprintf("ssh -o StrictHostKeyChecking=no -i %s dap-ops@10.221.46.1 'sudo -S bash /root/update-dns.sh *.%s %s < /home/dap-ops/.dap-passwd'", dnsServerKeyFile, clusterName, envoyExternalIP)
+				linux_util.ExecuteCmdInBashMode(cmd)
+			}
+			return ctx
+		}).Feature()
+
+}
+
+func DeleteNamespace(t *testing.T, namespace string, clusterContext string) features.Feature {
+	return features.New("delete namespace").
+		Assess(fmt.Sprintf("delete namespace %s", namespace), func(ctx context.Context, t *testing.T, cfg *envconf.Config) context.Context {
+			if clusterContext != " " {
+				_, err := kubectl_libs.UseContext(clusterContext)
+				if err != nil {
+					t.Errorf("error while changing context to %s", clusterContext)
+					t.FailNow()
+				} else {
+					t.Logf("context changed to %s", clusterContext)
+				}
+			}
+
+			err := kubectl_libs.KubectlDeleteNamespace(namespace)
+			if err != nil {
+				t.Errorf("error while deleting to %s", namespace)
+				t.FailNow()
+			} else {
+				t.Logf("deleted %s", namespace)
+			}
+			return ctx
+		}).Feature()
 }

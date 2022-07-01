@@ -56,7 +56,24 @@ func TanzuApplyWorkload(namespace string, workloadFile string) error {
 		log.Printf("output: %s", output)
 	}
 	return err
+}
 
+func TanzuCreateWorkloadWithGitRepo(workload string, gitRepo string, gitBranch string, gitTag string, serviceRef string, namespace string) error {
+	log.Printf("deploying workload %s", workload)
+
+	// execute cmd
+	cmd := fmt.Sprintf("tanzu apps workload create %s --git-repo %s --git-branch %s --git-tag %s --type web --service-ref %s --yes -n %s", workload, gitRepo, gitBranch, gitTag, serviceRef, namespace)
+	output, err := linux_util.ExecuteCmd(cmd)
+	if err != nil {
+		log.Printf("error while deploying workload %s", workload)
+		log.Printf("error: %s", err)
+		log.Printf("output: %s", output)
+	} else {
+		log.Printf("workload %s deployed", workload)
+		log.Printf("output: %s", output)
+	}
+
+	return err
 }
 
 func DeleteWorkload(name string, namespace string) error {

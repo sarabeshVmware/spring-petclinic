@@ -85,6 +85,7 @@ upgrade-versions:
 multicluster:
   view-cluster-context: <VIEW-CLUSTER-CONTEXT>
   view-tap-values-file: view-tap-values.yaml
+  view-with-metadata-store-tap-values-file: view-with-metadata-store-tap-values.yaml
   build-cluster-context: <BUILD-CLUSTER-CONTEXT>
   build-tap-values-file: build-tap-values.yaml
   run-cluster-context: <RUN-CLUSTER-CONTEXT>
@@ -92,3 +93,11 @@ multicluster:
   iterate-cluster-context: <ITERATE-CLUSTER-CONTEXT>
   iterate-tap-values-file: iterate-tap-values.yaml
   full-tap-values-with-tbs-secret-file: tap-values-with-tbs-secret.yaml
+service-toolkit:
+  name: rmq-operator
+  gitrepository: https://github.com/rabbitmq/cluster-operator/releases/download/v1.9.0/cluster-operator.yml
+  workload-name: rmq-sample-app-usecase-1
+  workload-url: rmq-sample-app-usecase-1.my-apps.example.com
+  build_name_suffix: -build-1
+  message: "Connected and sent message:)"
+  workload-repository: https://github.com/sample-accelerators/rabbitmq-sample

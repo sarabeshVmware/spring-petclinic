@@ -1513,7 +1513,7 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 	//getting metadata store app access token
 	serviceAccount := kubectl_libs.GetServiceAccountJson("metadata-store-read-write-client", "metadata-store")
 	secretName := serviceAccount.Secrets[0].Name
-	secret := kubectl_libs.GetSecrets(secretName, "metadata-store")
+	secret := kubectl_libs.GetSecret(secretName, "metadata-store")
 	encodedToken := string(secret.Data.Token)
 	decodedToken, err := base64.StdEncoding.DecodeString(encodedToken)
 	if err != nil {
@@ -1553,7 +1553,7 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 	}
 
 	//getting ca cert from app-tls-cert secret
-	caSecret := kubectl_libs.GetSecrets("app-tls-cert", "metadata-store")
+	caSecret := kubectl_libs.GetSecret("app-tls-cert", "metadata-store")
 	caEncodedToken := string(caSecret.Data.CaCrt)
 	caDecodedSecret, err := base64.StdEncoding.DecodeString(caEncodedToken)
 	if err != nil {
@@ -1580,7 +1580,7 @@ func setupInsightPluginConfig(t *testing.T, cfg *envconf.Config) {
 	}
 
 	//configure tanzu insight config set-target command
-	err = tanzu_libs.TanzuConfigureInsight(tempFile.Name(), string(decodedToken))
+	err = tanzu_libs.TanzuConfigureInsight(tempFile.Name(), string(decodedToken), "")
 	if err != nil {
 		t.FailNow()
 	}
