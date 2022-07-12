@@ -32,7 +32,8 @@ type OuterloopConfig struct {
 		AccessToken         string `yaml:"access_token"`
 	} `yaml:"project"`
 	ScanPolicy struct {
-		YamlFile string `yaml:"yaml_file"`
+		YamlFile    string `yaml:"yaml_file"`
+		OldYamlFile string `yaml:"before_1.2.0"`
 	} `yaml:"scan_policy"`
 	SpringPetclinicPipeline struct {
 		Name     string `yaml:"name"`
@@ -100,6 +101,7 @@ func GetOuterloopConfig() (OuterloopConfig, error) {
 	// update outerloop config for full file paths
 	outerloopConfig.Mysql.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Mysql.YamlFile)
 	outerloopConfig.ScanPolicy.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.YamlFile)
+	outerloopConfig.ScanPolicy.OldYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.ScanPolicy.OldYamlFile)
 	outerloopConfig.SpringPetclinicPipeline.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.SpringPetclinicPipeline.YamlFile)
 	outerloopConfig.BuildPacks.PipelineYamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.BuildPacks.PipelineYamlFile)
 	outerloopConfig.Workload.YamlFile = filepath.Join(outerloopResourcesDir, outerloopConfig.Workload.YamlFile)

@@ -18,7 +18,9 @@ import (
 func AddPackageRepository(name string, image string, version string, namespace string) env.Func {
 	return func(ctx context.Context, cfg *envconf.Config) (context.Context, error) {
 		log.Printf("adding package repository %s (%s) in namespace %s", name, image, namespace)
-
+		if version != " " {
+			image = fmt.Sprintf("%s:%s", image, version)
+		}
 		// add repo
 		err := tanzuCmds.TanzuAddPackageRepository(name, image, namespace)
 		if err != nil {

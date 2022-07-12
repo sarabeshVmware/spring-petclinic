@@ -20,6 +20,7 @@ project:
   access_token: <ACCESS_TOKEN>
 scan_policy:
   yaml_file: scan-policy.yaml
+  before_1.2.0: scan-policy-before-1.2.0.yaml
 spring_petclinic_pipeline:
   name: developer-defined-tekton-pipeline
   yaml_file: spring-petclinic-tests-pipeline.yaml
